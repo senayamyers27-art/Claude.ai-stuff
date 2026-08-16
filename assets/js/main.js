@@ -25,19 +25,34 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ---------- Mobile nav ---------- */
   const hamburger = document.getElementById('hamburger');
   const navMobile = document.getElementById('navMobile');
+  const navOverlay = document.getElementById('navOverlay');
+  const navMobileClose = document.getElementById('navMobileClose');
+
+  const openNav = () => {
+    navMobile.classList.add('open');
+    navOverlay.classList.add('open');
+    hamburger.classList.add('open');
+    hamburger.setAttribute('aria-expanded', true);
+    document.body.style.overflow = 'hidden';
+  };
+  const closeNav = () => {
+    navMobile.classList.remove('open');
+    navOverlay.classList.remove('open');
+    hamburger.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', false);
+    document.body.style.overflow = '';
+  };
+
   hamburger.addEventListener('click', () => {
-    const open = navMobile.classList.toggle('open');
-    hamburger.classList.toggle('open', open);
-    hamburger.setAttribute('aria-expanded', open);
-    document.body.style.overflow = open ? 'hidden' : '';
+    navMobile.classList.contains('open') ? closeNav() : openNav();
+  });
+  navMobileClose.addEventListener('click', closeNav);
+  navOverlay.addEventListener('click', closeNav);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navMobile.classList.contains('open')) closeNav();
   });
   navMobile.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
-      navMobile.classList.remove('open');
-      hamburger.classList.remove('open');
-      hamburger.setAttribute('aria-expanded', false);
-      document.body.style.overflow = '';
-    });
+    a.addEventListener('click', closeNav);
   });
 
   /* ---------- Scroll reveal ---------- */
