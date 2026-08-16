@@ -1,3 +1,17 @@
+/* =========================================================
+   SevenRooms reservation hand-off
+   ---------------------------------------------------------
+   11:Eleven doesn't have a live SevenRooms account yet (see
+   Section 11 of the business plan — SevenRooms is the intended
+   guest-management platform, to be set up before opening).
+   Once a venue is created in SevenRooms, its dashboard provides
+   a venue slug used in the hosted booking page URL:
+     https://www.sevenrooms.com/reservations/<venue-slug>
+   Replace the placeholder below with that slug to go live —
+   no other code changes are needed.
+   ========================================================= */
+const SEVENROOMS_VENUE_ID = 'YOUR-VENUE-ID';
+
 document.addEventListener('DOMContentLoaded', () => {
 
   /* ---------- Header scroll state ---------- */
@@ -92,14 +106,32 @@ document.addEventListener('DOMContentLoaded', () => {
   lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
 
-  /* ---------- Reservation form (front-end only) ---------- */
+  /* ---------- Reservation form: hands off to SevenRooms ---------- */
   const form = document.getElementById('reserveForm');
   const formNote = document.getElementById('formNote');
+  const isConfigured = SEVENROOMS_VENUE_ID && SEVENROOMS_VENUE_ID !== 'YOUR-VENUE-ID';
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = document.getElementById('name').value.trim();
-    formNote.textContent = `Thank you, ${name.split(' ')[0] || 'guest'} — we'll confirm your request shortly.`;
-    form.reset();
+
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+    const party = document.getElementById('party').value;
+
+    if (!isConfigured) {
+      formNote.textContent = 'Online booking through SevenRooms is launching soon — check back shortly, or follow us for the opening announcement.';
+      return;
+    }
+
+    const params = new URLSearchParams({
+      date,
+      time,
+      party_size: party,
+    });
+    const bookingUrl = `https://www.sevenrooms.com/reservations/${SEVENROOMS_VENUE_ID}?${params.toString()}`;
+
+    formNote.textContent = 'Opening SevenRooms in a new tab to complete your booking…';
+    window.open(bookingUrl, '_blank', 'noopener');
   });
 
   /* ---------- Active nav link on scroll ---------- */

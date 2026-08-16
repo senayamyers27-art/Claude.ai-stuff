@@ -672,11 +672,13 @@ a { color: inherit; text-decoration: none; }
 .reserve { background: var(--charcoal); }
 .reserve-form { margin-top: 54px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.form-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
 .form-field.full { grid-column: 1 / -1; }
 .form-field label {
   display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
   color: var(--gold-light); margin-bottom: 10px;
 }
+.label-optional { color: rgba(255,253,251,.4); text-transform: none; letter-spacing: 0; font-size: 11px; }
 .form-field input, .form-field select, .form-field textarea {
   width: 100%;
   background: rgba(255,253,251,.04);
@@ -694,9 +696,14 @@ a { color: inherit; text-decoration: none; }
 .form-field textarea { resize: vertical; }
 .form-field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23dfc590' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
 .form-note { text-align: center; margin-top: 18px; color: var(--gold-light); font-size: 14px; min-height: 20px; }
+.form-powered-by {
+  text-align: center; margin-top: 22px; color: rgba(255,253,251,.4);
+  font-size: 12.5px; line-height: 1.6; font-weight: 300;
+}
+.form-powered-by span { color: var(--gold-light); font-weight: 500; }
 
 @media (max-width: 600px) {
-  .form-row { grid-template-columns: 1fr; }
+  .form-row, .form-row.cols-3 { grid-template-columns: 1fr; }
 }
 
 /* =========================================================
