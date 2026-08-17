@@ -477,6 +477,28 @@ document.addEventListener('DOMContentLoaded', async function() {
   </script>
 
   <!-- =========================================================
+       Collapse the mobile browser chrome on load
+       ---------------------------------------------------------
+       On iOS Safari (and some Android browsers), the address bar
+       and bottom toolbar can stay expanded on first load, hiding
+       fixed-position elements — including this app's own bottom
+       tab bar — behind them until the guest scrolls once. That
+       makes the whole app feel unresponsive until they discover
+       they need to swipe first. Nudging a 1px scroll on load
+       collapses that chrome immediately, so everything is
+       tappable right away.
+       ========================================================= -->
+  <script>
+  (function () {
+    function nudge() {
+      if (window.scrollY === 0) window.scrollTo(0, 1);
+    }
+    window.addEventListener('load', function () { setTimeout(nudge, 50); });
+    document.addEventListener('DOMContentLoaded', function () { setTimeout(nudge, 50); });
+  })();
+  </script>
+
+  <!-- =========================================================
        Back-to-site link
        ---------------------------------------------------------
        This page has no way back to the marketing site otherwise.
