@@ -477,6 +477,35 @@ document.addEventListener('DOMContentLoaded', async function() {
   </script>
 
   <!-- =========================================================
+       Hide the "Preview" banner
+       ---------------------------------------------------------
+       This prototype's own top banner ("Preview — online booking
+       opens soon") is driven by a `hideBanner` prop that's never
+       actually wired to anything in this export, so it always
+       shows. Hiding it here instead of touching the framework's
+       internal render logic.
+       ========================================================= -->
+  <script>
+  (function () {
+    function hidePreviewBanner() {
+      var divs = document.querySelectorAll('div');
+      for (var i = 0; i < divs.length; i++) {
+        var el = divs[i];
+        if (el.children.length !== 2) continue;
+        var kids = [el.children[0].tagName, el.children[1].tagName].sort().join(',');
+        if (kids !== 'A,SPAN') continue;
+        var text = (el.textContent || '').toLowerCase();
+        if (text.indexOf('online booking opens soon') !== -1 && el.style.display !== 'none') {
+          el.style.display = 'none';
+        }
+      }
+    }
+    hidePreviewBanner();
+    setInterval(hidePreviewBanner, 400);
+  })();
+  </script>
+
+  <!-- =========================================================
        Collapse the mobile browser chrome on load
        ---------------------------------------------------------
        On iOS Safari (and some Android browsers), the address bar
@@ -513,7 +542,7 @@ document.addEventListener('DOMContentLoaded', async function() {
       link.id = '__sr_back_link';
       link.href = '/';
       link.textContent = '\u2190 11:Eleven Lounge';
-      link.style.cssText = 'position:fixed; top:48px; left:12px; z-index:99999; ' +
+      link.style.cssText = 'position:fixed; top:calc(env(safe-area-inset-top) + 12px); left:12px; z-index:99999; ' +
         'font:600 11px/1 Jost, -apple-system, sans-serif; letter-spacing:.08em; text-transform:uppercase; ' +
         'color:#DFC590; background:rgba(14,11,10,.85); backdrop-filter:blur(6px); ' +
         'padding:9px 14px; border:1px solid rgba(223,197,144,.35); border-radius:2px; text-decoration:none;';
