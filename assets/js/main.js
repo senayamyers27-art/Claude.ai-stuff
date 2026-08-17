@@ -12,6 +12,29 @@
    ========================================================= */
 const SEVENROOMS_VENUE_ID = 'YOUR-VENUE-ID';
 
+/* =========================================================
+   Google Analytics (GA4)
+   ---------------------------------------------------------
+   Create a free GA4 property at analytics.google.com, then
+   replace the placeholder below with its Measurement ID
+   (looks like "G-XXXXXXXXXX"). Until then this does nothing —
+   no script loads and no request is made to Google.
+   ========================================================= */
+const GA_MEASUREMENT_ID = 'G-XXXXXXXXXX';
+
+(function initAnalytics() {
+  if (!GA_MEASUREMENT_ID || GA_MEASUREMENT_ID === 'G-XXXXXXXXXX') return;
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+  document.head.appendChild(script);
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { window.dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', GA_MEASUREMENT_ID);
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
 
   /* ---------- Header scroll state ---------- */
