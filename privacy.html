@@ -4,83 +4,103 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Privacy Policy — 11:Eleven Lounge</title>
-<meta name="description" content="How 11:Eleven Lounge collects and uses information from reservations and website visits.">
-<link rel="canonical" href="https://11elevendallas.com/privacy.html">
-<meta name="robots" content="index, follow">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; upgrade-insecure-requests">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥂</text></svg>">
+<meta name="description" content="How 11:Eleven Lounge collects, uses and protects guest information for reservations, text messages and the 11:Eleven app.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --charcoal: #171213; --cream: #f7f1ea; --cream-2: #efe4d8;
-    --gold: #c6a15b; --ink: #241d1d; --ink-soft: #5a4d4d;
-    --font-display: 'Cormorant Garamond', Georgia, serif;
-    --font-sans: 'Jost', 'Helvetica Neue', Arial, sans-serif;
-  }
+  :root { --ink:#0E0B0A; --bone:#F7F1EA; --gold:#DFC590; --burgundy:#6E1F33; --dim:rgba(247,241,234,.62); }
   * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--cream); color: var(--ink);
-    font-family: var(--font-sans); line-height: 1.7;
-  }
-  .wrap { max-width: 760px; margin: 0 auto; padding: 72px 24px 96px; }
-  a { color: var(--charcoal); }
-  .back { display: inline-block; margin-bottom: 40px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid rgba(36,29,29,.25); padding-bottom: 2px; }
-  .back:hover { color: var(--gold); border-color: var(--gold); }
-  .brand { font-family: var(--font-display); font-size: 22px; letter-spacing: .03em; color: var(--charcoal); margin-bottom: 4px; }
-  .brand span { color: var(--gold); }
-  h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(32px, 5vw, 44px); margin: 4px 0 8px; }
-  .updated { font-size: 13px; color: var(--ink-soft); margin-bottom: 48px; }
-  h2 { font-family: var(--font-display); font-weight: 600; font-size: 22px; margin: 44px 0 12px; color: var(--charcoal); }
-  p, li { font-size: 15.5px; color: var(--ink); }
-  ul { padding-left: 20px; }
-  .footer-note { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--cream-2); font-size: 13px; color: var(--ink-soft); }
+  body { margin:0; background:var(--ink); color:var(--bone); font-family:Jost, system-ui, sans-serif; font-weight:300; line-height:1.7; }
+  header { border-bottom:1px solid rgba(247,241,234,.14); }
+  .inner { max-width:760px; margin:0 auto; padding:0 24px; }
+  .bar { display:flex; justify-content:space-between; align-items:center; padding:22px 0; }
+  .brand { font-family:'Cormorant Garamond', Georgia, serif; font-size:22px; letter-spacing:.06em; color:var(--bone); text-decoration:none; }
+  .brand span { color:var(--gold); }
+  .back { font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); text-decoration:none; }
+  .back:hover { color:var(--gold); }
+  main { padding:56px 0 80px; }
+  h1 { font-family:'Cormorant Garamond', Georgia, serif; font-weight:400; font-size:clamp(34px,6vw,52px); line-height:1.08; margin:0 0 14px; }
+  .eyebrow { font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); margin:0 0 26px; }
+  .updated { font-size:13px; color:var(--dim); margin:0 0 40px; padding-bottom:26px; border-bottom:2px solid rgba(247,241,234,.9); }
+  h2 { font-family:'Cormorant Garamond', Georgia, serif; font-weight:400; font-size:26px; line-height:1.2; margin:44px 0 12px; }
+  p, li { font-size:16px; color:rgba(247,241,234,.82); text-wrap:pretty; }
+  ul { padding-left:20px; }
+  li { margin-bottom:8px; }
+  strong { font-weight:500; color:var(--bone); }
+  a { color:var(--gold); }
+  a:hover { color:var(--bone); }
+  .note { border-left:3px solid var(--gold); padding:2px 0 2px 18px; margin:32px 0; }
+  footer { border-top:1px solid rgba(247,241,234,.14); padding:26px 0 40px; font-size:12px; color:rgba(247,241,234,.45); }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <a class="back" href="index.html">&larr; Back to 11:Eleven</a>
-    <div class="brand">11<span>:</span>Eleven</div>
-    <h1>Privacy Policy</h1>
-    <p class="updated">Effective August 17, 2026</p>
 
-    <p>This page explains what information 11:Eleven Lounge ("11:Eleven," "we," "us") collects through this website, and how it's used. We keep this simple on purpose: we're a lounge, not a data company.</p>
-
-    <h2>Information we collect</h2>
-    <p>When you request a reservation through this site, the details you enter — name, phone number and/or email, party size, and requested date/time — are submitted directly to <strong>SevenRooms</strong>, the third-party reservation platform we use to manage bookings. We don't separately store that information on our own servers.</p>
-    <p>If you contact us directly (phone, email, or in person), we keep whatever information is reasonably needed to respond to you or honor a reservation.</p>
-
-    <h2>Analytics</h2>
-    <p>Like most websites, we may use a privacy-conscious analytics tool (such as Google Analytics) to understand overall visit trends — pages viewed, general location by city/region, and device type. This data is aggregated and isn't used to identify you personally. You can opt out at any time using your browser's cookie or tracking settings, or tools like Google's Analytics Opt-out extension.</p>
-
-    <h2>How we use information</h2>
-    <ul>
-      <li>To confirm and manage your reservation</li>
-      <li>To respond to questions or requests you send us</li>
-      <li>To understand how visitors use this website, so we can improve it</li>
-    </ul>
-    <p>We do not sell your information, and we don't share it with third parties beyond what's needed to fulfill a reservation (i.e., SevenRooms) or as required by law.</p>
-
-    <h2>Third-party services</h2>
-    <p>Our reservation system is operated by SevenRooms, which has its own privacy practices governing information submitted through the booking flow. We encourage you to review SevenRooms' own privacy policy for details on how they handle reservation data.</p>
-
-    <h2>Data retention &amp; security</h2>
-    <p>We retain information only as long as reasonably necessary for the purposes above, and rely on our service providers' security practices (including SevenRooms' and our hosting provider's) to protect it in transit and at rest.</p>
-
-    <h2>Your choices</h2>
-    <p>You can decline to submit personal information to us at any time — note that doing so may mean we're unable to process a reservation request. To ask a question about this policy or request that we delete information you've sent us directly, contact us using the information below.</p>
-
-    <h2>Changes to this policy</h2>
-    <p>We may update this page from time to time as our practices evolve. The "Effective" date above reflects the most recent revision.</p>
-
-    <h2>Contact</h2>
-    <p>11:Eleven Lounge — Uptown / Knox-Henderson, Dallas, TX<br>
-    <a href="mailto:support@11elevendallas.com">support@11elevendallas.com</a></p>
-
-    <div class="footer-note">
-      &copy; 2026 11:Eleven Lounge. &middot; <a href="index.html">Home</a> &middot; <a href="terms.html">Terms</a>
-    </div>
+<header>
+  <div class="inner bar">
+    <a class="brand" href="/">11<span>:</span>ELEVEN</a>
+    <a class="back" href="/" onclick="if(history.length>1){history.back();return false}">Back</a>
   </div>
+</header>
+
+<main class="inner">
+  <p class="eyebrow">Legal</p>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated 17 August 2026 &middot; 11:Eleven Lounge, Uptown / Knox-Henderson, Dallas, Texas</p>
+
+  <p>This policy covers the information we collect when you reserve a table on our website, in the 11:Eleven app, or by phone &mdash; and what we do with it. We keep as little as possible.</p>
+
+  <h2>What we collect</h2>
+  <ul>
+    <li><strong>Your name and mobile number</strong>, so we know who to expect and can reach you about your table.</li>
+    <li><strong>Reservation details</strong> &mdash; date, time, party size, the table you chose, and any note you send the host, including an occasion or dietary request.</li>
+    <li><strong>Device token</strong>, only if you allow notifications in the app, so we can send alerts about your reservation.</li>
+    <li><strong>Basic usage information</strong> &mdash; the pages or screens you open, so we can fix what is broken.</li>
+    <li><strong>Details kept on your own device</strong> &mdash; if you switch on &ldquo;keep my number for next time&rdquo;, your name, mobile number and any dietary tags are saved in the app&rsquo;s storage on your phone so you do not retype them. They stay on the device, we never receive that copy, and switching the setting off deletes it.</li>
+  </ul>
+  <p>We do not collect payment card details through the website or the app. VIP minimum spend is settled in person at the venue.</p>
+
+  <h2>Why we collect it</h2>
+  <p>To hold your table, to contact you about it, and to set the room the way you asked. We also keep your past reservations so a returning guest can be offered their usual booth. Nothing is used for any other purpose.</p>
+
+  <h2>Text messages and notifications</h2>
+  <p>When you give us your number and confirm a reservation, you agree to receive text messages about that reservation &mdash; confirmations, reminders, and a message when a walk-in table is ready. Message and data rates may apply. Message frequency varies.</p>
+  <p>Reply <strong>STOP</strong> to any message to opt out of all texts, or <strong>HELP</strong> for help. In the app you can turn individual alert types off under &ldquo;You&rdquo;. Event announcements are off unless you switch them on. Opting out of reservation messages may mean we cannot tell you when your table is ready.</p>
+
+  <h2>Who else sees it</h2>
+  <p>We share what is necessary with service providers who act only on our instructions:</p>
+  <ul>
+    <li><strong>SevenRooms</strong>, which operates our reservation system.</li>
+    <li>Our <strong>text messaging provider</strong>, to deliver messages you have agreed to.</li>
+  </ul>
+  <p>We do not sell your information, and we do not share it for advertising or with data brokers. We may disclose information if the law requires it.</p>
+
+  <h2>How long we keep it</h2>
+  <p>Reservation records for two years, then they are deleted. Ask us sooner and we delete them sooner.</p>
+
+  <h2>Your choices</h2>
+  <p>Email <a href="mailto:privacy@11elevendallas.com">privacy@11elevendallas.com</a> to see, correct, or delete the information we hold about you. We reply within 45 days. Texas residents may have additional rights under the Texas Data Privacy and Security Act, including the right to confirm, correct, delete, obtain a copy of, and opt out of certain processing of personal data &mdash; exercised through the same address.</p>
+
+  <h2>Security</h2>
+  <p>Information is encrypted in transit and access is limited to staff who need it to seat you. No system is perfect; we will tell you promptly if a breach affects your information.</p>
+
+  <h2>Age</h2>
+  <p>The 11:Eleven app is intended for guests 17 and over, and the venue is 21 and over after 9 PM. We do not knowingly collect information from children under 13.</p>
+
+  <h2>Changes</h2>
+  <p>If this policy changes, we post the new version here with a new date. Material changes affecting how we use your information will be announced in the app.</p>
+
+  <div class="note">
+    <p><strong>Contact</strong><br>
+    11:Eleven Lounge &middot; Uptown / Knox-Henderson, Dallas, TX<br>
+    <a href="mailto:privacy@11elevendallas.com">privacy@11elevendallas.com</a><br>
+    See also our <a href="terms.html">Terms of Use</a>.</p>
+  </div>
+</main>
+
+<footer class="inner">
+  <p>&copy; 2026 11:Eleven Lounge. All rights reserved. Must be 21+ to enter after 9PM.</p>
+</footer>
+
 </body>
 </html>
