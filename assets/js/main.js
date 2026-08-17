@@ -1,16 +1,5 @@
-/* =========================================================
-   SevenRooms reservation hand-off
-   ---------------------------------------------------------
-   11:Eleven doesn't have a live SevenRooms account yet (see
-   Section 11 of the business plan — SevenRooms is the intended
-   guest-management platform, to be set up before opening).
-   Once a venue is created in SevenRooms, its dashboard provides
-   a venue slug used in the hosted booking page URL:
-     https://www.sevenrooms.com/reservations/<venue-slug>
-   Replace the placeholder below with that slug to go live —
-   no other code changes are needed.
-   ========================================================= */
-const SEVENROOMS_VENUE_ID = 'YOUR-VENUE-ID';
+/* SEVENROOMS_VENUE_ID is defined in sevenrooms-config.js, loaded
+   before this file — see that file to go live with bookings. */
 
 /* =========================================================
    Google Analytics (GA4)
