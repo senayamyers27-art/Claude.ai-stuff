@@ -1,4 +1,6 @@
 User-agent: *
 Disallow: /app.html
+Disallow: /reserve.html
+Disallow: /support.html
 
 Sitemap: https://11elevendallas.com/sitemap.xml
