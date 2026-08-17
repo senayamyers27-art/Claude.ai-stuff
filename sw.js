@@ -1,6 +1,6 @@
 /* 11:Eleven Lounge — offline shell.
    Bump CACHE when you upload a new reserve.html, or returning guests keep the old one. */
-const CACHE = '11eleven-v5';
+const CACHE = '11eleven-v6';
 const ASSETS = [
   '/reserve.html',
   '/privacy.html',
