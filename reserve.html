@@ -475,5 +475,33 @@ document.addEventListener('DOMContentLoaded', async function() {
     }, 400);
   })();
   </script>
+
+  <!-- =========================================================
+       Back-to-site link
+       ---------------------------------------------------------
+       This page has no way back to the marketing site otherwise.
+       Appended directly to <body>, outside the app's own reactive
+       UI tree, so it survives that framework's re-renders.
+       ========================================================= -->
+  <script>
+  (function () {
+    function ensureBackLink() {
+      if (document.getElementById('__sr_back_link')) return;
+      var link = document.createElement('a');
+      link.id = '__sr_back_link';
+      link.href = '/';
+      link.textContent = '\u2190 11:Eleven Lounge';
+      link.style.cssText = 'position:fixed; top:48px; left:12px; z-index:99999; ' +
+        'font:600 11px/1 Jost, -apple-system, sans-serif; letter-spacing:.08em; text-transform:uppercase; ' +
+        'color:#DFC590; background:rgba(14,11,10,.85); backdrop-filter:blur(6px); ' +
+        'padding:9px 14px; border:1px solid rgba(223,197,144,.35); border-radius:2px; text-decoration:none;';
+      link.addEventListener('mouseenter', function () { link.style.color = '#F7F1EA'; });
+      link.addEventListener('mouseleave', function () { link.style.color = '#DFC590'; });
+      document.body.appendChild(link);
+    }
+    ensureBackLink();
+    setInterval(ensureBackLink, 400);
+  })();
+  </script>
 </body>
 </html>
