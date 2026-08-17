@@ -121,32 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  /* ---------- Gallery lightbox ---------- */
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImg = document.getElementById('lightboxImg');
-  const lightboxCaption = document.getElementById('lightboxCaption');
-  const lightboxClose = document.getElementById('lightboxClose');
-
-  document.querySelectorAll('.gallery-item').forEach(item => {
-    item.addEventListener('click', () => {
-      lightboxImg.src = item.dataset.full;
-      lightboxImg.alt = item.dataset.caption;
-      lightboxCaption.textContent = item.dataset.caption;
-      lightbox.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    });
-  });
-  const closeLightbox = () => {
-    lightbox.classList.remove('open');
-    document.body.style.overflow = '';
-  };
-  lightboxClose.addEventListener('click', closeLightbox);
-  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
-
   /* ---------- Reservation form: hands off to SevenRooms ---------- */
   const form = document.getElementById('reserveForm');
   const formNote = document.getElementById('formNote');
+  const dateInput = document.getElementById('date');
+  dateInput.min = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD, local time
   const isConfigured = SEVENROOMS_VENUE_ID && SEVENROOMS_VENUE_ID !== 'YOUR-VENUE-ID';
 
   form.addEventListener('submit', (e) => {
