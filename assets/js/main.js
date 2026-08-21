@@ -82,21 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
     io.observe(el);
   });
 
-  /* ---------- Floor plan hotspots ---------- */
-  const hotspots = document.querySelectorAll('.hotspot');
-  const hotspotTitle = document.getElementById('hotspotTitle');
-  const hotspotCopy = document.getElementById('hotspotCopy');
-  hotspots.forEach(hs => {
-    const activate = () => {
-      hotspots.forEach(h => h.classList.remove('active'));
-      hs.classList.add('active');
-      hotspotTitle.textContent = hs.dataset.title;
-      hotspotCopy.textContent = hs.dataset.copy;
-    };
-    hs.addEventListener('click', activate);
-    hs.addEventListener('mouseenter', activate);
-  });
-
   /* ---------- Menu tabs ---------- */
   const tabs = document.querySelectorAll('.menu-tab');
   const panels = document.querySelectorAll('.menu-panel');
