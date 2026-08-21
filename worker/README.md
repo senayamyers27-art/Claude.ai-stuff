@@ -28,17 +28,12 @@ cd worker
 npx wrangler login
 ```
 
-## 2. Add yourself as the first owner
+## 2. Add yourself as the first owner — already done
 
-The staff table starts empty — nobody can log in yet, including you. Add
-your own email once, using your real one:
-
-```
-npx wrangler d1 execute eleven-eleven-staff --remote --command "INSERT INTO staff (email, name, role) VALUES ('you@yourdomain.com', 'Your Name', 'owner')"
-```
-
-After this, you can add everyone else through the Owner page's Staff tab —
-you won't need to touch wrangler again for staff changes.
+`senaya.myers27@gmail.com` is already in the `staff` table with role
+`owner` (added directly via the Cloudflare API in this session). Nothing
+to run here. Add everyone else through the Owner page's Staff tab once
+the Worker is deployed and Access is configured below.
 
 ## 3. Deploy the Worker
 
@@ -48,7 +43,10 @@ npx wrangler deploy
 
 This publishes the API at `11elevendallas.com/api/*` (per the `routes`
 entry in `wrangler.toml`) — same domain as the rest of the site, so no
-CORS configuration is needed.
+CORS configuration is needed. It also picks up the KV binding
+(`RATE_LIMIT`, for per-IP request throttling) and the nightly cron trigger
+(auto-delete of old data — see `DATA_RETENTION.md`) already declared in
+`wrangler.toml`; there's nothing extra to configure for either.
 
 ## 4. Configure Cloudflare Access (this is the actual login)
 
@@ -71,6 +69,49 @@ dashboard and **disable the workers.dev preview URL**. Without that step,
 someone could reach the API directly at its `*.workers.dev` address,
 bypassing Access entirely — the `/api/*` route on your real domain is the
 only path that should work.
+
+## Backups
+
+Cloudflare D1 keeps 30 days of point-in-time recovery automatically — no
+setup needed (`wrangler d1 time-travel`). On top of that,
+`.github/workflows/d1-backup.yml` runs a nightly `wrangler d1 export` and
+uploads the SQL dump as a workflow artifact (kept 35 days). It's disabled
+until you add:
+
+- Repo variable `CLOUDFLARE_ACCOUNT_ID` (Settings → Secrets and variables →
+  Actions → Variables)
+- Repo secret `CLOUDFLARE_API_TOKEN` (same page, Secrets tab) — a token
+  scoped to **D1: Edit** on this account is enough, no need for a
+  full-account token.
+
+## Rate limiting & data retention — already in place
+
+- Every `/api/*` request is throttled per IP (120 req/min) using the
+  `RATE_LIMIT` KV namespace bound in `wrangler.toml` — no dashboard config
+  needed, it deploys with the Worker.
+- A nightly cron (`0 9 * * *`, also in `wrangler.toml`) deletes data past
+  its retention window. See `DATA_RETENTION.md` for exactly what's kept
+  and for how long.
+
+## What's dashboard-only (can't be done from a Claude session)
+
+A few of the standard hardening items don't have an API/CLI path and have
+to be turned on by hand in the Cloudflare dashboard once the domain's
+nameservers point at Cloudflare:
+
+- **WAF** (managed rules) — Security → WAF on the zone.
+- **Bot Management / IDS-IPS-style traffic inspection** — Security →
+  Bots, and Security → Analytics for anomaly visibility.
+- **Edge-level Rate Limiting Rules** — a second, zone-wide layer on top of
+  the per-Worker one above; Security → WAF → Rate limiting rules.
+- **Access session duration** ("session timeout") — set per-application
+  when you create the three Access apps in step 4 above.
+- **CAPTCHA (Turnstile)** — there's no public-facing form on this site that
+  submits directly to our own backend right now (the reservation form on
+  the homepage hands off entirely to SevenRooms, which runs its own bot
+  protection), so there's nothing to attach a Turnstile widget to yet. If
+  a form that posts straight to `/api/*` gets added later, wire Turnstile
+  in then.
 
 ## 5. Test it
 

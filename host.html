@@ -106,9 +106,9 @@
         <tbody id="bookRows"></tbody>
       </table>
       <div class="inline-fields">
-        <div class="field"><label for="rTime">Time</label><input type="text" id="rTime" placeholder="9:00 PM"></div>
-        <div class="field"><label for="rName">Guest</label><input type="text" id="rName"></div>
-        <div class="field"><label for="rParty">Party</label><input type="number" id="rParty" min="1"></div>
+        <div class="field"><label for="rTime">Time</label><input type="text" id="rTime" placeholder="9:00 PM" maxlength="20" required></div>
+        <div class="field"><label for="rName">Guest</label><input type="text" id="rName" maxlength="120" required></div>
+        <div class="field"><label for="rParty">Party</label><input type="number" id="rParty" min="1" max="50" required></div>
         <button class="save-btn" id="addResBtn">Add</button>
       </div>
     </div>
@@ -124,8 +124,8 @@
         <tbody id="walkinRows"></tbody>
       </table>
       <div class="inline-fields">
-        <div class="field"><label for="wName">Guest</label><input type="text" id="wName"></div>
-        <div class="field"><label for="wParty">Party</label><input type="number" id="wParty" min="1"></div>
+        <div class="field"><label for="wName">Guest</label><input type="text" id="wName" maxlength="120" required></div>
+        <div class="field"><label for="wParty">Party</label><input type="number" id="wParty" min="1" max="50" required></div>
         <button class="save-btn" id="addWalkinBtn">Add to list</button>
       </div>
     </div>

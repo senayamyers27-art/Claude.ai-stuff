@@ -13,3 +13,11 @@ routes = [
 binding = "DB"
 database_name = "eleven-eleven-staff"
 database_id = "dd243803-9c55-4dd5-96a3-674d3a37ff0a"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "718327ab06674a339a0d2572aa58d7db"
+
+# Nightly cleanup of data past its retention window — see DATA_RETENTION.md.
+[triggers]
+crons = ["0 9 * * *"] # 03:00 America/Chicago (CST)

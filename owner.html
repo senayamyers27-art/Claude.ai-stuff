@@ -143,8 +143,8 @@
         <tbody id="staffRows"></tbody>
       </table>
       <div class="inline-fields">
-        <div class="field"><label for="newStaffName">Name</label><input type="text" id="newStaffName"></div>
-        <div class="field"><label for="newStaffEmail">Email</label><input type="text" id="newStaffEmail"></div>
+        <div class="field"><label for="newStaffName">Name</label><input type="text" id="newStaffName" maxlength="120" required></div>
+        <div class="field"><label for="newStaffEmail">Email</label><input type="email" id="newStaffEmail" maxlength="200" required></div>
         <div class="field">
           <label for="newStaffRole">Role</label>
           <select id="newStaffRole"><option value="host">Host</option><option value="owner">Owner</option></select>
