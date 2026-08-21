@@ -19,5 +19,9 @@ binding = "RATE_LIMIT"
 id = "718327ab06674a339a0d2572aa58d7db"
 
 # Nightly cleanup of data past its retention window — see DATA_RETENTION.md.
+# Cron runs in UTC always; 07:00 UTC is 2:00 AM America/Chicago during
+# Central Daylight Time (roughly Mar-Nov). It drifts to 1:00 AM once Central
+# Standard Time resumes in November — a cleanup job an hour off is harmless,
+# so this isn't adjusted seasonally.
 [triggers]
-crons = ["0 9 * * *"] # 03:00 America/Chicago (CST)
+crons = ["0 7 * * *"] # ~02:00 America/Chicago (CDT)

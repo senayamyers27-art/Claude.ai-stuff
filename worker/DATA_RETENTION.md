@@ -15,7 +15,7 @@ long, and how it's deleted.
 ## How it's enforced
 
 `worker/src/index.js` exports a `scheduled()` handler wired to the cron
-trigger in `wrangler.toml` (`0 9 * * *`, ~03:00 America/Chicago). It runs
+trigger in `wrangler.toml` (`0 7 * * *`, ~02:00 America/Chicago). It runs
 `cleanupOldData()`, which deletes rows past the windows above. Nothing here
 is a soft-delete — rows are gone from the live database once the window
 passes.
