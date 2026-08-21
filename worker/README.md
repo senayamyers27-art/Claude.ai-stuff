@@ -41,11 +41,13 @@ the Worker is deployed and Access is configured below.
 npx wrangler deploy
 ```
 
-This publishes the API at `11elevendallas.com/api/*` (per the `routes`
-entry in `wrangler.toml`) — same domain as the rest of the site, so no
-CORS configuration is needed. It also picks up the KV binding
-(`RATE_LIMIT`, for per-IP request throttling) and the nightly cron trigger
-(auto-delete of old data — see `DATA_RETENTION.md`) already declared in
+This publishes the API at `11elevendallas.com/api/*` and
+`www.11elevendallas.com/api/*` (per the `routes` entries in
+`wrangler.toml` — the live site redirects everything to `www`, so both
+hosts are routed) — same domain as the rest of the site, so no CORS
+configuration is needed. It also picks up the KV binding (`RATE_LIMIT`,
+for per-IP request throttling) and the nightly cron trigger (auto-delete
+of old data — see `DATA_RETENTION.md`) already declared in
 `wrangler.toml`; there's nothing extra to configure for either.
 
 ## 4. Configure Cloudflare Access (this is the actual login)
@@ -60,6 +62,11 @@ Create **three** applications, all on domain `11elevendallas.com`:
 | Owner | `/owner.html` | Owner email(s) only |
 | Host | `/host.html` | All staff emails |
 | Staff API | `/api/*` | All staff emails (owners + hosts both need this — it's what lets the pages actually load data) |
+
+Add a matching destination for `www.11elevendallas.com` on each
+application too (same path) — the live site redirects everything to
+`www`, so an application scoped only to the bare apex domain won't
+actually gate the pages/API real visitors reach.
 
 Login method: email one-time code works with no extra setup. Add
 Google/Microsoft SSO later if your team already uses one.
@@ -89,7 +96,7 @@ until you add:
 - Every `/api/*` request is throttled per IP (120 req/min) using the
   `RATE_LIMIT` KV namespace bound in `wrangler.toml` — no dashboard config
   needed, it deploys with the Worker.
-- A nightly cron (`0 9 * * *`, also in `wrangler.toml`) deletes data past
+- A nightly cron (`0 7 * * *`, also in `wrangler.toml`) deletes data past
   its retention window. See `DATA_RETENTION.md` for exactly what's kept
   and for how long.
 

@@ -5,8 +5,12 @@ compatibility_date = "2025-01-01"
 # Routes this Worker on your existing domain at /api/* — same zone as the
 # static site, so no CORS headers are needed and it can sit behind the same
 # Cloudflare Access application that gates owner.html / host.html.
+# Both the apex and www hosts are listed because the live site redirects
+# everything to www.11elevendallas.com — without the www route, API calls
+# from the real site 404 instead of ever reaching this Worker.
 routes = [
-  { pattern = "11elevendallas.com/api/*", zone_name = "11elevendallas.com" }
+  { pattern = "11elevendallas.com/api/*", zone_name = "11elevendallas.com" },
+  { pattern = "www.11elevendallas.com/api/*", zone_name = "11elevendallas.com" }
 ]
 
 [[d1_databases]]
@@ -19,5 +23,9 @@ binding = "RATE_LIMIT"
 id = "718327ab06674a339a0d2572aa58d7db"
 
 # Nightly cleanup of data past its retention window — see DATA_RETENTION.md.
+# Cron runs in UTC always; 07:00 UTC is 2:00 AM America/Chicago during
+# Central Daylight Time (roughly Mar-Nov). It drifts to 1:00 AM once Central
+# Standard Time resumes in November — a cleanup job an hour off is harmless,
+# so this isn't adjusted seasonally.
 [triggers]
-crons = ["0 9 * * *"] # 03:00 America/Chicago (CST)
+crons = ["0 7 * * *"] # ~02:00 America/Chicago (CDT)
