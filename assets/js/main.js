@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const activate = () => {
       hotspots.forEach(h => h.classList.remove('active'));
       hs.classList.add('active');
-      hotspotTitle.innerHTML = hs.dataset.title;
+      hotspotTitle.textContent = hs.dataset.title;
       hotspotCopy.textContent = hs.dataset.copy;
     };
     hs.addEventListener('click', activate);
