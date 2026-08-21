@@ -27,6 +27,31 @@ function errorResponse(message, status) {
   return json({ error: message }, status);
 }
 
+/* ---------------- rate limiting ----------------
+ * Cloudflare Access already keeps unauthenticated traffic out, but this
+ * throttles any single client (staff device gone haywire, a script, a probe
+ * that reaches the Worker directly) to a sane request rate. Sliding-ish
+ * fixed window per minute, per IP, stored in KV with a self-expiring TTL. */
+const RATE_LIMIT_PER_MINUTE = 120;
+
+async function checkRateLimit(request, kv) {
+  if (!kv) return null; // KV not bound (e.g. local dev without it) — skip rather than break.
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const windowKey = `rl:${ip}:${Math.floor(Date.now() / 60000)}`;
+  const current = Number((await kv.get(windowKey)) || '0');
+  if (current >= RATE_LIMIT_PER_MINUTE) {
+    return errorResponse('Too many requests, slow down.', 429);
+  }
+  await kv.put(windowKey, String(current + 1), { expirationTtl: 90 });
+  return null;
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function isPositiveInt(n, max = 1000) {
+  return Number.isInteger(n) && n > 0 && n <= max;
+}
+
 async function getCaller(request, db) {
   const email = request.headers.get('Cf-Access-Authenticated-User-Email');
   if (!email) return null;
@@ -162,13 +187,31 @@ async function setNightlyStats(db, enteredBy, body) {
     .run();
 }
 
+/* ---------------- data retention (auto-delete) ----------------
+ * See DATA_RETENTION.md for the retention periods and rationale. Runs on
+ * the cron trigger in wrangler.toml. */
+async function cleanupOldData(db) {
+  await db.batch([
+    db.prepare(`DELETE FROM reservations WHERE status IN ('completed', 'cancelled') AND created_at < datetime('now', '-365 days')`),
+    db.prepare(`DELETE FROM walkins WHERE status IN ('seated', 'left') AND waited_since < datetime('now', '-30 days')`),
+    db.prepare(`DELETE FROM nightly_stats WHERE created_at < datetime('now', '-730 days')`),
+  ]);
+}
+
 /* ---------------- router ---------------- */
 
 export default {
+  async scheduled(event, env) {
+    await cleanupOldData(env.DB);
+  },
+
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname.replace(/^\/api/, '') || '/';
     const db = env.DB;
+
+    const limited = await checkRateLimit(request, env.RATE_LIMIT);
+    if (limited) return limited;
 
     const caller = await getCaller(request, db);
     if (!caller) {
@@ -202,7 +245,9 @@ export default {
         const body = await request.json();
         const email = String(body.email || '').toLowerCase().trim();
         const role = body.role === 'owner' ? 'owner' : 'host';
-        if (!email || !body.name) return errorResponse('email and name required', 400);
+        if (!EMAIL_RE.test(email) || !String(body.name || '').trim()) {
+          return errorResponse('A valid email and name are required', 400);
+        }
         await db
           .prepare('INSERT INTO staff (email, name, role) VALUES (?, ?, ?)')
           .bind(email, String(body.name).slice(0, 120), role)
@@ -241,8 +286,8 @@ export default {
         const forbidden = requireRole(caller, ['owner', 'host']);
         if (forbidden) return forbidden;
         const body = await request.json();
-        if (!body.guestName || !body.partySize || !body.timeSlot) {
-          return errorResponse('guestName, partySize, timeSlot required', 400);
+        if (!String(body.guestName || '').trim() || !isPositiveInt(body.partySize, 50) || !String(body.timeSlot || '').trim()) {
+          return errorResponse('guestName, a valid partySize (1-50), and timeSlot are required', 400);
         }
         await db
           .prepare('INSERT INTO reservations (guest_name, party_size, time_slot, table_id, tag) VALUES (?, ?, ?, ?, ?)')
@@ -274,7 +319,9 @@ export default {
         const forbidden = requireRole(caller, ['owner', 'host']);
         if (forbidden) return forbidden;
         const body = await request.json();
-        if (!body.guestName || !body.partySize) return errorResponse('guestName, partySize required', 400);
+        if (!String(body.guestName || '').trim() || !isPositiveInt(body.partySize, 50)) {
+          return errorResponse('guestName and a valid partySize (1-50) are required', 400);
+        }
         const maxPos = await db.prepare(`SELECT COALESCE(MAX(position), 0) AS n FROM walkins WHERE status = 'waiting'`).first();
         await db
           .prepare('INSERT INTO walkins (guest_name, party_size, position) VALUES (?, ?, ?)')
