@@ -10,27 +10,25 @@ login and billing account.
 Prerequisites: your domain is already on Cloudflare (from the earlier
 WAF/security-headers setup), and you have Node installed locally.
 
-## 1. Log in and create the database
+## 1. Database — already created
+
+The D1 database (`eleven-eleven-staff`) and its schema already exist in
+your Cloudflare account — created and migrated directly via the
+Cloudflare API in this session, tables and seed menu/floor data included.
+`wrangler.toml`'s `database_id` is already set to the real one. You don't
+need to run `wrangler d1 create` or the migration yourself — doing so
+again would fail with "table already exists," which is fine to ignore if
+it happens, but there's nothing to do here.
+
+You do still need to log in once before the next steps, since deploying
+the Worker and adding staff both need your own Cloudflare credentials:
 
 ```
 cd worker
 npx wrangler login
-npx wrangler d1 create eleven-eleven-staff
 ```
 
-This prints a `database_id`. Copy it into `wrangler.toml`, replacing
-`REPLACE_WITH_YOUR_D1_DATABASE_ID`.
-
-## 2. Run the schema migration
-
-```
-npx wrangler d1 execute eleven-eleven-staff --remote --file=migrations/0001_init.sql
-```
-
-This creates the tables and seeds the menu with what's currently on the
-public site, plus a starter set of tables matching the floor plan.
-
-## 3. Add yourself as the first owner
+## 2. Add yourself as the first owner
 
 The staff table starts empty — nobody can log in yet, including you. Add
 your own email once, using your real one:
@@ -42,7 +40,7 @@ npx wrangler d1 execute eleven-eleven-staff --remote --command "INSERT INTO staf
 After this, you can add everyone else through the Owner page's Staff tab —
 you won't need to touch wrangler again for staff changes.
 
-## 4. Deploy the Worker
+## 3. Deploy the Worker
 
 ```
 npx wrangler deploy
@@ -52,7 +50,7 @@ This publishes the API at `11elevendallas.com/api/*` (per the `routes`
 entry in `wrangler.toml`) — same domain as the rest of the site, so no
 CORS configuration is needed.
 
-## 5. Configure Cloudflare Access (this is the actual login)
+## 4. Configure Cloudflare Access (this is the actual login)
 
 In the Cloudflare dashboard: **Zero Trust → Access → Applications → Add an
 application → Self-hosted**.
@@ -74,7 +72,7 @@ someone could reach the API directly at its `*.workers.dev` address,
 bypassing Access entirely — the `/api/*` route on your real domain is the
 only path that should work.
 
-## 6. Test it
+## 5. Test it
 
 Visit `11elevendallas.com/owner.html` — you should hit the Access login
 first (email code), then land on the Owner page signed in as yourself.

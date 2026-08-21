@@ -12,4 +12,4 @@ routes = [
 [[d1_databases]]
 binding = "DB"
 database_name = "eleven-eleven-staff"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "dd243803-9c55-4dd5-96a3-674d3a37ff0a"
