@@ -1,91 +1,62 @@
-/* Owner interface — client-side prototype only.
-   OWNER_PIN is a deterrent, not security: it lives in this file's own
-   source, visible to anyone who views it. Change it before relying on
-   this for anything real, and see the note in owner.html about how the
-   staff/host-view PIN in reserve.html is a separate, unconnected value. */
-const OWNER_PIN = '2222';
+/* Owner interface — talks to the staff API at /api/*.
+   Identity comes from Cloudflare Access (see worker/README.md), not from
+   anything in this file — there is no PIN or password here. The API looks
+   the caller's Access-authenticated email up in the staff table and only
+   returns data once that's confirmed. */
 
-const UNLOCK_KEY = '11eleven:owner';
-const STAFF_PIN_KEY = '11eleven:staffpin';
-const MENU_KEY = '11eleven:menu';
-const DEFAULT_STAFF_PIN = '1111';
+const API = '/api';
 
-const DEFAULT_MENU = [
-  { name: 'Bar', items: [
-    { name: 'Signature Old Fashioned', price: '16' },
-    { name: 'Blush Spritz', price: '15' },
-    { name: 'House Red / White (glass)', price: '13' },
-  ]},
-  { name: 'Food', items: [
-    { name: 'Mediterranean Mezze Board', price: '24' },
-    { name: 'Truffle Fries', price: '14' },
-  ]},
-  { name: 'Hookah', items: [
-    { name: 'Classic Blend', price: '35' },
-    { name: 'House Specialty Blend', price: '45' },
-  ]},
-  { name: 'Bottle Service', items: [
-    { name: 'VIP Booth Minimum', price: '200' },
-    { name: 'Private Bar Minimum', price: '1000' },
-  ]},
-];
-
-function loadJSON(key, fallback) {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
-  } catch (err) {
-    return fallback;
+async function api(path, options = {}) {
+  const res = await fetch(API + path, {
+    ...options,
+    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    const err = new Error(body.error || `Request failed (${res.status})`);
+    err.status = res.status;
+    throw err;
   }
-}
-function saveJSON(key, value) {
-  try { localStorage.setItem(key, JSON.stringify(value)); } catch (err) { /* private browsing */ }
+  return res.json();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const lockScreen = document.getElementById('lockScreen');
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str == null ? '' : String(str);
+  return div.innerHTML;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const loadingState = document.getElementById('loadingState');
+  const deniedState = document.getElementById('deniedState');
+  const errorState = document.getElementById('errorState');
   const ownerScreen = document.getElementById('ownerScreen');
-  const pinInput = document.getElementById('pinInput');
-  const pinError = document.getElementById('pinError');
-  const unlockBtn = document.getElementById('unlockBtn');
-  const lockBtn = document.getElementById('lockBtn');
 
-  function showUnlocked() {
-    lockScreen.style.display = 'none';
-    ownerScreen.style.display = 'block';
-  }
-
+  let me;
   try {
-    if (sessionStorage.getItem(UNLOCK_KEY) === '1') showUnlocked();
-  } catch (err) { /* private browsing */ }
-
-  pinInput.addEventListener('input', () => {
-    pinInput.value = pinInput.value.replace(/\D/g, '').slice(0, 4);
-    unlockBtn.disabled = pinInput.value.length !== 4;
-    pinError.textContent = '';
-  });
-
-  function attemptUnlock() {
-    if (pinInput.value.length !== 4) return;
-    if (pinInput.value !== OWNER_PIN) {
-      pinError.textContent = 'Incorrect code.';
-      pinInput.value = '';
-      unlockBtn.disabled = true;
-      return;
+    me = await api('/me');
+  } catch (err) {
+    loadingState.style.display = 'none';
+    if (err.status === 401 || err.status === 403) {
+      document.getElementById('deniedMsg').textContent = err.message;
+      deniedState.style.display = 'block';
+    } else {
+      errorState.style.display = 'block';
     }
-    try { sessionStorage.setItem(UNLOCK_KEY, '1'); } catch (err) { /* private browsing */ }
-    showUnlocked();
+    return;
   }
-  unlockBtn.addEventListener('click', attemptUnlock);
-  pinInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') attemptUnlock(); });
 
-  lockBtn.addEventListener('click', () => {
-    try { sessionStorage.removeItem(UNLOCK_KEY); } catch (err) { /* private browsing */ }
+  loadingState.style.display = 'none';
+  ownerScreen.style.display = 'block';
+  document.getElementById('whoamiName').textContent = me.name;
+  document.getElementById('whoamiEmail').textContent = `${me.email} · ${me.role}`;
+
+  if (me.role !== 'owner') {
+    deniedState.style.display = 'block';
+    document.getElementById('deniedMsg').textContent = 'This page is for owners. You’re signed in as staff — try the Host view instead.';
     ownerScreen.style.display = 'none';
-    lockScreen.style.display = 'block';
-    pinInput.value = '';
-    unlockBtn.disabled = true;
-  });
+    return;
+  }
 
   /* ---------- tabs ---------- */
   const tabs = document.querySelectorAll('.tab');
@@ -98,67 +69,106 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  /* ---------- staff pin ---------- */
-  const staffPinInput = document.getElementById('staffPinInput');
-  const staffPinSaved = document.getElementById('staffPinSaved');
-  staffPinInput.value = loadJSON(STAFF_PIN_KEY, DEFAULT_STAFF_PIN);
-  staffPinInput.addEventListener('input', () => {
-    staffPinInput.value = staffPinInput.value.replace(/\D/g, '').slice(0, 4);
-    staffPinSaved.textContent = '';
-  });
-  document.getElementById('saveStaffPin').addEventListener('click', () => {
-    if (staffPinInput.value.length !== 4) return;
-    saveJSON(STAFF_PIN_KEY, staffPinInput.value);
-    staffPinSaved.textContent = 'Saved.';
+  /* ---------- overview ---------- */
+  async function loadOverview() {
+    const stats = await api('/stats/overview');
+    document.getElementById('kpiGrid').innerHTML = `
+      <div class="kpi"><div class="label">Covers tonight</div><div class="value">${stats.coversTonight}</div><div class="sub">seated so far</div></div>
+      <div class="kpi"><div class="label">Revenue tonight</div><div class="value">${stats.revenueCents != null ? '$' + (stats.revenueCents / 100).toLocaleString() : '—'}</div><div class="sub">manually entered</div></div>
+      <div class="kpi"><div class="label">Avg table turn</div><div class="value">${stats.avgTurnMinutes != null ? stats.avgTurnMinutes + 'm' : '—'}</div><div class="sub">manually entered</div></div>
+      <div class="kpi"><div class="label">VIP bookings (7d)</div><div class="value">${stats.vipBookings7d}</div><div class="sub">tagged reservations</div></div>
+    `;
+    if (stats.revenueCents != null) document.getElementById('revenueInput').value = (stats.revenueCents / 100).toFixed(0);
+    if (stats.avgTurnMinutes != null) document.getElementById('turnInput').value = stats.avgTurnMinutes;
+  }
+  document.getElementById('saveStatsBtn').addEventListener('click', async () => {
+    const revenue = document.getElementById('revenueInput').value;
+    const turn = document.getElementById('turnInput').value;
+    await api('/stats/nightly', {
+      method: 'POST',
+      body: JSON.stringify({
+        revenueCents: revenue === '' ? null : Math.round(Number(revenue) * 100),
+        avgTurnMinutes: turn === '' ? null : Number(turn),
+      }),
+    });
+    document.getElementById('statsSaved').textContent = 'Saved.';
+    loadOverview();
   });
 
-  /* ---------- menu editor ---------- */
-  let menu = loadJSON(MENU_KEY, DEFAULT_MENU);
-  const menuRoot = document.getElementById('menuCategories');
+  /* ---------- staff ---------- */
+  async function loadStaff() {
+    const staff = await api('/staff');
+    document.getElementById('staffRows').innerHTML = staff.map((s) => `
+      <tr data-id="${s.id}">
+        <td>${escapeHtml(s.name)}</td>
+        <td>${escapeHtml(s.email)}</td>
+        <td><span class="role-pill ${s.role}">${s.role}</span></td>
+        <td><button class="del-btn" data-id="${s.id}" aria-label="Remove ${escapeHtml(s.name)}">×</button></td>
+      </tr>
+    `).join('');
+    document.querySelectorAll('#staffRows .del-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        await api(`/staff/${btn.dataset.id}`, { method: 'DELETE' });
+        loadStaff();
+      });
+    });
+  }
+  document.getElementById('addStaffBtn').addEventListener('click', async () => {
+    const name = document.getElementById('newStaffName').value.trim();
+    const email = document.getElementById('newStaffEmail').value.trim();
+    const role = document.getElementById('newStaffRole').value;
+    if (!name || !email) return;
+    try {
+      await api('/staff', { method: 'POST', body: JSON.stringify({ name, email, role }) });
+      document.getElementById('newStaffName').value = '';
+      document.getElementById('newStaffEmail').value = '';
+      document.getElementById('staffSaved').textContent = 'Added.';
+      loadStaff();
+    } catch (err) {
+      document.getElementById('staffSaved').textContent = err.message;
+    }
+  });
 
+  /* ---------- menu ---------- */
+  let menu = [];
   function renderMenu() {
-    menuRoot.innerHTML = '';
+    const root = document.getElementById('menuCategories');
+    root.innerHTML = '';
     menu.forEach((cat, catIdx) => {
       const catEl = document.createElement('div');
       catEl.className = 'menu-cat';
 
       const head = document.createElement('div');
       head.className = 'menu-cat-head';
-      head.innerHTML = `<h3>${escapeHtml(cat.name)}</h3>`;
+      const nameInput = document.createElement('input');
+      nameInput.value = cat.name;
+      nameInput.style.cssText = 'background:transparent;border:none;color:#F1ECE4;font-family:var(--font-display);font-size:20px;font-weight:500;padding:0;outline:none;width:auto;';
+      nameInput.addEventListener('input', () => { menu[catIdx].name = nameInput.value; });
+      head.appendChild(nameInput);
       catEl.appendChild(head);
 
       cat.items.forEach((item, itemIdx) => {
         const row = document.createElement('div');
         row.className = 'menu-item';
 
-        const nameInput = document.createElement('input');
-        nameInput.value = item.name;
-        nameInput.placeholder = 'Item name';
-        nameInput.addEventListener('input', () => {
-          menu[catIdx].items[itemIdx].name = nameInput.value;
-          saveJSON(MENU_KEY, menu);
-        });
+        const itemName = document.createElement('input');
+        itemName.value = item.name;
+        itemName.placeholder = 'Item name';
+        itemName.addEventListener('input', () => { menu[catIdx].items[itemIdx].name = itemName.value; });
 
         const priceInput = document.createElement('input');
         priceInput.value = item.price;
         priceInput.placeholder = 'Price';
-        priceInput.addEventListener('input', () => {
-          menu[catIdx].items[itemIdx].price = priceInput.value;
-          saveJSON(MENU_KEY, menu);
-        });
+        priceInput.addEventListener('input', () => { menu[catIdx].items[itemIdx].price = priceInput.value; });
 
         const delBtn = document.createElement('button');
         delBtn.className = 'del';
         delBtn.type = 'button';
         delBtn.textContent = '×';
         delBtn.setAttribute('aria-label', `Remove ${item.name}`);
-        delBtn.addEventListener('click', () => {
-          menu[catIdx].items.splice(itemIdx, 1);
-          saveJSON(MENU_KEY, menu);
-          renderMenu();
-        });
+        delBtn.addEventListener('click', () => { menu[catIdx].items.splice(itemIdx, 1); renderMenu(); });
 
-        row.appendChild(nameInput);
+        row.appendChild(itemName);
         row.appendChild(priceInput);
         row.appendChild(delBtn);
         catEl.appendChild(row);
@@ -168,22 +178,25 @@ document.addEventListener('DOMContentLoaded', () => {
       addBtn.className = 'add-item';
       addBtn.type = 'button';
       addBtn.textContent = '+ Add item';
-      addBtn.addEventListener('click', () => {
-        menu[catIdx].items.push({ name: '', price: '' });
-        saveJSON(MENU_KEY, menu);
-        renderMenu();
-      });
+      addBtn.addEventListener('click', () => { menu[catIdx].items.push({ name: '', price: '' }); renderMenu(); });
       catEl.appendChild(addBtn);
 
-      menuRoot.appendChild(catEl);
+      root.appendChild(catEl);
     });
   }
+  document.getElementById('addCatBtn').addEventListener('click', () => {
+    menu.push({ name: 'New category', items: [] });
+    renderMenu();
+  });
+  document.getElementById('saveMenuBtn').addEventListener('click', async () => {
+    await api('/menu', { method: 'PUT', body: JSON.stringify({ categories: menu }) });
+    document.getElementById('menuSaved').textContent = 'Saved.';
+  });
 
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
+  async function loadMenu() {
+    menu = await api('/menu');
+    renderMenu();
   }
 
-  renderMenu();
+  await Promise.all([loadOverview(), loadStaff(), loadMenu()]);
 });

@@ -1,3 +1,4 @@
 .lighthouseci/
 .lighthouseci-results/
 node_modules/
+worker/.wrangler/

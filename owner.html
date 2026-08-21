@@ -12,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #0E0B0A; --ink-2: #171213; --bone: #F1ECE4; --dim: rgba(241,236,228,.58);
+    --ink: #0E0B0A; --bone: #F1ECE4; --dim: rgba(241,236,228,.58);
     --gold: #C9A15A; --gold-light: #dfc590; --line: rgba(241,236,228,.14);
     --font-display: 'Cormorant Garamond', Georgia, serif; --font-sans: 'Jost', system-ui, sans-serif;
   }
@@ -28,22 +28,14 @@
   .back:hover { color: var(--gold); }
   main { padding: 56px 0 100px; }
 
-  /* ---- lock screen ---- */
-  .lock-wrap { max-width: 360px; margin: 60px auto 0; text-align: center; }
-  .lock-wrap h1 { font-family: var(--font-display); font-weight: 400; font-size: 36px; margin: 0 0 10px; }
-  .lock-wrap p { color: var(--dim); font-size: 14px; margin: 0 0 30px; }
-  .pin-input { width: 100%; text-align: center; letter-spacing: .6em; font-size: 22px; font-family: var(--font-sans); background: transparent; border: 1px solid rgba(241,236,228,.28); color: var(--bone); padding: 16px 14px; outline: none; }
-  .pin-input:focus { border-color: var(--gold); }
-  .pin-error { color: #d98a8a; font-size: 12.5px; margin-top: 10px; min-height: 16px; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; margin-top: 18px; padding: 15px; font-family: var(--font-sans); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; font-weight: 500; border: none; cursor: pointer; background: var(--gold); color: var(--ink); transition: background .25s ease; }
-  .btn:hover { background: var(--gold-light); }
-  .btn:disabled { opacity: .4; cursor: not-allowed; }
-  .lock-note { font-size: 11.5px; color: var(--dim); margin-top: 24px; }
+  .state-msg { max-width: 460px; margin: 60px auto 0; text-align: center; }
+  .state-msg h1 { font-family: var(--font-display); font-weight: 400; font-size: 32px; margin: 0 0 14px; }
+  .state-msg p { color: var(--dim); font-size: 14px; }
 
-  /* ---- unlocked shell ---- */
-  .owner-head { display:flex; justify-content:space-between; align-items: baseline; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+  .owner-head { display:flex; justify-content:space-between; align-items: baseline; gap: 16px; margin-bottom: 8px; flex-wrap: wrap; }
   .owner-head h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 4vw, 42px); margin: 0; }
-  .lock-btn { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); cursor: pointer; background: none; border: none; font-family: var(--font-sans); }
+  .whoami { font-size: 11.5px; color: var(--dim); margin-bottom: 30px; }
+  .whoami b { color: var(--gold-light); font-weight: 500; }
 
   .tabs { display:flex; gap: 6px; border-bottom: 1px solid var(--line); margin-bottom: 34px; }
   .tab { padding: 12px 18px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-family: var(--font-sans); }
@@ -53,24 +45,32 @@
   .panel.active { display: block; }
 
   .note { border-left: 3px solid var(--gold); padding: 10px 16px; margin: 0 0 28px; font-size: 13px; color: var(--dim); background: rgba(241,236,228,.04); }
+  .error-note { border-left-color: #d98a8a; color: #e0a6a6; }
 
-  /* overview */
-  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-bottom: 8px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-bottom: 24px; }
   .kpi { background: var(--ink); padding: 24px 22px; }
   .kpi .label { font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
   .kpi .value { font-family: var(--font-display); font-size: 34px; color: var(--bone); }
   .kpi .sub { font-size: 12px; color: var(--dim); margin-top: 6px; }
 
-  /* staff */
-  .field { margin-bottom: 22px; max-width: 320px; }
+  .field { margin-bottom: 18px; max-width: 320px; }
   .field label { display:block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
-  .field input { width: 100%; background: transparent; border: 1px solid rgba(241,236,228,.28); color: var(--bone); padding: 13px 14px; font-family: var(--font-sans); font-size: 15px; outline: none; }
-  .field input:focus { border-color: var(--gold); }
-  .save-btn { padding: 13px 28px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; background: var(--gold); color: var(--ink); border: none; cursor: pointer; font-family: var(--font-sans); }
+  .field input, .field select { width: 100%; background: transparent; border: 1px solid rgba(241,236,228,.28); color: var(--bone); padding: 13px 14px; font-family: var(--font-sans); font-size: 15px; outline: none; }
+  .field input:focus, .field select:focus { border-color: var(--gold); }
+  .inline-fields { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 22px; }
+  .inline-fields .field { margin-bottom: 0; max-width: 200px; flex: 1; }
+  .save-btn { padding: 13px 28px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; background: var(--gold); color: var(--ink); border: none; cursor: pointer; font-family: var(--font-sans); white-space: nowrap; }
   .save-btn:hover { background: var(--gold-light); }
   .save-msg { font-size: 12px; color: var(--gold-light); margin-left: 14px; }
 
-  /* menu editor */
+  table.data-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  .data-table th { text-align: left; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  .data-table td { padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .role-pill { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border: 1px solid rgba(241,236,228,.25); }
+  .role-pill.owner { color: var(--gold-light); border-color: var(--gold); }
+  .del-btn { background: none; border: none; color: var(--dim); cursor: pointer; font-size: 18px; }
+  .del-btn:hover { color: #d98a8a; }
+
   .menu-cat { border: 1px solid var(--line); margin-bottom: 22px; }
   .menu-cat-head { display:flex; justify-content:space-between; align-items:center; padding: 16px 20px; border-bottom: 1px solid var(--line); }
   .menu-cat-head h3 { font-family: var(--font-display); font-weight: 500; font-size: 20px; margin: 0; }
@@ -82,6 +82,8 @@
   .menu-item .del:hover { color: #d98a8a; }
   .add-item { display:block; width: 100%; padding: 12px; background: none; border: 1px dashed rgba(241,236,228,.25); color: var(--dim); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; font-family: var(--font-sans); }
   .add-item:hover { color: var(--gold-light); border-color: var(--gold); }
+  .add-cat { display:block; width: 100%; padding: 14px; background: none; border: 1px dashed rgba(241,236,228,.25); color: var(--dim); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; font-family: var(--font-sans); margin-bottom: 24px; }
+  .add-cat:hover { color: var(--gold-light); border-color: var(--gold); }
 
   footer { border-top: 1px solid var(--line); padding: 26px 0 40px; font-size: 12px; color: rgba(241,236,228,.5); }
 </style>
@@ -97,20 +99,25 @@
 
 <main class="inner">
 
-  <div id="lockScreen" class="lock-wrap">
-    <h1>Owner</h1>
-    <p>Four-digit code required.</p>
-    <input type="text" id="pinInput" class="pin-input" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off">
-    <div class="pin-error" id="pinError"></div>
-    <button class="btn" id="unlockBtn" disabled>Unlock</button>
-    <p class="lock-note">This is a prototype gate, not real security — the code lives in this page's own JavaScript. Don't rely on it to protect anything sensitive.</p>
+  <div id="loadingState" class="state-msg">
+    <h1>Checking access&hellip;</h1>
+  </div>
+
+  <div id="deniedState" class="state-msg" style="display:none">
+    <h1>Not recognized as staff</h1>
+    <p id="deniedMsg">Ask an owner to add your email to the staff list.</p>
+  </div>
+
+  <div id="errorState" class="state-msg" style="display:none">
+    <h1>Can't reach the staff API</h1>
+    <p>This page expects an API at <code>/api/*</code> on this domain, gated by Cloudflare Access. If that isn't deployed yet, see <code>worker/README.md</code> in the repo for setup steps.</p>
   </div>
 
   <div id="ownerScreen" style="display:none">
     <div class="owner-head">
       <h1>Owner</h1>
-      <button class="lock-btn" id="lockBtn">Lock</button>
     </div>
+    <p class="whoami">Signed in as <b id="whoamiName"></b> &middot; <span id="whoamiEmail"></span></p>
 
     <div class="tabs" role="tablist">
       <button class="tab active" data-panel="overview" role="tab">Overview</button>
@@ -119,28 +126,40 @@
     </div>
 
     <div class="panel active" id="panel-overview">
-      <div class="note">Illustrative numbers for this prototype — nothing here is connected to a real POS or reservation backend yet.</div>
-      <div class="kpi-grid">
-        <div class="kpi"><div class="label">Covers tonight</div><div class="value">86</div><div class="sub">of ~110 capacity</div></div>
-        <div class="kpi"><div class="label">Est. revenue tonight</div><div class="value">$6,240</div><div class="sub">avg $72.50 / cover</div></div>
-        <div class="kpi"><div class="label">Avg table turn</div><div class="value">1h 48m</div><div class="sub">main floor</div></div>
-        <div class="kpi"><div class="label">VIP bookings (7d)</div><div class="value">11</div><div class="sub">3 booths + private bar</div></div>
+      <div class="note">Covers and VIP bookings are computed from real reservation data. Revenue and average turn time are entered manually below until there's a POS to pull them from automatically.</div>
+      <div class="kpi-grid" id="kpiGrid"></div>
+      <div class="inline-fields">
+        <div class="field"><label for="revenueInput">Tonight's revenue ($)</label><input type="number" id="revenueInput" min="0" step="1"></div>
+        <div class="field"><label for="turnInput">Avg table turn (minutes)</label><input type="number" id="turnInput" min="0" step="1"></div>
+        <button class="save-btn" id="saveStatsBtn">Save</button>
+        <span class="save-msg" id="statsSaved"></span>
       </div>
     </div>
 
     <div class="panel" id="panel-staff">
-      <div class="note">Changing this updates the value shown here only. The live guest-facing app's host-view code is set separately inside <code>reserve.html</code> (the <code>STAFF_PIN</code> constant) — update both places to keep them in sync, or ask your developer to wire them together.</div>
-      <div class="field">
-        <label for="staffPinInput">Staff / host-view code</label>
-        <input type="text" id="staffPinInput" inputmode="numeric" maxlength="4">
+      <div class="note">Real per-person access, backed by Cloudflare Access — no shared PIN. Add someone's work email and pick their role; they'll be recognized the next time they log in through Access.</div>
+      <table class="data-table" id="staffTable">
+        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th></th></tr></thead>
+        <tbody id="staffRows"></tbody>
+      </table>
+      <div class="inline-fields">
+        <div class="field"><label for="newStaffName">Name</label><input type="text" id="newStaffName"></div>
+        <div class="field"><label for="newStaffEmail">Email</label><input type="text" id="newStaffEmail"></div>
+        <div class="field">
+          <label for="newStaffRole">Role</label>
+          <select id="newStaffRole"><option value="host">Host</option><option value="owner">Owner</option></select>
+        </div>
+        <button class="save-btn" id="addStaffBtn">Add</button>
+        <span class="save-msg" id="staffSaved"></span>
       </div>
-      <button class="save-btn" id="saveStaffPin">Save</button>
-      <span class="save-msg" id="staffPinSaved"></span>
     </div>
 
     <div class="panel" id="panel-menu">
-      <div class="note">Edits here save to this browser only (not a shared database) and are separate from the menu shown on the public site today. Ask if you'd like the public menu wired to read from this same list.</div>
+      <div class="note">Edits here save to the shared database once you hit "Save Menu" — every staff device and (once wired up) the public site read from this same list.</div>
       <div id="menuCategories"></div>
+      <button class="add-cat" id="addCatBtn">+ Add category</button>
+      <button class="save-btn" id="saveMenuBtn">Save Menu</button>
+      <span class="save-msg" id="menuSaved"></span>
     </div>
   </div>
 

@@ -1,0 +1,15 @@
+name = "eleven-eleven-staff-api"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# Routes this Worker on your existing domain at /api/* — same zone as the
+# static site, so no CORS headers are needed and it can sit behind the same
+# Cloudflare Access application that gates owner.html / host.html.
+routes = [
+  { pattern = "11elevendallas.com/api/*", zone_name = "11elevendallas.com" }
+]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "eleven-eleven-staff"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
