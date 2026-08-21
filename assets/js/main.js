@@ -82,6 +82,37 @@ document.addEventListener('DOMContentLoaded', () => {
     io.observe(el);
   });
 
+  /* ---------- Floor plan hotspots ---------- */
+  const hotspots = document.querySelectorAll('.hotspot');
+  const hotspotTitle = document.getElementById('hotspotTitle');
+  const hotspotCopy = document.getElementById('hotspotCopy');
+  hotspots.forEach(hs => {
+    const activate = () => {
+      hotspots.forEach(h => h.classList.remove('active'));
+      hs.classList.add('active');
+      hotspotTitle.textContent = hs.dataset.title;
+      hotspotCopy.textContent = hs.dataset.copy;
+    };
+    hs.addEventListener('click', activate);
+    hs.addEventListener('mouseenter', activate);
+  });
+
+  /* ---------- Floor plan video: load and play only once visible,
+     and only if the visitor hasn't asked for reduced motion ---------- */
+  const floorplanVideo = document.getElementById('floorplanVideo');
+  if (floorplanVideo && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const videoIo = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          floorplanVideo.preload = 'auto';
+          floorplanVideo.play().catch(() => {});
+          videoIo.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.25 });
+    videoIo.observe(floorplanVideo);
+  }
+
   /* ---------- Menu tabs ---------- */
   const tabs = document.querySelectorAll('.menu-tab');
   const panels = document.querySelectorAll('.menu-panel');
