@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Host — 11:Eleven Lounge</title>
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; upgrade-insecure-requests">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥂</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0E0B0A; --bone: #F1ECE4; --dim: rgba(241,236,228,.58);
+    --gold: #C9A15A; --gold-light: #dfc590; --line: rgba(241,236,228,.14);
+    --font-display: 'Cormorant Garamond', Georgia, serif; --font-sans: 'Jost', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--ink); color:var(--bone); font-family:var(--font-sans); font-weight:300; line-height:1.6; }
+  a { color: var(--gold); }
+  header { border-bottom:1px solid var(--line); }
+  .inner { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  .bar { display:flex; justify-content:space-between; align-items:center; padding: 22px 0; }
+  .brand { font-family: var(--font-display); font-size: 22px; letter-spacing: .06em; color: var(--bone); text-decoration: none; }
+  .brand span { color: var(--gold); }
+  .back { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--dim); text-decoration: none; }
+  .back:hover { color: var(--gold); }
+  main { padding: 56px 0 100px; }
+
+  .state-msg { max-width: 460px; margin: 60px auto 0; text-align: center; }
+  .state-msg h1 { font-family: var(--font-display); font-weight: 400; font-size: 32px; margin: 0 0 14px; }
+  .state-msg p { color: var(--dim); font-size: 14px; }
+
+  .head { display:flex; justify-content:space-between; align-items: baseline; gap: 16px; margin-bottom: 8px; flex-wrap: wrap; }
+  .head h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 4vw, 42px); margin: 0; }
+  .whoami { font-size: 11.5px; color: var(--dim); margin-bottom: 30px; }
+  .whoami b { color: var(--gold-light); font-weight: 500; }
+
+  .tabs { display:flex; gap: 6px; border-bottom: 1px solid var(--line); margin-bottom: 34px; }
+  .tab { padding: 12px 18px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-family: var(--font-sans); }
+  .tab.active { color: var(--gold-light); border-bottom-color: var(--gold); }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .note { border-left: 3px solid var(--gold); padding: 10px 16px; margin: 0 0 28px; font-size: 13px; color: var(--dim); background: rgba(241,236,228,.04); }
+
+  .field { margin-bottom: 18px; }
+  .field label { display:block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .field input { width: 100%; background: transparent; border: 1px solid rgba(241,236,228,.28); color: var(--bone); padding: 13px 14px; font-family: var(--font-sans); font-size: 15px; outline: none; }
+  .field input:focus { border-color: var(--gold); }
+  .inline-fields { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 30px; }
+  .inline-fields .field { margin-bottom: 0; max-width: 170px; flex: 1; }
+  .save-btn { padding: 13px 24px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; background: var(--gold); color: var(--ink); border: none; cursor: pointer; font-family: var(--font-sans); white-space: nowrap; }
+  .save-btn:hover { background: var(--gold-light); }
+
+  table.data-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+  .data-table th { text-align: left; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  .data-table td { padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .tag-pill { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border: 1px solid var(--gold); color: var(--gold-light); }
+  .status-btn { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 6px 12px; border: 1px solid rgba(241,236,228,.25); background: none; color: var(--dim); cursor: pointer; font-family: var(--font-sans); margin-right: 6px; }
+  .status-btn.active { border-color: var(--gold); color: var(--gold-light); }
+
+  .table-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; margin-bottom: 10px; }
+  .table-card { border: 1px solid var(--line); padding: 16px; }
+  .table-card .label { font-family: var(--font-display); font-size: 19px; margin-bottom: 4px; }
+  .table-card .cap { font-size: 11.5px; color: var(--dim); margin-bottom: 12px; }
+  .table-card .guest { font-size: 12.5px; color: var(--gold-light); margin-bottom: 12px; min-height: 16px; }
+
+  footer { border-top: 1px solid var(--line); padding: 26px 0 40px; font-size: 12px; color: rgba(241,236,228,.5); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner bar">
+    <a class="brand" href="/">11<span>:</span>ELEVEN</a>
+    <a class="back" href="/">Back to site</a>
+  </div>
+</header>
+
+<main class="inner">
+
+  <div id="loadingState" class="state-msg"><h1>Checking access&hellip;</h1></div>
+  <div id="deniedState" class="state-msg" style="display:none">
+    <h1>Not recognized as staff</h1>
+    <p id="deniedMsg">Ask an owner to add your email to the staff list.</p>
+  </div>
+  <div id="errorState" class="state-msg" style="display:none">
+    <h1>Can't reach the staff API</h1>
+    <p>This page expects an API at <code>/api/*</code> on this domain, gated by Cloudflare Access. If that isn't deployed yet, see <code>worker/README.md</code> in the repo for setup steps.</p>
+  </div>
+
+  <div id="hostScreen" style="display:none">
+    <div class="head"><h1>Host</h1></div>
+    <p class="whoami">Signed in as <b id="whoamiName"></b> &middot; <span id="whoamiEmail"></span></p>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-panel="book" role="tab">Tonight's Book</button>
+      <button class="tab" data-panel="floor" role="tab">Floor</button>
+      <button class="tab" data-panel="walkins" role="tab">Walk-ins</button>
+    </div>
+
+    <div class="panel active" id="panel-book">
+      <table class="data-table" id="bookTable">
+        <thead><tr><th>Time</th><th>Guest</th><th>Party</th><th></th><th>Status</th></tr></thead>
+        <tbody id="bookRows"></tbody>
+      </table>
+      <div class="inline-fields">
+        <div class="field"><label for="rTime">Time</label><input type="text" id="rTime" placeholder="9:00 PM"></div>
+        <div class="field"><label for="rName">Guest</label><input type="text" id="rName"></div>
+        <div class="field"><label for="rParty">Party</label><input type="number" id="rParty" min="1"></div>
+        <button class="save-btn" id="addResBtn">Add</button>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-floor">
+      <div class="note">Tap Seated / Held / Open to update — every staff device sees this the moment you change it.</div>
+      <div class="table-grid" id="floorGrid"></div>
+    </div>
+
+    <div class="panel" id="panel-walkins">
+      <table class="data-table" id="walkinTable">
+        <thead><tr><th>#</th><th>Guest</th><th>Party</th><th>Waiting since</th><th></th></tr></thead>
+        <tbody id="walkinRows"></tbody>
+      </table>
+      <div class="inline-fields">
+        <div class="field"><label for="wName">Guest</label><input type="text" id="wName"></div>
+        <div class="field"><label for="wParty">Party</label><input type="number" id="wParty" min="1"></div>
+        <button class="save-btn" id="addWalkinBtn">Add to list</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="inner">
+  <p>11:Eleven Lounge &middot; internal use only</p>
+</footer>
+
+<script src="assets/js/host.js"></script>
+</body>
+</html>

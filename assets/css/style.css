@@ -746,6 +746,9 @@ a { color: inherit; text-decoration: none; }
 .social-links a:hover { color: var(--gold-light); }
 .footer-bottom { text-align: center; padding: 26px 0; }
 .footer-bottom p { color: rgba(255,253,251,.5); font-size: 12.5px; margin: 0; }
+.footer-staff { margin-top: 10px !important; font-size: 11px !important; letter-spacing: .1em; text-transform: uppercase; }
+.footer-staff a { color: rgba(255,253,251,.35); text-decoration: none; }
+.footer-staff a:hover { color: var(--gold-light); }
 
 @media (max-width: 600px) {
   .footer-inner { flex-direction: column; gap: 36px; }
