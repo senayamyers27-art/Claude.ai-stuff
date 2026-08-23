@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('deniedMsg').textContent = err.message;
       deniedState.style.display = 'block';
     } else {
+      document.getElementById('errorDetail').textContent = `(${err.status || 'network'}) ${err.message}`;
       errorState.style.display = 'block';
     }
     return;
