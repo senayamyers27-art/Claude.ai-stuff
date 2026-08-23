@@ -198,5 +198,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderMenu();
   }
 
-  await Promise.all([loadOverview(), loadStaff(), loadMenu()]);
+  /* ---------- guests ---------- */
+  function formatLastVisit(iso) {
+    if (!iso) return 'Never';
+    const d = new Date(iso + 'Z');
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+  async function loadGuests(search) {
+    const qs = search ? `?q=${encodeURIComponent(search)}` : '';
+    const guests = await api(`/guests${qs}`);
+    document.getElementById('guestRows').innerHTML = guests.map((g) => `
+      <tr>
+        <td>${escapeHtml(g.name)}</td>
+        <td>${escapeHtml(g.email || g.phone || '')}</td>
+        <td>${g.visit_count}</td>
+        <td>${formatLastVisit(g.last_visit_at)}</td>
+        <td><button class="del-btn" data-id="${g.id}" aria-label="Delete ${escapeHtml(g.name)}">×</button></td>
+      </tr>
+    `).join('') || '<tr><td colspan="5" style="color:var(--dim)">No guests yet.</td></tr>';
+    document.querySelectorAll('#guestRows .del-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Delete this guest profile? Their past reservation history stays, just unlinked from a name.')) return;
+        await api(`/guests/${btn.dataset.id}`, { method: 'DELETE' });
+        loadGuests(document.getElementById('guestSearch').value.trim());
+      });
+    });
+  }
+  document.getElementById('guestSearchBtn').addEventListener('click', () => {
+    loadGuests(document.getElementById('guestSearch').value.trim());
+  });
+  document.getElementById('guestSearch').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); loadGuests(document.getElementById('guestSearch').value.trim()); }
+  });
+
+  await Promise.all([loadOverview(), loadStaff(), loadMenu(), loadGuests()]);
 });

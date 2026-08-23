@@ -102,11 +102,11 @@
 
     <div class="panel active" id="panel-book">
       <table class="data-table" id="bookTable">
-        <thead><tr><th>Time</th><th>Guest</th><th>Party</th><th></th><th>Status</th></tr></thead>
+        <thead><tr><th>Time</th><th>Guest</th><th>Contact</th><th>Party</th><th></th><th>Status</th></tr></thead>
         <tbody id="bookRows"></tbody>
       </table>
       <div class="inline-fields">
-        <div class="field"><label for="rTime">Time</label><input type="text" id="rTime" placeholder="9:00 PM" maxlength="20" required></div>
+        <div class="field"><label for="rTime">Time</label><input type="time" id="rTime" required></div>
         <div class="field"><label for="rName">Guest</label><input type="text" id="rName" maxlength="120" required></div>
         <div class="field"><label for="rParty">Party</label><input type="number" id="rParty" min="1" max="50" required></div>
         <button class="save-btn" id="addResBtn">Add</button>
