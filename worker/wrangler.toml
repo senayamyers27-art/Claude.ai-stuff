@@ -9,7 +9,9 @@ compatibility_date = "2025-01-01"
 # Cloudflare identity to authenticate with).
 routes = [
   { pattern = "11elevendallas.com/api/*", zone_name = "11elevendallas.com" },
-  { pattern = "11elevendallas.com/public/*", zone_name = "11elevendallas.com" }
+  { pattern = "11elevendallas.com/public/*", zone_name = "11elevendallas.com" },
+  { pattern = "www.11elevendallas.com/api/*", zone_name = "11elevendallas.com" },
+  { pattern = "www.11elevendallas.com/public/*", zone_name = "11elevendallas.com" }
 ]
 
 [[d1_databases]]

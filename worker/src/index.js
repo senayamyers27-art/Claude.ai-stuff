@@ -482,21 +482,21 @@ export default {
     const url = new URL(request.url);
     const db = env.DB;
 
-    const limited = await checkRateLimit(request, env.RATE_LIMIT);
-    if (limited) return limited;
-
-    if (url.pathname.startsWith('/public/')) {
-      return handlePublic(request, env, url);
-    }
-
-    const path = url.pathname.replace(/^\/api/, '') || '/';
-
-    const caller = await getCaller(request, db);
-    if (!caller) {
-      return errorResponse('Not recognized as staff. Ask an owner to add your email.', 401);
-    }
-
     try {
+      const limited = await checkRateLimit(request, env.RATE_LIMIT);
+      if (limited) return limited;
+
+      if (url.pathname.startsWith('/public/')) {
+        return await handlePublic(request, env, url);
+      }
+
+      const path = url.pathname.replace(/^\/api/, '') || '/';
+
+      const caller = await getCaller(request, db);
+      if (!caller) {
+        return errorResponse('Not recognized as staff. Ask an owner to add your email.', 401);
+      }
+
       if (path === '/me') {
         return json({ email: caller.email, name: caller.name, role: caller.role });
       }
