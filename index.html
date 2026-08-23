@@ -19,7 +19,7 @@
 <meta name="twitter:description" content="An elegant, upscale lounge in Uptown / Knox-Henderson, Dallas — full bar &amp; food, premium hookah, and reservable bottle service in a calm, design-forward setting.">
 <meta name="twitter:image" content="https://11elevendallas.com/assets/img/photowall-entrance.jpg">
 
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://www.googletagmanager.com https://*.google-analytics.com; object-src 'none'; base-uri 'self'; form-action 'self' https://www.sevenrooms.com; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://www.googletagmanager.com https://*.google-analytics.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥂</text></svg>">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <meta name="theme-color" content="#171213">
@@ -404,27 +404,8 @@
         </div>
         <div class="form-field">
           <label for="time">Time</label>
-          <select id="time" name="time" required>
-            <option value="">Select</option>
-            <option value="15:00">3:00 PM</option>
-            <option value="15:30">3:30 PM</option>
-            <option value="16:00">4:00 PM</option>
-            <option value="16:30">4:30 PM</option>
-            <option value="17:00">5:00 PM</option>
-            <option value="17:30">5:30 PM</option>
-            <option value="18:00">6:00 PM</option>
-            <option value="18:30">6:30 PM</option>
-            <option value="19:00">7:00 PM</option>
-            <option value="19:30">7:30 PM</option>
-            <option value="20:00">8:00 PM</option>
-            <option value="20:30">8:30 PM</option>
-            <option value="21:00">9:00 PM</option>
-            <option value="21:30">9:30 PM</option>
-            <option value="22:00">10:00 PM</option>
-            <option value="22:30">10:30 PM</option>
-            <option value="23:00">11:00 PM</option>
-            <option value="23:30">11:30 PM</option>
-            <option value="00:00">12:00 AM</option>
+          <select id="time" name="time" required disabled>
+            <option value="">Pick a date first</option>
           </select>
         </div>
         <div class="form-field">
@@ -432,15 +413,29 @@
           <input type="number" id="party" name="party" min="1" max="20" placeholder="e.g. 4" required>
         </div>
       </div>
+      <div class="form-row cols-3">
+        <div class="form-field">
+          <label for="guestName">Name</label>
+          <input type="text" id="guestName" name="guestName" maxlength="120" required>
+        </div>
+        <div class="form-field">
+          <label for="guestEmail">Email</label>
+          <input type="email" id="guestEmail" name="guestEmail" maxlength="200">
+        </div>
+        <div class="form-field">
+          <label for="guestPhone">Phone</label>
+          <input type="tel" id="guestPhone" name="guestPhone" maxlength="40">
+        </div>
+      </div>
       <div class="form-row">
         <div class="form-field full">
           <label for="occasion">Occasion / Notes <span class="label-optional">(optional)</span></label>
-          <textarea id="occasion" name="occasion" rows="3" placeholder="Birthday, bachelorette, VIP booth request, hookah, dietary notes…"></textarea>
+          <textarea id="occasion" name="occasion" rows="3" maxlength="500" placeholder="Birthday, bachelorette, VIP booth request, hookah, dietary notes…"></textarea>
         </div>
       </div>
-      <button type="submit" class="btn btn-solid btn-wide">Continue to SevenRooms</button>
-      <p class="form-note" id="formNote"></p>
-      <p class="form-powered-by">Reservations are handled securely by <span>SevenRooms</span>, our booking partner. Your date, time, and party size carry over automatically — you'll confirm your name and phone on the next step.</p>
+      <button type="submit" class="btn btn-solid btn-wide" id="reserveSubmit">Reserve</button>
+      <p class="form-note" id="formNote">Email or phone (at least one) so we can confirm your table.</p>
+      <p class="form-powered-by">You'll get a confirmation code once your table's booked — use it to view or cancel your reservation anytime on <a href="manage-reservation.html">Manage my reservation</a>.</p>
     </form>
   </div>
 </section>
@@ -477,7 +472,6 @@
   </div>
 </footer>
 
-<script src="assets/js/sevenrooms-config.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>

@@ -121,6 +121,7 @@
 
     <div class="tabs" role="tablist">
       <button class="tab active" data-panel="overview" role="tab">Overview</button>
+      <button class="tab" data-panel="guests" role="tab">Guests</button>
       <button class="tab" data-panel="staff" role="tab">Staff</button>
       <button class="tab" data-panel="menu" role="tab">Menu &amp; Pricing</button>
     </div>
@@ -134,6 +135,18 @@
         <button class="save-btn" id="saveStatsBtn">Save</button>
         <span class="save-msg" id="statsSaved"></span>
       </div>
+    </div>
+
+    <div class="panel" id="panel-guests">
+      <div class="note">Guest profiles build up automatically from online bookings — matched by email or phone. Visit count and last visit update once a host marks a reservation "Seated."</div>
+      <div class="inline-fields">
+        <div class="field"><label for="guestSearch">Search</label><input type="text" id="guestSearch" placeholder="Name, email, or phone"></div>
+        <button class="save-btn" id="guestSearchBtn">Search</button>
+      </div>
+      <table class="data-table" id="guestsTable">
+        <thead><tr><th>Name</th><th>Contact</th><th>Visits</th><th>Last Visit</th><th></th></tr></thead>
+        <tbody id="guestRows"></tbody>
+      </table>
     </div>
 
     <div class="panel" id="panel-staff">

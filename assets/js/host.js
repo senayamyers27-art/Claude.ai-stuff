@@ -24,6 +24,13 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+function formatTime(hhmm) {
+  const [h, m] = hhmm.split(':').map(Number);
+  const period = h < 12 ? 'AM' : 'PM';
+  const displayH = (h % 12) || 12;
+  return `${displayH}:${String(m).padStart(2, '0')} ${period}`;
+}
+
 function timeAgo(iso) {
   const mins = Math.max(0, Math.round((Date.now() - new Date(iso + 'Z').getTime()) / 60000));
   if (mins < 1) return 'just now';
@@ -72,8 +79,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const res = await api('/reservations');
     document.getElementById('bookRows').innerHTML = res.map((r) => `
       <tr>
-        <td>${escapeHtml(r.time_slot)}</td>
-        <td>${escapeHtml(r.guest_name)}</td>
+        <td>${formatTime(r.time_slot)}</td>
+        <td>${escapeHtml(r.guest_name)}${r.source === 'online' ? ' <span class="tag-pill">online</span>' : ''}</td>
+        <td>${escapeHtml(r.contact_email || r.contact_phone || '')}</td>
         <td>${r.party_size}</td>
         <td>${r.tag ? `<span class="tag-pill">${escapeHtml(r.tag)}</span>` : ''}</td>
         <td>
@@ -81,7 +89,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <button class="status-btn ${r.status === 'cancelled' ? 'active' : ''}" data-id="${r.id}" data-status="cancelled">Cancel</button>
         </td>
       </tr>
-    `).join('') || '<tr><td colspan="5" style="color:var(--dim)">Nothing on the book yet tonight.</td></tr>';
+    `).join('') || '<tr><td colspan="6" style="color:var(--dim)">Nothing on the book yet tonight.</td></tr>';
     document.querySelectorAll('#bookRows .status-btn').forEach((btn) => {
       btn.addEventListener('click', async () => {
         await api(`/reservations/${btn.dataset.id}`, { method: 'PATCH', body: JSON.stringify({ status: btn.dataset.status }) });

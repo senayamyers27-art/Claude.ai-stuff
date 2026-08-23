@@ -126,34 +126,98 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  /* ---------- Reservation form: hands off to SevenRooms ---------- */
+  /* ---------- Reservation form: real-time availability + direct booking ---------- */
   const form = document.getElementById('reserveForm');
   const formNote = document.getElementById('formNote');
+  const submitBtn = document.getElementById('reserveSubmit');
   const dateInput = document.getElementById('date');
+  const timeSelect = document.getElementById('time');
+  const partyInput = document.getElementById('party');
   dateInput.min = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD, local time
-  const isConfigured = SEVENROOMS_VENUE_ID && SEVENROOMS_VENUE_ID !== 'YOUR-VENUE-ID';
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
+  function formatTime(hhmm) {
+    const [h, m] = hhmm.split(':').map(Number);
+    const period = h < 12 ? 'AM' : 'PM';
+    const displayH = (h % 12) || 12;
+    return `${displayH}:${String(m).padStart(2, '0')} ${period}`;
+  }
 
-    const date = document.getElementById('date').value;
-    const time = document.getElementById('time').value;
-    const party = document.getElementById('party').value;
-
-    if (!isConfigured) {
-      formNote.textContent = 'Online booking through SevenRooms is launching soon — check back shortly, or follow us for the opening announcement.';
+  let availabilityRequestId = 0;
+  async function refreshAvailability() {
+    const requestId = ++availabilityRequestId; // guards against an older, slower request overwriting a newer one
+    const date = dateInput.value;
+    const party = Number(partyInput.value) || 2;
+    const previouslySelected = timeSelect.value; // a field's native "change" can fire late (on blur, e.g. when
+                                                  // focus moves to the time dropdown right after editing party
+                                                  // size) - preserve an already-made selection if it's still valid.
+    if (!date) {
+      timeSelect.disabled = true;
+      timeSelect.innerHTML = '<option value="">Pick a date first</option>';
       return;
     }
+    timeSelect.disabled = true;
+    timeSelect.innerHTML = '<option value="">Checking availability…</option>';
+    try {
+      const res = await fetch(`/public/availability?date=${encodeURIComponent(date)}&partySize=${encodeURIComponent(party)}`);
+      const data = await res.json();
+      if (requestId !== availabilityRequestId) return; // a newer request has since started
+      const slots = data.slots || [];
+      if (!slots.length) {
+        timeSelect.innerHTML = '<option value="">Closed that day</option>';
+        return;
+      }
+      const options = ['<option value="">Select</option>'].concat(
+        slots.map((s) => `<option value="${s.time}"${s.available ? '' : ' disabled'}>${formatTime(s.time)}${s.available ? '' : ' — full'}</option>`)
+      );
+      timeSelect.innerHTML = options.join('');
+      timeSelect.disabled = false;
+      const stillValid = slots.find((s) => s.time === previouslySelected && s.available);
+      if (stillValid) timeSelect.value = previouslySelected;
+    } catch (err) {
+      if (requestId !== availabilityRequestId) return;
+      timeSelect.innerHTML = '<option value="">Couldn’t load times — try again</option>';
+    }
+  }
+  dateInput.addEventListener('change', refreshAvailability);
+  partyInput.addEventListener('change', refreshAvailability);
 
-    const params = new URLSearchParams({
-      date,
-      time,
-      party_size: party,
-    });
-    const bookingUrl = `https://www.sevenrooms.com/reservations/${SEVENROOMS_VENUE_ID}?${params.toString()}`;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    formNote.textContent = 'Booking your table…';
 
-    formNote.textContent = 'Opening SevenRooms in a new tab to complete your booking…';
-    window.open(bookingUrl, '_blank', 'noopener');
+    const body = {
+      name: document.getElementById('guestName').value.trim(),
+      email: document.getElementById('guestEmail').value.trim(),
+      phone: document.getElementById('guestPhone').value.trim(),
+      partySize: Number(partyInput.value),
+      date: dateInput.value,
+      time: timeSelect.value,
+      notes: document.getElementById('occasion').value.trim(),
+    };
+
+    try {
+      const res = await fetch('/public/reservations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        formNote.textContent = data.error || 'Something went wrong — please try again.';
+        if (data.full) refreshAvailability();
+        submitBtn.disabled = false;
+        return;
+      }
+      formNote.innerHTML = `You're booked! Confirmation code <strong>${data.confirmationCode}</strong> — save it to view or cancel your reservation on <a href="manage-reservation.html">Manage my reservation</a>.`;
+      form.reset();
+      timeSelect.innerHTML = '<option value="">Pick a date first</option>';
+      timeSelect.disabled = true;
+      submitBtn.disabled = false;
+    } catch (err) {
+      formNote.textContent = 'Couldn’t reach the booking system — please try again in a moment.';
+      submitBtn.disabled = false;
+    }
   });
 
   /* ---------- Active nav link on scroll ---------- */
