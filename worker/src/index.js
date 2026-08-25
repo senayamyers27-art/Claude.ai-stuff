@@ -498,6 +498,16 @@ export default {
       }
 
       if (path === '/me') {
+        // A real browser navigation (not the app's own background fetch) landing here
+        // means host.js/owner.js redirected here after fetch('/me') failed with no
+        // status - the signature of Access intercepting the request with a
+        // cross-origin redirect that fetch() can't follow. Access has already
+        // authenticated this request by the time we get here, so send the browser
+        // back to the right dashboard instead of showing it raw JSON.
+        if (request.headers.get('Sec-Fetch-Mode') === 'navigate') {
+          const dest = caller.role === 'owner' ? '/owner.html' : '/host.html';
+          return Response.redirect(new URL(dest, url.origin), 302);
+        }
         return json({ email: caller.email, name: caller.name, role: caller.role });
       }
 
