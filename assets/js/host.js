@@ -52,6 +52,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (err.status === 401 || err.status === 403) {
       document.getElementById('deniedMsg').textContent = err.message;
       deniedState.style.display = 'block';
+    } else if (!err.status) {
+      /* No HTTP status at all almost always means Cloudflare Access
+         intercepted this request with a cross-origin redirect to its
+         login page — fetch() can't follow that, so it surfaces as a
+         generic network error instead of a real 401/403. Send the
+         browser there directly with a real navigation so Access can
+         show its actual login form (email + one-time code). Once
+         login succeeds, the Worker redirects back to this page (see
+         worker/src/index.js's /me handler). */
+      window.location.href = API + '/me';
+      return;
     } else {
       document.getElementById('errorDetail').textContent = `(${err.status || 'network'}) ${err.message}`;
       errorState.style.display = 'block';
