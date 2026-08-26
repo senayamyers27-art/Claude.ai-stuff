@@ -1,0 +1,39 @@
+name: CodeQL
+
+# Static analysis of the actual backend/frontend JS (worker/src, assets/js).
+# There's no package.json anywhere in this repo, so there's no npm
+# dependency tree for Dependabot to patch here — this is the real "auto
+# auditing" coverage for the hand-written code itself (injection, unsafe
+# regex, prototype pollution, etc.), not a substitute for dependency scanning.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 10 * * 1" # weekly, Monday ~04:00 America/Chicago
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+          source-root: .
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3

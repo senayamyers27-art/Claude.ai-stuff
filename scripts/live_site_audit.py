@@ -5,7 +5,10 @@ Live-site security/health audit for 11:Eleven Lounge.
 Checks the deployed site (not the repo) for the things that can silently
 regress after deploy: pages actually up, CSP still present, security.txt
 and robots.txt still served, HTTPS enforced, and the TLS cert isn't about
-to expire. Exits non-zero if anything meaningful is wrong, so CI can flag it.
+to expire. Also covers the backend's access-control boundary directly:
+the staff API must reject anonymous requests, and the workers.dev preview
+URL must stay disabled. Exits non-zero if anything meaningful is wrong, so
+CI can flag it.
 """
 import socket
 import ssl
@@ -16,6 +19,17 @@ from urllib.parse import urlparse
 import requests
 
 BASE_URL = sys.argv[1] if len(sys.argv) > 1 else "https://11elevendallas.com"
+WORKERS_DEV_URL = sys.argv[2] if len(sys.argv) > 2 else ""
+
+# Response headers that must be present with these exact (case-insensitive)
+# values on every response, wherever the header is set (Cloudflare edge or
+# the Worker itself) — a regression here weakens transport/content hardening
+# without touching a single HTML file, so it can't be caught by the CSP
+# meta-tag check alone.
+REQUIRED_HEADERS = {
+    "strict-transport-security": None,  # presence only; max-age value is Cloudflare-dashboard config
+    "x-content-type-options": "nosniff",
+}
 
 # path -> whether it must contain a CSP meta tag
 HTML_PAGES = {
@@ -99,6 +113,57 @@ def check_cert_expiry():
         warnings.append(f"could not check TLS certificate ({e})")
 
 
+def check_response_headers():
+    url = BASE_URL.rstrip("/") + "/"
+    try:
+        r = requests.get(url, timeout=15)
+    except requests.RequestException as e:
+        warnings.append(f"header check failed to run ({e})")
+        return
+    headers_lower = {k.lower(): v for k, v in r.headers.items()}
+    for name, expected in REQUIRED_HEADERS.items():
+        actual = headers_lower.get(name)
+        if actual is None:
+            failures.append(f"missing response header: {name}")
+        elif expected is not None and expected.lower() not in actual.lower():
+            failures.append(f"{name}: expected to contain {expected!r}, got {actual!r}")
+        else:
+            print(f"  OK  {name}: {actual}")
+
+
+def check_staff_api_requires_auth():
+    """/api/me must never return a 200 with real staff data to an anonymous
+    caller — this is the exact boundary Cloudflare Access enforces, and a
+    regression here (e.g. a route added outside Access, or Access disabled
+    on the app) would otherwise leak staff identity/roster data silently."""
+    url = BASE_URL.rstrip("/") + "/api/me"
+    try:
+        r = requests.get(url, timeout=15, allow_redirects=False)
+    except requests.RequestException as e:
+        warnings.append(f"/api/me check failed to run ({e})")
+        return
+    if r.status_code == 200:
+        failures.append(f"/api/me returned 200 to an anonymous request (expected a login challenge/redirect or 401/403) — Access may be misconfigured or disabled")
+        return
+    print(f"  OK  /api/me rejects anonymous requests ({r.status_code})")
+
+
+def check_workers_dev_disabled():
+    """The workers.dev preview URL runs identical Worker code but Access
+    policies bind to the custom-domain routes, not workers.dev — if it's
+    ever re-enabled (e.g. after a wrangler.toml change), the staff API
+    becomes reachable with no login at all. Skipped if no URL is configured."""
+    if not WORKERS_DEV_URL:
+        warnings.append("workers.dev exposure check skipped (no URL configured — pass as 2nd script argument)")
+        return
+    try:
+        r = requests.get(WORKERS_DEV_URL.rstrip("/") + "/me", timeout=15, allow_redirects=False)
+    except requests.RequestException:
+        print("  OK  workers.dev preview URL is unreachable")
+        return
+    failures.append(f"workers.dev preview URL is still reachable (got {r.status_code}) — disable it in Workers & Pages > Settings > Domains & Routes")
+
+
 def main():
     print(f"Auditing {BASE_URL}\n")
 
@@ -113,6 +178,13 @@ def main():
     print("\nTransport:")
     check_https_enforced()
     check_cert_expiry()
+
+    print("\nResponse headers:")
+    check_response_headers()
+
+    print("\nBackend access control:")
+    check_staff_api_requires_auth()
+    check_workers_dev_disabled()
 
     print()
     if warnings:

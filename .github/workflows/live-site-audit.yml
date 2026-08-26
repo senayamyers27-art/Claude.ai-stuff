@@ -26,7 +26,11 @@ jobs:
 
       - name: Run live-site health/security checks
         id: health
-        run: python3 scripts/live_site_audit.py https://11elevendallas.com
+        # Second argument is optional: set the WORKERS_DEV_URL repo variable
+        # (Settings > Secrets and variables > Actions > Variables) to your
+        # account's *.workers.dev URL for eleven-eleven-staff-api to get the
+        # "still reachable" regression check; the audit runs fine without it.
+        run: python3 scripts/live_site_audit.py https://11elevendallas.com "${{ vars.WORKERS_DEV_URL }}"
 
       - name: Set up Node
         if: always()
