@@ -32,7 +32,7 @@ jobs:
         run: npx wrangler d1 export eleven-eleven-staff --remote --output=backup.sql
 
       - name: Upload backup artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: d1-backup-${{ github.run_id }}
           path: worker/backup.sql
