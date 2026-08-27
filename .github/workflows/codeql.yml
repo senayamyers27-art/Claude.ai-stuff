@@ -24,16 +24,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@5ba2889ada762081db2c4f32a729827dce632c7b # v3
         with:
           languages: javascript
           source-root: .
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+        uses: github/codeql-action/autobuild@5ba2889ada762081db2c4f32a729827dce632c7b # v3
 
       - name: Perform CodeQL analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@5ba2889ada762081db2c4f32a729827dce632c7b # v3
