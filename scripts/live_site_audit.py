@@ -21,6 +21,18 @@ import requests
 BASE_URL = sys.argv[1] if len(sys.argv) > 1 else "https://11elevendallas.com"
 WORKERS_DEV_URL = sys.argv[2] if len(sys.argv) > 2 else ""
 
+# Cloudflare's bot protection blocks requests' default "python-requests/x.y"
+# User-Agent outright (403), which is exactly what made this audit fail every
+# night for a week — not a real site outage. A realistic browser UA gets
+# treated like normal traffic.
+session = requests.Session()
+session.headers.update({
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+})
+
 # Response headers that must be present with these exact (case-insensitive)
 # values on every response, wherever the header is set (Cloudflare edge or
 # the Worker itself) — a regression here weakens transport/content hardening
@@ -51,7 +63,7 @@ warnings = []
 def check_page(path, needs_csp):
     url = BASE_URL.rstrip("/") + path
     try:
-        r = requests.get(url, timeout=15)
+        r = session.get(url, timeout=15)
     except requests.RequestException as e:
         failures.append(f"{path}: request failed ({e})")
         return
@@ -66,7 +78,7 @@ def check_page(path, needs_csp):
 def check_text_file(path, expected_substring):
     url = BASE_URL.rstrip("/") + path
     try:
-        r = requests.get(url, timeout=15)
+        r = session.get(url, timeout=15)
     except requests.RequestException as e:
         failures.append(f"{path}: request failed ({e})")
         return
@@ -83,7 +95,7 @@ def check_https_enforced():
     parsed = urlparse(BASE_URL)
     http_url = f"http://{parsed.netloc}/"
     try:
-        r = requests.get(http_url, timeout=15, allow_redirects=True)
+        r = session.get(http_url, timeout=15, allow_redirects=True)
     except requests.RequestException as e:
         warnings.append(f"HTTP->HTTPS check failed to run ({e})")
         return
@@ -116,7 +128,7 @@ def check_cert_expiry():
 def check_response_headers():
     url = BASE_URL.rstrip("/") + "/"
     try:
-        r = requests.get(url, timeout=15)
+        r = session.get(url, timeout=15)
     except requests.RequestException as e:
         warnings.append(f"header check failed to run ({e})")
         return
@@ -138,7 +150,7 @@ def check_staff_api_requires_auth():
     on the app) would otherwise leak staff identity/roster data silently."""
     url = BASE_URL.rstrip("/") + "/api/me"
     try:
-        r = requests.get(url, timeout=15, allow_redirects=False)
+        r = session.get(url, timeout=15, allow_redirects=False)
     except requests.RequestException as e:
         warnings.append(f"/api/me check failed to run ({e})")
         return
@@ -157,7 +169,7 @@ def check_workers_dev_disabled():
         warnings.append("workers.dev exposure check skipped (no URL configured — pass as 2nd script argument)")
         return
     try:
-        r = requests.get(WORKERS_DEV_URL.rstrip("/") + "/me", timeout=15, allow_redirects=False)
+        r = session.get(WORKERS_DEV_URL.rstrip("/") + "/me", timeout=15, allow_redirects=False)
     except requests.RequestException:
         print("  OK  workers.dev preview URL is unreachable")
         return
