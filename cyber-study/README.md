@@ -39,11 +39,11 @@ review.
 
 | Cert | Status | Notes |
 |---|---|---|
-| Security+ SY0-701 | Built, weights verified | 91 questions, original 16-week plan and note sources kept |
+| Security+ SY0-701 | Built, weights verified | 101 questions: the original 91 with their note sources, plus 10 new Domain 5 questions |
 | CySA+ CS0-004 | Built, weights verified | Objective numbers follow CS0-003; check against the CS0-004 PDF |
-| CCNA 200-301 v2.0 | Built, weights verified | |
+| CCNA 200-301 v2.0 | Built, weights verified | Topic numbers are exact only where confirmed (1.1–1.2, 2.2, 3.1–3.8, 4.1); others cite the section |
 | SSCP | Built, weights verified | Sub-objective numbers are from the earlier outline; check against the PDF |
-| Network+ N10-009 | Built | See the page's banner for verification status |
+| Network+ N10-009 | Built, weights to confirm | Third-party sources match 23/20/19/14/24; CompTIA's PDF not checked |
 | ISC2 CC | Built, weights to confirm | Uses the outline ISC2 introduced Sept 1, 2026, based on search summaries of ISC2's announcement |
 | PenTest+ PT0-003 | Not built | Listed with domain weights only |
 | CEH v13 | Not built | Listed with domain weights only |
