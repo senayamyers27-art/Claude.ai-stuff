@@ -1,10 +1,10 @@
 /* Microsoft Azure developer track (id az-204). AZ-204 retired July 31, 2026, so this plan covers its
    replacement, AI-200 (Azure AI Cloud Developer Associate). Generated plan (no hand-written weeks). */
 CertHub.register({
-  id: "az-204",
+  id: "ai-200",
   vendor: "Microsoft",
   name: "Microsoft Certified: Azure AI Cloud Developer Associate",
-  short: "Azure Developer",
+  short: "AI-200",
   exam: "AI-200 (replaced AZ-204)",
   blurb: "For developers who build back-end and AI-powered apps on Azure: containers, Cosmos DB, PostgreSQL and Redis for AI data, messaging and Functions, plus security and monitoring.",
   status: "check",

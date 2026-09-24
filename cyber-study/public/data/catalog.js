@@ -5,11 +5,11 @@ CertHub.tracks = [
   { id: "cybersecurity", name: "Cybersecurity", blurb: "Security analyst and security management certifications, from first job to CISSP.",
     certs: ["isc2-cc", "security-plus", "cysa-plus", "sscp", "cissp"] },
   { id: "network", name: "Network Engineering", blurb: "Design, build and troubleshoot networks: from entry-level to CCNP, plus Juniper, wireless and cloud networking.",
-    certs: ["ccst-networking", "network-plus", "ccna", "ccnp-encor", "jncia-junos", "cwna", "aws-ans"] },
+    certs: ["ccst-networking", "network-plus", "ccna", "ccnp-encor", "jncia-junos", "cwna"] },
   { id: "software", name: "Software Engineering", blurb: "Programming languages, cloud development, containers and infrastructure as code.",
-    certs: ["pcep", "pcap", "java-se", "aws-developer", "az-204", "ckad", "terraform"] },
+    certs: ["pcep", "pcap", "java-se", "aws-developer", "ai-200", "ckad", "terraform"] },
   { id: "secadmin", name: "Cybersecurity Administration", blurb: "Run security day to day: cloud security, identity, security operations and firewalls.",
-    certs: ["security-plus", "sscp", "cysa-plus", "az-500", "sc-300", "sc-200", "palo-alto-ngfw", "fortinet-fortigate"] },
+    certs: ["security-plus", "sscp", "cysa-plus", "sc-500", "sc-300", "sc-200", "palo-alto-ngfw", "fortinet-fortigate"] },
   { id: "sysadmin", name: "System Administrator", blurb: "Support and run systems: desktops, Linux and Windows servers, cloud and Kubernetes.",
     certs: ["a-plus-core1", "a-plus-core2", "linux-plus", "server-plus", "rhcsa", "az-104", "az-800", "cka"] }
 ];

@@ -1,6 +1,6 @@
 /* Microsoft AZ-500 (retired Aug 31, 2026) -> replacement exam SC-500 — generated plan (no hand-written weeks). */
 CertHub.register({
-  id: "az-500",
+  id: "sc-500",
   vendor: "Microsoft",
   name: "Microsoft Certified: Cloud and AI Security Engineer Associate (replaces Azure Security Engineer Associate / AZ-500)",
   short: "SC-500",
