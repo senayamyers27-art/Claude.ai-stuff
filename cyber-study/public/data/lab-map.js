@@ -20,9 +20,9 @@ CertHub.labMap = {
     15: ["lab-risk-register", "lab-policy-writing", "lab-vendor-risk", "lab-controls-audit"]
   } },
   "cysa-plus": { domains: {
-    1: ["lab-splunk-siem", "lab-sysmon-detection", "lab-wazuh", "lab-pcap-investigation", "lab-cyberchef-decoding", "lab-phishing-analysis", "lab-auditd", "lab-net-monitoring"],
+    1: ["lab-splunk-siem", "lab-sysmon-detection", "lab-wazuh", "lab-pcap-investigation", "lab-cyberchef-decoding", "lab-phishing-analysis", "lab-auditd", "lab-net-monitoring", "lab-sentinel-kql", "lab-defender-asr", "lab-ngfw-policy"],
     2: ["lab-nmap-discovery", "lab-vuln-management", "lab-appsec-zap", "lab-container-security", "lab-cloud-iam", "lab-secure-sdlc", "lab-cloud-posture"],
-    3: ["lab-incident-response", "lab-memory-forensics", "lab-disk-forensics"],
+    3: ["lab-incident-response", "lab-memory-forensics", "lab-disk-forensics", "lab-sentinel-kql"],
     4: ["lab-threat-intel", "lab-risk-register", "lab-controls-audit"]
   } },
   "ccna": { domains: {
@@ -33,13 +33,13 @@ CertHub.labMap = {
     5: ["lab-network-automation", "lab-splunk-siem", "lab-net-monitoring"]
   } },
   "sscp": { domains: {
-    1: ["lab-home-lab", "lab-policy-writing", "lab-data-classification", "lab-controls-audit"],
-    2: ["lab-iam-sso", "lab-ssh-mfa", "lab-windows-hardening", "lab-ad-gpo", "lab-radius-aaa", "lab-apparmor-mac"],
-    3: ["lab-risk-register", "lab-vuln-management", "lab-splunk-siem", "lab-auditd", "lab-net-monitoring", "lab-cloud-posture", "lab-controls-audit"],
-    4: ["lab-incident-response", "lab-bia-backup", "lab-disk-forensics", "lab-db-failover"],
-    5: ["lab-hashing-integrity", "lab-pki-openssl"],
-    6: ["lab-firewall-pfsense", "lab-wireshark-basics", "lab-wifi-audit", "lab-wireguard-vpn", "lab-dns-bind"],
-    7: ["lab-linux-hardening", "lab-appsec-zap", "lab-container-security", "lab-apparmor-mac"]
+    1: ["lab-home-lab", "lab-policy-writing", "lab-data-classification", "lab-controls-audit", "lab-entra-pim-reviews"],
+    2: ["lab-iam-sso", "lab-ssh-mfa", "lab-windows-hardening", "lab-ad-gpo", "lab-radius-aaa", "lab-apparmor-mac", "lab-entra-conditional-access", "lab-entra-pim-reviews"],
+    3: ["lab-risk-register", "lab-vuln-management", "lab-splunk-siem", "lab-auditd", "lab-net-monitoring", "lab-cloud-posture", "lab-controls-audit", "lab-sentinel-kql"],
+    4: ["lab-incident-response", "lab-bia-backup", "lab-disk-forensics", "lab-db-failover", "lab-sentinel-kql"],
+    5: ["lab-hashing-integrity", "lab-pki-openssl", "lab-ipsec-site-to-site", "lab-azure-security-baseline"],
+    6: ["lab-firewall-pfsense", "lab-wireshark-basics", "lab-wifi-audit", "lab-wireguard-vpn", "lab-dns-bind", "lab-ngfw-policy", "lab-ipsec-site-to-site"],
+    7: ["lab-linux-hardening", "lab-appsec-zap", "lab-container-security", "lab-apparmor-mac", "lab-defender-asr", "lab-azure-security-baseline"]
   } },
   "network-plus": { domains: {
     1: ["lab-subnetting", "lab-wireshark-basics", "lab-dns-bind"],
@@ -64,5 +64,32 @@ CertHub.labMap = {
     6: ["lab-vuln-management", "lab-nmap-discovery", "lab-controls-audit", "lab-cloud-posture"],
     7: ["lab-incident-response", "lab-splunk-siem", "lab-disk-forensics", "lab-db-failover", "lab-auditd"],
     8: ["lab-secure-sdlc", "lab-appsec-zap"]
+  } },
+  "sc-500": { domains: {
+    1: ["lab-entra-conditional-access", "lab-entra-pim-reviews"],
+    2: ["lab-azure-security-baseline"],
+    3: ["lab-azure-security-baseline", "lab-defender-asr"],
+    4: ["lab-azure-security-baseline", "lab-sentinel-kql"]
+  } },
+  "sc-300": { domains: {
+    1: ["lab-entra-conditional-access"],
+    2: ["lab-entra-conditional-access"],
+    3: ["lab-azure-security-baseline"],
+    4: ["lab-entra-pim-reviews"]
+  } },
+  "sc-200": { domains: {
+    1: ["lab-sentinel-kql", "lab-defender-asr"],
+    2: ["lab-sentinel-kql", "lab-defender-asr"],
+    3: ["lab-sentinel-kql"]
+  } },
+  "palo-alto-ngfw": { domains: {
+    1: ["lab-ngfw-policy", "lab-ipsec-site-to-site"],
+    2: ["lab-ngfw-policy"]
+  } },
+  "fortinet-fortigate": { domains: {
+    1: ["lab-ngfw-policy"],
+    2: ["lab-ngfw-policy"],
+    3: ["lab-ngfw-policy", "lab-ipsec-site-to-site"],
+    5: ["lab-ipsec-site-to-site"]
   } }
 };

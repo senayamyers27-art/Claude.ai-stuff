@@ -211,5 +211,12 @@ CertHub.labRoles = {
   "lab-radius-aaa": ["netops", "infra"], "lab-subnetting": ["netops"], "lab-wireshark-basics": ["netops", "defensive"],
   "lab-nmap-discovery": ["vuln", "netops"], "lab-pt-vlans": ["netops"], "lab-pt-ospf": ["netops"],
   "lab-pt-acl-nat": ["netops", "infra"], "lab-pt-l2-security": ["netops", "infra"], "lab-network-troubleshooting": ["netops"],
-  "lab-firewall-pfsense": ["infra", "netops"], "lab-wifi-audit": ["netops", "vuln"], "lab-network-automation": ["netops", "sysadmin"]
+  "lab-firewall-pfsense": ["infra", "netops"], "lab-wifi-audit": ["netops", "vuln"], "lab-network-automation": ["netops", "sysadmin"],
+  "lab-entra-conditional-access": ["ssa", "arch"],
+  "lab-entra-pim-reviews": ["ssa", "arch", "policy"],
+  "lab-sentinel-kql": ["defensive", "incident", "infra"],
+  "lab-defender-asr": ["defensive", "ssa", "infra"],
+  "lab-azure-security-baseline": ["arch", "ssa", "infra"],
+  "lab-ngfw-policy": ["infra", "defensive", "netops"],
+  "lab-ipsec-site-to-site": ["infra", "netops"]
 };
