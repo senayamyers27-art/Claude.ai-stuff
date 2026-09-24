@@ -2,6 +2,33 @@
 (function () {
   const DAY = 86400000;
   const certs = {};
+  // Where the site's files live (pages can be at / or /<cert>/), taken from this script's own URL.
+  const BASE = ((document.currentScript && document.currentScript.src) || "").replace(/assets\/core\.js(\?.*)?$/, "");
+  // Question banks load on demand: data/gen/<id>-q.js calls CertHub.addQuestions when it arrives.
+  const qWaiting = {};
+  function loadQuestions(id) {
+    const c = certs[id];
+    if (!c) return Promise.resolve(null);
+    if (Array.isArray(c.questions)) return Promise.resolve(c.questions);
+    if (!qWaiting[id]) {
+      const w = {};
+      w.promise = new Promise((resolve, reject) => { w.resolve = resolve; w.reject = reject; });
+      qWaiting[id] = w;
+      const s = document.createElement("script");
+      s.src = `${BASE}data/gen/${id}-q.js`;
+      s.async = true;
+      s.onerror = () => { delete qWaiting[id]; s.remove(); w.reject(new Error("Couldn't load the questions. Check your connection and try again.")); };
+      document.head.appendChild(s);
+    }
+    return qWaiting[id].promise;
+  }
+  function addQuestions(id, qs) {
+    if (!certs[id] || !Array.isArray(qs)) return;
+    certs[id].questions = qs;
+    certs[id].qCount = qs.length;
+    const w = qWaiting[id];
+    if (w && w.resolve) w.resolve(qs);
+  }
 
   const U = {
     DAY,
@@ -279,7 +306,8 @@
   window.CertHub = {
     U, store, certs, buildPlan, loadProgress, saveProgress, freshProgress, applyTheme, themeButton, exportAll, importAll, activeNotices,
     backupText, restoreText, ui, install, labs, labOrder, loadLabProgress, saveLabProgress, labStatus,
-    register(c) { certs[c.id] = c; },
+    register(c) { certs[c.id] = c; if (Array.isArray(c.questions)) c.qCount = c.questions.length; },
+    loadQuestions, addQuestions,
     registerLabs(list) { list.forEach(l => { if (!labs[l.id]) labOrder.push(l.id); labs[l.id] = l; }); }
   };
 })();

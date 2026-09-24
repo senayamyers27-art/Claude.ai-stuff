@@ -29,6 +29,15 @@
     FREE_Q = (C.questions || []).map(toQ);
     Q = FREE_Q;
     PRO = null;
+    if (!Array.isArray(C.questions)) {
+      // The question bank loads separately; redraw once it arrives.
+      CertHub.loadQuestions(id).then(qs => {
+        if (!C || C.id !== id || !qs) return;
+        FREE_Q = qs.map(toQ);
+        Q = FREE_Q.concat(PRO ? PRO.questions : []);
+        if (active && !(S.quiz && !S.quiz.done)) render();
+      }, e => { if (active && C.id === id) CertHub.ui.toast(e.message); });
+    }
     const p = loadProgress(C.id);
     if (!p.start) p.start = C.start || U.iso(U.nextMonday(today()));
     if (!p.examDate) p.examDate = C.examDate || U.iso(U.addDays(parseD(p.start), W.length * 7 + 1));
@@ -50,7 +59,7 @@
       PRO = { questions: (Array.isArray(b.questions) ? b.questions : []).filter(ok).map(toQ),
         flashcards: (Array.isArray(b.flashcards) ? b.flashcards : []).filter(f => Array.isArray(f) && doms.has(f[0]) && f[1] && f[2]),
         guide: Array.isArray(b.guide) ? b.guide : [] };
-      Q = FREE_Q.concat(PRO.questions);
+      Q = FREE_Q.concat(PRO.questions); // FREE_Q may still be loading; its loader adds PRO back in
       if (active && !(S.quiz && !S.quiz.done)) render();
     });
   }
@@ -248,6 +257,7 @@
   }
   function practiceView() {
     if (S.quiz) return quizView();
+    if (!Array.isArray(C.questions)) return `<h1>Quizzes & tests</h1><p class="note">Loading questions…</p>`;
     const due = dueIds().length;
     const cnt = d => Q.filter(q => q.d === d).length;
     const ex = examQs().length;

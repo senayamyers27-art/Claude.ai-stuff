@@ -36,7 +36,9 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(BASE + "/");
   await page.waitForSelector(".card");
   const cards = await page.$$eval(".card", c => c.length);
-  check(cards === CertHub.catalog.length, `${cards} certification cards (expected ${CertHub.catalog.length})`);
+  // "All tracks" shows each track's certifications; a cert in two tracks appears in both.
+  const expected = CertHub.tracks.reduce((n, t) => n + t.certs.filter(id => ids.includes(id)).length, 0);
+  check(cards === expected, `${cards} certification cards across ${CertHub.tracks.length} tracks (expected ${expected})`);
 
   for (const id of ids) {
     console.log(id);

@@ -20,7 +20,7 @@
       const plan = buildPlan(c);
       const labCount = new Set(plan.weeks.flatMap(w => w.labRefs || []).filter(l => labs[l])).size;
       const days = Object.values(p.checks).filter(Boolean).length;
-      foot = `<span>${plan.weeks.length} weeks · ${c.questions.length} questions${labCount ? ` · ${labCount} labs` : ""}</span><span>${s.t ? `${Math.round(100 * s.c / s.t)}% of ${s.t} answered` : days ? `${days} days checked` : "Not started"}</span>`;
+      foot = `<span>${plan.weeks.length} weeks · ${c.qCount ?? (c.questions || []).length} questions${labCount ? ` · ${labCount} labs` : ""}</span><span>${s.t ? `${Math.round(100 * s.c / s.t)}% of ${s.t} answered` : days ? `${days} days checked` : "Not started"}</span>`;
     } else foot = `<span>Study plan not written yet</span>`;
     const inner = `<span class="vendor">${esc(c.vendor)} · ${esc(c.exam)}</span>
       <h2>${esc(c.name)}</h2>
@@ -30,19 +30,41 @@
       <div class="cardfoot">${badge}${foot}</div>`;
     return built ? `<a class="card" href="#${esc(id)}">${inner}</a>` : `<div class="card" aria-disabled="true" style="opacity:.7">${inner}</div>`;
   }
+  /* ---------- career tracks ---------- */
+  const TRACKS = CertHub.tracks || [{ id: "all", name: "All", certs: CertHub.catalog }];
+  const TRACK_KEY = "certhub:track";
+  const curTrack = () => { const t = CertHub.store.get(TRACK_KEY) || "all"; return t === "all" || TRACKS.some(x => x.id === t) ? t : "all"; };
+  function trackPicker() {
+    const cur = curTrack();
+    return `<div class="trackpick" role="group" aria-labelledby="tracks-h">${[["all", "All tracks"], ...TRACKS.map(t => [t.id, t.name])].map(([id, name]) => `<button type="button" class="chipbtn" data-track="${esc(id)}" aria-pressed="${cur === id}">${esc(name)}</button>`).join("")}</div>`;
+  }
+  function trackCards() {
+    const cur = curTrack();
+    if (cur === "all") return TRACKS.map(t => `<h3 class="trackh">${esc(t.name)}</h3><p class="note">${esc(t.blurb || "")}</p><div class="cards">${t.certs.map(certCard).join("")}</div>`).join("");
+    const t = TRACKS.find(x => x.id === cur);
+    return `<p class="note">${esc(t.blurb || "")}</p><div class="cards">${t.certs.map(certCard).join("")}</div>`;
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-track]"); if (!b) return;
+    CertHub.store.set(TRACK_KEY, b.dataset.track);
+    document.querySelectorAll("[data-track]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    const box = document.getElementById("trackcards"); if (box) box.innerHTML = trackCards();
+  });
+
   function homeView() {
     const lp = loadLabProgress();
     const labList = labOrder.map(id => labs[id]);
     const doneLabs = labList.filter(l => labStatus(l, lp).state === "done").length;
     const start = labs["lab-home-lab"];
     return `<section class="hero">
-      <h1>Study plans and hands-on labs for cybersecurity certifications</h1>
-      <p class="meta">Pick a certification for a week-by-week plan with quizzes, timed checkpoint tests, a practice exam weighted like the real one, and spaced review. Every week links to step-by-step labs you do in your own home lab, so you finish with real experience and a portfolio, not just a score.</p>
+      <h1>Study plans and hands-on labs for IT and cybersecurity certifications</h1>
+      <p class="meta">Pick a career track and a certification for a week-by-week plan with quizzes, timed checkpoint tests, a practice exam weighted like the real one, and spaced review. Every week links to step-by-step labs you do in your own home lab, so you finish with real experience and a portfolio, not just a score.</p>
       <div class="btns">${start ? `<a class="btn" href="#lab-home-lab">Start with the home lab</a>` : ""}<a class="btn ghost" href="#labs">Browse ${labList.length} labs</a><a class="btn ghost" href="#portfolio">Your portfolio${doneLabs ? ` (${doneLabs})` : ""}</a></div>
     </section>
     ${CertHub.install.installed() ? "" : `<div class="panel installcard"><div class="grow"><strong>Get the app on your phone</strong><br><span class="note">Install it from your browser: it opens full screen and works offline. No app store needed.</span></div><div class="btns" style="margin:0">${CertHub.install.prompt ? `<button type="button" class="btn sm" data-gact="install">Install</button>` : ""}<a class="btn ghost sm" href="#install">How to install</a></div></div>`}
-    <h2>Certifications</h2>
-    <div class="cards">${CertHub.catalog.map(certCard).join("")}</div>
+    <h2 id="tracks-h">Certifications by career track</h2>
+    ${trackPicker()}
+    <div id="trackcards">${trackCards()}</div>
     <h2>Your progress</h2>
     <div class="panel">
       <p class="note" style="margin:0">Progress, lab notes and checkmarks are saved in this browser only. Nothing is sent anywhere. Back up to move them to another device.</p>

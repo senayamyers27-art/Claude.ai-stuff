@@ -3,7 +3,7 @@
   const { U } = CertHub;
   const { esc } = U;
   const FW = CertHub.frameworks || [], ROLES = CertHub.niceRoles || [], LAB_ROLES = CertHub.labRoles || {};
-  const KINDS = ["Governance & risk", "Controls & standards", "Threat & detection", "Secure development", "Privacy & compliance", "Careers"];
+  const KINDS = ["Governance & risk", "Controls & standards", "Threat & detection", "Secure development", "Privacy & compliance", "Networking models & standards", "IT service & operations", "Software delivery", "Cloud architecture", "Careers"];
   const roleById = Object.fromEntries(ROLES.map(r => [r.id, r]));
 
   // Labs whose content mentions a framework, found from the lab text itself so it stays current.

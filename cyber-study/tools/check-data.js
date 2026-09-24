@@ -10,7 +10,7 @@ fs.readdirSync(path.join(root, "data")).filter(f => /^labs-.+\.js$/.test(f)).for
 const fail = (id, m) => { bad++; console.log(`  ✗ ${id}: ${m}`); };
 for (const id of CertHub.catalog) {
   const f = path.join(root, "data", id + ".js");
-  if (!fs.existsSync(f)) { if (!CertHub.planned[id]) fail(id, "no data file and not listed as planned"); continue; }
+  if (!fs.existsSync(f)) { if (!CertHub.planned[id] && !(CertHub.tracks || []).some(t => t.certs.includes(id))) fail(id, "no data file and not in a track"); else console.log(`${id}: not written yet`); continue; }
   require(f);
   const c = CertHub.certs[id];
   if (!c) { fail(id, "file did not register " + id); continue; }
@@ -40,7 +40,7 @@ for (const id of CertHub.catalog) {
   console.log(`${id}: ${c.questions.length} questions, per domain ${JSON.stringify(per)}, answer positions ${pos.join("/")}, ${c.status}`);
 }
 /* ---------- labs ---------- */
-const TRACKS = ["Foundations", "Networking", "Blue team", "GRC & architecture"], LEVELS = ["Beginner", "Intermediate", "Advanced"];
+const TRACKS = ["Foundations", "Networking", "Blue team", "GRC & architecture", "Systems administration", "Software engineering"], LEVELS = ["Beginner", "Intermediate", "Advanced"];
 for (const l of Object.values(CertHub.labs)) {
   const f = m => fail(l.id, m);
   if (!/^lab-[a-z0-9-]+$/.test(l.id)) f("id must look like lab-some-name");
@@ -58,7 +58,7 @@ for (const l of Object.values(CertHub.labs)) {
 /* ---------- frameworks and NICE work roles ---------- */
 require(path.join(root, "data/frameworks.js"));
 {
-  const KINDS = ["Governance & risk", "Controls & standards", "Threat & detection", "Secure development", "Privacy & compliance", "Careers"];
+  const KINDS = ["Governance & risk", "Controls & standards", "Threat & detection", "Secure development", "Privacy & compliance", "Networking models & standards", "IT service & operations", "Software delivery", "Cloud architecture", "Careers"];
   const fwIds = new Set();
   for (const f of CertHub.frameworks || []) {
     const e = m => fail(`framework ${f.id}`, m);

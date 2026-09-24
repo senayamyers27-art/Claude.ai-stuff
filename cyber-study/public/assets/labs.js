@@ -3,8 +3,8 @@
 (function () {
   const { U, labs, labOrder, loadLabProgress, saveLabProgress, labStatus, ui } = CertHub;
   const { $, esc } = U;
-  const TRACKS = ["Foundations", "Networking", "Blue team", "GRC & architecture"];
-  const trackColor = t => `var(--d${{ Foundations: 1, Networking: 3, "Blue team": 2, "GRC & architecture": 5 }[t] || 6})`;
+  const TRACKS = ["Foundations", "Networking", "Blue team", "GRC & architecture", "Systems administration", "Software engineering"];
+  const trackColor = t => `var(--d${{ Foundations: 1, Networking: 3, "Blue team": 2, "GRC & architecture": 5, "Systems administration": 6, "Software engineering": 7 }[t] || 6})`;
   const STATE = { new: "Not started", doing: "In progress", done: "Done" };
   const filters = { track: "", cert: "", state: "", role: "", q: "" };
   const nice = () => CertHub.nice || { roles: [], rolesFor: () => [] };
@@ -152,7 +152,7 @@ ${lab.deliverable}
     const nextUp = all().filter(l => labStatus(l, lp).state === "new" && (l.requires || []).every(r => !labs[r] || labStatus(labs[r], lp).state === "done")).slice(0, 4);
     return `<h1>Your portfolio</h1>
     <p class="meta">Finished labs become proof of hands-on experience. Copy the write-ups into a GitHub repository and the bullets into your resume.</p>
-    <div class="figs3"><div class="fig"><b>${done.length}</b><span>labs finished</span></div><div class="fig"><b>${hours(mins)}</b><span>hands-on time</span></div><div class="fig"><b>${new Set(done.map(l => l.track)).size}</b><span>of 4 tracks</span></div></div>
+    <div class="figs3"><div class="fig"><b>${done.length}</b><span>labs finished</span></div><div class="fig"><b>${hours(mins)}</b><span>hands-on time</span></div><div class="fig"><b>${new Set(done.map(l => l.track)).size}</b><span>of ${TRACKS.length} tracks</span></div></div>
     ${done.length ? `<div class="btns"><button type="button" class="btn" data-lact="copybullets">Copy all resume bullets</button><button type="button" class="btn ghost" data-lact="copyportfolio">Copy full portfolio (Markdown)</button></div>
     <h2>Finished labs</h2>
     <div class="panel">${done.map(l => `<div class="row"><div class="grow"><a href="#${esc(l.id)}"><strong>${esc(l.title)}</strong></a><br><span class="note">${esc(l.track)} · finished ${new Date(lp[l.id].done).toLocaleDateString()}</span><p class="resume" style="margin:6px 0 0">${esc(l.resume)}</p></div></div>`).join("")}</div>`
