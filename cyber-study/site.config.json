@@ -7,5 +7,10 @@
   "securityContact": "https://github.com/senayamyers27-art/Claude.ai-stuff/security/advisories/new",
   "securityTxtExpires": "2027-09-24",
   "reviewEveryDays": 180,
-  "cloudflarePagesProject": "cyber-cert-study"
+  "cloudflarePagesProject": "cyber-cert-study",
+  "support": {
+    "label": "",
+    "url": ""
+  },
+  "feedbackUrl": "https://github.com/senayamyers27-art/senayamyers27-art.github.io/issues"
 }
