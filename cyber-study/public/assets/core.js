@@ -31,7 +31,9 @@
     try { const raw = store.get(KEY(id)); if (raw) Object.assign(p, JSON.parse(raw)); } catch (e) {}
     return p;
   }
-  function saveProgress(id, p) { return store.set(KEY(id), JSON.stringify(p)); }
+  // Tell the sync module (if an account is signed in) that a document changed.
+  const changed = key => { try { if (window.CertHub && CertHub.sync) CertHub.sync.changed(key); } catch (e) {} };
+  function saveProgress(id, p) { const ok = store.set(KEY(id), JSON.stringify(p)); changed(KEY(id)); return ok; }
 
   /* ---------- plan ---------- */
   // Hand-written weeks are used as-is. Otherwise the last week is a final review and the
@@ -265,7 +267,7 @@
   const labOrder = [];
   const LABKEY = "certhub:v1:labs";
   function loadLabProgress() { try { return JSON.parse(store.get(LABKEY) || "{}") || {}; } catch (e) { return {}; } }
-  function saveLabProgress(p) { return store.set(LABKEY, JSON.stringify(p)); }
+  function saveLabProgress(p) { const ok = store.set(LABKEY, JSON.stringify(p)); changed(LABKEY); return ok; }
   function labStatus(lab, p) {
     const s = (p || loadLabProgress())[lab.id];
     if (!s) return { state: "new", pct: 0 };

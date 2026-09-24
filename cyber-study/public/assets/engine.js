@@ -373,6 +373,10 @@
   CertHub.certView = {
     open, close,
     get active() { return active; },
+    // A quiz or test in progress holds unsaved state; sync waits until it's finished.
+    get busy() { return !!(active && S && S.quiz && !S.quiz.done); },
+    // Re-read progress from storage after sync merged in changes from another device.
+    reload() { if (C && S && !(S.quiz && !S.quiz.done)) { const { start, examDate } = S.p; S.p = loadProgress(C.id); S.p.start = S.p.start || start; S.p.examDate = S.p.examDate || examDate; if (active) render(); } },
     title: () => C ? `${C.short} ${C.exam}` : "",
     // Weeks and certifications that use a lab, for the lab page's "Used in" list.
     usesOf(labId) {

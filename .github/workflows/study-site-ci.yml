@@ -2,7 +2,8 @@ name: Study site CI
 
 # Every change to the Cyber Cert Study site (cyber-study/) must pass before it can deploy:
 # data checks, generated files in sync, security lint, dependency audit, and a headless
-# browser smoke test of every study page (including offline mode).
+# browser smoke test of every study page (including offline mode), plus the optional
+# accounts API: unit tests and a browser test against a local copy of it.
 
 on:
   push:
@@ -43,6 +44,9 @@ jobs:
       - name: Question banks, generated files and security lint
         run: npm run check
 
+      - name: Accounts API tests
+        run: npm run test:api
+
       - name: Dependency audit
         run: npm audit --audit-level=high
 
@@ -51,3 +55,6 @@ jobs:
 
       - name: Browser smoke test
         run: npm test
+
+      - name: Accounts browser test (local API)
+        run: npm run test:accounts

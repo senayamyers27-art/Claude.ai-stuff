@@ -70,8 +70,10 @@
 
   /* ---------- router ---------- */
   const NAV = [["home", "Certifications"], ["labs", "Labs"], ["portfolio", "Portfolio"]];
+  // The Account tab only appears when the site has an accounts API configured.
+  const navItems = () => CertHub.sync && CertHub.sync.enabled ? NAV.concat([["account", "Account"]]) : NAV;
   function topNav(cur) {
-    $("#tabs").innerHTML = NAV.map(([k, l]) => `<a role="tab" href="#${k}" aria-selected="${cur === k}">${l}</a>`).join("");
+    $("#tabs").innerHTML = navItems().map(([k, l]) => `<a role="tab" href="#${k}" aria-selected="${cur === k}">${l}</a>`).join("");
     $("#count").innerHTML = "";
   }
   // Route tokens come from the URL, so only look them up as the objects' own keys
@@ -98,6 +100,8 @@
       if (head === "labs") { topNav("labs"); $("#app").innerHTML = CertHub.labViews.library(); title = "Hands-on Labs"; view = "labs"; }
       else if (own(labs, head)) { topNav("labs"); $("#app").innerHTML = CertHub.labViews.detail(labs[head]); title = labs[head].title; view = head; }
       else if (own(POLICY_TITLES, head)) { topNav(""); const pv = CertHub.policyViews; $("#app").innerHTML = head === "privacy" ? pv.privacy() : head === "terms" ? pv.terms() : head === "install" ? pv.install() : head === "support" ? pv.support() : pv.security(); title = POLICY_TITLES[head]; view = head; }
+      else if (head === "account" && CertHub.accountViews) { topNav("account"); $("#app").innerHTML = CertHub.accountViews.account(); title = "Account"; view = "account"; }
+      else if (/^cohort-[0-9a-f]{24}$/.test(head) && CertHub.accountViews) { topNav("account"); CertHub.accountViews.cohort(head.slice(7)); title = "Cohort Progress"; view = head; }
       else if (head === "portfolio") { topNav("portfolio"); $("#app").innerHTML = CertHub.labViews.portfolio(); title = "Lab Portfolio"; view = "portfolio"; }
       else { topNav("home"); $("#app").innerHTML = homeView(); view = "home"; }
     }

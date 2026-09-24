@@ -1,0 +1,24 @@
+# Cloudflare Worker for optional accounts (see ../docs/BACKEND_DESIGN.md).
+# Deploys from GitHub Actions ("Study site API deploy"), which fills in the database id, the
+# site origin and the custom domain from site.config.json via tools/api-config.js.
+# For local development without Cloudflare, use `npm run api:dev` instead.
+name = "cyber-cert-study-api"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = false
+
+[vars]
+APP_ENV = "production"
+SITE_ORIGIN = "https://example.com"
+EMAIL_FROM = "Cyber Cert Study <signin@example.com>"
+STRIPE_TAX = "off"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cyber-cert-study"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+# Secrets (never in this file): EMAIL_API_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET.
+# Price ids (plain vars, set by the deploy workflow when present): STRIPE_PRICE_PRO_MONTHLY,
+# STRIPE_PRICE_PRO_YEARLY, STRIPE_PRICE_ORG_SEAT.
