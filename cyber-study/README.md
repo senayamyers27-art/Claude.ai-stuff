@@ -4,8 +4,14 @@ A static study website with plans for several cybersecurity certifications, grow
 Security+ Study Hub. It's a separate site from 11:Eleven: it deploys to its own domain on
 Cloudflare Pages and is excluded from this repository's GitHub Pages deploy.
 
-Everything runs in the browser. Progress is saved in `localStorage` (with backup/restore),
-pages work offline, and the site makes no requests to other websites.
+Everything runs in the browser as one app: certifications, a library of 41 step-by-step
+hands-on labs, a portfolio of finished labs, and Privacy, Terms and Security pages. Progress
+and lab notes are saved in `localStorage` (with backup/restore), pages work offline, and the
+site makes no requests to other websites.
+
+Routes are hash tokens: `#home`, `#security-plus`, `#security-plus.labs`, `#labs`,
+`#lab-linux-hardening`, `#portfolio`, `#privacy`, `#terms`, `#security`. The generated pages
+`/<cert>/`, `/privacy/`, `/terms/` and `/security/` load the same app on that route.
 
 ```
 cyber-study/
@@ -13,9 +19,12 @@ cyber-study/
   public/                 ← everything deployed (Cloudflare Pages output directory)
     index.html            home page                                 (generated)
     <cert-id>/index.html  one study page per certification          (generated)
-    assets/               core.js, engine.js, home.js, theme.js, style.css, fonts/
+    assets/               core.js, app.js (router, home), engine.js (study plans),
+                          labs.js (labs, portfolio), pages.js (policies), style.css, fonts/
     data/catalog.js       home page order, planned certifications
     data/<cert-id>.js     domains, weights, plan, notices, question bank
+    data/labs-*.js        lab library (see LABS_FORMAT.md)
+    data/lab-map.js       which labs go with which study weeks
     _headers _redirects robots.txt sitemap.xml manifest.webmanifest sw.js
     .well-known/security.txt                                        (all generated)
   functions/_middleware.js  HTTPS + canonical-host redirects         (generated)
@@ -36,6 +45,14 @@ npm test            # headless browser smoke test of every page, including offli
 
 `npm run build` writes every generated file from `site.config.json` and `public/data/`. Never
 edit generated files by hand; CI fails if they're out of date.
+
+## Labs
+
+41 labs in four tracks (Foundations, Networking, Blue team, GRC & architecture), 507 steps in
+total. Each has exact commands with copy buttons, checks that prove it worked, a notes box,
+a Markdown write-up and a resume bullet. Finished labs collect on the Portfolio page. Add or
+edit labs in `public/data/labs-*.js` following [LABS_FORMAT.md](LABS_FORMAT.md), and link them
+to study weeks in `public/data/lab-map.js`.
 
 ## Add or change a certification
 

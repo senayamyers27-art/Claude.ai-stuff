@@ -28,7 +28,7 @@ const certs = ids.map(id => CertHub.certs[id]);
 const labFiles = fs.readdirSync(path.join(PUB, "data")).filter(f => /^labs-.+\.js$/.test(f)).sort();
 global.CertHub.registerLabs = function (list) { (this.labList = this.labList || []).push(...list); };
 labFiles.forEach(f => require(path.join(PUB, "data", f)));
-const APP_SCRIPTS = ["assets/core.js", "data/catalog.js", "data/lab-map.js", ...ids.map(id => `data/${id}.js`), ...labFiles.map(f => `data/${f}`), "assets/engine.js", "assets/labs.js", "assets/app.js"];
+const APP_SCRIPTS = ["assets/core.js", "data/catalog.js", "data/lab-map.js", ...ids.map(id => `data/${id}.js`), ...labFiles.map(f => `data/${f}`), "assets/engine.js", "assets/labs.js", "assets/pages.js", "assets/app.js"];
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const changed = [];
@@ -96,6 +96,14 @@ ${shell}
 </html>
 `));
 
+const POLICY = { privacy: ["Privacy Policy", "No accounts, cookies, analytics or tracking. Your progress stays in your browser."], terms: ["Terms of Use", "Terms for using the study plans and labs, including authorized-use-only lab rules."], security: ["Security", "How the site is secured and how to report a vulnerability."] };
+Object.entries(POLICY).forEach(([id, [t, d]]) => out(`public/${id}/index.html`, `${head({ title: `${t} · ${cfg.siteName}`, desc: d, prefix: "../", urlPath: `/${id}/`, scripts: APP_SCRIPTS })}
+<body data-route="${id}">
+${shell}
+</body>
+</html>
+`));
+
 out("public/404.html", `${head({ title: "Page Not Found", desc: cfg.description, prefix: "/", urlPath: "/404", scripts: [] })}
 <body>
 <main class="wrap">
@@ -146,7 +154,7 @@ Allow: /
 ${origin ? `\nSitemap: ${origin}/sitemap.xml\n` : ""}`);
 
 // lastmod comes from each data file's lastVerified date, so the sitemap stays deterministic.
-const urls = [["/", certs.map(c => c.lastVerified).filter(Boolean).sort().pop()]].concat(certs.map(c => [`/${c.id}/`, c.lastVerified]));
+const urls = [["/", certs.map(c => c.lastVerified).filter(Boolean).sort().pop()]].concat(certs.map(c => [`/${c.id}/`, c.lastVerified]), [["/privacy/"], ["/terms/"], ["/security/"]]);
 out("public/sitemap.xml", origin ? `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(([u, d]) => `  <url><loc>${origin}${u}</loc>${d ? `<lastmod>${d}</lastmod>` : ""}</url>`).join("\n")}

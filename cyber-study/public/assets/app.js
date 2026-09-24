@@ -87,6 +87,7 @@
       CertHub.certView.close();
       if (head === "labs") { topNav("labs"); $("#app").innerHTML = CertHub.labViews.library(); title = "Hands-on Labs"; view = "labs"; }
       else if (labs[head]) { topNav("labs"); $("#app").innerHTML = CertHub.labViews.detail(labs[head]); title = labs[head].title; view = head; }
+      else if (CertHub.policyViews[head]) { topNav(""); $("#app").innerHTML = CertHub.policyViews[head](); title = { privacy: "Privacy Policy", terms: "Terms of Use", security: "Security" }[head]; view = head; }
       else if (head === "portfolio") { topNav("portfolio"); $("#app").innerHTML = CertHub.labViews.portfolio(); title = "Lab Portfolio"; view = "portfolio"; }
       else { topNav("home"); $("#app").innerHTML = homeView(); view = "home"; }
     }
