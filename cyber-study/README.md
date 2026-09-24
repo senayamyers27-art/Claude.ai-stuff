@@ -104,9 +104,9 @@ Inside the site:
 | CySA+ CS0-004 | Built, weights verified | Objective numbers follow CS0-003; check against the CS0-004 PDF |
 | CCNA 200-301 v2.0 | Built, weights verified | Exact topic numbers only where confirmed; others cite the section |
 | SSCP | Built, weights verified | Sub-objective numbers from the earlier outline |
-| Network+ N10-009 | Built, weights to confirm | Third-party sources match 23/20/19/14/24 |
-| ISC2 CC | Built, weights to confirm | Uses the outline ISC2 introduced Sept 1, 2026 |
-| CISSP | Built, weights to confirm | Third-party sources match the 2024 outline |
+| Network+ N10-009 | Built, weights verified | 23/20/19/14/24, confirmed Sept 24, 2026 |
+| ISC2 CC | Built, weights verified | Outline effective Sept 1, 2026 (24/17.3/20/21.3/17.3, rounded) |
+| CISSP | Built, weights verified | 2024 outline, confirmed Sept 24, 2026 |
 | PenTest+ PT0-003 | Not built | Listed with weights only; content generation was stopped by a safety filter |
 | CEH v13 | Not built | Same as PenTest+ |
 
