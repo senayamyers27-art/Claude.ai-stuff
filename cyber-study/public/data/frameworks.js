@@ -192,6 +192,8 @@ CertHub.niceRoles = [
   { id: "ssm", name: "Systems Security Management", category: "Oversight and Governance", titles: "Information security manager (ISSM), risk manager", about: "Manages security risk and the security program for systems or an organization." },
   { id: "testing", name: "Systems Testing and Evaluation", category: "Design and Development", titles: "QA engineer, software test engineer, SDET", about: "Plans and runs tests, automates them in pipelines and reports defects." },
   { id: "entarch", name: "Enterprise Architecture", category: "Design and Development", titles: "Cloud architect, solutions architect, platform engineer", about: "Designs how systems, clouds and networks fit together across an organization." },
+  { id: "techsupport", name: "Technical Support", category: "Implementation and Operation", titles: "Help desk technician, IT support specialist, desktop support", about: "Installs, configures and troubleshoots computers, software and user accounts, and helps people fix problems." },
+  { id: "dba", name: "Database Administration", category: "Implementation and Operation", titles: "Database administrator, data platform engineer", about: "Installs, secures, backs up, tunes and restores databases." },
   { id: "privacy", name: "Privacy Compliance", category: "Oversight and Governance", titles: "Privacy analyst, data protection officer", about: "Makes sure personal data is handled lawfully and protected." }
 ];
 
@@ -229,5 +231,14 @@ CertHub.labRoles = {
   "lab-github-actions-ci": ["securedev", "testing"],
   "lab-kubernetes-kind": ["sysadmin", "securedev", "entarch"],
   "lab-lambda-api": ["securedev", "entarch"],
-  "lab-terraform-docker": ["sysadmin", "entarch", "securedev"]
+  "lab-terraform-docker": ["sysadmin", "entarch", "securedev"],
+  "lab-helpdesk-tickets": ["techsupport"],
+  "lab-windows-deployment": ["techsupport", "sysadmin"],
+  "lab-linux-storage-lvm": ["sysadmin"],
+  "lab-systemd-services": ["sysadmin"],
+  "lab-package-patching": ["sysadmin", "ssa"],
+  "lab-powershell-admin": ["sysadmin", "techsupport"],
+  "lab-azure-admin": ["sysadmin", "entarch"],
+  "lab-k8s-cluster-admin": ["sysadmin", "infra"],
+  "lab-postgres-dba": ["dba", "sysadmin"]
 };

@@ -134,9 +134,52 @@ CertHub.labMap = {
     7: ["lab-terraform-docker"]
   } },
   "cka": { domains: {
-    2: ["lab-kubernetes-kind"],
-    3: ["lab-kubernetes-kind"],
+    1: ["lab-k8s-cluster-admin"],
+    2: ["lab-kubernetes-kind", "lab-k8s-cluster-admin"],
+    3: ["lab-kubernetes-kind", "lab-k8s-cluster-admin"],
     4: ["lab-kubernetes-kind"],
-    5: ["lab-kubernetes-kind"]
+    5: ["lab-kubernetes-kind", "lab-k8s-cluster-admin"]
+  } },
+  "a-plus-core1": { domains: {
+    4: ["lab-azure-admin"],
+    5: ["lab-helpdesk-tickets"]
+  } },
+  "a-plus-core2": { domains: {
+    1: ["lab-windows-deployment", "lab-linux-storage-lvm", "lab-package-patching"],
+    3: ["lab-helpdesk-tickets"],
+    4: ["lab-powershell-admin"]
+  } },
+  "linux-plus": { domains: {
+    1: ["lab-linux-storage-lvm", "lab-package-patching", "lab-systemd-services"],
+    2: ["lab-systemd-services", "lab-postgres-dba"],
+    3: ["lab-package-patching"],
+    4: ["lab-k8s-cluster-admin"],
+    5: ["lab-systemd-services", "lab-linux-storage-lvm"]
+  } },
+  "server-plus": { domains: {
+    1: ["lab-linux-storage-lvm"],
+    2: ["lab-windows-deployment", "lab-powershell-admin", "lab-systemd-services", "lab-package-patching"],
+    3: ["lab-postgres-dba", "lab-package-patching"],
+    4: ["lab-helpdesk-tickets", "lab-systemd-services"]
+  } },
+  "rhcsa": { domains: {
+    2: ["lab-package-patching"],
+    4: ["lab-systemd-services"],
+    5: ["lab-linux-storage-lvm"],
+    6: ["lab-linux-storage-lvm"],
+    7: ["lab-systemd-services", "lab-package-patching"]
+  } },
+  "az-104": { domains: {
+    1: ["lab-azure-admin"],
+    2: ["lab-azure-admin"],
+    3: ["lab-azure-admin"],
+    4: ["lab-azure-admin"],
+    5: ["lab-azure-admin"]
+  } },
+  "az-802": { domains: {
+    1: ["lab-ad-gpo"],
+    2: ["lab-powershell-admin"],
+    3: ["lab-windows-deployment"],
+    7: ["lab-powershell-admin"]
   } }
 };
