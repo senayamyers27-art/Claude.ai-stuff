@@ -11,7 +11,7 @@ const ctx = {
   document: { addEventListener: noop, getElementById: () => null }
 };
 vm.runInNewContext(src, ctx);
-const { mergeCert, mergeLabs, mergeDoc, enabled } = ctx.CertHub.sync;
+const { mergePlan, mergeLabs, mergeDoc, enabled } = ctx.CertHub.sync;
 const plain = v => JSON.parse(JSON.stringify(v)); // objects from the sandbox have another realm's prototypes
 
 test("sync stays off without an API", () => {
@@ -21,7 +21,7 @@ test("sync stays off without an API", () => {
 test("cert progress: checks union, bigger stats win, history merges", () => {
   const a = { start: "2026-09-01", checks: { "1-1": true, "1-2": false }, stats: { 1: { c: 5, t: 10 }, 2: { c: 1, t: 1 } }, history: [{ at: 3, title: "Test 1", score: 8, total: 10 }] };
   const b = { start: "2026-08-01", examDate: "2026-12-01", checks: { "1-2": true, "2-1": true }, stats: { 1: { c: 12, t: 20 } }, history: [{ at: 3, title: "Test 1", score: 8, total: 10 }, { at: 5, title: "Test 2", score: 9, total: 10 }] };
-  const m = plain(mergeCert(a, b));
+  const m = plain(mergePlan(a, b));
   assert.deepEqual(m.checks, { "1-1": true, "1-2": true, "2-1": true });
   assert.deepEqual(m.stats, { 1: { c: 12, t: 20 }, 2: { c: 1, t: 1 } });
   assert.deepEqual(m.history.map(h => h.at), [5, 3]);
@@ -30,16 +30,16 @@ test("cert progress: checks union, bigger stats win, history merges", () => {
 });
 
 test("cert progress: review queue keeps the entry that's further along", () => {
-  const m = plain(mergeCert({ review: { q1: { due: 100, box: 1 }, q2: { due: 900 } } }, { review: { q1: { due: 500, box: 3 }, q3: { due: 1 } } }));
+  const m = plain(mergePlan({ review: { q1: { due: 100, box: 1 }, q2: { due: 900 } } }, { review: { q1: { due: 500, box: 3 }, q3: { due: 1 } } }));
   assert.deepEqual(m.review, { q1: { due: 500, box: 3 }, q2: { due: 900 }, q3: { due: 1 } });
 });
 
 test("cert progress: merging is stable and tolerates junk", () => {
   const a = { checks: { x: true }, stats: { 1: { c: 1, t: 2 } }, history: [] };
-  const once = plain(mergeCert(a, a));
-  assert.deepEqual(plain(mergeCert(once, once)), once);
-  assert.doesNotThrow(() => mergeCert(null, "nope"));
-  assert.doesNotThrow(() => mergeCert([], { checks: null, history: null }));
+  const once = plain(mergePlan(a, a));
+  assert.deepEqual(plain(mergePlan(once, once)), once);
+  assert.doesNotThrow(() => mergePlan(null, "nope"));
+  assert.doesNotThrow(() => mergePlan([], { checks: null, history: null }));
 });
 
 test("labs: steps union, earliest start and finish, newest notes win", () => {

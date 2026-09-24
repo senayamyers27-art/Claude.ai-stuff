@@ -8,7 +8,7 @@
 
   /* ---------- merge rules (pure; also used by tests) ---------- */
   const isObj = v => v && typeof v === "object" && !Array.isArray(v);
-  function mergeCert(local, server) {
+  function mergePlan(local, server) {
     const a = isObj(local) ? local : {}, b = isObj(server) ? server : {};
     const out = { ...b, ...a };
     // Checked study days: once checked on any device, stay checked.
@@ -51,7 +51,7 @@
     }
     return out;
   }
-  const mergeDoc = (docKey, local, server) => docKey === "labs" ? mergeLabs(local, server) : mergeCert(local, server);
+  const mergeDoc = (docKey, local, server) => docKey === "labs" ? mergeLabs(local, server) : mergePlan(local, server);
 
   /* ---------- API client ---------- */
   async function api(method, path, body) {
@@ -135,7 +135,7 @@
   }
 
   CertHub.sync = {
-    mergeCert, mergeLabs, mergeDoc,
+    mergePlan, mergeLabs, mergeDoc,
     changed(storageKey) {
       if (!API || !signedIn() || !/^certhub:v1:/.test(storageKey)) return;
       pending.add(storageKey);
