@@ -1,0 +1,11 @@
+{
+  "siteName": "Cyber Cert Study",
+  "description": "Free study plans for cybersecurity certifications: weekly topics, labs, quizzes, timed checkpoint tests, weighted practice exams and spaced review.",
+  "domain": "",
+  "redirectWww": true,
+  "hstsPreload": false,
+  "securityContact": "https://github.com/senayamyers27-art/Claude.ai-stuff/security/advisories/new",
+  "securityTxtExpires": "2027-09-24",
+  "reviewEveryDays": 180,
+  "cloudflarePagesProject": "cyber-cert-study"
+}

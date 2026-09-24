@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* Sanity checks for every data file: weights, question shape, ids, answer spread. */
 const fs = require("fs"), path = require("path");
-const root = path.join(__dirname, "..");
+const root = path.join(__dirname, "..", "public");
 global.CertHub = { certs: {}, register(c) { this.certs[c.id] = c; } };
 require(path.join(root, "data/catalog.js"));
 let bad = 0;
@@ -26,6 +26,14 @@ for (const id of CertHub.catalog) {
     if (!e) fail(id, `${qid} has no explanation`);
     pos[a]++; per[d] = (per[d] || 0) + 1;
   }
+  const isDate = d => /^\d{4}-\d{2}-\d{2}$/.test(d || "") && !isNaN(Date.parse(d));
+  if (!isDate(c.lastVerified)) fail(id, "lastVerified must be a YYYY-MM-DD date");
+  (c.notices || []).forEach((n, i) => {
+    if (!n.text) fail(id, `notice ${i} has no text`);
+    if ((n.from && !isDate(n.from)) || (n.until && !isDate(n.until))) fail(id, `notice ${i} has a bad date`);
+    if (n.from && n.until && n.from > n.until) fail(id, `notice ${i} ends before it starts`);
+  });
+  if (!(c.sources || []).every(s => /^https:\/\//.test(s.url))) fail(id, "source links must use https://");
   if (!c.weeks) c.domains.forEach(d => { if (!(d.topics || []).length) fail(id, `domain ${d.id} has no topics`); });
   console.log(`${id}: ${c.questions.length} questions, per domain ${JSON.stringify(per)}, answer positions ${pos.join("/")}, ${c.status}`);
 }

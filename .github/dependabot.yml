@@ -8,3 +8,17 @@ updates:
     labels:
       - "dependencies"
       - "ci"
+
+  # Cyber Cert Study tooling (playwright for tests, wrangler for deploys).
+  # Security fixes open immediately; version bumps are grouped weekly.
+  - package-ecosystem: "npm"
+    directory: "/cyber-study"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    groups:
+      study-site-tools:
+        patterns: ["*"]
+    labels:
+      - "dependencies"
+      - "study-site"

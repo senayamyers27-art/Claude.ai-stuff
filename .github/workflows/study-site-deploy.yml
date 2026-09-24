@@ -1,0 +1,75 @@
+name: Study site deploy
+
+# Deploys cyber-study/public (plus the HTTPS redirect function) to Cloudflare Pages,
+# only after "Study site CI" passes for a push. main goes to production; any other
+# branch gets its own preview URL (hidden from search engines by the Pages Function).
+#
+# Setup (once): add repository secrets CLOUDFLARE_API_TOKEN (Account > Cloudflare Pages: Edit)
+# and CLOUDFLARE_ACCOUNT_ID. Until they exist this workflow does nothing.
+# Don't also connect the repo in Cloudflare's dashboard, or every push deploys twice.
+
+on:
+  workflow_run:
+    workflows: ["Study site CI"]
+    types: [completed]
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: study-site-deploy-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Pull requests are never deployed from here: their code must not run with the Cloudflare token.
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: ${{ github.event.workflow_run.head_branch == 'main' && 'study-site-production' || 'study-site-preview' }}
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      BRANCH: ${{ github.event.workflow_run.head_branch }}
+      SHA: ${{ github.event.workflow_run.head_sha }}
+    defaults:
+      run:
+        working-directory: cyber-study
+    steps:
+      - name: Check Cloudflare secrets
+        id: secrets
+        working-directory: .
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::notice::Cloudflare secrets aren't set yet, so nothing was deployed."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout the tested commit
+        if: steps.secrets.outputs.ready == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set up Node
+        if: steps.secrets.outputs.ready == 'true'
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cyber-study/package-lock.json
+
+      - name: Install wrangler
+        if: steps.secrets.outputs.ready == 'true'
+        run: npm ci
+
+      - name: Deploy to Cloudflare Pages
+        if: steps.secrets.outputs.ready == 'true'
+        run: |
+          PROJECT=$(node -p 'require("./site.config.json").cloudflarePagesProject')
+          npx wrangler pages project create "$PROJECT" --production-branch main 2>/dev/null || true
+          npx wrangler pages deploy public --project-name "$PROJECT" --branch "$BRANCH" --commit-hash "$SHA" --commit-dirty=false

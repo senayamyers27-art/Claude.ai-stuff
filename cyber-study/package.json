@@ -1,0 +1,21 @@
+{
+  "name": "cyber-cert-study",
+  "private": true,
+  "description": "Static study site for cybersecurity certifications. Deployed from public/ to Cloudflare Pages.",
+  "license": "UNLICENSED",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node tools/build.js",
+    "check": "node tools/check-data.js && node tools/build.js --check && node tools/check-security.js",
+    "test": "node tools/smoke.js",
+    "start": "node tools/serve.js 8000",
+    "freshness": "node tools/freshness.js",
+    "live-check": "node tools/live-check.js",
+    "cloudflare-config": "node tools/cloudflare-config.js",
+    "deploy": "wrangler pages deploy public --project-name cyber-cert-study"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1",
+    "wrangler": "4.138.0"
+  }
+}

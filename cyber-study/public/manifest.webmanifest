@@ -1,0 +1,36 @@
+{
+  "name": "Cyber Cert Study",
+  "short_name": "Cert Study",
+  "description": "Free study plans for cybersecurity certifications: weekly topics, labs, quizzes, timed checkpoint tests, weighted practice exams and spaced review.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#EEF1F4",
+  "theme_color": "#EEF1F4",
+  "icons": [
+    {
+      "src": "/assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Security+ study plan",
+      "url": "/security-plus/"
+    },
+    {
+      "name": "CySA+ study plan",
+      "url": "/cysa-plus/"
+    },
+    {
+      "name": "CCNA study plan",
+      "url": "/ccna/"
+    },
+    {
+      "name": "SSCP study plan",
+      "url": "/sscp/"
+    }
+  ]
+}

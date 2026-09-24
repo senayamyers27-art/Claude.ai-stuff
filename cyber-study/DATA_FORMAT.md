@@ -1,11 +1,12 @@
 # Certification data files
 
-Each certification is one file in `data/<id>.js` that calls `CertHub.register({...})`.
+Each certification is one file in `public/data/<id>.js` that calls `CertHub.register({...})`.
 The shared engine (`assets/engine.js`) turns it into a study page with a plan, weekly
 quizzes, timed checkpoint tests, a practice exam, spaced review and progress by domain.
 
-To add a certification: write `data/<id>.js`, add the id to `data/catalog.js`, then run
-`node tools/make-pages.js` to create `<id>/index.html`.
+To add a certification: write `public/data/<id>.js`, add the id to `public/data/catalog.js`,
+then run `npm run build` (creates `public/<id>/index.html` and updates the sitemap and
+service worker), `npm run check` and `npm test`.
 
 ## Fields
 
@@ -22,6 +23,11 @@ CertHub.register({
   // "check":    weights not yet confirmed; the page shows a warning banner
   status: "verified",
   statusNote: "Weights verified Sept 24, 2026. CS0-003 retires Nov 22, 2026.",
+  lastVerified: "2026-09-24",      // when exam details were last checked; the weekly
+                                   // maintenance report asks again after reviewEveryDays
+
+  // Dated banners, shown only between from and until (both optional, YYYY-MM-DD)
+  notices: [{ from: "2026-09-24", until: "2026-11-22", text: "CS0-003 retires Nov 22, 2026." }],
 
   examInfo: { questions: "Max 85", minutes: 165, pass: "750 on a 100–900 scale" },
   examSim:  { questions: 85, minutes: 165 },   // practice exam size and time limit

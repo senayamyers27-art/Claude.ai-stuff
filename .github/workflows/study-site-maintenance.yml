@@ -1,0 +1,56 @@
+name: Study site maintenance
+
+# Weekly report on what needs updating: exam details due for a re-check, weights still
+# to confirm, notices starting or ending, security.txt expiry, and changes on the official
+# exam pages. Kept in one issue titled "Study site maintenance report", updated in place.
+
+on:
+  schedule:
+    - cron: "0 13 * * 1" # Mondays, 08:00 America/Chicago
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+
+      - name: Load last week's page fingerprints
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553 # v9
+        with:
+          script: |
+            const fs = require("fs");
+            const { data } = await github.rest.issues.listForRepo({ ...context.repo, state: "open", per_page: 100 });
+            const issue = data.find(i => i.title === "Study site maintenance report" && !i.pull_request);
+            const m = issue && issue.body && issue.body.match(/<!-- state:([A-Za-z0-9+/=]+) -->/);
+            fs.writeFileSync("cyber-study/.state.json", m ? Buffer.from(m[1], "base64").toString() : "{}");
+
+      - name: Build the report
+        id: report
+        working-directory: cyber-study
+        run: node tools/freshness.js --state .state.json --state-out .state-new.json --out report.md
+
+      - name: Update the issue
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553 # v9
+        with:
+          script: |
+            const fs = require("fs");
+            const title = "Study site maintenance report";
+            const state = Buffer.from(fs.readFileSync("cyber-study/.state-new.json", "utf8")).toString("base64");
+            const body = fs.readFileSync("cyber-study/report.md", "utf8") + `\n<!-- state:${state} -->\n`;
+            const { data } = await github.rest.issues.listForRepo({ ...context.repo, state: "open", per_page: 100 });
+            const issue = data.find(i => i.title === title && !i.pull_request);
+            if (issue) await github.rest.issues.update({ ...context.repo, issue_number: issue.number, body });
+            else await github.rest.issues.create({ ...context.repo, title, body, labels: ["study-site"] });
+            core.summary.addRaw(fs.readFileSync("cyber-study/report.md", "utf8")).write();
