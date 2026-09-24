@@ -42,6 +42,7 @@ npm run build       # regenerate pages and config files after editing data or co
 npm run check       # data checks + generated files in sync + security lint
 npm test            # headless browser smoke test of every page, including offline mode
 npm run test:api    # accounts API tests (see "Optional accounts" below)
+npm run test:a11y   # accessibility: axe-core WCAG 2.2 AA on every view, light and dark
 ```
 
 `npm run build` writes every generated file from `site.config.json` and `public/data/`. Never

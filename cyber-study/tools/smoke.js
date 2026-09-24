@@ -88,10 +88,10 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(`${BASE}/#security-plus`);
   await page.waitForSelector(".labgrid");
   check((await page.$$(".labgrid .labcard")).length >= 1, "study week links to its labs");
-  for (const pth of ["privacy", "terms", "security"]) {
+  for (const pth of ["privacy", "terms", "security", "frameworks"]) {
     const r = await page.goto(`${BASE}/${pth}/`);
     await page.waitForSelector("h1");
-    check(r.status() === 200 && /Privacy|Terms|Security/.test(await page.textContent("h1")), `/${pth}/ policy page renders`);
+    check(r.status() === 200 && /Privacy|Terms|Security|Frameworks/.test(await page.textContent("h1")), `/${pth}/ policy page renders`);
   }
 
   console.log("Without accounts");

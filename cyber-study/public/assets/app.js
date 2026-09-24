@@ -69,7 +69,7 @@
   };
 
   /* ---------- router ---------- */
-  const NAV = [["home", "Certifications"], ["labs", "Labs"], ["portfolio", "Portfolio"]];
+  const NAV = [["home", "Certifications"], ["labs", "Labs"], ["portfolio", "Portfolio"], ["frameworks", "Frameworks"]];
   // The Account tab only appears when the site has an accounts API configured.
   const navItems = () => CertHub.sync && CertHub.sync.enabled ? NAV.concat([["account", "Account"]]) : NAV;
   function topNav(cur) {
@@ -103,6 +103,7 @@
       else if (head === "account" && CertHub.accountViews) { topNav("account"); $("#app").innerHTML = CertHub.accountViews.account(); title = "Account"; view = "account"; }
       else if (/^cohort-[0-9a-f]{24}$/.test(head) && CertHub.accountViews) { topNav("account"); CertHub.accountViews.cohort(head.slice(7)); title = "Cohort Progress"; view = head; }
       else if (/^cap-[a-z0-9-]{1,60}$/.test(head) && CertHub.pro) { topNav("labs"); CertHub.pro.capstoneView(head); title = "Capstone project"; view = head; }
+      else if (head === "frameworks" && CertHub.frameworksView) { topNav("frameworks"); $("#app").innerHTML = CertHub.frameworksView(); title = "Frameworks"; view = "frameworks"; }
       else if (head === "portfolio") { topNav("portfolio"); $("#app").innerHTML = CertHub.labViews.portfolio(); title = "Lab Portfolio"; view = "portfolio"; }
       else { topNav("home"); $("#app").innerHTML = homeView(); view = "home"; }
     }

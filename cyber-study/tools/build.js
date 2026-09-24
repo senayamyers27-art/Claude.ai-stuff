@@ -122,7 +122,7 @@ ${shell}
 </html>
 `));
 
-const POLICY = { support: ["Support This Site", "Ways to help keep Cyber Cert Study free: share it, send feedback, or donate."], install: ["Install the App", "Add Cyber Cert Study to your phone's home screen. Works offline, no app store needed."], privacy: ["Privacy Policy", "No accounts, cookies, analytics or tracking. Your progress stays in your browser."], terms: ["Terms of Use", "Terms for using the study plans and labs, including authorized-use-only lab rules."], security: ["Security", "How the site is secured and how to report a vulnerability."] };
+const POLICY = { support: ["Support This Site", "Ways to help keep Cyber Cert Study free: share it, send feedback, or donate."], install: ["Install the App", "Add Cyber Cert Study to your phone's home screen. Works offline, no app store needed."], privacy: ["Privacy Policy", "No accounts, cookies, analytics or tracking. Your progress stays in your browser."], terms: ["Terms of Use", "Terms for using the study plans and labs, including authorized-use-only lab rules."], security: ["Security", "How the site is secured and how to report a vulnerability."], frameworks: ["Security Frameworks", "NIST CSF, ATT&CK, CIS Controls, ISO 27001, OWASP and more: what each framework is, which exams test it, and labs that use it. Plus NICE cybersecurity job roles."] };
 Object.entries(POLICY).forEach(([id, [t, d]]) => out(`public/${id}/index.html`, `${head({ title: `${t} · ${cfg.siteName}`, desc: d, prefix: "../", urlPath: `/${id}/`, scripts: APP_SCRIPTS })}
 <body data-route="${id}">
 ${shell}
@@ -180,7 +180,7 @@ Allow: /
 ${origin ? `\nSitemap: ${origin}/sitemap.xml\n` : ""}`);
 
 // lastmod comes from each data file's lastVerified date, so the sitemap stays deterministic.
-const urls = [["/", certs.map(c => c.lastVerified).filter(Boolean).sort().pop()]].concat(certs.map(c => [`/${c.id}/`, c.lastVerified]), [["/install/"], ["/support/"], ["/privacy/"], ["/terms/"], ["/security/"]]);
+const urls = [["/", certs.map(c => c.lastVerified).filter(Boolean).sort().pop()]].concat(certs.map(c => [`/${c.id}/`, c.lastVerified]), [["/frameworks/"], ["/install/"], ["/support/"], ["/privacy/"], ["/terms/"], ["/security/"]]);
 out("public/sitemap.xml", origin ? `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(([u, d]) => `  <url><loc>${origin}${u}</loc>${d ? `<lastmod>${d}</lastmod>` : ""}</url>`).join("\n")}

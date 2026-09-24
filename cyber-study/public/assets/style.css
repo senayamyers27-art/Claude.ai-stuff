@@ -5,7 +5,7 @@
 @font-face{font-family:"Public Sans";font-style:normal;font-weight:800;font-display:swap;src:url("fonts/public-sans-latin-800-normal.woff2") format("woff2")}
 :root{
   --bg:#EEF1F4; --surface:#FFFFFF; --ink:#16202C; --muted:#5A6573; --line:#D5DBE2; --soft:#E4E9EE;
-  --d1:#2D5BD0; --d2:#C9372A; --d3:#12806A; --d4:#B57C00; --d5:#7646AE;
+  --d1:#2D5BD0; --d2:#C9372A; --d3:#12806A; --d4:#8F6100; --d5:#7646AE;
   --d6:#0E7490; --d7:#BE185D; --d8:#4D7C0F; --d9:#9A3412; --d0:#16202C;
   --ok:#12806A; --bad:#C9372A; --warn:#8A5A00; --code:#F5F7F9;
   color-scheme:light;
@@ -229,3 +229,5 @@ footer.foot{max-width:760px;margin:0 auto;padding:18px 16px 40px;color:var(--mut
   .guide details.week{break-inside:avoid-page;border:0}
   .guide details.week>summary{list-style:none}
 }
+.cmd pre:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.scroll:focus-visible{outline:2px solid var(--ink);outline-offset:2px}

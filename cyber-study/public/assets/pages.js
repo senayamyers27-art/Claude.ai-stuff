@@ -70,7 +70,8 @@
     <p>Labs and exam pages link to official documentation and vendor sites (for example CompTIA, ISC2, Cisco, NIST and tool vendors). Those sites have their own privacy practices. Labs that use cloud services (such as AWS) or third-party tools involve accounts you create with those providers under their terms.</p>
 
     <h2>Children</h2>
-    <p>The site is intended for adults and students preparing for professional certifications. It is not directed to children under 13, and it does not knowingly collect personal information from anyone.</p>
+    <p>The site is intended for adults and students preparing for professional certifications. It is not directed to children under 13${accounts() ? "" : ", and it does not knowingly collect personal information from anyone"}.</p>
+    ${accounts() ? `<p>Accounts are only for people aged 13 or older, or the minimum age for consenting to online services where you live if that is higher (up to 16 in some EU countries). We don't knowingly collect personal information from children under 13. If you believe a child has created an account, contact us and we will delete it. Studying without an account needs no personal information at all.</p>` : ""}
 
     <h2>Your choices</h2>
     <p>You can view, back up, restore or erase your data at any time: use the backup and reset options on the Progress tab or home page, or clear this site's data in your browser settings.</p>
@@ -111,7 +112,7 @@
     <h2>5. Your content</h2>
     <p>Notes, write-ups and portfolio text you create belong to you. They are stored in your browser${accounts() ? ", and on our server only if you sign in to sync them," : ""} (see the <a href="#privacy">Privacy Policy</a>).${accounts() ? " You let us store and copy them only to sync them to your devices." : ""}</p>
     ${accounts() ? `<h2>5a. Accounts and paid plans</h2>
-    <p>Accounts are optional. Keep your email account secure, since sign-in links go there. Pro and group plans renew automatically until cancelled; you can cancel any time from Manage billing and keep access until the end of the paid period. If you're not happy with Pro, ask within 7 days of your first payment for a full refund. Prices and taxes are shown at checkout by Stripe. Organization owners are responsible for inviting only people who agreed to share their progress numbers with instructors. We may suspend accounts that abuse the service.</p>` : ""}
+    <p>Accounts are optional. You must be at least 13 years old to create one, or older where local law sets a higher age for consenting to online services. Keep your email account secure, since sign-in links go there. Pro and group plans renew automatically until cancelled; you can cancel any time from Manage billing and keep access until the end of the paid period. If you're not happy with Pro, ask within 7 days of your first payment for a full refund. Prices and taxes are shown at checkout by Stripe. Organization owners are responsible for inviting only people who agreed to share their progress numbers with instructors. We may suspend accounts that abuse the service.</p>` : ""}
 
     <h2>6. Acceptable use</h2>
     <p>Don't try to disrupt the site or its hosting, bypass its security controls, or use automated tools to overload it. If you find a security issue, please report it privately (see the <a href="#security">Security</a> page).</p>
@@ -141,7 +142,7 @@
       ? "Without an account the site stores nothing about you on a server. Optional accounts are protected as described under Accounts below."
       : "The site stores nothing about you on a server: there are no accounts, no database and no cookies. That removes most of the risks a typical website has."}</div>
     <h2>In the browser</h2>
-    <div class="scroll"><table class="sectable"><tbody>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table class="sectable"><tbody>
       ${row("Content Security Policy", "Scripts, styles, fonts and connections are allowed only from the site itself. No inline scripts, <code>eval</code> or third-party code. Plugins (<code>object-src</code>) are blocked.")}
       ${row("No third parties", "Fonts are self-hosted and there are no analytics, ads or CDNs, so no outside service sees your visits. An automated test fails if any page requests another site.")}
       ${row("Output escaping", "All content is escaped before it's placed on the page, which prevents injected HTML or script (XSS). A lint check blocks unescaped values.")}
@@ -150,7 +151,7 @@
       ${row("Local data only", accounts() ? "Progress and notes stay in your browser's storage. Nothing is uploaded unless you sign in to sync." : "Progress and notes stay in your browser's storage. Nothing is uploaded.")}
     </tbody></table></div>
     ${accounts() ? `<h2>Accounts</h2>
-    <div class="scroll"><table class="sectable"><tbody>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table class="sectable"><tbody>
       ${row("No passwords", "Sign-in uses one-time email links that expire in 15 minutes. Only a SHA-256 hash of each link and session token is stored, so a database leak can't be used to sign in.")}
       ${row("Session cookie", "<code>__Host-</code> prefixed, <code>Secure</code>, <code>HttpOnly</code>, <code>SameSite=Lax</code>, 30-day sliding expiry; signing out deletes it on the server.")}
       ${row("Request forgery", "Every change must come from the site's own origin; the API allows cross-origin requests only from the site.")}
@@ -160,14 +161,14 @@
       ${row("Your control", "Download everything the server holds about you, or delete your account, from the Account page.")}
     </tbody></table></div>` : ""}
     <h2>In transit</h2>
-    <div class="scroll"><table class="sectable"><tbody>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table class="sectable"><tbody>
       ${row("HTTPS everywhere", "Every <code>http://</code> request is redirected to <code>https://</code> (301), and pages upgrade any insecure request.")}
       ${row("HSTS", "<code>Strict-Transport-Security</code> for two years including subdomains, so browsers refuse plain HTTP after the first visit.")}
       ${row("Modern TLS", "TLS 1.2 minimum and TLS 1.3 enabled; TLS 1.0 and 1.1 are refused. Certificates are issued and renewed automatically by Cloudflare.")}
       ${row("One canonical address", "<code>www</code> and the Cloudflare preview address redirect to the main domain; preview builds are hidden from search engines.")}
     </tbody></table></div>
     <h2>In development and operations</h2>
-    <div class="scroll"><table class="sectable"><tbody>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table class="sectable"><tbody>
       ${row("Checks on every change", "Automated CI validates content, runs a security lint (CSP, inline scripts, insecure links, escaping), audits dependencies and runs a browser test of every page before anything can deploy.")}
       ${row("Code and secret scanning", "CodeQL static analysis and gitleaks secret scanning run on the repository.")}
       ${row("Dependency updates", "Dependabot opens updates for build tools and GitHub Actions weekly; actions are pinned to exact commit SHAs.")}
