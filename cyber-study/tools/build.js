@@ -67,6 +67,10 @@ function head({ title, desc, prefix, urlPath, scripts }) {
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">${canonical}
 <link rel="icon" href="${prefix}assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="${prefix}assets/icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cert Study">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="${prefix}manifest.webmanifest">
 <link rel="preload" href="${prefix}assets/fonts/public-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${prefix}assets/style.css">
@@ -95,7 +99,7 @@ ${shell}
 </html>
 `));
 
-const POLICY = { privacy: ["Privacy Policy", "No accounts, cookies, analytics or tracking. Your progress stays in your browser."], terms: ["Terms of Use", "Terms for using the study plans and labs, including authorized-use-only lab rules."], security: ["Security", "How the site is secured and how to report a vulnerability."] };
+const POLICY = { install: ["Install the App", "Add Cyber Cert Study to your phone's home screen. Works offline, no app store needed."], privacy: ["Privacy Policy", "No accounts, cookies, analytics or tracking. Your progress stays in your browser."], terms: ["Terms of Use", "Terms for using the study plans and labs, including authorized-use-only lab rules."], security: ["Security", "How the site is secured and how to report a vulnerability."] };
 Object.entries(POLICY).forEach(([id, [t, d]]) => out(`public/${id}/index.html`, `${head({ title: `${t} · ${cfg.siteName}`, desc: d, prefix: "../", urlPath: `/${id}/`, scripts: APP_SCRIPTS })}
 <body data-route="${id}">
 ${shell}
@@ -153,7 +157,7 @@ Allow: /
 ${origin ? `\nSitemap: ${origin}/sitemap.xml\n` : ""}`);
 
 // lastmod comes from each data file's lastVerified date, so the sitemap stays deterministic.
-const urls = [["/", certs.map(c => c.lastVerified).filter(Boolean).sort().pop()]].concat(certs.map(c => [`/${c.id}/`, c.lastVerified]), [["/privacy/"], ["/terms/"], ["/security/"]]);
+const urls = [["/", certs.map(c => c.lastVerified).filter(Boolean).sort().pop()]].concat(certs.map(c => [`/${c.id}/`, c.lastVerified]), [["/install/"], ["/privacy/"], ["/terms/"], ["/security/"]]);
 out("public/sitemap.xml", origin ? `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(([u, d]) => `  <url><loc>${origin}${u}</loc>${d ? `<lastmod>${d}</lastmod>` : ""}</url>`).join("\n")}
@@ -171,9 +175,15 @@ ${origin ? `Canonical: ${origin}/.well-known/security.txt\n` : ""}`);
 
 out("public/manifest.webmanifest", JSON.stringify({
   name: cfg.siteName, short_name: "Cert Study", description: cfg.description,
-  start_url: "/", scope: "/", display: "standalone", background_color: "#EEF1F4", theme_color: "#EEF1F4",
-  icons: [{ src: "/assets/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }],
-  shortcuts: certs.slice(0, 4).map(c => ({ name: `${c.short} study plan`, url: `/${c.id}/` }))
+  id: "/", start_url: "/", scope: "/", display: "standalone", orientation: "any",
+  background_color: "#EEF1F4", theme_color: "#EEF1F4", categories: ["education"],
+  icons: [
+    { src: "/assets/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+    { src: "/assets/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+    { src: "/assets/icons/maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+    { src: "/assets/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }
+  ],
+  shortcuts: [{ name: "Labs", url: "/#labs" }, { name: "Portfolio", url: "/#portfolio" }, ...certs.slice(0, 2).map(c => ({ name: `${c.short} study plan`, url: `/${c.id}/` }))]
 }, null, 2) + "\n");
 
 /* ---------- service worker: offline study, versioned by content hash ---------- */

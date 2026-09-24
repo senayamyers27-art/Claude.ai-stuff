@@ -40,6 +40,7 @@
       <p class="meta">Pick a certification for a week-by-week plan with quizzes, timed checkpoint tests, a practice exam weighted like the real one, and spaced review. Every week links to step-by-step labs you do in your own home lab, so you finish with real experience and a portfolio, not just a score.</p>
       <div class="btns">${start ? `<a class="btn" href="#lab-home-lab">Start with the home lab</a>` : ""}<a class="btn ghost" href="#labs">Browse ${labList.length} labs</a><a class="btn ghost" href="#portfolio">Your portfolio${doneLabs ? ` (${doneLabs})` : ""}</a></div>
     </section>
+    ${CertHub.install.installed() ? "" : `<div class="panel installcard"><div class="grow"><strong>Get the app on your phone</strong><br><span class="note">Install it from your browser: it opens full screen and works offline. No app store needed.</span></div><div class="btns" style="margin:0">${CertHub.install.prompt ? `<button type="button" class="btn sm" data-gact="install">Install</button>` : ""}<a class="btn ghost sm" href="#install">How to install</a></div></div>`}
     <h2>Certifications</h2>
     <div class="cards">${CertHub.catalog.map(certCard).join("")}</div>
     <h2>Your progress</h2>
@@ -75,7 +76,7 @@
   // Route tokens come from the URL, so only look them up as the objects' own keys
   // (never inherited ones like "constructor" or "__proto__").
   const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
-  const POLICY_TITLES = { privacy: "Privacy Policy", terms: "Terms of Use", security: "Security" };
+  const POLICY_TITLES = { privacy: "Privacy Policy", terms: "Terms of Use", security: "Security", install: "Install the App" };
   function route() {
     let raw = "";
     try { raw = decodeURIComponent(location.hash.replace(/^#/, "")); } catch (e) { raw = ""; }
@@ -95,7 +96,7 @@
       CertHub.certView.close();
       if (head === "labs") { topNav("labs"); $("#app").innerHTML = CertHub.labViews.library(); title = "Hands-on Labs"; view = "labs"; }
       else if (own(labs, head)) { topNav("labs"); $("#app").innerHTML = CertHub.labViews.detail(labs[head]); title = labs[head].title; view = head; }
-      else if (own(POLICY_TITLES, head)) { topNav(""); const pv = CertHub.policyViews; $("#app").innerHTML = head === "privacy" ? pv.privacy() : head === "terms" ? pv.terms() : pv.security(); title = POLICY_TITLES[head]; view = head; }
+      else if (own(POLICY_TITLES, head)) { topNav(""); const pv = CertHub.policyViews; $("#app").innerHTML = head === "privacy" ? pv.privacy() : head === "terms" ? pv.terms() : head === "install" ? pv.install() : pv.security(); title = POLICY_TITLES[head]; view = head; }
       else if (head === "portfolio") { topNav("portfolio"); $("#app").innerHTML = CertHub.labViews.portfolio(); title = "Lab Portfolio"; view = "portfolio"; }
       else { topNav("home"); $("#app").innerHTML = homeView(); view = "home"; }
     }
@@ -113,6 +114,7 @@
     if (a === "download") CertHub.exportAll();
     if (a === "copybackup") ui.copy(CertHub.backupText(), "progress backup");
     if (a === "pasterestore") CertHub.restoreFromText();
+    if (a === "install") CertHub.install.run().then(ok => { if (!ok) location.hash = "install"; else CertHub.rerender(); });
   });
   document.addEventListener("change", e => {
     if (e.target.id !== "imp" || view !== "home" || !e.target.files[0]) return;

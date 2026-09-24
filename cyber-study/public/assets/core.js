@@ -189,6 +189,29 @@
     }).catch(() => {});
   }
   document.addEventListener("DOMContentLoaded", registerSW);
+  /* ---------- "Install app" ---------- */
+  // Chrome, Edge and Android offer an install prompt we can trigger from our own button;
+  // iPhone and iPad install only from Safari's Share menu, so we show steps instead.
+  const install = {
+    prompt: null,
+    installed: () => { try { return matchMedia("(display-mode: standalone)").matches || navigator.standalone === true; } catch (e) { return false; } },
+    platform() {
+      const ua = navigator.userAgent || "";
+      if (/iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) return "ios";
+      if (/Android/.test(ua)) return "android";
+      return "desktop";
+    },
+    async run() {
+      if (!install.prompt) return false;
+      install.prompt.prompt();
+      const choice = await install.prompt.userChoice.catch(() => ({}));
+      install.prompt = null;
+      return choice.outcome === "accepted";
+    }
+  };
+  window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); install.prompt = e; document.documentElement.classList.add("can-install"); if (window.CertHub && CertHub.rerender && location.hash.replace("#", "") in { "": 1, home: 1, install: 1 }) CertHub.rerender(); });
+  window.addEventListener("appinstalled", () => { install.prompt = null; document.documentElement.classList.remove("can-install"); if (window.CertHub && CertHub.ui) CertHub.ui.toast("Installed. Open Cyber Cert Study from your home screen."); });
+
   // Inside a frame, file downloads are usually blocked, so hide download-only buttons.
   try { if (window.self !== window.top) document.documentElement.classList.add("framed"); } catch (e) { document.documentElement.classList.add("framed"); }
 
@@ -253,7 +276,7 @@
 
   window.CertHub = {
     U, store, certs, buildPlan, loadProgress, saveProgress, freshProgress, applyTheme, themeButton, exportAll, importAll, activeNotices,
-    backupText, restoreText, ui, labs, labOrder, loadLabProgress, saveLabProgress, labStatus,
+    backupText, restoreText, ui, install, labs, labOrder, loadLabProgress, saveLabProgress, labStatus,
     register(c) { certs[c.id] = c; },
     registerLabs(list) { list.forEach(l => { if (!labs[l.id]) labOrder.push(l.id); labs[l.id] = l; }); }
   };
