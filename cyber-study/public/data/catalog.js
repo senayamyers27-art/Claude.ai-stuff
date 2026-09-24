@@ -11,7 +11,7 @@ CertHub.tracks = [
   { id: "secadmin", name: "Cybersecurity Administration", blurb: "Run security day to day: cloud security, identity, security operations and firewalls.",
     certs: ["security-plus", "sscp", "cysa-plus", "sc-500", "sc-300", "sc-200", "palo-alto-ngfw", "fortinet-fortigate"] },
   { id: "sysadmin", name: "System Administrator", blurb: "Support and run systems: desktops, Linux and Windows servers, cloud and Kubernetes.",
-    certs: ["a-plus-core1", "a-plus-core2", "linux-plus", "server-plus", "rhcsa", "az-104", "az-800", "cka"] }
+    certs: ["a-plus-core1", "a-plus-core2", "linux-plus", "server-plus", "rhcsa", "az-104", "az-802", "cka"] }
 ];
 // Every certification once, in track order.
 CertHub.catalog = [...new Set(CertHub.tracks.flatMap(t => t.certs))];
