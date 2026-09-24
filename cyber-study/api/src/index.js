@@ -91,11 +91,13 @@ async function route(request, env) {
     return json(env, request, r.data, r.status);
   }
 
-  if ((m = path.match(/^\/v1\/content\/([a-z0-9-]{1,40})\/questions$/)) && method === "GET") {
+  // Pro bundles: /v1/content/<cert-id> (questions, flashcards, study guide) and
+  // /v1/content/capstones. The older /v1/content/<cert-id>/questions path returns the same bundle.
+  if ((m = path.match(/^\/v1\/content\/([a-z0-9-]{1,40})(?:\/questions)?$/)) && method === "GET") {
     const ent = await entitlementsFor(env, user.id);
-    if (!ent.features.includes("pro_content")) throw new HttpError(402, "pro_required", "Extra question banks are part of Pro.");
+    if (!ent.features.includes("pro_content")) throw new HttpError(402, "pro_required", "This is part of Pro.");
     const obj = env.CONTENT ? await env.CONTENT.get(`pro/${m[1]}.json`) : null;
-    if (!obj) throw notFound("No extra questions for this certification yet.");
+    if (!obj) throw notFound("No Pro content for this yet.");
     return new Response(obj.body, { headers: { "Content-Type": "application/json; charset=utf-8", ...SECURITY_HEADERS, ...cors(env, request) } });
   }
 

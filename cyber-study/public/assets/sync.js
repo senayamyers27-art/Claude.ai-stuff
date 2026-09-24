@@ -20,9 +20,16 @@
       const x = (a.stats || {})[d], y = (b.stats || {})[d];
       out.stats[d] = !x ? y : !y ? x : (y.t > x.t ? y : x);
     }
-    // Review queue: per question, keep the entry that's due later (further along).
-    out.review = { ...(b.review || {}) };
-    for (const [q, r] of Object.entries(a.review || {})) { const s = out.review[q]; out.review[q] = !s || (r.due || 0) >= (s.due || 0) ? r : s; }
+    // Accuracy by exam objective (Pro score report): same rule as the domain stats.
+    out.objs = {};
+    for (const o of new Set([...Object.keys(a.objs || {}), ...Object.keys(b.objs || {})])) {
+      const x = (a.objs || {})[o], y = (b.objs || {})[o];
+      out.objs[o] = !x ? y : !y ? x : (y.t > x.t ? y : x);
+    }
+    // Review queue and flashcard schedule: per item, keep the entry that's due later (further along).
+    const later = (x, y) => { const o = { ...(y || {}) }; for (const [k, r] of Object.entries(x || {})) { const s = o[k]; o[k] = !s || (r.due || 0) >= (s.due || 0) ? r : s; } return o; };
+    out.review = later(a.review, b.review);
+    out.cards = later(a.cards, b.cards);
     // History: union by time, newest 60.
     const seen = new Set();
     out.history = [...(a.history || []), ...(b.history || [])].filter(h => h && !seen.has(h.at + "|" + h.title) && seen.add(h.at + "|" + h.title)).sort((x, y) => y.at - x.at).slice(0, 60);
@@ -76,11 +83,13 @@
   const readLocal = k => { try { return JSON.parse(store.get(k) || "null"); } catch (e) { return null; } };
 
   let me = null, syncing = false, pushTimer = null, lastError = "";
+  // Other modules (Pro) listen for "certhub:me" to react to sign-in, sign-out and plan changes.
+  const setMe = v => { me = v; document.dispatchEvent(new Event("certhub:me")); };
   const pending = new Set();
 
   async function refreshMe() {
     if (!API) return null;
-    try { me = (await api("GET", "/v1/me")).data; } catch (e) { me = null; }
+    try { setMe((await api("GET", "/v1/me")).data); } catch (e) { setMe(null); }
     return me;
   }
   const signedIn = () => !!(me && me.user);
@@ -151,6 +160,14 @@
     el.textContent = syncing ? "Syncing…" : lastError ? `Not synced: ${lastError}` : st.lastSync ? `Synced ${new Date(st.lastSync).toLocaleString()}` : "Not synced yet";
   }
   const PLAN = { free: "Free", pro: "Pro", org: "Organization" };
+  const PRICE = (CertHub.site && CertHub.site.pro) || {};
+  // What Pro adds. Everything else on the site stays free.
+  const proPitch = () => `<p style="margin:0">Everything on the site stays free. Pro adds:</p><ul class="clean">
+      <li>About 300 extra practice questions per certification, with explanations</li>
+      <li>Full-length timed exams at the real exam's length, with a pass estimate</li>
+      <li>A score report: weakest domains and objectives, trend and exam readiness</li>
+      <li>Flashcards with spaced repetition, and printable study guides</li>
+      <li>Capstone projects with grading rubrics for your portfolio</li></ul>`;
 
   function accountView() {
     if (!API) return `<h1>Account</h1><div class="status">Accounts aren't available on this site yet. Everything still works without one: your progress is saved on this device.</div>`;
@@ -163,7 +180,8 @@
         <div class="btns"><button type="submit" class="btn">Email me a sign-in link</button></div>
         <p class="note" id="signin-msg" role="status"></p>
       </form>
-      <p class="note">No password. We email a link that signs you in once and expires in 15 minutes. See the <a href="#privacy">Privacy Policy</a>.</p>`;
+      <p class="note">No password. We email a link that signs you in once and expires in 15 minutes. See the <a href="#privacy">Privacy Policy</a>.</p>
+      ${me && me.billing ? `<h2>Pro</h2><div class="panel">${proPitch()}<p class="note" style="margin:0">${PRICE.monthly ? `${esc(PRICE.monthly)} a month or ${esc(PRICE.yearly)} a year. ` : ""}Sign in first, then upgrade from this page.</p></div>` : ""}`;
     }
     const u = me.user, plan = me.plan || "free";
     const orgs = me.orgs || [];
@@ -172,9 +190,9 @@
       <div class="row"><div class="grow"><strong>${esc(u.email)}</strong><br><span class="note">Plan: ${esc(PLAN[plan] || plan)}</span></div><button type="button" class="btn ghost sm" data-aact="signout">Sign out</button></div>
       <div class="row"><div class="grow"><strong>Sync</strong><br><span class="note" id="syncstatus"></span></div><button type="button" class="btn sm" data-aact="sync">Sync now</button></div>
     </div>
-    ${me.billing ? `<h2>Pro</h2><div class="panel">${plan === "pro"
-      ? `<p style="margin:0">Thanks for supporting the site. Manage or cancel your plan any time.</p><div class="btns"><button type="button" class="btn ghost" data-aact="portal">Manage billing</button></div>`
-      : `<p style="margin:0">Pro adds extra question banks and full-length practice exams, and keeps the site free for everyone else.</p><div class="btns"><button type="button" class="btn" data-aact="upgrade" data-interval="month">Upgrade monthly</button><button type="button" class="btn ghost" data-aact="upgrade" data-interval="year">Upgrade yearly</button></div>`}</div>` : ""}
+    ${plan === "org" ? `<h2>Pro</h2><div class="panel"><p style="margin:0">Your organization's plan includes every Pro feature.</p></div>` : me.billing ? `<h2>Pro</h2><div class="panel">${plan === "pro"
+      ? `<p style="margin:0">You have Pro. Thanks for supporting the site. Manage or cancel your plan any time.</p><div class="btns"><button type="button" class="btn ghost" data-aact="portal">Manage billing</button></div>`
+      : `${proPitch()}<div class="btns"><button type="button" class="btn" data-aact="upgrade" data-interval="month">${PRICE.monthly ? `${esc(PRICE.monthly)} a month` : "Upgrade monthly"}</button><button type="button" class="btn ghost" data-aact="upgrade" data-interval="year">${PRICE.yearly ? `${esc(PRICE.yearly)} a year` : "Upgrade yearly"}</button></div><p class="note" style="margin:0">Cancel any time from Manage billing. 7-day refund on your first payment. Payments are handled by Stripe.</p>`}</div>` : ""}
     <h2>Organizations</h2>
     <div class="panel">${orgs.length ? orgs.map(o => `<div class="row"><div class="grow"><strong>${esc(o.name)}</strong><br><span class="note">${esc(o.role)}${o.active ? "" : " · no active seats"}</span></div>${o.role !== "learner" ? `<button type="button" class="btn ghost sm" data-aact="manage" data-org="${esc(o.id)}">Manage</button>` : ""}</div>`).join("") : `<p class="note" style="margin:0">You're not in an organization. If your school or employer gave you an invite link, open it and you'll join automatically.</p>`}
       <details class="sq"><summary>Create an organization (for instructors)</summary>
@@ -258,7 +276,7 @@
     const b = e.target.closest("[data-aact]"); if (!b) return;
     const a = b.dataset.aact;
     try {
-      if (a === "signout") { await api("POST", "/v1/auth/logout", {}); me = null; ui.toast("Signed out. Your progress stays on this device."); CertHub.rerender(); }
+      if (a === "signout") { await api("POST", "/v1/auth/logout", {}); setMe(null); ui.toast("Signed out. Your progress stays on this device."); CertHub.rerender(); }
       if (a === "sync") await syncAll();
       if (a === "upgrade" || a === "portal") {
         const { data } = await api("POST", a === "upgrade" ? "/v1/billing/checkout" : "/v1/billing/portal", a === "upgrade" ? { plan: "pro", interval: b.dataset.interval } : {});
@@ -283,7 +301,7 @@
         const email = me.user.email;
         if (!(await ui.confirm(`Delete your account (${email}) and everything stored on the server? This can't be undone. Your progress on this device stays.`, { ok: "Delete account", cancel: "Keep it", danger: true }))) return;
         await api("DELETE", "/v1/account", { confirm: email });
-        me = null; store.set(STATE_KEY, "{}"); ui.toast("Account deleted."); CertHub.rerender();
+        setMe(null); store.set(STATE_KEY, "{}"); ui.toast("Account deleted."); CertHub.rerender();
       }
     } catch (err) { ui.toast(err.message); }
   });

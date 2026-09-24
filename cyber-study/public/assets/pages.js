@@ -111,7 +111,7 @@
     <h2>5. Your content</h2>
     <p>Notes, write-ups and portfolio text you create belong to you. They are stored in your browser${accounts() ? ", and on our server only if you sign in to sync them," : ""} (see the <a href="#privacy">Privacy Policy</a>).${accounts() ? " You let us store and copy them only to sync them to your devices." : ""}</p>
     ${accounts() ? `<h2>5a. Accounts and paid plans</h2>
-    <p>Accounts are optional. Keep your email account secure, since sign-in links go there. Pro and group plans renew automatically until cancelled; you can cancel any time from Manage billing and keep access until the end of the paid period. Prices and taxes are shown at checkout by Stripe. Organization owners are responsible for inviting only people who agreed to share their progress numbers with instructors. We may suspend accounts that abuse the service.</p>` : ""}
+    <p>Accounts are optional. Keep your email account secure, since sign-in links go there. Pro and group plans renew automatically until cancelled; you can cancel any time from Manage billing and keep access until the end of the paid period. If you're not happy with Pro, ask within 7 days of your first payment for a full refund. Prices and taxes are shown at checkout by Stripe. Organization owners are responsible for inviting only people who agreed to share their progress numbers with instructors. We may suspend accounts that abuse the service.</p>` : ""}
 
     <h2>6. Acceptable use</h2>
     <p>Don't try to disrupt the site or its hosting, bypass its security controls, or use automated tools to overload it. If you find a security issue, please report it privately (see the <a href="#security">Security</a> page).</p>

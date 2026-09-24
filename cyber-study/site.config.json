@@ -9,6 +9,10 @@
   "reviewEveryDays": 180,
   "cloudflarePagesProject": "cyber-cert-study",
   "apiOrigin": "",
+  "pro": {
+    "monthly": "$7",
+    "yearly": "$49"
+  },
   "support": {
     "label": "",
     "url": ""

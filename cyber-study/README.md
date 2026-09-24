@@ -179,6 +179,22 @@ when the API is on the same site, for example `https://api.example.com` for `exa
 6. Group pilot without billing: `npx wrangler d1 execute cyber-cert-study --remote --command
    "UPDATE orgs SET pilot_seats = 30 WHERE id = 'org_…'"`.
 
+### Pro
+
+Everything that's free today stays free. Pro (prices in `site.config.json` → `pro`, charged
+amounts set in Stripe) adds, per certification: about 300 extra questions, full-length timed
+exams at the real exam's length with a pass estimate, a score report (predicted score, weakest
+domains and objectives, trend, readiness), flashcards with spaced repetition and a printable
+study guide; plus capstone projects with grading rubrics in the lab library. Organization seats
+include Pro.
+
+The code is here (`public/assets/pro.js`, `engine.js`); the paid content lives in the private
+`cyber-study-pro` repository, whose workflow uploads it to an R2 bucket that only the API reads,
+for signed-in Pro members (`GET /v1/content/<cert-id>`, `/v1/content/capstones`). Without
+`apiOrigin` there are no Pro prompts anywhere. Locally, `npm run api:dev` serves the small samples in
+`api/test/fixtures/pro`; to try Pro, run it with `PRO_EMAILS=you@example.com` (and
+`PRO_CONTENT_DIR=../../cyber-study-pro/content` for the real content).
+
 The GitHub Pages copy (`*.github.io`) can't use accounts, because browsers block the cookie
 across different sites. It keeps working as the free, local-only version.
 

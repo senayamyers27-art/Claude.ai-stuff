@@ -5,7 +5,9 @@ until `apiOrigin` is set in `site.config.json`; see "Optional accounts" in the R
 it on. Built: magic-link sign-in, sessions, progress sync with merge rules, export and delete,
 Stripe Checkout/portal/webhooks and entitlements, R2-backed Pro question banks, organizations,
 cohorts, invites, pilot seats, instructor summary and CSV, audit log and rate limits.
-Deferred: passkeys (magic links only for now), SSO, invoicing, opt-in note sharing.
+Pro features built: extra question banks, full-length exams with a pass estimate, score
+report, flashcards and study guides, capstone projects (content in the private cyber-study-pro
+repository). Deferred: passkeys (magic links only for now), SSO, invoicing, opt-in note sharing.
 
 Covers monetization options 4 (Pro subscription) and 5
 (group licenses for bootcamps, colleges and employers). Option 5 reuses everything in option 4.

@@ -175,6 +175,17 @@ test("Pro content is gated and billing stays off until configured", async () => 
   assert.equal((await call(env, "GET", "/v1/content/security-plus/questions", { cookie })).status, 404, "no extra bank uploaded yet");
   await env.CONTENT.put("pro/security-plus.json", { questions: [] });
   assert.equal((await call(env, "GET", "/v1/content/security-plus/questions", { cookie })).status, 200);
+  // The bundle path and capstones work the same way; names are restricted to [a-z0-9-].
+  assert.equal((await call(env, "GET", "/v1/content/security-plus", { cookie })).status, 200);
+  assert.equal((await call(env, "GET", "/v1/content/capstones", { cookie })).status, 404);
+  await env.CONTENT.put("pro/capstones.json", { labs: [] });
+  const cap = await call(env, "GET", "/v1/content/capstones", { cookie });
+  assert.equal(cap.status, 200);
+  assert.equal(cap.headers.get("cache-control"), "no-store");
+  assert.equal((await call(env, "GET", "/v1/content/..%2Fsecrets", { cookie })).status, 404);
+  const free = await signIn(env, "free@example.com");
+  assert.equal((await call(env, "GET", "/v1/content/capstones", { cookie: free.cookie })).status, 402, "free accounts can't read capstones");
+  assert.equal((await call(env, "GET", "/v1/content/capstones")).status, 401, "signed-out requests can't either");
   assert.equal((await call(env, "POST", "/v1/billing/checkout", { cookie, body: { plan: "pro" } })).status, 503);
 });
 

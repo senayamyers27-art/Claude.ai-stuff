@@ -67,3 +67,11 @@ test("mergeDoc picks the rule by document key", () => {
   assert.deepEqual(plain(mergeDoc("labs", { l: { steps: { 0: true } } }, {})).l.steps, { 0: true });
   assert.deepEqual(plain(mergeDoc("cert:ccna", { checks: { a: true } }, {})).checks, { a: true });
 });
+
+test("cert progress: objective stats and flashcard schedule merge like stats and review", () => {
+  const m = plain(mergePlan(
+    { objs: { "2.3": { c: 2, t: 3 } }, cards: { c1: { box: 2, due: 900 } } },
+    { objs: { "2.3": { c: 5, t: 9 }, "4.1": { c: 1, t: 1 } }, cards: { c1: { box: 1, due: 100 }, c2: { box: 0, due: 5 } } }));
+  assert.deepEqual(m.objs, { "2.3": { c: 5, t: 9 }, "4.1": { c: 1, t: 1 } });
+  assert.deepEqual(m.cards, { c1: { box: 2, due: 900 }, c2: { box: 0, due: 5 } });
+});
