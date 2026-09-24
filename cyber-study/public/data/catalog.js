@@ -1,6 +1,8 @@
 /* Home page order. Built certifications have a data file in data/<id>.js and a page in <id>/.
    Planned ones are listed with their published domains but have no study content yet. */
-CertHub.catalog = ["security-plus", "cysa-plus", "ccna", "sscp", "network-plus", "isc2-cc", "pentest-plus", "ceh", "cissp"];
+CertHub.catalog = ["security-plus", "cysa-plus", "ccna", "sscp", "network-plus", "isc2-cc", "cissp"];
+// Not shown on the site. To list one again, add its id to the catalog above (it will show
+// as "Study plan not written yet" until a data file exists).
 CertHub.planned = {
   "pentest-plus": {
     vendor: "CompTIA", name: "CompTIA PenTest+", short: "PenTest+", exam: "PT0-003",

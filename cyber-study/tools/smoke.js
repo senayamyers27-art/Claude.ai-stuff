@@ -51,14 +51,47 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await page.click(".opt >> nth=0");
     check(!!(await page.$(".opt.right")), "answer feedback shows the correct option");
     await page.click("[data-act=quit]");
+    check(!!(await page.$(".modal")), "leaving a quiz asks for confirmation in the page");
+    await page.click('.modal [data-v="1"]');
     await page.click("[data-tab=practice]");
     await page.click("[data-act=exam]");
     check(!!(await page.$("#timer")), "practice exam starts with a timer");
     await page.click("[data-act=finish]");
+    await page.click('.modal [data-v="1"]');
     check(!!(await page.$(".big")), "practice exam can be submitted and scored");
     await page.click("[data-act=quit]");
-    for (const t of ["plan", "progress", "about"]) await page.click(`[data-tab=${t}]`);
-    check(!!(await page.$("#app h1")), "plan, progress and about tabs render");
+    for (const t of ["plan", "labs", "progress", "about"]) { await page.click(`[data-tab=${t}]`); await page.waitForTimeout(50); }
+    check(!!(await page.$("#app h1")), "plan, labs, progress and about tabs render");
+  }
+
+  console.log("Labs");
+  const labCount = fs.readdirSync(path.join(PUB, "data")).filter(f => /^labs-/.test(f)).reduce((n, f) => { let k = 0; global.CertHub.registerLabs = l => { k = l.length; }; require(path.join(PUB, "data", f)); return n + k; }, 0);
+  await page.goto(`${BASE}/#labs`);
+  await page.waitForSelector(".labcard");
+  const shown = await page.$$eval(".labcard", c => c.length);
+  check(shown === labCount, `lab library shows ${shown} labs (expected ${labCount})`);
+  await page.fill("#f-q", "wireshark");
+  await page.waitForTimeout(300);
+  check((await page.$$eval(".labcard", c => c.length)) >= 1 && (await page.$$eval(".labcard", c => c.length)) < labCount, "lab search filters the list");
+  await page.goto(`${BASE}/#lab-home-lab`);
+  await page.waitForSelector(".steps-list");
+  check((await page.$$(".steps-list > li")).length >= 8, "lab page lists its steps");
+  check((await page.evaluate(() => document.documentElement.scrollWidth)) <= 390, "lab page has no sideways scroll");
+  await page.check('[data-lstep="0"]');
+  await page.fill("#labnotes", "Smoke test note");
+  await page.waitForTimeout(600);
+  await page.click('[data-lact="done"]');
+  await page.click('[data-v="1"]');
+  await page.goto(`${BASE}/#portfolio`);
+  await page.waitForSelector("h1");
+  check((await page.textContent("#app")).includes("Build a home") || (await page.$$eval(".row", r => r.length)) > 0, "finished lab appears in the portfolio");
+  await page.goto(`${BASE}/#security-plus`);
+  await page.waitForSelector(".labgrid");
+  check((await page.$$(".labgrid .labcard")).length >= 1, "study week links to its labs");
+  for (const pth of ["privacy", "terms", "security"]) {
+    const r = await page.goto(`${BASE}/${pth}/`);
+    await page.waitForSelector("h1");
+    check(r.status() === 200 && /Privacy|Terms|Security/.test(await page.textContent("h1")), `/${pth}/ policy page renders`);
   }
 
   console.log("Saved progress");

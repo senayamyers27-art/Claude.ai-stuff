@@ -33,9 +33,12 @@ for (const f of files.filter(f => /\.(html|js|css|webmanifest|txt)$/.test(f) && 
   if (f.endsWith(".js") && /\beval\s*\(|new Function\s*\(|document\.write\s*\(|setTimeout\s*\(\s*["'`]/.test(s)) fail(f, "eval-style code");
 }
 // Engine and home page render with innerHTML, so every data value must pass through esc().
-for (const f of ["assets/engine.js", "assets/home.js"].map(p => path.join(PUB, p))) {
-  const s = fs.readFileSync(f, "utf8");
-  for (const m of s.matchAll(/\$\{\s*(?:q|c|w|d|n|s|h|x|z)\.(q|e|src|name|title|text|blurb|statusNote|prompt|answer|lab|obj|label)\s*\}/g)) fail(f, `unescaped \${${m[0].slice(2, -1).trim()}} in HTML`);
+for (const f of ["assets/engine.js", "assets/app.js", "assets/labs.js"].map(p => path.join(PUB, p))) {
+  // Only lines that build HTML (contain a tag) are checked; Markdown write-ups are plain text.
+  // ids are excluded: check-data.js restricts them to numbers and [a-z0-9-] slugs.
+  fs.readFileSync(f, "utf8").split("\n").filter(line => /<[a-z/]/i.test(line)).forEach(line => {
+    for (const m of line.matchAll(/\$\{\s*(?:q|c|w|d|n|s|h|x|z|l|r|u|v|lab|cert)\.(q|e|src|name|title|text|blurb|statusNote|prompt|answer|lab|obj|label|summary|body|cmd|check|realWorld|deliverable|resume|safety|notes|track|level|cost|url)\s*\}/g)) fail(f, `unescaped \${${m[0].slice(2, -1).trim()}} in HTML`);
+  });
 }
 const headers = fs.readFileSync(path.join(PUB, "_headers"), "utf8");
 for (const h of ["Content-Security-Policy", "Strict-Transport-Security", "X-Content-Type-Options: nosniff", "X-Frame-Options: DENY", "Referrer-Policy", "Permissions-Policy"])

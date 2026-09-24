@@ -20,31 +20,30 @@
 <script src="assets/theme.js"></script>
 <script src="assets/core.js" defer></script>
 <script src="data/catalog.js" defer></script>
-<script src="assets/home.js" defer></script>
+<script src="data/lab-map.js" defer></script>
+<script src="data/security-plus.js" defer></script>
+<script src="data/cysa-plus.js" defer></script>
+<script src="data/ccna.js" defer></script>
+<script src="data/sscp.js" defer></script>
+<script src="data/network-plus.js" defer></script>
+<script src="data/isc2-cc.js" defer></script>
+<script src="data/cissp.js" defer></script>
+<script src="data/labs-blueteam.js" defer></script>
+<script src="data/labs-foundations.js" defer></script>
+<script src="data/labs-grc.js" defer></script>
+<script src="data/labs-network.js" defer></script>
+<script src="assets/engine.js" defer></script>
+<script src="assets/labs.js" defer></script>
+<script src="assets/pages.js" defer></script>
+<script src="assets/app.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#app">Skip to content</a>
 <header class="top">
-  <div class="bar"><a class="brand" href="./"><span class="name">Cyber Cert Study</span></a><span class="right"><button class="theme" id="theme" type="button">Auto</button></span></div>
-  <div class="barpad"></div>
+  <div class="bar"><span class="brand"><a class="home" id="back" href="#home" aria-label="All certifications" hidden>&larr; All</a><a class="name" id="brandname" href="#home">Cyber Cert Study</a></span><span class="right"><span class="count" id="count"></span><button class="theme" id="theme" type="button">Auto</button></span></div>
+  <nav class="tabs" role="tablist" id="tabs" aria-label="Sections"></nav>
 </header>
-<main class="wrap" id="app">
-  <section class="hero">
-    <h1>Study plans for cybersecurity certifications</h1>
-    <p class="meta">Each plan spreads its weeks across the exam's domains by weight and ends with a final review week. Every week has topics, a daily plan, a hands-on lab, study questions and a 10-question quiz. Timed checkpoint tests close each domain, a full practice exam is weighted like the real one, and missed questions come back 1, 3, 7 and 14 days later.</p>
-  </section>
-  <div class="cards" id="cards"><p class="note">Loading plans…</p></div>
-  <h2>Your progress</h2>
-  <div class="panel">
-    <p class="note" style="margin:0">Progress is saved in this browser only. Nothing is sent anywhere. Download a backup to move it to another device.</p>
-    <div class="btns"><button class="btn ghost sm" id="exp" type="button">Download backup</button><label class="btn ghost sm" for="imp">Restore backup</label><input type="file" id="imp" accept="application/json" class="hide"></div>
-    <p class="note" id="datamsg" role="status"></p>
-  </div>
-  <h2>How the questions are written</h2>
-  <div class="panel">
-    <p style="margin:0">Questions and plans come from each vendor's official exam objectives, and for Security+ from Senaya's UTD Fullstack Cybersecurity bootcamp notes. Every question shows its source. Answer options are shuffled each time so their position never gives the answer away. Plans marked <strong>Weights to confirm</strong> haven't been checked against the current official outline yet.</p>
-  </div>
-</main>
-<footer class="foot">Not affiliated with CompTIA, Cisco, ISC2 or EC-Council. Exam names are trademarks of their owners.</footer>
+<main class="wrap" id="app"><noscript><p>This site needs JavaScript for its plans, quizzes and labs.</p></noscript><p class="note">Loading…</p></main>
+<footer class="foot"><nav class="footlinks" aria-label="Site policies"><a href="#privacy">Privacy Policy</a><a href="#terms">Terms of Use</a><a href="#security">Security</a></nav>Not affiliated with CompTIA, Cisco or ISC2. Exam names are trademarks of their owners. Labs are for systems you own or are authorized to test.</footer>
 </body>
 </html>

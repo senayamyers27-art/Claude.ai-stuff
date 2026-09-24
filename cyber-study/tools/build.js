@@ -24,6 +24,10 @@ require(path.join(PUB, "data/catalog.js"));
 const ids = CertHub.catalog.filter(id => fs.existsSync(path.join(PUB, "data", id + ".js")));
 ids.forEach(id => require(path.join(PUB, "data", id + ".js")));
 const certs = ids.map(id => CertHub.certs[id]);
+// Lab libraries: every data/labs-*.js file, in name order.
+const { labFiles, scripts: APP_SCRIPTS } = require("./app-scripts")(ids);
+global.CertHub.registerLabs = function (list) { (this.labList = this.labList || []).push(...list); };
+labFiles.forEach(f => require(path.join(PUB, "data", f)));
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const changed = [];
@@ -72,29 +76,29 @@ ${scripts.map(s => `<script src="${prefix}${s}" defer></script>`).join("\n")}
 }
 
 /* ---------- pages ---------- */
-out("public/index.html", `${head({
-  title: cfg.siteName, desc: cfg.description, prefix: "", urlPath: "/",
-  scripts: ["assets/core.js", "data/catalog.js", "assets/home.js"]
-})}
+// Every page is the same app; cert pages just open on their certification.
+const shell = fs.readFileSync(path.join(__dirname, "templates/home.html"), "utf8").trim();
+out("public/index.html", `${head({ title: cfg.siteName, desc: cfg.description, prefix: "", urlPath: "/", scripts: APP_SCRIPTS })}
 <body>
-${fs.readFileSync(path.join(__dirname, "templates/home.html"), "utf8").trim()}
+${shell}
 </body>
 </html>
 `);
-
 certs.forEach(c => out(`public/${c.id}/index.html`, `${head({
   title: `${c.short} ${c.exam} Study Plan`,
-  desc: `Free ${c.name} ${c.exam} study plan: weekly topics, labs, quizzes, timed checkpoint tests and a weighted practice exam.`,
-  prefix: "../", urlPath: `/${c.id}/`,
-  scripts: ["assets/core.js", `data/${c.id}.js`, "assets/engine.js"]
+  desc: `Free ${c.name} ${c.exam} study plan: weekly topics, step-by-step labs, quizzes, timed checkpoint tests and a weighted practice exam.`,
+  prefix: "../", urlPath: `/${c.id}/`, scripts: APP_SCRIPTS
 })}
-<body data-cert="${c.id}">
-<a class="skip" href="#app">Skip to content</a>
-<header class="top">
-  <div class="bar"><span class="brand"><a class="home" href="../" aria-label="All certifications">&larr; All</a><span class="name" id="brandname">${esc(c.short)} ${esc(c.exam)}</span></span><span class="right"><span class="count" id="count"></span><button class="theme" id="theme" type="button">Auto</button></span></div>
-  <nav class="tabs" role="tablist" id="tabs" aria-label="Sections"></nav>
-</header>
-<main class="wrap" id="app"><noscript><p>This study plan needs JavaScript.</p></noscript></main>
+<body data-route="${c.id}">
+${shell}
+</body>
+</html>
+`));
+
+const POLICY = { privacy: ["Privacy Policy", "No accounts, cookies, analytics or tracking. Your progress stays in your browser."], terms: ["Terms of Use", "Terms for using the study plans and labs, including authorized-use-only lab rules."], security: ["Security", "How the site is secured and how to report a vulnerability."] };
+Object.entries(POLICY).forEach(([id, [t, d]]) => out(`public/${id}/index.html`, `${head({ title: `${t} · ${cfg.siteName}`, desc: d, prefix: "../", urlPath: `/${id}/`, scripts: APP_SCRIPTS })}
+<body data-route="${id}">
+${shell}
 </body>
 </html>
 `));
@@ -149,7 +153,7 @@ Allow: /
 ${origin ? `\nSitemap: ${origin}/sitemap.xml\n` : ""}`);
 
 // lastmod comes from each data file's lastVerified date, so the sitemap stays deterministic.
-const urls = [["/", certs.map(c => c.lastVerified).filter(Boolean).sort().pop()]].concat(certs.map(c => [`/${c.id}/`, c.lastVerified]));
+const urls = [["/", certs.map(c => c.lastVerified).filter(Boolean).sort().pop()]].concat(certs.map(c => [`/${c.id}/`, c.lastVerified]), [["/privacy/"], ["/terms/"], ["/security/"]]);
 out("public/sitemap.xml", origin ? `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(([u, d]) => `  <url><loc>${origin}${u}</loc>${d ? `<lastmod>${d}</lastmod>` : ""}</url>`).join("\n")}
