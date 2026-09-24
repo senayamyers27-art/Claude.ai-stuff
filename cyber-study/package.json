@@ -3,12 +3,18 @@
   "private": true,
   "description": "Static study site for cybersecurity certifications. Deployed from public/ to Cloudflare Pages.",
   "license": "UNLICENSED",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=22.5"
+  },
   "scripts": {
     "build": "node tools/build.js",
     "check": "node tools/check-data.js && node tools/build.js --check && node tools/check-security.js",
     "test": "node tools/smoke.js",
+    "test:api": "node --test api/test/*.test.js",
+    "test:accounts": "node tools/accounts-e2e.js",
     "start": "node tools/serve.js 8000",
+    "api:dev": "node api/dev-server.js 8787 http://localhost:8000",
+    "start:accounts": "node tools/serve.js 8000 http://localhost:8787",
     "freshness": "node tools/freshness.js",
     "live-check": "node tools/live-check.js",
     "cloudflare-config": "node tools/cloudflare-config.js",

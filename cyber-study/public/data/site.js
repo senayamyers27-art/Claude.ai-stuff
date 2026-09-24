@@ -4,5 +4,6 @@ CertHub.site = {
     "label": "",
     "url": ""
   },
-  "feedbackUrl": "https://github.com/senayamyers27-art/senayamyers27-art.github.io/issues"
+  "feedbackUrl": "https://github.com/senayamyers27-art/senayamyers27-art.github.io/issues",
+  "apiUrl": ""
 };

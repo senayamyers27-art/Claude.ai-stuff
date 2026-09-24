@@ -41,6 +41,7 @@ npm start           # preview at http://localhost:8000 (behaves like Cloudflare 
 npm run build       # regenerate pages and config files after editing data or config
 npm run check       # data checks + generated files in sync + security lint
 npm test            # headless browser smoke test of every page, including offline mode
+npm run test:api    # accounts API tests (see "Optional accounts" below)
 ```
 
 `npm run build` writes every generated file from `site.config.json` and `public/data/`. Never
@@ -143,16 +144,43 @@ Pages Function only apply on Cloudflare.
 When you confirm a cert's details against the official outline, set `status: "verified"` and
 update `lastVerified`. The maintenance report asks again after `reviewEveryDays` (180).
 
-## Phase 2 (optional): a small backend
+## Optional accounts (backend)
 
-The full design for accounts, sync, the Pro tier and group licenses is in
+`api/` is a Cloudflare Worker with a D1 database that adds optional accounts: email sign-in
+links (no passwords), progress sync between devices, a Pro plan through Stripe, and
+organizations with cohorts, invite links and an instructor progress summary. The design is in
 [docs/BACKEND_DESIGN.md](docs/BACKEND_DESIGN.md).
 
+It is **off** until `apiOrigin` is set in `site.config.json`. While it's empty the site makes
+no outside requests, shows no Account tab, and the policies say there are no accounts.
 
-A Cloudflare Worker on the same domain could bring back Drive sync, AI-written questions from
-the "UTD Fullstack Cybersecurity" notes, and progress across devices, with API keys kept as
-Worker secrets: `GET /api/drive/changes`, `POST /api/questions/generate` (returns questions in
-the same eight-field shape as the data files), `GET/PUT /api/progress` behind Cloudflare Access.
+Try it locally (no Cloudflare, email or Stripe needed; sign-in links appear on the page):
+
+```sh
+npm run api:dev          # API at http://localhost:8787 (SQLite in memory)
+npm run start:accounts   # site at http://localhost:8000 with the Account tab turned on
+npm run test:api         # API and sync merge-rule tests (node:test)
+npm run test:accounts    # browser test: sign-in, two-device sync, cohort, delete account
+```
+
+Turn it on for real (needs the site on its own domain, since the sign-in cookie only works
+when the API is on the same site, for example `https://api.example.com` for `example.com`):
+
+1. `npx wrangler d1 create cyber-cert-study` and save the id as secret `STUDY_API_D1_ID`.
+2. Give `CLOUDFLARE_API_TOKEN` Workers Scripts, D1 and Workers Routes edit permissions.
+3. Email: create a Resend account, verify the domain, save the key as `STUDY_API_EMAIL_KEY`.
+4. Set `"apiOrigin": "https://api.<domain>"` in `site.config.json`, run `npm run build`, push.
+   "Study site API deploy" applies migrations, deploys, and checks `/v1/health`.
+5. Payments (later): add `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` secrets and
+   `STRIPE_PRICE_PRO_MONTHLY` (and optionally `_YEARLY`, `STRIPE_PRICE_ORG_SEAT`) variables,
+   and point a Stripe webhook at `https://api.<domain>/v1/stripe/webhook` for
+   `checkout.session.completed`, `customer.subscription.*` and `invoice.payment_failed`.
+   Until then the Pro section stays hidden.
+6. Group pilot without billing: `npx wrangler d1 execute cyber-cert-study --remote --command
+   "UPDATE orgs SET pilot_seats = 30 WHERE id = 'org_…'"`.
+
+The GitHub Pages copy (`*.github.io`) can't use accounts, because browsers block the cookie
+across different sites. It keeps working as the free, local-only version.
 
 PenTest+ and CEH are not on the site. Their domain weights are kept in `public/data/catalog.js`
 (`CertHub.planned`) so they can be added back later with a data file.

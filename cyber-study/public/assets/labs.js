@@ -185,7 +185,7 @@ ${lab.deliverable}
     if (e.target.id === "labnotes" && current) {
       const v = e.target.value;
       clearTimeout(noteT);
-      noteT = setTimeout(() => { const { p, s } = prog(); s.notes = v; s.started = s.started || Date.now(); saveLabProgress(p); }, 400);
+      noteT = setTimeout(() => { const { p, s } = prog(); s.notes = v; s.notesAt = Date.now(); s.started = s.started || Date.now(); saveLabProgress(p); }, 400);
     }
   });
   document.addEventListener("click", async e => {
@@ -209,7 +209,7 @@ ${lab.deliverable}
   });
   function flushNotes() {
     const t = $("#labnotes"); if (!t || !current) return;
-    clearTimeout(noteT); const { p, s } = prog(); s.notes = t.value; saveLabProgress(p);
+    clearTimeout(noteT); const { p, s } = prog(); if (s.notes !== t.value) { s.notes = t.value; s.notesAt = Date.now(); } saveLabProgress(p);
   }
 
   CertHub.labViews = { library: libraryView, detail: detailView, portfolio: portfolioView, leave() { flushNotes(); current = null; } };

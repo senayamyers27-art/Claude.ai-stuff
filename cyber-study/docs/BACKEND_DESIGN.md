@@ -1,6 +1,13 @@
 # Backend design: Pro tier and group licenses
 
-Status: design sketch, not built. Covers monetization options 4 (Pro subscription) and 5
+Status: **built** in `../api/` (Cloudflare Worker + D1) and `../public/assets/sync.js`, off
+until `apiOrigin` is set in `site.config.json`; see "Optional accounts" in the README to turn
+it on. Built: magic-link sign-in, sessions, progress sync with merge rules, export and delete,
+Stripe Checkout/portal/webhooks and entitlements, R2-backed Pro question banks, organizations,
+cohorts, invites, pilot seats, instructor summary and CSV, audit log and rate limits.
+Deferred: passkeys (magic links only for now), SSO, invoicing, opt-in note sharing.
+
+Covers monetization options 4 (Pro subscription) and 5
 (group licenses for bootcamps, colleges and employers). Option 5 reuses everything in option 4.
 
 ## Goals and non-goals

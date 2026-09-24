@@ -9,6 +9,8 @@ const PUB = path.join(ROOT, "public");
 let bad = 0;
 const fail = (f, m) => { bad++; console.log(`  ✗ ${path.relative(ROOT, f)}: ${m}`); };
 const walk = d => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]);
+const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "site.config.json"), "utf8"));
+const apiOrigin = String(cfg.apiOrigin || "").trim().replace(/\/+$/, "").toLowerCase();
 const files = walk(PUB).concat(walk(path.join(ROOT, "functions")));
 
 for (const f of files.filter(f => f.endsWith(".html"))) {
@@ -18,7 +20,9 @@ for (const f of files.filter(f => f.endsWith(".html"))) {
   else {
     if (/'unsafe-eval'|script-src[^;]*'unsafe-inline'/.test(csp)) fail(f, "CSP allows unsafe script execution");
     if (!/object-src 'none'/.test(csp)) fail(f, "CSP must set object-src 'none'");
-    if (/https?:\/\//.test(csp)) fail(f, "CSP allows a third-party host");
+    // The only outside host allowed is the site's own accounts API, and only for connect-src.
+    const other = csp.split(";").map(d => d.trim()).map(d => d.startsWith("connect-src") && apiOrigin ? d.replace(" " + apiOrigin, "") : d).join(";");
+    if (/https?:\/\//.test(other)) fail(f, "CSP allows a third-party host");
   }
   if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(s)) fail(f, "inline <script> (move it to a file)");
   if (/\son[a-z]+\s*=\s*["']/i.test(s)) fail(f, "inline event handler attribute");
@@ -33,7 +37,7 @@ for (const f of files.filter(f => /\.(html|js|css|webmanifest|txt)$/.test(f) && 
   if (f.endsWith(".js") && /\beval\s*\(|new Function\s*\(|document\.write\s*\(|setTimeout\s*\(\s*["'`]/.test(s)) fail(f, "eval-style code");
 }
 // Engine and home page render with innerHTML, so every data value must pass through esc().
-for (const f of ["assets/engine.js", "assets/app.js", "assets/labs.js"].map(p => path.join(PUB, p))) {
+for (const f of ["assets/engine.js", "assets/app.js", "assets/labs.js", "assets/sync.js"].map(p => path.join(PUB, p))) {
   // Only lines that build HTML (contain a tag) are checked; Markdown write-ups are plain text.
   // ids are excluded: check-data.js restricts them to numbers and [a-z0-9-] slugs.
   fs.readFileSync(f, "utf8").split("\n").filter(line => /<[a-z/]/i.test(line)).forEach(line => {

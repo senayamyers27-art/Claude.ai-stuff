@@ -8,6 +8,7 @@
   "securityTxtExpires": "2027-09-24",
   "reviewEveryDays": 180,
   "cloudflarePagesProject": "cyber-cert-study",
+  "apiOrigin": "",
   "support": {
     "label": "",
     "url": ""
