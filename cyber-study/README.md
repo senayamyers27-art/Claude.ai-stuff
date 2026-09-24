@@ -1,0 +1,121 @@
+# Cyber Cert Study
+
+A static study website with plans for several cybersecurity certifications, grown out of the
+Security+ Study Hub. It's a separate site from 11:Eleven: it deploys to its own domain on
+Cloudflare Pages and is excluded from this repository's GitHub Pages deploy.
+
+Everything runs in the browser. Progress is saved in `localStorage` (with backup/restore),
+pages work offline, and the site makes no requests to other websites.
+
+```
+cyber-study/
+  site.config.json        domain, security contact, review interval, Pages project name
+  public/                 ← everything deployed (Cloudflare Pages output directory)
+    index.html            home page                                 (generated)
+    <cert-id>/index.html  one study page per certification          (generated)
+    assets/               core.js, engine.js, home.js, theme.js, style.css, fonts/
+    data/catalog.js       home page order, planned certifications
+    data/<cert-id>.js     domains, weights, plan, notices, question bank
+    _headers _redirects robots.txt sitemap.xml manifest.webmanifest sw.js
+    .well-known/security.txt                                        (all generated)
+  functions/_middleware.js  HTTPS + canonical-host redirects         (generated)
+  tools/                  build, checks, smoke test, local server, maintenance scripts
+  package.json            pinned dev tools: playwright (tests), wrangler (deploys)
+```
+
+## Everyday commands
+
+```sh
+cd cyber-study
+npm ci              # once: install the pinned tools
+npm start           # preview at http://localhost:8000 (behaves like Cloudflare Pages)
+npm run build       # regenerate pages and config files after editing data or config
+npm run check       # data checks + generated files in sync + security lint
+npm test            # headless browser smoke test of every page, including offline mode
+```
+
+`npm run build` writes every generated file from `site.config.json` and `public/data/`. Never
+edit generated files by hand; CI fails if they're out of date.
+
+## Add or change a certification
+
+See [DATA_FORMAT.md](DATA_FORMAT.md): write `public/data/<id>.js`, add the id to
+`public/data/catalog.js`, then `npm run build && npm run check && npm test`.
+
+## Automation
+
+| Workflow | When | What it does |
+|---|---|---|
+| **Study site CI** (`study-site-ci.yml`) | Every push or PR touching `cyber-study/` | Question-bank checks, generated files in sync, security lint, `npm audit`, browser smoke test. |
+| **Study site deploy** (`study-site-deploy.yml`) | After CI passes on a push | Deploys to Cloudflare Pages. `main` → production; other branches → preview URL (hidden from search engines). Pull requests are never deployed with the token. |
+| **Study site maintenance** (`study-site-maintenance.yml`) | Mondays + on demand | Updates one issue, "Study site maintenance report": exam details due for re-checking, weights to confirm, notices starting or ending in 30 days, security.txt expiry, and whether the official exam pages changed. |
+| **Study site live check** (`study-site-live-check.yml`) | Daily + after each production deploy | Every page over HTTPS, http→https and www→apex redirects, HSTS/CSP/nosniff/frame headers, trusted TLS certificate with 14+ days left, TLS 1.0/1.1 refused. A failure fails the run and GitHub emails you. |
+| **Study site Cloudflare settings** (`study-site-cloudflare.yml`) | Wednesdays + on demand | Checks the zone for drift: Always Use HTTPS, Full (strict) SSL, minimum TLS 1.2, TLS 1.3, HTTP/3, no 0-RTT, DNSSEC. Run manually with **apply** to fix. |
+| **Dependabot** (`.github/dependabot.yml`) | Weekly | Security and version updates for the npm tools and all GitHub Actions. |
+| **CodeQL** and **Secret Scan** (existing) | Pushes and PRs to `main` | Static analysis of the JavaScript and a scan for committed credentials, covering this folder too. |
+
+Inside the site:
+
+- **Updates reach visitors automatically.** Each build stamps `sw.js` with a hash of every
+  page, script and data file. When anything changes, open pages show "New questions or fixes
+  are ready. Update now".
+- **Dated notices** (`notices` in a data file) show between their `from` and `until` dates,
+  for example the Security+ SY0-801 preview and the CySA+ CS0-003 retirement, then disappear.
+- **Offline study.** After the first visit every page, script, font and question bank is
+  cached, so plans and quizzes work without a connection.
+
+## HTTP/HTTPS and security
+
+- **HTTPS only.** Cloudflare's Always Use HTTPS plus the Pages Function redirect every
+  `http://` request (301). HSTS is sent with a two-year max-age. Set `"hstsPreload": true` and
+  submit the domain at hstspreload.org only once you're sure every subdomain will stay on HTTPS.
+- **One address.** `www.` and `<project>.pages.dev` redirect to the domain in
+  `site.config.json`. Preview deployments stay reachable but carry `X-Robots-Tag: noindex`.
+- **Headers** (`public/_headers`): Content-Security-Policy that allows only the site's own
+  files, `frame-ancestors 'none'`, X-Frame-Options, nosniff, Referrer-Policy,
+  Permissions-Policy, Cross-Origin-Opener/Resource-Policy.
+- **No third parties.** Fonts are self-hosted (Public Sans, SIL OFL), so there are no Google
+  Fonts requests, no analytics and no cookies.
+- **security.txt** at `/.well-known/security.txt` points to GitHub private vulnerability
+  reporting. The maintenance report reminds you 45 days before it expires.
+
+## Launch checklist
+
+1. **Buy the domain** in Cloudflare: Domain Registration → Register Domains.
+2. **Set it** in `site.config.json` (`"domain": "yourdomain.com"`), run `npm run build`, and commit.
+   That fills in canonical URLs, the sitemap, robots.txt, security.txt and the redirect function.
+3. **Create a Cloudflare API token** (My Profile → API Tokens) with *Account › Cloudflare Pages:
+   Edit*. Add repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`
+   (GitHub → Settings → Secrets and variables → Actions). The next push to `main` deploys.
+4. **Attach the domain**: Workers & Pages → `cyber-cert-study` → Custom domains → add the domain
+   and `www.` Cloudflare issues the certificates.
+5. **Zone settings token**: a second token with *Zone › Zone Settings: Edit* and *Zone › Zone: Read*
+   (add *Zone: Edit* for DNSSEC), saved as `CLOUDFLARE_ZONE_TOKEN`, plus `CLOUDFLARE_ZONE_ID`
+   (shown on the domain's Overview page). Run **Study site Cloudflare settings** with **apply** once.
+6. **Turn on private vulnerability reporting**: GitHub → Settings → Code security, so the
+   security.txt contact works.
+7. Run **Study site live check** manually and confirm everything passes.
+
+## Status of each certification
+
+| Cert | Status | Notes |
+|---|---|---|
+| Security+ SY0-701 | Built, weights verified | 101 questions: the original 91 with their note sources, plus 10 Domain 5 |
+| CySA+ CS0-004 | Built, weights verified | Objective numbers follow CS0-003; check against the CS0-004 PDF |
+| CCNA 200-301 v2.0 | Built, weights verified | Exact topic numbers only where confirmed; others cite the section |
+| SSCP | Built, weights verified | Sub-objective numbers from the earlier outline |
+| Network+ N10-009 | Built, weights verified | 23/20/19/14/24, confirmed Sept 24, 2026 |
+| ISC2 CC | Built, weights verified | Outline effective Sept 1, 2026 (24/17.3/20/21.3/17.3, rounded) |
+| CISSP | Built, weights verified | 2024 outline, confirmed Sept 24, 2026 |
+| PenTest+ PT0-003 | Not built | Listed with weights only; content generation was stopped by a safety filter |
+| CEH v13 | Not built | Same as PenTest+ |
+
+When you confirm a cert's details against the official outline, set `status: "verified"` and
+update `lastVerified`. The maintenance report asks again after `reviewEveryDays` (180).
+
+## Phase 2 (optional): a small backend
+
+A Cloudflare Worker on the same domain could bring back Drive sync, AI-written questions from
+the "UTD Fullstack Cybersecurity" notes, and progress across devices, with API keys kept as
+Worker secrets: `GET /api/drive/changes`, `POST /api/questions/generate` (returns questions in
+the same eight-field shape as the data files), `GET/PUT /api/progress` behind Cloudflare Access.

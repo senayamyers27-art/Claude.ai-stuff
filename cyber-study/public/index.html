@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cyber Cert Study</title>
+<meta name="description" content="Free study plans for cybersecurity certifications: weekly topics, labs, quizzes, timed checkpoint tests, weighted practice exams and spaced review.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1319" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Cyber Cert Study">
+<meta property="og:title" content="Cyber Cert Study">
+<meta property="og:description" content="Free study plans for cybersecurity certifications: weekly topics, labs, quizzes, timed checkpoint tests, weighted practice exams and spaced review.">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preload" href="assets/fonts/public-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/theme.js"></script>
+<script src="assets/core.js" defer></script>
+<script src="data/catalog.js" defer></script>
+<script src="assets/home.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#app">Skip to content</a>
+<header class="top">
+  <div class="bar"><a class="brand" href="./"><span class="name">Cyber Cert Study</span></a><span class="right"><button class="theme" id="theme" type="button">Auto</button></span></div>
+  <div class="barpad"></div>
+</header>
+<main class="wrap" id="app">
+  <section class="hero">
+    <h1>Study plans for cybersecurity certifications</h1>
+    <p class="meta">Each plan spreads its weeks across the exam's domains by weight and ends with a final review week. Every week has topics, a daily plan, a hands-on lab, study questions and a 10-question quiz. Timed checkpoint tests close each domain, a full practice exam is weighted like the real one, and missed questions come back 1, 3, 7 and 14 days later.</p>
+  </section>
+  <div class="cards" id="cards"><p class="note">Loading plans…</p></div>
+  <h2>Your progress</h2>
+  <div class="panel">
+    <p class="note" style="margin:0">Progress is saved in this browser only. Nothing is sent anywhere. Download a backup to move it to another device.</p>
+    <div class="btns"><button class="btn ghost sm" id="exp" type="button">Download backup</button><label class="btn ghost sm" for="imp">Restore backup</label><input type="file" id="imp" accept="application/json" class="hide"></div>
+    <p class="note" id="datamsg" role="status"></p>
+  </div>
+  <h2>How the questions are written</h2>
+  <div class="panel">
+    <p style="margin:0">Questions and plans come from each vendor's official exam objectives, and for Security+ from Senaya's UTD Fullstack Cybersecurity bootcamp notes. Every question shows its source. Answer options are shuffled each time so their position never gives the answer away. Plans marked <strong>Weights to confirm</strong> haven't been checked against the current official outline yet.</p>
+  </div>
+</main>
+<footer class="foot">Not affiliated with CompTIA, Cisco, ISC2 or EC-Council. Exam names are trademarks of their owners.</footer>
+</body>
+</html>

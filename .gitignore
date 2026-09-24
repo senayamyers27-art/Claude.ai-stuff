@@ -2,3 +2,6 @@
 .lighthouseci-results/
 node_modules/
 worker/.wrangler/
+cyber-study/.wrangler/
+cyber-study/.state*.json
+cyber-study/report.md

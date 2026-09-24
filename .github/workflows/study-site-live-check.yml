@@ -1,0 +1,38 @@
+name: Study site live check
+
+# Daily check of the deployed study site over the internet: every page loads over HTTPS,
+# http:// and www redirect, security headers are present, the TLS certificate is trusted
+# with 14+ days left, and TLS 1.0/1.1 are refused. A failure fails this run, and GitHub
+# emails the repository owner. Does nothing until "domain" is set in site.config.json.
+
+on:
+  schedule:
+    - cron: "30 11 * * *" # daily, 06:30 America/Chicago
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Study site deploy"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: cyber-study
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+
+      - name: Check HTTPS, redirects, headers and TLS
+        run: node tools/live-check.js

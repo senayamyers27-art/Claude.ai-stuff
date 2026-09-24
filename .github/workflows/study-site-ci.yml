@@ -1,0 +1,53 @@
+name: Study site CI
+
+# Every change to the Cyber Cert Study site (cyber-study/) must pass before it can deploy:
+# data checks, generated files in sync, security lint, dependency audit, and a headless
+# browser smoke test of every study page (including offline mode).
+
+on:
+  push:
+    paths: ["cyber-study/**", ".github/workflows/study-site-*.yml"]
+  pull_request:
+    paths: ["cyber-study/**", ".github/workflows/study-site-*.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: study-site-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: cyber-study
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cyber-study/package-lock.json
+
+      - name: Install tools
+        run: npm ci
+
+      - name: Question banks, generated files and security lint
+        run: npm run check
+
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+
+      - name: Install headless Chromium
+        run: npx playwright install --with-deps --only-shell chromium
+
+      - name: Browser smoke test
+        run: npm test
