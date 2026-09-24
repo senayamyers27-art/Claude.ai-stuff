@@ -25,10 +25,9 @@ const ids = CertHub.catalog.filter(id => fs.existsSync(path.join(PUB, "data", id
 ids.forEach(id => require(path.join(PUB, "data", id + ".js")));
 const certs = ids.map(id => CertHub.certs[id]);
 // Lab libraries: every data/labs-*.js file, in name order.
-const labFiles = fs.readdirSync(path.join(PUB, "data")).filter(f => /^labs-.+\.js$/.test(f)).sort();
+const { labFiles, scripts: APP_SCRIPTS } = require("./app-scripts")(ids);
 global.CertHub.registerLabs = function (list) { (this.labList = this.labList || []).push(...list); };
 labFiles.forEach(f => require(path.join(PUB, "data", f)));
-const APP_SCRIPTS = ["assets/core.js", "data/catalog.js", "data/lab-map.js", ...ids.map(id => `data/${id}.js`), ...labFiles.map(f => `data/${f}`), "assets/engine.js", "assets/labs.js", "assets/pages.js", "assets/app.js"];
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const changed = [];

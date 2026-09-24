@@ -6,9 +6,11 @@
 const fs = require("fs"), path = require("path");
 const ROOT = path.join(__dirname, ".."), PUB = path.join(ROOT, "public");
 const OUT = path.resolve(process.argv[2] || path.join(ROOT, "dist-artifact"));
-const html = fs.readFileSync(path.join(PUB, "index.html"), "utf8");
-const scripts = [...html.matchAll(/<script src="([^"]+)"( defer)?><\/script>/g)].map(m => m[1]);
-const body = html.slice(html.indexOf("<body>") + 6, html.indexOf("</body>")).trim();
+global.CertHub = { certs: {}, register(c) { this.certs[c.id] = c; } };
+require(path.join(PUB, "data/catalog.js"));
+const ids = CertHub.catalog.filter(id => fs.existsSync(path.join(PUB, "data", id + ".js")));
+const scripts = ["assets/theme.js", ...require("./app-scripts")(ids).scripts];
+const body = fs.readFileSync(path.join(__dirname, "templates/home.html"), "utf8").trim();
 const page = `<title>Cyber Cert Study</title>
 <link rel="stylesheet" href="assets/style.css">
 ${scripts.map(s => s === "assets/theme.js" ? `<script src="${s}"></script>` : `<script src="${s}" defer></script>`).join("\n")}

@@ -72,13 +72,21 @@
     $("#tabs").innerHTML = NAV.map(([k, l]) => `<a role="tab" href="#${k}" aria-selected="${cur === k}">${l}</a>`).join("");
     $("#count").innerHTML = "";
   }
+  // Route tokens come from the URL, so only look them up as the objects' own keys
+  // (never inherited ones like "constructor" or "__proto__").
+  const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+  const POLICY_TITLES = { privacy: "Privacy Policy", terms: "Terms of Use", security: "Security" };
   function route() {
-    const raw = decodeURIComponent(location.hash.replace(/^#/, "")) || document.body.dataset.route || "home";
-    const [head, tab] = raw.split(".");
+    let raw = "";
+    try { raw = decodeURIComponent(location.hash.replace(/^#/, "")); } catch (e) { raw = ""; }
+    raw = raw || document.body.dataset.route || "home";
+    let [head, tab] = raw.split(".");
+    if (!/^[a-z0-9-]{1,64}$/.test(head || "")) head = "home";
+    if (tab && !/^[a-z]{1,16}$/.test(tab)) tab = "";
     const prev = view;
     if (prev.startsWith("lab-")) CertHub.labViews.leave();
     let title = "Cyber Cert Study", brand = "Cyber Cert Study";
-    if (certs[head]) {
+    if (own(certs, head)) {
       CertHub.certView.open(head, tab || "week");
       view = "cert:" + head;
       brand = CertHub.certView.title();
@@ -86,8 +94,8 @@
     } else {
       CertHub.certView.close();
       if (head === "labs") { topNav("labs"); $("#app").innerHTML = CertHub.labViews.library(); title = "Hands-on Labs"; view = "labs"; }
-      else if (labs[head]) { topNav("labs"); $("#app").innerHTML = CertHub.labViews.detail(labs[head]); title = labs[head].title; view = head; }
-      else if (CertHub.policyViews[head]) { topNav(""); $("#app").innerHTML = CertHub.policyViews[head](); title = { privacy: "Privacy Policy", terms: "Terms of Use", security: "Security" }[head]; view = head; }
+      else if (own(labs, head)) { topNav("labs"); $("#app").innerHTML = CertHub.labViews.detail(labs[head]); title = labs[head].title; view = head; }
+      else if (own(POLICY_TITLES, head)) { topNav(""); const pv = CertHub.policyViews; $("#app").innerHTML = head === "privacy" ? pv.privacy() : head === "terms" ? pv.terms() : pv.security(); title = POLICY_TITLES[head]; view = head; }
       else if (head === "portfolio") { topNav("portfolio"); $("#app").innerHTML = CertHub.labViews.portfolio(); title = "Lab Portfolio"; view = "portfolio"; }
       else { topNav("home"); $("#app").innerHTML = homeView(); view = "home"; }
     }

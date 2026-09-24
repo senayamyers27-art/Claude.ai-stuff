@@ -17,8 +17,8 @@
       if (TAB_IDS.includes(tab) && tab !== S.tab) { S.tab = tab; if (tab === "week") S.viewWeek = null; }
       render(); return true;
     }
+    if (!Object.prototype.hasOwnProperty.call(CertHub.certs, id)) return false;
     C = CertHub.certs[id];
-    if (!C) return false;
     active = true;
     PLAN = buildPlan(C);
     W = PLAN.weeks;
