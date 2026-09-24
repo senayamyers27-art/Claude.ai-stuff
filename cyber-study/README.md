@@ -145,6 +145,10 @@ update `lastVerified`. The maintenance report asks again after `reviewEveryDays`
 
 ## Phase 2 (optional): a small backend
 
+The full design for accounts, sync, the Pro tier and group licenses is in
+[docs/BACKEND_DESIGN.md](docs/BACKEND_DESIGN.md).
+
+
 A Cloudflare Worker on the same domain could bring back Drive sync, AI-written questions from
 the "UTD Fullstack Cybersecurity" notes, and progress across devices, with API keys kept as
 Worker secrets: `GET /api/drive/changes`, `POST /api/questions/generate` (returns questions in
