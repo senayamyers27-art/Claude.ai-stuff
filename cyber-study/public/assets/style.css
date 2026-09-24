@@ -239,3 +239,5 @@ footer.foot{max-width:760px;margin:0 auto;padding:18px 16px 40px;color:var(--mut
 .trackh{margin:26px 0 2px}
 /* Questions can contain code: keep line breaks and indentation, wrap long lines on phones. */
 .q,.qtext,.opt,.expl{white-space:pre-wrap;overflow-wrap:anywhere}
+/* Long commands, paths or names in plan text wrap instead of widening the page on phones. */
+.days .t,ul.clean li,.expl,.note{min-width:0;overflow-wrap:anywhere}
