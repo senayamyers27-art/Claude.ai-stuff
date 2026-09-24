@@ -190,6 +190,8 @@ CertHub.niceRoles = [
   { id: "assess", name: "Security Control Assessment", category: "Oversight and Governance", titles: "Security auditor, IT auditor, GRC analyst", about: "Tests whether controls are in place and working, and reports the gaps." },
   { id: "policy", name: "Cybersecurity Policy and Planning", category: "Oversight and Governance", titles: "Security policy analyst, GRC analyst", about: "Writes policies, standards and plans and aligns them to frameworks." },
   { id: "ssm", name: "Systems Security Management", category: "Oversight and Governance", titles: "Information security manager (ISSM), risk manager", about: "Manages security risk and the security program for systems or an organization." },
+  { id: "testing", name: "Systems Testing and Evaluation", category: "Design and Development", titles: "QA engineer, software test engineer, SDET", about: "Plans and runs tests, automates them in pipelines and reports defects." },
+  { id: "entarch", name: "Enterprise Architecture", category: "Design and Development", titles: "Cloud architect, solutions architect, platform engineer", about: "Designs how systems, clouds and networks fit together across an organization." },
   { id: "privacy", name: "Privacy Compliance", category: "Oversight and Governance", titles: "Privacy analyst, data protection officer", about: "Makes sure personal data is handled lawfully and protected." }
 ];
 
@@ -218,5 +220,14 @@ CertHub.labRoles = {
   "lab-defender-asr": ["defensive", "ssa", "infra"],
   "lab-azure-security-baseline": ["arch", "ssa", "infra"],
   "lab-ngfw-policy": ["infra", "defensive", "netops"],
-  "lab-ipsec-site-to-site": ["infra", "netops"]
+  "lab-ipsec-site-to-site": ["infra", "netops"],
+  "lab-git-workflow": ["securedev", "testing"],
+  "lab-python-project": ["securedev", "testing"],
+  "lab-java-build-test": ["securedev", "testing"],
+  "lab-rest-api": ["securedev", "testing", "entarch"],
+  "lab-docker-compose-app": ["securedev", "sysadmin"],
+  "lab-github-actions-ci": ["securedev", "testing"],
+  "lab-kubernetes-kind": ["sysadmin", "securedev", "entarch"],
+  "lab-lambda-api": ["securedev", "entarch"],
+  "lab-terraform-docker": ["sysadmin", "entarch", "securedev"]
 };

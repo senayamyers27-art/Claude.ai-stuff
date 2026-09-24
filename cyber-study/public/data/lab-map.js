@@ -91,5 +91,52 @@ CertHub.labMap = {
     2: ["lab-ngfw-policy"],
     3: ["lab-ngfw-policy", "lab-ipsec-site-to-site"],
     5: ["lab-ipsec-site-to-site"]
+  } },
+  "pcep": { domains: {
+    1: ["lab-python-project"],
+    4: ["lab-python-project", "lab-rest-api"]
+  } },
+  "pcap": { domains: {
+    1: ["lab-python-project", "lab-git-workflow"],
+    2: ["lab-python-project", "lab-rest-api"],
+    4: ["lab-python-project", "lab-rest-api"]
+  } },
+  "java-se": { domains: {
+    3: ["lab-java-build-test"],
+    4: ["lab-java-build-test"],
+    5: ["lab-java-build-test"],
+    6: ["lab-java-build-test"],
+    7: ["lab-java-build-test"]
+  } },
+  "aws-developer": { domains: {
+    1: ["lab-lambda-api", "lab-rest-api"],
+    2: ["lab-lambda-api"],
+    3: ["lab-lambda-api", "lab-github-actions-ci", "lab-docker-compose-app", "lab-git-workflow"],
+    4: ["lab-lambda-api"]
+  } },
+  "ai-200": { domains: {
+    1: ["lab-docker-compose-app", "lab-github-actions-ci"]
+  } },
+  "ckad": { domains: {
+    1: ["lab-docker-compose-app", "lab-kubernetes-kind", "lab-git-workflow"],
+    2: ["lab-kubernetes-kind", "lab-github-actions-ci"],
+    3: ["lab-kubernetes-kind"],
+    4: ["lab-kubernetes-kind"],
+    5: ["lab-kubernetes-kind"]
+  } },
+  "terraform": { domains: {
+    1: ["lab-terraform-docker", "lab-git-workflow"],
+    2: ["lab-terraform-docker"],
+    3: ["lab-terraform-docker"],
+    4: ["lab-terraform-docker"],
+    5: ["lab-terraform-docker"],
+    6: ["lab-terraform-docker"],
+    7: ["lab-terraform-docker"]
+  } },
+  "cka": { domains: {
+    2: ["lab-kubernetes-kind"],
+    3: ["lab-kubernetes-kind"],
+    4: ["lab-kubernetes-kind"],
+    5: ["lab-kubernetes-kind"]
   } }
 };
