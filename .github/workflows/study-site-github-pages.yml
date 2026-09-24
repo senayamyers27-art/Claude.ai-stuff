@@ -1,0 +1,59 @@
+name: Study site to GitHub Pages
+
+# Publishes cyber-study/public to https://senayamyers27-art.github.io after "Study site CI"
+# passes on main, by pushing it to the senayamyers27-art.github.io repository.
+#
+# Setup (once): create a fine-grained personal access token limited to the
+# senayamyers27-art.github.io repository with "Contents: Read and write", and save it as
+# the repository secret PAGES_DEPLOY_TOKEN. Until it exists this workflow does nothing.
+
+on:
+  workflow_run:
+    workflows: ["Study site CI"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: study-site-github-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TOKEN: ${{ secrets.PAGES_DEPLOY_TOKEN }}
+      SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+    steps:
+      - name: Check deploy token
+        id: token
+        run: |
+          if [ -z "$TOKEN" ]; then echo "::notice::PAGES_DEPLOY_TOKEN isn't set, so nothing was published."; echo "ready=false" >> "$GITHUB_OUTPUT"; else echo "ready=true" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Checkout the tested commit
+        if: steps.token.outputs.ready == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Push the site to senayamyers27-art.github.io
+        if: steps.token.outputs.ready == 'true'
+        run: |
+          out="$RUNNER_TEMP/site"
+          git clone --depth 1 "https://x-access-token:${TOKEN}@github.com/senayamyers27-art/senayamyers27-art.github.io.git" "$out" || { mkdir -p "$out" && git -C "$out" init -b main && git -C "$out" remote add origin "https://x-access-token:${TOKEN}@github.com/senayamyers27-art/senayamyers27-art.github.io.git"; }
+          find "$out" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a cyber-study/public/. "$out/"
+          touch "$out/.nojekyll"   # serve .well-known/ and skip Jekyll processing
+          cd "$out"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "No changes to publish."; exit 0; fi
+          git commit -q -m "Publish Cyber Cert Study from ${GITHUB_REPOSITORY}@${SHA::7}"
+          git push -q origin HEAD:main
+          echo "Published ${SHA::7} to https://senayamyers27-art.github.io"

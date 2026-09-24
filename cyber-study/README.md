@@ -96,6 +96,21 @@ Inside the site:
 - **security.txt** at `/.well-known/security.txt` points to GitHub private vulnerability
   reporting. The maintenance report reminds you 45 days before it expires.
 
+## Free hosting now: GitHub Pages
+
+Until the Cloudflare domain is set up, the site can run at `https://senayamyers27-art.github.io`,
+which is installable on phones.
+
+1. Create a **public** repository named exactly `senayamyers27-art.github.io` (empty, no README).
+2. Grant the Claude GitHub App access to it, or create a fine-grained token limited to that
+   repository with *Contents: Read and write* and save it here as the secret `PAGES_DEPLOY_TOKEN`.
+3. **Study site to GitHub Pages** (`study-site-github-pages.yml`) then publishes `public/` there
+   after every green CI run on `main`, adding `.nojekyll` so `/.well-known/` is served.
+
+GitHub Pages can't send custom response headers, so the Content-Security-Policy comes from each
+page's `<meta>` tag, HTTPS/HSTS come from github.io itself, and the `_headers`, `_redirects` and
+Pages Function only apply on Cloudflare.
+
 ## Launch checklist
 
 1. **Buy the domain** in Cloudflare: Domain Registration → Register Domains.
