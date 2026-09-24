@@ -237,3 +237,5 @@ footer.foot{max-width:760px;margin:0 auto;padding:18px 16px 40px;color:var(--mut
 .chipbtn[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 .chipbtn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .trackh{margin:26px 0 2px}
+/* Questions can contain code: keep line breaks and indentation, wrap long lines on phones. */
+.q,.qtext,.opt,.expl{white-space:pre-wrap;overflow-wrap:anywhere}
