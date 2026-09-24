@@ -78,7 +78,7 @@
     <p>You are solely responsible for how you use the instructions and for any consequences.</p>
 
     <h2>3. No affiliation and trademarks</h2>
-    <p>${SITE} is independent. It is not affiliated with, endorsed by or sponsored by CompTIA, Cisco, ISC2, EC-Council or any tool vendor. Security+, CySA+, Network+, PenTest+, CCNA, SSCP, CC, CISSP, CEH and other names are trademarks of their respective owners and are used only to identify the exams.</p>
+    <p>${SITE} is independent. It is not affiliated with, endorsed by or sponsored by CompTIA, Cisco, ISC2 or any tool vendor. Security+, CySA+, Network+, CCNA, SSCP, CC, CISSP and other names are trademarks of their respective owners and are used only to identify the exams.</p>
 
     <h2>4. Accuracy and no guarantee</h2>
     <p>Exam objectives, domain weights, formats and dates change. We work to keep content current and show when each exam's details were last checked, but we can't guarantee that questions, plans or lab steps are complete, current or error-free, or that using the site will lead to passing an exam. Always confirm details with the official exam objectives. Practice questions are original study material, not actual exam questions.</p>

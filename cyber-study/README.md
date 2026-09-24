@@ -124,8 +124,6 @@ Inside the site:
 | Network+ N10-009 | Built, weights verified | 23/20/19/14/24, confirmed Sept 24, 2026 |
 | ISC2 CC | Built, weights verified | Outline effective Sept 1, 2026 (24/17.3/20/21.3/17.3, rounded) |
 | CISSP | Built, weights verified | 2024 outline, confirmed Sept 24, 2026 |
-| PenTest+ PT0-003 | Not built | Listed with weights only; content generation was stopped by a safety filter |
-| CEH v13 | Not built | Same as PenTest+ |
 
 When you confirm a cert's details against the official outline, set `status: "verified"` and
 update `lastVerified`. The maintenance report asks again after `reviewEveryDays` (180).
@@ -136,3 +134,6 @@ A Cloudflare Worker on the same domain could bring back Drive sync, AI-written q
 the "UTD Fullstack Cybersecurity" notes, and progress across devices, with API keys kept as
 Worker secrets: `GET /api/drive/changes`, `POST /api/questions/generate` (returns questions in
 the same eight-field shape as the data files), `GET/PUT /api/progress` behind Cloudflare Access.
+
+PenTest+ and CEH are not on the site. Their domain weights are kept in `public/data/catalog.js`
+(`CertHub.planned`) so they can be added back later with a data file.
