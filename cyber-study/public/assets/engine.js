@@ -1,16 +1,25 @@
-/* Study page engine: plan, weekly quizzes, checkpoint tests, practice exam,
-   spaced review (1, 3, 7, 14 days) and progress by domain, saved in localStorage. */
+/* Certification view: plan, weekly quizzes, checkpoint tests, practice exam, spaced
+   review (1, 3, 7, 14 days), linked labs and progress by domain, saved in localStorage.
+   The app router (app.js) calls CertHub.certView.open(id, tab). */
 (function () {
   const { U, buildPlan, loadProgress, saveProgress } = CertHub;
   const { $, esc, DAY, today, parseD, fmt, fmtLong, shuffle, dc } = U;
   const INTERVALS = [1, 3, 7, 14];
 
   let C, PLAN, W, DOM, Q, S;
+  let active = false;
+  const TAB_IDS = ["week", "plan", "practice", "labs", "progress", "about"];
 
-  function boot() {
-    const id = document.body.dataset.cert;
+  function open(id, tab) {
+    if (C && C.id === id && S) {
+      // Same certification: switch tabs but keep any quiz in progress.
+      active = true;
+      if (TAB_IDS.includes(tab) && tab !== S.tab) { S.tab = tab; if (tab === "week") S.viewWeek = null; }
+      render(); return true;
+    }
     C = CertHub.certs[id];
-    if (!C) { $("#app").innerHTML = `<p class="err">This study plan couldn't load.</p>`; return; }
+    if (!C) return false;
+    active = true;
     PLAN = buildPlan(C);
     W = PLAN.weeks;
     DOM = Object.fromEntries(C.domains.map(d => [d.id, d]));
@@ -19,20 +28,18 @@
     const p = loadProgress(C.id);
     if (!p.start) p.start = C.start || U.iso(U.nextMonday(today()));
     if (!p.examDate) p.examDate = C.examDate || U.iso(U.addDays(parseD(p.start), W.length * 7 + 1));
-    S = { tab: "week", viewWeek: null, quiz: null, p };
+    S = { tab: TAB_IDS.includes(tab) ? tab : "week", viewWeek: null, quiz: null, p };
     saveProgress(C.id, p);
-    document.title = `${C.short} ${C.exam} Study Plan`;
-    $("#brandname").textContent = `${C.short} ${C.exam}`;
-    CertHub.themeButton();
-    wire();
     render();
+    return true;
   }
+  function close() { active = false; clearTimeout(tickT); }
 
   const DAYS = () => [
     ["Mon", "Read this week's objectives and reread the listed sections of your notes"],
     ["Tue", C.videoTip || "Watch videos or read the matching chapters of a study guide for this week's topics"],
     ["Wed", "Answer the study questions below out loud before revealing them"],
-    ["Thu", "Hands-on: this week's lab"],
+    ["Thu", "Hands-on: this week's lab (step-by-step below)"],
     ["Fri", "Take the weekly quiz (10 questions)"],
     ["Sat", "Clear your review queue, then any checkpoint test"],
     ["Sun", "Rest, or 15 minutes of review only"]
@@ -85,7 +92,7 @@
 
   /* ---------- quiz engine ---------- */
   function startQuiz(o) {
-    if (!o.qs.length) { alert("No questions available yet for this set."); return; }
+    if (!o.qs.length) { CertHub.ui.toast("No questions available yet for this set."); return; }
     // Shuffle answer options every time so position never gives the answer away.
     o.qs = o.qs.map(q => { const idx = shuffle(q.o.map((_, i) => i)); return { ...q, o: idx.map(i => q.o[i]), a: idx.indexOf(q.a) }; });
     S.quiz = { ...o, i: 0, ans: [], picked: null, revealed: false, end: o.minutes ? Date.now() + o.minutes * 60000 : null, done: false };
@@ -124,13 +131,17 @@
     S.p.history = S.p.history.slice(0, 60);
     save(); render(); window.scrollTo(0, 0);
   }
-  function quitQuiz() {
-    if (S.quiz && !S.quiz.done && !confirm(S.quiz.mode === "test" ? "Leave this test? It won't be scored." : "Leave this quiz? Answers so far are already saved.")) return;
+  async function quitQuiz() {
+    if (S.quiz && !S.quiz.done) {
+      const test = S.quiz.mode === "test";
+      const ok = await CertHub.ui.confirm(test ? "Leave this test? It won't be scored." : "Leave this quiz? Answers so far are already saved.", { ok: test ? "Leave test" : "Leave quiz", cancel: "Keep going" });
+      if (!ok) return;
+    }
     S.quiz = null; clearTimeout(tickT); render();
   }
 
   /* ---------- views ---------- */
-  const TABS = [["week", "This week"], ["plan", "Plan"], ["practice", "Quizzes & tests"], ["progress", "Progress"], ["about", "About the exam"]];
+  const TABS = [["week", "This week"], ["plan", "Plan"], ["practice", "Quizzes & tests"], ["labs", "Labs"], ["progress", "Progress"], ["about", "About the exam"]];
   function renderTabs() {
     $("#tabs").innerHTML = TABS.map(([k, l]) => `<button role="tab" aria-selected="${S.tab === k}" data-tab="${k}">${k === "plan" ? `${W.length}-week plan` : l}</button>`).join("");
     const days = Math.ceil((parseD(S.p.examDate) - today()) / DAY);
@@ -150,8 +161,16 @@
     return C.status === "verified" ? "" : `<div class="status warn"><strong>Check before relying on this.</strong> ${esc(C.statusNote || "Domain weights haven't been confirmed against the current official outline.")}</div>`;
   }
   const noticeHtml = () => CertHub.activeNotices(C).map(n => `<div class="status notice">${esc(n.text)}</div>`).join("");
+  const weekLabs = w => (w.labRefs || []).map(id => CertHub.labs[id]).filter(Boolean);
+  // Every linked lab once, at the first week that uses it.
+  function planLabs() {
+    const seen = new Map();
+    W.forEach(w => weekLabs(w).forEach(l => { if (!seen.has(l.id)) seen.set(l.id, { lab: l, week: w }); }));
+    return [...seen.values()];
+  }
   function weekView() {
     const n = S.viewWeek || weekNow(); const w = W[n - 1];
+    const labs = weekLabs(w);
     const due = dueIds().length;
     const cp = PLAN.checkpoints.find(c => c.after === n);
     const pre = today() < parseD(S.p.start);
@@ -170,9 +189,13 @@
     </div>
     <h2>What you're covering</h2>
     <div class="panel wk" style="--c:${dc(w.dom)}"><ul class="clean">${w.topics.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>
+    <h2>Hands-on labs</h2>
+    ${labs.length ? `<p class="note">Step-by-step, in your own home lab. Each one ends with a portfolio write-up and a resume bullet.</p>
+    <div class="labgrid">${labs.map(l => CertHub.labCard(l)).join("")}</div>` : ""}
+    ${w.lab ? `<div class="panel"><strong>Quick exercise</strong><p style="margin:6px 0 0">${esc(w.lab)}</p></div>` : ""}
     ${w.notes && w.notes.length ? `<h2>${esc(C.notesLabel || "Reread")}</h2><div class="panel"><ul class="clean">${w.notes.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>` : ""}
     <h2>Daily plan</h2>
-    <div class="panel"><ul class="days">${DAYS().map(([d, t], i) => { const k = `${n}-${i}`; const c = !!S.p.checks[k]; const text = i === 3 ? "Hands-on: " + w.lab : t; return `<li class="${c ? "checked" : ""}"><label><input type="checkbox" data-check="${k}" ${c ? "checked" : ""}><span class="d">${d}</span><span class="t">${esc(text)}</span></label></li>`; }).join("")}</ul></div>
+    <div class="panel"><ul class="days">${DAYS().map(([d, t], i) => { const k = `${n}-${i}`; const c = !!S.p.checks[k]; const text = i === 3 ? "Hands-on: " + (labs.length ? labs.map(l => l.title).join("; ") : w.lab) : t; return `<li class="${c ? "checked" : ""}"><label><input type="checkbox" data-check="${k}" ${c ? "checked" : ""}><span class="d">${d}</span><span class="t">${esc(text)}</span></label></li>`; }).join("")}</ul></div>
     ${w.study && w.study.length ? `<h2>Study questions</h2>
     <p class="note">Answer out loud first, then open to check.</p>
     <div class="panel">${w.study.map(([q, a]) => `<details class="sq"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("")}</div>` : ""}`;
@@ -232,6 +255,17 @@
     ${(z.mode === "learn" && z.revealed) || z.mode === "test" ? `<button class="btn" data-act="next">${z.i + 1 === z.qs.length ? "Finish" : "Next"}</button>` : ""}
     ${z.mode === "test" ? `<button class="btn ghost" data-act="finish">Submit test</button>` : ""}</div>`;
   }
+  function labsView() {
+    const all = planLabs();
+    const lp = CertHub.loadLabProgress();
+    const done = all.filter(x => CertHub.labStatus(x.lab, lp).state === "done").length;
+    return `<h1>${esc(C.short)} labs</h1>
+    <p class="meta">${all.length} hands-on labs linked to this plan · ${done} finished. They use free tools in your own home lab and build a portfolio as you go. <a href="#labs">All labs</a> · <a href="#portfolio">Your portfolio</a></p>
+    ${all.length ? PLAN.phases.map(([a, b, t]) => {
+      const here = all.filter(x => x.week.n >= a && x.week.n <= b);
+      return here.length ? `<h2>${esc(t)}</h2><div class="labgrid">${here.map(x => CertHub.labCard(x.lab, `Week ${x.week.n}`)).join("")}</div>` : "";
+    }).join("") : `<p class="note">No labs are linked to this plan yet.</p>`}`;
+  }
   function progressView() {
     const st = S.p.stats;
     const rows = C.domains.map(d => { const s = st[d.id] || { c: 0, t: 0 }; return { d: d.id, pct: s.t ? Math.round(100 * s.c / s.t) : null, ...s }; });
@@ -252,7 +286,7 @@
     </div>
     <h2>Your data</h2>
     <div class="panel"><p class="note" style="margin:0">Progress is saved only in this browser. Back it up to move it to another device.</p>
-      <div class="btns"><button class="btn ghost sm" data-act="export">Download backup</button><label class="btn ghost sm" for="imp">Restore backup</label><input type="file" id="imp" accept="application/json" class="hide"><button class="btn ghost sm" data-act="reset">Reset ${esc(C.short)} progress</button></div>
+      <div class="btns"><button class="btn ghost sm no-framed" data-act="export">Download backup</button><button class="btn ghost sm" data-act="copybackup">Copy backup</button><label class="btn ghost sm" for="imp">Restore from file</label><input type="file" id="imp" accept="application/json" class="hide"><button class="btn ghost sm" data-act="pasterestore">Restore from text</button><button class="btn ghost sm" data-act="reset">Reset ${esc(C.short)} progress</button></div>
       <p class="note" id="datamsg" role="status"></p></div>`;
   }
   function aboutView() {
@@ -277,55 +311,72 @@
   }
   function render() {
     renderTabs();
-    const v = { week: weekView, plan: planView, practice: practiceView, progress: progressView, about: aboutView }[S.tab];
+    const v = { week: weekView, plan: planView, practice: practiceView, labs: labsView, progress: progressView, about: aboutView }[S.tab];
     $("#app").innerHTML = v();
     if (S.quiz && !S.quiz.done && S.quiz.end && S.tab === "practice") tick();
   }
 
-  /* ---------- events ---------- */
-  function wire() {
-    document.addEventListener("click", e => {
-      const t = e.target.closest("button"); if (!t || !t.closest("#app, #tabs")) return;
-      if (t.dataset.tab) { S.tab = t.dataset.tab; if (t.dataset.tab === "week") S.viewWeek = null; render(); window.scrollTo(0, 0); return; }
-      if (t.dataset.week) { S.viewWeek = +t.dataset.week; S.tab = "week"; render(); return; }
-      if (t.dataset.open) { S.viewWeek = +t.dataset.open; S.tab = "week"; render(); window.scrollTo(0, 0); return; }
-      if (t.dataset.opt != null) return choose(+t.dataset.opt);
-      const a = t.dataset.act; if (!a) return;
-      const d = +t.dataset.d;
-      const cp = dom => { const qs = pickFor(q => q.d === dom, 25); startQuiz({ title: `Checkpoint: Domain ${dom}`, qs, mode: "test", minutes: Math.max(5, Math.round(30 * qs.length / 25)) }); };
-      const drill = dom => startQuiz({ title: `Domain ${dom} drill`, qs: pickFor(q => q.d === dom, 15), mode: "learn" });
-      const acts = {
-        weekly: () => startQuiz({ title: `Week ${t.dataset.w} quiz`, qs: weeklyQs(+t.dataset.w), mode: "learn" }),
-        "weekly-sel": () => { const n = +$("#wsel").value; startQuiz({ title: `Week ${n} quiz`, qs: weeklyQs(n), mode: "learn" }); },
-        review: () => { const ids = dueIds(); startQuiz({ title: "Review queue", qs: shuffle(Q.filter(q => ids.includes(q.id))).slice(0, 20), mode: "learn", review: true }); },
-        drill: () => drill(+$("#dsel").value),
-        "drill-d": () => drill(d),
-        checkpoint: () => cp(d),
-        exam: () => { const qs = examQs(); startQuiz({ title: "Practice exam", qs, mode: "test", minutes: examMinutes(qs.length) }); },
-        next, prev, quit: quitQuiz,
-        finish: () => { if (confirm("Submit the test now?")) { S.quiz.ans[S.quiz.i] = S.quiz.picked; S.quiz.i = S.quiz.qs.length; finishQuiz(); } },
-        export: () => { saveProgress(C.id, S.p); CertHub.exportAll(); },
-        reset: () => { if (confirm(`Erase all ${C.short} progress in this browser? This can't be undone.`)) { const { start, examDate } = S.p; S.p = { ...CertHub.freshProgress(), start, examDate }; saveProgress(C.id, S.p); render(); } }
-      };
-      if (acts[a]) acts[a]();
-    });
-    document.addEventListener("change", e => {
-      const el = e.target;
-      const c = el.dataset && el.dataset.check;
-      if (c) { S.p.checks[c] = el.checked; el.closest("li").classList.toggle("checked", el.checked); save(); return; }
-      if (el.id === "exam" && el.value) { S.p.examDate = el.value; save(); renderTabs(); }
-      if (el.id === "start" && el.value) { S.p.start = el.value; save(); renderTabs(); }
-      if (el.id === "imp" && el.files && el.files[0]) {
-        CertHub.importAll(el.files[0], (err, n) => {
-          if (err) { $("#datamsg").textContent = err.message; return; }
-          S.p = loadProgress(C.id);
-          if (!S.p.start) S.p.start = C.start || U.iso(U.nextMonday(today()));
-          if (!S.p.examDate) S.p.examDate = C.examDate || U.iso(U.addDays(parseD(S.p.start), W.length * 7 + 1));
-          render(); $("#datamsg").textContent = `Restored ${n} saved item${n === 1 ? "" : "s"}.`;
-        });
+  /* ---------- events (delegated once; only act while this view is open) ---------- */
+  document.addEventListener("click", e => {
+    if (!active) return;
+    const t = e.target.closest("button"); if (!t || !t.closest("#app, #tabs")) return;
+    if (t.dataset.tab) { location.hash = `${C.id}.${t.dataset.tab}`; return; }
+    if (t.dataset.week) { S.viewWeek = +t.dataset.week; S.tab = "week"; render(); return; }
+    if (t.dataset.open) { S.viewWeek = +t.dataset.open; S.tab = "week"; history.replaceState(null, "", `#${C.id}.week`); render(); window.scrollTo(0, 0); return; }
+    if (t.dataset.opt != null) return choose(+t.dataset.opt);
+    const a = t.dataset.act; if (!a) return;
+    const d = +t.dataset.d;
+    const cp = dom => { const qs = pickFor(q => q.d === dom, 25); startQuiz({ title: `Checkpoint: Domain ${dom}`, qs, mode: "test", minutes: Math.max(5, Math.round(30 * qs.length / 25)) }); };
+    const drill = dom => startQuiz({ title: `Domain ${dom} drill`, qs: pickFor(q => q.d === dom, 15), mode: "learn" });
+    const acts = {
+      weekly: () => startQuiz({ title: `Week ${t.dataset.w} quiz`, qs: weeklyQs(+t.dataset.w), mode: "learn" }),
+      "weekly-sel": () => { const n = +$("#wsel").value; startQuiz({ title: `Week ${n} quiz`, qs: weeklyQs(n), mode: "learn" }); },
+      review: () => { const ids = dueIds(); startQuiz({ title: "Review queue", qs: shuffle(Q.filter(q => ids.includes(q.id))).slice(0, 20), mode: "learn", review: true }); },
+      drill: () => drill(+$("#dsel").value),
+      "drill-d": () => drill(d),
+      checkpoint: () => cp(d),
+      exam: () => { const qs = examQs(); startQuiz({ title: "Practice exam", qs, mode: "test", minutes: examMinutes(qs.length) }); },
+      next, prev, quit: quitQuiz,
+      finish: async () => {
+        const unanswered = S.quiz.qs.length - S.quiz.ans.filter((x, i) => x != null || (i === S.quiz.i && S.quiz.picked != null)).length;
+        if (await CertHub.ui.confirm(unanswered > 0 ? `Submit now? ${unanswered} question${unanswered > 1 ? "s are" : " is"} unanswered and will count as wrong.` : "Submit the test now?", { ok: "Submit test", cancel: "Keep working" })) {
+          S.quiz.ans[S.quiz.i] = S.quiz.picked; S.quiz.i = S.quiz.qs.length; finishQuiz();
+        }
+      },
+      export: () => { saveProgress(C.id, S.p); CertHub.exportAll(); },
+      copybackup: () => { saveProgress(C.id, S.p); CertHub.ui.copy(CertHub.backupText(), "progress backup"); },
+      pasterestore: () => CertHub.restoreFromText(),
+      reset: async () => {
+        if (await CertHub.ui.confirm(`Erase all ${C.short} progress in this browser? This can't be undone.`, { ok: "Erase progress", cancel: "Keep it", danger: true })) {
+          const { start, examDate } = S.p; S.p = { ...CertHub.freshProgress(), start, examDate }; saveProgress(C.id, S.p); render();
+        }
       }
-    });
-  }
+    };
+    if (acts[a]) acts[a]();
+  });
+  document.addEventListener("change", e => {
+    if (!active) return;
+    const el = e.target;
+    const c = el.dataset && el.dataset.check;
+    if (c) { S.p.checks[c] = el.checked; el.closest("li").classList.toggle("checked", el.checked); save(); return; }
+    if (el.id === "exam" && el.value) { S.p.examDate = el.value; save(); renderTabs(); }
+    if (el.id === "start" && el.value) { S.p.start = el.value; save(); renderTabs(); }
+    if (el.id === "imp" && el.files && el.files[0]) {
+      CertHub.importAll(el.files[0], (err, n) => {
+        if (err) { $("#datamsg").textContent = err.message; return; }
+        CertHub.ui.toast(`Restored ${n} saved item${n === 1 ? "" : "s"}.`);
+        setTimeout(() => location.reload(), 800);
+      });
+    }
+  });
 
-  document.addEventListener("DOMContentLoaded", boot);
+  CertHub.certView = {
+    open, close,
+    get active() { return active; },
+    title: () => C ? `${C.short} ${C.exam}` : "",
+    // Weeks and certifications that use a lab, for the lab page's "Used in" list.
+    usesOf(labId) {
+      return Object.values(CertHub.certs).flatMap(c => buildPlan(c).weeks.filter(w => (w.labRefs || []).includes(labId)).map(w => ({ cert: c, week: w.n })));
+    }
+  };
 })();

@@ -5,3 +5,4 @@ worker/.wrangler/
 cyber-study/.wrangler/
 cyber-study/.state*.json
 cyber-study/report.md
+cyber-study/dist-artifact/

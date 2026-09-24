@@ -53,9 +53,10 @@
     return out;
   }
   function buildPlan(c) {
+    const map = (window.CertHub && window.CertHub.labMap || {})[c.id] || {};
     if (c.weeks) {
       return {
-        weeks: c.weeks.map((w, i) => ({ n: i + 1, ...w })),
+        weeks: c.weeks.map((w, i) => ({ n: i + 1, labRefs: (map.weeks || {})[i + 1] || [], ...w })),
         checkpoints: c.checkpoints || [],
         phases: c.phases || [[1, c.weeks.length, "Plan"]]
       };
@@ -65,7 +66,8 @@
     const weeks = [], checkpoints = [], phases = [];
     c.domains.forEach((d, di) => {
       const k = counts[di];
-      const topics = split(d.topics, k), study = split((c.study || {})[d.id], k);
+      const labRefs = d.labRefs || (map.domains || {})[d.id] || [];
+      const topics = split(d.topics, k), study = split((c.study || {})[d.id], k), refs = split(labRefs, k);
       const first = weeks.length + 1;
       for (let j = 0; j < k; j++) {
         const labs = d.labs || [];
@@ -78,6 +80,9 @@
           notes: d.notes || [],
           lab: labs.length ? labs[j % labs.length] : "Summarize this week's topics in your own words on one page.",
           study: study[j] || [],
+          // Each week of a domain gets its share of the domain's labs; if there are fewer
+          // labs than weeks, later weeks continue with the domain's labs in turn.
+          labRefs: refs[j] && refs[j].length ? refs[j] : labRefs.length ? [labRefs[j % labRefs.length]] : [],
           checkpoint: j === k - 1
         });
       }
@@ -122,10 +127,20 @@
   }
 
   /* ---------- backup (progress lives only in this browser) ---------- */
-  function exportAll() {
+  function backupText() {
     const data = {};
     store.keys().forEach(k => { data[k] = store.get(k); });
-    const blob = new Blob([JSON.stringify({ app: "certhub", v: 1, at: new Date().toISOString(), data }, null, 1)], { type: "application/json" });
+    return JSON.stringify({ app: "certhub", v: 1, at: new Date().toISOString(), data }, null, 1);
+  }
+  function restoreText(text) {
+    const j = JSON.parse(text);
+    if (j.app !== "certhub" || typeof j.data !== "object") throw new Error("That isn't a progress backup from this site.");
+    let n = 0;
+    Object.entries(j.data).forEach(([k, v]) => { if (k.startsWith("certhub:") && typeof v === "string") { store.set(k, v); n++; } });
+    return n;
+  }
+  function exportAll() {
+    const blob = new Blob([backupText()], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = `cert-study-progress-${U.iso(new Date())}.json`;
@@ -134,15 +149,7 @@
   }
   function importAll(file, done) {
     const r = new FileReader();
-    r.onload = () => {
-      try {
-        const j = JSON.parse(r.result);
-        if (j.app !== "certhub" || typeof j.data !== "object") throw new Error("Not a progress backup from this site.");
-        let n = 0;
-        Object.entries(j.data).forEach(([k, v]) => { if (k.startsWith("certhub:") && typeof v === "string") { store.set(k, v); n++; } });
-        done(null, n);
-      } catch (e) { done(e); }
-    };
+    r.onload = () => { try { done(null, restoreText(r.result)); } catch (e) { done(e); } };
     r.onerror = () => done(new Error("Couldn't read that file."));
     r.readAsText(file);
   }
@@ -159,7 +166,8 @@
   function registerSW() {
     if (!("serviceWorker" in navigator) || !/^https?:$/.test(location.protocol)) return;
     const m = document.querySelector('link[rel="manifest"]');
-    const base = m ? m.getAttribute("href").replace("manifest.webmanifest", "") : "/";
+    if (!m) return; // embedded copies (e.g. a hosted preview) run without offline support
+    const base = m.getAttribute("href").replace("manifest.webmanifest", "");
     let reloading = false;
     navigator.serviceWorker.addEventListener("controllerchange", () => { if (reloading) location.reload(); });
     const offer = w => {
@@ -181,9 +189,72 @@
     }).catch(() => {});
   }
   document.addEventListener("DOMContentLoaded", registerSW);
+  // Inside a frame, file downloads are usually blocked, so hide download-only buttons.
+  try { if (window.self !== window.top) document.documentElement.classList.add("framed"); } catch (e) { document.documentElement.classList.add("framed"); }
+
+
+  /* ---------- in-page dialogs, toasts and copy (hosted pages block confirm/alert) ---------- */
+  const ui = {
+    confirm(message, { ok = "OK", cancel = "Cancel", danger = false } = {}) {
+      return new Promise(resolve => {
+        const prev = document.activeElement;
+        const wrap = document.createElement("div");
+        wrap.className = "modal-wrap";
+        wrap.innerHTML = `<div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="modal-msg"><p id="modal-msg"></p><div class="btns"><button type="button" class="btn ${danger ? "danger" : ""}" data-v="1"></button><button type="button" class="btn ghost" data-v="0"></button></div></div>`;
+        wrap.querySelector("#modal-msg").textContent = message;
+        wrap.querySelector('[data-v="1"]').textContent = ok;
+        wrap.querySelector('[data-v="0"]').textContent = cancel;
+        const close = v => { wrap.remove(); document.removeEventListener("keydown", key); if (prev && prev.focus) prev.focus(); resolve(v); };
+        const key = e => { if (e.key === "Escape") close(false); };
+        wrap.addEventListener("click", e => { const b = e.target.closest("[data-v]"); if (b) close(b.dataset.v === "1"); else if (e.target === wrap) close(false); });
+        document.addEventListener("keydown", key);
+        document.body.appendChild(wrap);
+        wrap.querySelector('[data-v="1"]').focus();
+      });
+    },
+    toast(message) {
+      let t = document.getElementById("toast");
+      if (!t) { t = document.createElement("div"); t.id = "toast"; t.className = "toast"; t.setAttribute("role", "status"); document.body.appendChild(t); }
+      t.textContent = message; t.classList.add("show");
+      clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 2600);
+    },
+    // Clipboard first; if the browser refuses, select the text in a box the viewer can copy by hand.
+    copy(text, label) {
+      const fallback = () => ui.showText(text, label);
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => ui.toast("Copied" + (label ? `: ${label}` : "")), fallback);
+        else fallback();
+      } catch (e) { fallback(); }
+    },
+    showText(text, label) {
+      const wrap = document.createElement("div");
+      wrap.className = "modal-wrap";
+      wrap.innerHTML = `<div class="modal wide" role="dialog" aria-modal="true" aria-label="Copy text"><p><strong></strong><br><span class="note">Select all and copy.</span></p><textarea readonly rows="10"></textarea><div class="btns"><button type="button" class="btn">Done</button></div></div>`;
+      wrap.querySelector("strong").textContent = label || "Text to copy";
+      const ta = wrap.querySelector("textarea"); ta.value = text;
+      wrap.querySelector("button").addEventListener("click", () => wrap.remove());
+      document.body.appendChild(wrap); ta.focus(); ta.select();
+    }
+  };
+
+  /* ---------- lab library ---------- */
+  const labs = {};
+  const labOrder = [];
+  const LABKEY = "certhub:v1:labs";
+  function loadLabProgress() { try { return JSON.parse(store.get(LABKEY) || "{}") || {}; } catch (e) { return {}; } }
+  function saveLabProgress(p) { return store.set(LABKEY, JSON.stringify(p)); }
+  function labStatus(lab, p) {
+    const s = (p || loadLabProgress())[lab.id];
+    if (!s) return { state: "new", pct: 0 };
+    if (s.done) return { state: "done", pct: 100 };
+    const n = Object.values(s.steps || {}).filter(Boolean).length;
+    return { state: n ? "doing" : "new", pct: Math.round(100 * n / lab.steps.length) };
+  }
 
   window.CertHub = {
     U, store, certs, buildPlan, loadProgress, saveProgress, freshProgress, applyTheme, themeButton, exportAll, importAll, activeNotices,
-    register(c) { certs[c.id] = c; }
+    backupText, restoreText, ui, labs, labOrder, loadLabProgress, saveLabProgress, labStatus,
+    register(c) { certs[c.id] = c; },
+    registerLabs(list) { list.forEach(l => { if (!labs[l.id]) labOrder.push(l.id); labs[l.id] = l; }); }
   };
 })();

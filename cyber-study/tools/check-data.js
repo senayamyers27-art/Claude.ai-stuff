@@ -2,9 +2,11 @@
 /* Sanity checks for every data file: weights, question shape, ids, answer spread. */
 const fs = require("fs"), path = require("path");
 const root = path.join(__dirname, "..", "public");
-global.CertHub = { certs: {}, register(c) { this.certs[c.id] = c; } };
-require(path.join(root, "data/catalog.js"));
+global.CertHub = { certs: {}, labs: {}, register(c) { this.certs[c.id] = c; }, registerLabs(l) { l.forEach(x => { if (this.labs[x.id]) console.log(`  ✗ duplicate lab id ${x.id}`) || bad++; this.labs[x.id] = x; }); } };
 let bad = 0;
+require(path.join(root, "data/catalog.js"));
+require(path.join(root, "data/lab-map.js"));
+fs.readdirSync(path.join(root, "data")).filter(f => /^labs-.+\.js$/.test(f)).forEach(f => require(path.join(root, "data", f)));
 const fail = (id, m) => { bad++; console.log(`  ✗ ${id}: ${m}`); };
 for (const id of CertHub.catalog) {
   const f = path.join(root, "data", id + ".js");
@@ -37,4 +39,27 @@ for (const id of CertHub.catalog) {
   if (!c.weeks) c.domains.forEach(d => { if (!(d.topics || []).length) fail(id, `domain ${d.id} has no topics`); });
   console.log(`${id}: ${c.questions.length} questions, per domain ${JSON.stringify(per)}, answer positions ${pos.join("/")}, ${c.status}`);
 }
+/* ---------- labs ---------- */
+const TRACKS = ["Foundations", "Networking", "Blue team", "GRC & architecture"], LEVELS = ["Beginner", "Intermediate", "Advanced"];
+for (const l of Object.values(CertHub.labs)) {
+  const f = m => fail(l.id, m);
+  if (!/^lab-[a-z0-9-]+$/.test(l.id)) f("id must look like lab-some-name");
+  for (const k of ["title", "summary", "realWorld", "deliverable", "resume", "cost"]) if (typeof l[k] !== "string" || !l[k].trim()) f(`missing ${k}`);
+  if (!TRACKS.includes(l.track)) f(`unknown track "${l.track}"`);
+  if (!LEVELS.includes(l.level)) f(`unknown level "${l.level}"`);
+  if (!(l.minutes > 0)) f("minutes must be a positive number");
+  if (!Array.isArray(l.steps) || l.steps.length < 6) f("needs at least 6 steps");
+  (l.steps || []).forEach((st, i) => { if (!st.title || !st.body) f(`step ${i + 1} needs a title and body`); if (st.cmd != null && typeof st.cmd !== "string") f(`step ${i + 1} cmd must be text`); });
+  if (!Array.isArray(l.verify) || l.verify.length < 2) f("needs at least 2 verify checks");
+  if (!Array.isArray(l.youWillNeed) || !l.youWillNeed.length) f("youWillNeed is empty");
+  (l.links || []).forEach(u => { if (!/^https:\/\//.test(u.url)) f(`link must be https: ${u.url}`); });
+  (l.requires || []).forEach(r => { if (!CertHub.labs[r]) f(`requires unknown lab ${r}`); });
+}
+const used = new Set();
+for (const [cid, m] of Object.entries(CertHub.labMap || {})) {
+  if (!CertHub.certs[cid]) fail("lab-map", `unknown certification ${cid}`);
+  for (const [k, list] of Object.entries(Object.assign({}, m.weeks, m.domains))) list.forEach(id => { used.add(id); if (!CertHub.labs[id]) fail("lab-map", `${cid} ${k}: unknown lab ${id}`); });
+}
+const unused = Object.keys(CertHub.labs).filter(id => !used.has(id));
+console.log(`labs: ${Object.keys(CertHub.labs).length} labs, ${Object.values(CertHub.labs).reduce((a, l) => a + (l.steps || []).length, 0)} steps${unused.length ? `, not linked to any plan: ${unused.join(", ")}` : ""}`);
 process.exit(bad ? 1 : 0);
