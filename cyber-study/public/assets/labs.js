@@ -52,7 +52,8 @@
       <label>Status <select id="f-state"><option value="">Any</option>${Object.entries(STATE).map(([k, v]) => `<option value="${k}" ${filters.state === k ? "selected" : ""}>${v}</option>`).join("")}</select></label>
       <label class="grow">Search <input type="search" id="f-q" value="${esc(filters.q)}" placeholder="Wireshark, Splunk, VLAN…"></label>
     </div>
-    <div id="lablist">${listHtml()}</div>`;
+    <div id="lablist">${listHtml()}</div>
+    ${CertHub.pro ? CertHub.pro.capstoneSection() : ""}`;
   }
 
   /* ---------- one lab ---------- */

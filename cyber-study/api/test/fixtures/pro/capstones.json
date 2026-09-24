@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "sample": true,
+  "labs": [
+    {
+      "id": "cap-sample-soc",
+      "title": "SAMPLE capstone: build a tiny SOC",
+      "track": "Blue team",
+      "level": "Advanced",
+      "minutes": 600,
+      "cost": "Free",
+      "certs": ["security-plus", "cysa-plus"],
+      "summary": "SAMPLE capstone used for local development and tests.",
+      "realWorld": "SAMPLE: SOC teams run detections and write incident reports.",
+      "youWillNeed": ["Your home lab from lab-home-lab"],
+      "requires": ["lab-home-lab"],
+      "safety": "Only generate test events on your own lab VMs.",
+      "steps": [
+        { "title": "Plan", "body": "SAMPLE step." }, { "title": "Collect logs", "body": "SAMPLE step." },
+        { "title": "Write detection 1", "body": "SAMPLE step." }, { "title": "Write detection 2", "body": "SAMPLE step." },
+        { "title": "Generate test events", "body": "SAMPLE step." }, { "title": "Triage", "body": "SAMPLE step." },
+        { "title": "Report", "body": "SAMPLE step." }, { "title": "Present", "body": "SAMPLE step." }
+      ],
+      "verify": ["SAMPLE check 1", "SAMPLE check 2", "SAMPLE check 3"],
+      "deliverable": "SAMPLE incident report.",
+      "resume": "SAMPLE resume bullet.",
+      "rubric": [
+        { "criterion": "Detections", "levels": ["Needs work: fewer than 3", "Meets: 5 working detections", "Exceeds: tuned with false-positive notes"] },
+        { "criterion": "Report", "levels": ["Needs work: no timeline", "Meets: timeline and impact", "Exceeds: executive summary too"] },
+        { "criterion": "Evidence", "levels": ["Needs work: none", "Meets: screenshots", "Exceeds: exported queries"] },
+        { "criterion": "Clarity", "levels": ["Needs work: hard to follow", "Meets: clear", "Exceeds: reusable by others"] }
+      ]
+    }
+  ]
+}

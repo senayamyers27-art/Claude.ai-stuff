@@ -94,6 +94,15 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     check(r.status() === 200 && /Privacy|Terms|Security/.test(await page.textContent("h1")), `/${pth}/ policy page renders`);
   }
 
+  console.log("Without accounts");
+  let proSeen = false;
+  for (const h of [`#${ids[0]}.practice`, `#${ids[0]}.progress`, "#labs", "#account"]) {
+    await page.goto(`${BASE}/${h}`);
+    await page.waitForSelector("#app h1");
+    if (await page.$(".chip.pro, .pro-teaser, [data-tab=guide], a[href='#account']")) proSeen = true;
+  }
+  check(!proSeen, "no Pro prompts, Pro tab or Account link when accounts aren't configured");
+
   console.log("Saved progress");
   await page.goto(`${BASE}/${ids[0]}/`);
   await page.check('[data-check="1-0"]');

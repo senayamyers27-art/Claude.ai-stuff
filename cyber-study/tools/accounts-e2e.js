@@ -11,6 +11,8 @@ let failures = 0;
 const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (!ok) failures++; };
 
 (async () => {
+  process.env.PRO_EMAILS = "pro.learner@example.com"; // dev server grants this account Pro
+  delete process.env.PRO_CONTENT_DIR; // use the small sample content in api/test/fixtures/pro
   const { start } = require("../api/dev-server.js");
   const api = await start({ port: API_PORT, siteOrigin: BASE });
   const site = await serve(SITE_PORT, { apiOrigin: API });
@@ -62,6 +64,17 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     check(/learner\.one@example\.com/.test(await a.textContent("#app")), "account page shows the email");
     await a.waitForFunction(() => /^Synced/.test((document.getElementById("syncstatus") || {}).textContent || ""));
     check(true, "first sync finished");
+
+    console.log("Free account sees Pro as an upgrade");
+    check(/Plan: Free/.test(await a.textContent("#app")), "account shows the free plan");
+    await a.goto(BASE + "/#security-plus.practice");
+    await a.waitForSelector("text=Full-length exam");
+    check(!(await a.$("[data-act=fullexam]")) && !!(await a.$('a[href="#account"]:has-text("Unlock")')), "full-length exam is locked with an Unlock link");
+    await a.goto(BASE + "/#security-plus.guide");
+    await a.waitForSelector(".pro-teaser");
+    check(!(await a.$("[data-act=fcstart]")), "flashcards are locked");
+    await a.goto(BASE + "/#security-plus.progress");
+    check(!!(await a.$(".pro-teaser")) && !/Predicted score/.test(await a.textContent("#app")), "score report is locked");
 
     console.log("Device B: sign in and download");
     const b = await device();
@@ -128,6 +141,50 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     const row = await t.textContent("table.sectable tbody");
     check(/learner\.one@example\.com/.test(row) && /75%/.test(row), "summary lists the learner with accuracy");
     check(!/edited on B|notes from A/.test(await t.content()), "lab notes are not shown to the instructor");
+
+    console.log("Pro member");
+    const p = await device();
+    const contentCalls = [];
+    p.on("response", r => { if (r.url().includes("/v1/content/")) contentCalls.push(r.status()); });
+    await signIn(p, "pro.learner@example.com");
+    check(/Plan: Pro/.test(await p.textContent("#app")), "account shows the Pro plan");
+    await p.goto(BASE + "/#security-plus.practice");
+    await p.waitForSelector("[data-act=fullexam]");
+    check(/\+ 12 Pro/.test(await p.textContent("#app")), "Pro questions are added to the bank");
+    await p.click("[data-act=fullexam]");
+    check(/Question 1 of 90/.test(await p.textContent("#app")), "full-length exam has the real exam's 90 questions");
+    for (let i = 0; i < 40; i++) { await p.click(".opt >> nth=0"); await p.click("[data-act=next]"); }
+    await p.click("[data-act=finish]");
+    await p.click('.modal [data-v="1"]');
+    await p.waitForSelector(".big");
+    check(/Pass estimate/.test(await p.textContent("#app")), "result shows a pass estimate and domain breakdown");
+    await p.click("[data-act=quit]");
+    await p.goto(BASE + "/#security-plus.progress");
+    await p.waitForSelector("text=Predicted score");
+    check(/Latest full-length exam/.test(await p.textContent("#app")), "score report shows the prediction and the full-length exam");
+    await p.goto(BASE + "/#security-plus.guide");
+    await p.waitForSelector("[data-act=fcstart]");
+    await p.click("[data-act=fcstart]");
+    await p.click("[data-act=fcflip]");
+    check(!!(await p.$(".flashcard .expl")), "flashcard flips to show the answer");
+    await p.click("[data-act=fcknow]");
+    await p.click("[data-act=fcdone]");
+    await p.waitForTimeout(600); // progress saves are debounced
+    const cards = await p.evaluate(() => Object.keys((JSON.parse(localStorage.getItem("certhub:v1:security-plus")) || {}).cards || {}).length);
+    check(cards === 1, "flashcard progress is saved for spaced repetition");
+    check((await p.$$(".guide details")).length === 5, "study guide has a section for every domain");
+    await p.goto(BASE + "/#labs");
+    await p.waitForSelector('a.labcard[href="#cap-sample-soc"]');
+    await p.click('a.labcard[href="#cap-sample-soc"]');
+    await p.waitForSelector("text=Grade your project");
+    check(/SAMPLE capstone/.test(await p.textContent("#app")) && (await p.$$(".sectable tbody tr")).length === 4, "capstone opens with its rubric");
+    check(contentCalls.length >= 2 && contentCalls.every(s => s === 200), "Pro content was served to the Pro member");
+    await p.goto(BASE + "/#account");
+    await p.click("[data-aact=signout]");
+    await p.waitForSelector("#signin-form");
+    await p.goto(BASE + "/#security-plus.practice");
+    await p.waitForSelector("text=Full-length exam");
+    check(!(await p.$("[data-act=fullexam]")) && !/\+ 12 Pro/.test(await p.textContent("#app")), "signing out removes Pro content from the page");
 
     console.log("Delete account");
     await b.goto(BASE + "/#account");

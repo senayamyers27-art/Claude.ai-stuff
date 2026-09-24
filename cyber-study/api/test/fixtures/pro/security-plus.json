@@ -1,0 +1,299 @@
+{
+ "cert": "security-plus",
+ "version": 1,
+ "sample": true,
+ "questions": [
+  [
+   "pro-1",
+   0,
+   1,
+   "SAMPLE: Which control type is a security guard checking badges at a lobby desk?",
+   [
+    "Technical preventive",
+    "Physical preventive",
+    "Managerial detective",
+    "Operational corrective"
+   ],
+   1,
+   "A guard stopping people without badges physically prevents entry. Managerial controls are policies and plans, not people at a door.",
+   "1.1"
+  ],
+  [
+   "pro-2",
+   0,
+   1,
+   "SAMPLE: A company signs every software release so customers can prove who published it. Which concept does this BEST provide?",
+   [
+    "Availability",
+    "Obfuscation",
+    "Non-repudiation",
+    "Tokenization"
+   ],
+   2,
+   "A digital signature ties the release to the publisher's private key, so the publisher can't credibly deny it. Obfuscation only hides meaning.",
+   "1.2"
+  ],
+  [
+   "pro-3",
+   0,
+   2,
+   "SAMPLE: Users report emails that appear to come from the CEO asking for urgent gift card purchases. What is this MOST likely?",
+   [
+    "Business email compromise",
+    "Watering hole",
+    "Typosquatting",
+    "Vishing"
+   ],
+   0,
+   "Impersonating an executive by email to trick staff into sending money is business email compromise. Vishing uses voice calls, not email.",
+   "2.2"
+  ],
+  [
+   "pro-4",
+   0,
+   2,
+   "SAMPLE: What BEST mitigates stored cross-site scripting in a web forum?",
+   [
+    "Rate limiting",
+    "Output encoding",
+    "Longer session timeouts",
+    "Disabling TLS 1.0"
+   ],
+   1,
+   "Encoding user content when it is rendered stops the browser treating it as script. Rate limiting slows abuse but does not stop the payload.",
+   "2.3"
+  ],
+  [
+   "pro-5",
+   0,
+   2,
+   "SAMPLE: A vulnerability scan shows a critical CVE on a server that can't be patched for a month. What should the team do FIRST?",
+   [
+    "Accept the risk",
+    "Apply a compensating control",
+    "Decommission the server",
+    "Ignore it until patch day"
+   ],
+   1,
+   "A compensating control such as isolating the server or blocking the vulnerable service reduces risk until the patch. Accepting a critical risk without controls is rarely appropriate.",
+   "2.5"
+  ],
+  [
+   "pro-6",
+   0,
+   3,
+   "SAMPLE: Which architecture keeps an industrial control network separate from the office LAN with no network path between them?",
+   [
+    "Microsegmentation",
+    "Screened subnet",
+    "SD-WAN",
+    "Air gap"
+   ],
+   3,
+   "An air gap means there is no network connection at all. Microsegmentation still connects segments and filters traffic between them.",
+   "3.1"
+  ],
+  [
+   "pro-7",
+   0,
+   3,
+   "SAMPLE: Which data state is protected by full-disk encryption on a stolen laptop?",
+   [
+    "Data in transit",
+    "Data at rest",
+    "Data in use",
+    "Data in motion"
+   ],
+   1,
+   "Full-disk encryption protects stored data when the device is powered off. Data in transit is protected by protocols such as TLS.",
+   "3.3"
+  ],
+  [
+   "pro-8",
+   0,
+   4,
+   "SAMPLE: An analyst sees many failed logons followed by one success from the same IP. What should they do FIRST?",
+   [
+    "Close the alert",
+    "Validate and scope the activity",
+    "Reimage every workstation",
+    "Notify the press"
+   ],
+   1,
+   "Triage starts by confirming the activity is real and finding which accounts and hosts are involved before containment.",
+   "4.8"
+  ],
+  [
+   "pro-9",
+   0,
+   4,
+   "SAMPLE: Which tool aggregates logs from many sources and alerts on correlated events?",
+   [
+    "SIEM",
+    "DLP",
+    "WAF",
+    "NAC"
+   ],
+   0,
+   "A SIEM collects and correlates logs and raises alerts. A WAF filters web traffic; it does not aggregate logs from many systems.",
+   "4.4"
+  ],
+  [
+   "pro-10",
+   0,
+   4,
+   "SAMPLE: Which step of incident response removes the attacker's persistence from affected systems?",
+   [
+    "Preparation",
+    "Detection",
+    "Eradication",
+    "Lessons learned"
+   ],
+   2,
+   "Eradication removes malware, accounts and persistence. Containment limits spread first; lessons learned comes after recovery.",
+   "4.8"
+  ],
+  [
+   "pro-11",
+   0,
+   5,
+   "SAMPLE: A risk has a single loss expectancy of $10,000 and happens twice a year. What is the ALE?",
+   [
+    "$5,000",
+    "$10,000",
+    "$20,000",
+    "$40,000"
+   ],
+   2,
+   "ALE = SLE x ARO = $10,000 x 2 = $20,000. Dividing instead of multiplying gives the tempting wrong $5,000.",
+   "5.2"
+  ],
+  [
+   "pro-12",
+   0,
+   5,
+   "SAMPLE: Which document sets the minimum security requirements a vendor must meet in a contract?",
+   [
+    "MOU",
+    "SLA",
+    "NDA",
+    "MSA with security addendum"
+   ],
+   3,
+   "A master service agreement with a security addendum makes security requirements contractually binding. An NDA only covers confidentiality.",
+   "5.3"
+  ]
+ ],
+ "flashcards": [
+  [
+   1,
+   "SAMPLE: CIA triad",
+   "Confidentiality, integrity and availability: the three core security goals."
+  ],
+  [
+   2,
+   "SAMPLE: BEC",
+   "Business email compromise: impersonating an executive or vendor by email to redirect payments."
+  ],
+  [
+   3,
+   "SAMPLE: Data at rest",
+   "Stored data; protected with encryption such as full-disk or database encryption."
+  ],
+  [
+   4,
+   "SAMPLE: SIEM",
+   "Collects, normalizes and correlates logs, and raises alerts."
+  ],
+  [
+   5,
+   "SAMPLE: ALE",
+   "Annualized loss expectancy = SLE x ARO."
+  ],
+  [
+   5,
+   "SAMPLE: RTO vs RPO",
+   "RTO: how long you can be down. RPO: how much data (time) you can lose."
+  ]
+ ],
+ "guide": [
+  {
+   "domain": 1,
+   "summary": "SAMPLE guide text for local development.",
+   "sections": [
+    {
+     "title": "Control types",
+     "points": [
+      "Technical, managerial, operational, physical",
+      "Preventive, detective, corrective, deterrent, compensating, directive"
+     ]
+    }
+   ],
+   "examTips": [
+    "Read for the control's purpose, not its technology."
+   ]
+  },
+  {
+   "domain": 2,
+   "summary": "SAMPLE guide text.",
+   "sections": [
+    {
+     "title": "Social engineering",
+     "points": [
+      "Phishing, vishing, smishing",
+      "BEC and pretexting"
+     ]
+    }
+   ],
+   "examTips": [
+    "Look for the delivery channel."
+   ]
+  },
+  {
+   "domain": 3,
+   "summary": "SAMPLE guide text.",
+   "sections": [
+    {
+     "title": "Data states",
+     "points": [
+      "At rest, in transit, in use"
+     ]
+    }
+   ],
+   "examTips": [
+    "Match the protection to the state."
+   ]
+  },
+  {
+   "domain": 4,
+   "summary": "SAMPLE guide text.",
+   "sections": [
+    {
+     "title": "Incident response",
+     "points": [
+      "Preparation, detection, analysis, containment, eradication, recovery, lessons learned"
+     ]
+    }
+   ],
+   "examTips": [
+    "FIRST usually means triage or containment."
+   ]
+  },
+  {
+   "domain": 5,
+   "summary": "SAMPLE guide text.",
+   "sections": [
+    {
+     "title": "Risk math",
+     "points": [
+      "SLE = AV x EF",
+      "ALE = SLE x ARO"
+     ]
+    }
+   ],
+   "examTips": [
+    "Write the formula before calculating."
+   ]
+  }
+ ]
+}

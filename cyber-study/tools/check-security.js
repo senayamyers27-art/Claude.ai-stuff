@@ -37,7 +37,7 @@ for (const f of files.filter(f => /\.(html|js|css|webmanifest|txt)$/.test(f) && 
   if (f.endsWith(".js") && /\beval\s*\(|new Function\s*\(|document\.write\s*\(|setTimeout\s*\(\s*["'`]/.test(s)) fail(f, "eval-style code");
 }
 // Engine and home page render with innerHTML, so every data value must pass through esc().
-for (const f of ["assets/engine.js", "assets/app.js", "assets/labs.js", "assets/sync.js"].map(p => path.join(PUB, p))) {
+for (const f of ["assets/engine.js", "assets/app.js", "assets/labs.js", "assets/sync.js", "assets/pro.js"].map(p => path.join(PUB, p))) {
   // Only lines that build HTML (contain a tag) are checked; Markdown write-ups are plain text.
   // ids are excluded: check-data.js restricts them to numbers and [a-z0-9-] slugs.
   fs.readFileSync(f, "utf8").split("\n").filter(line => /<[a-z/]/i.test(line)).forEach(line => {
