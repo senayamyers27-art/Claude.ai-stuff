@@ -2333,6 +2333,53 @@
   <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/client-problems-sticky-clients-power-mismatch-between-ap-and-client-dr/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/connection-problems-wrong-passphrase-expired-radius-certificates-dhcp/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/structured-troubleshooting-and-documenting-findings/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/fundamental-terms-interpreting-vs-compiling-lexis-syntax-and-semantics/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/python-logic-and-structure-keywords-instructions-indentation-and-comme/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/literals-boolean-integer-float-scientific-notation-and-string-literals/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/binary-octal-and-hexadecimal-integer-literals-0b-0o-0x/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/variables-and-naming-rules-reserved-keywords-and-pep-8-naming-conventi/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/numeric-operators-and-the-difference-between-and/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/string-operators-and-assignment-and-compound-assignment-operators-etc/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/operator-priority-and-binding-including-right-to-left-and-unary-minus/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/bitwise-operators-and/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/boolean-and-relational-operators-float-accuracy-and-rounding-surprises/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/type-casting-with-int-float-str-and-bool/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/console-i-o-print-with-sep-and-end-input-returning-a-string-converting/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/if-if-else-and-if-elif-else-statements-and-why-the-order-of-elif-condi/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/multiple-conditions-with-and-or-and-not-truthy-and-falsy-values/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/nested-conditional-statements-and-indentation/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/the-pass-instruction-as-a-placeholder-body/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/while-loops-loop-conditions-and-avoiding-infinite-loops/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/for-loops-over-range-with-start-stop-and-step-including-negative-steps/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/iterating-over-strings-lists-and-other-sequences-with-for/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/break-and-continue-and-how-break-affects-only-the-innermost-loop/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/while-else-and-for-else-when-the-else-clause-runs-and-when-break-skips/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/nested-loops-and-counting-iterations/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/the-value-of-the-loop-variable-after-a-for-loop-ends/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/lists-building-indexing-including-negative-indexes-and-slicing/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/list-methods-and-functions-append-insert-index-remove-sort-len-sorted/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/iterating-through-lists-in-and-not-in-list-comprehensions-with-conditi/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/copying-vs-aliasing-lists-b-a-compared-with-a-or-list-a/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/nested-lists-and-matrices-list-of-lists/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/tuples-building-including-one-item-tuples-indexing-slicing-immutabilit/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/dictionaries-building-indexing-adding-changing-and-removing-keys/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/iterating-dictionaries-with-keys-values-and-items-checking-whether-a-k/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/strings-indexing-slicing-including-1-immutability-and-comparison/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/escaping-with-quotes-and-apostrophes-inside-strings-multi-line-strings/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/common-string-methods-split-join-upper-lower-strip-find-count-replace/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/decomposition-splitting-a-program-into-functions/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/defining-and-invoking-functions-functions-must-be-defined-before-they/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/return-and-yield-returning-several-values-as-a-tuple-the-none-value/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/recursion-base-cases-and-recursionerror/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/parameters-vs-arguments-positional-keyword-and-mixed-argument-passing/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/default-parameter-values-and-why-defaults-must-follow-required-paramet/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/name-scopes-shadowing-and-the-global-keyword-unboundlocalerror/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/the-exception-hierarchy-baseexception-exception-systemexit-keyboardint/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/common-built-in-exceptions-zerodivisionerror-indexerror-keyerror-typee/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/try-except-except-with-several-exceptions-bare-except-and-except-excep/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/ordering-except-branches-from-specific-to-general/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/propagating-exceptions-through-function-boundaries-and-deciding-where/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/java-se/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/java-se/lessons/primitive-types-literals-underscores-binary-hex-octal-default-values/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/java-se/lessons/wrapper-classes-autoboxing-unboxing-and-integer-caching-with/</loc><lastmod>2026-09-24</lastmod></url>
