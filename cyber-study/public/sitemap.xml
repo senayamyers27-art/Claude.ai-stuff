@@ -2203,6 +2203,67 @@
   <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/embedded-event-manager-eem-applets/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/orchestration-tools-agent-based-puppet-chef-vs-agentless-ansible/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/ai-in-network-operations-baselining-anomaly-detection-ai-assisted-trou/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/rf-wave-characteristics-wavelength-frequency-amplitude-and-phase-and-h/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/rf-behaviors-reflection-refraction-diffraction-scattering-absorption-f/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/rf-math-mw-and-dbm-conversion-the-rule-of-10s-and-3s-db-gain-and-loss/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/signal-metrics-rssi-noise-floor-snr-receive-sensitivity-and-fade-margi/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/link-budgets-and-eirp-transmitter-power-cable-and-connector-loss-anten/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/antenna-types-omnidirectional-semi-directional-patch-panel-yagi-sector/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/antenna-characteristics-gain-beamwidth-polarization-azimuth-and-elevat/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/point-to-point-links-visual-vs-rf-line-of-sight-the-fresnel-zone-and-e/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/mimo-radios-radio-chains-spatial-streams-transmit-beamforming-mu-mimo/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/modulation-and-coding-basics-dsss-ofdm-ofdma-bpsk-through-qam-and-mcs/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/roles-of-the-ieee-wi-fi-alliance-ietf-and-national-regulators-such-as/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/wi-fi-alliance-certifications-and-generation-names-wi-fi-4-5-6-6e-and/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/802-11-phys-dsss-hr-dsss-b-ofdm-a-erp-g-ht-n-vht-ac-he-ax/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/2-4-ghz-channels-channel-overlap-and-the-1-6-11-plan/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/5-ghz-u-nii-bands-20-40-80-160-mhz-channel-bonding-and-channel-numberi/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/6-ghz-operation-wpa3-or-enhanced-open-requirement-and-preferred-scanni/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/dfs-and-tpc-requirements-in-5-ghz-radar-bands/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/802-11ax-features-ofdma-resource-units-1024-qam-bss-coloring-target-wa/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/roaming-and-management-amendments-802-11k-802-11r-802-11v-and-802-11w/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/regulatory-power-limits-eirp-rules-and-why-they-vary-by-country/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/802-11-frame-types-management-control-and-data-and-common-subtypes-bea/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/frame-addressing-bssid-ssid-essid-source-destination-transmitter-and-r/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/joining-a-bss-passive-and-active-scanning-open-system-authentication-a/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/medium-access-csma-ca-dcf-physical-carrier-sense-cca-and-virtual-carri/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/interframe-spaces-sifs-difs-aifs-random-backoff-and-contention-windows/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/qos-with-wmm-edca-access-categories-voice-video-best-effort-and-backgr/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/protection-mechanisms-rts-cts-and-cts-to-self/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/power-management-power-save-bit-tim-dtim-u-apsd-and-target-wake-time/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/aggregation-and-block-ack-frame-control-flags-such-as-retry/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/client-driven-roaming-reassociation-and-802-11k-v-assistance/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/ap-types-and-devices-autonomous-controller-managed-cloud-managed-mesh/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/management-control-and-data-planes-and-where-each-lives-in-autonomous/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/centralized-tunneled-vs-local-distributed-data-forwarding/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/gathering-requirements-client-types-and-capabilities-applications-dens/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/coverage-vs-capacity-design-cell-sizing-and-airtime/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/channel-reuse-plans-co-channel-contention-and-channel-width-choices/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/design-targets-for-voice-and-real-time-apps-signal-snr-secondary-cover/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/high-density-design-more-aps-at-lower-power-directional-antennas-5-and/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/ssid-and-vlan-design-802-1q-trunks-to-aps-ssid-overhead/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/data-rate-settings-band-steering-and-load-balancing/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/poe-planning-802-3af-802-3at-and-802-3bt-power-budgets/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/legacy-weaknesses-wep-tkip-shared-key-authentication-ssid-hiding-and-m/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/wpa2-and-wpa3-personal-and-enterprise-ccmp-aes-and-gcmp/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/sae-and-its-resistance-to-offline-dictionary-attacks-transition-mode/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/enhanced-open-owe-for-open-networks/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/802-1x-roles-supplicant-authenticator-and-authentication-server-radius/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/eap-methods-eap-tls-peap-eap-ttls-and-their-certificate-needs/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/the-4-way-handshake-pmk-ptk-and-gtk/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/protected-management-frames-802-11w/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/rogue-aps-evil-twins-and-wips-guest-access-captive-portals-and-client/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/site-survey-types-predictive-passive-active-and-ap-on-a-stick/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/pre-survey-preparation-floor-plans-scale-requirements-access-and-safet/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/post-installation-validation-surveys-against-design-requirements/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/spectrum-analysis-fft-waterfall-and-duty-cycle-views-identifying-non-w/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/protocol-analysis-monitor-mode-channel-selection-capture-location-filt/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/key-metrics-rssi-snr-retry-rate-channel-utilization-data-rates/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/common-rf-problems-co-channel-contention-adjacent-channel-interference/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/client-problems-sticky-clients-power-mismatch-between-ap-and-client-dr/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/connection-problems-wrong-passphrase-expired-radius-certificates-dhcp/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cwna/lessons/structured-troubleshooting-and-documenting-findings/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/java-se/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/java-se/lessons/primitive-types-literals-underscores-binary-hex-octal-default-values/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/java-se/lessons/wrapper-classes-autoboxing-unboxing-and-integer-caching-with/</loc><lastmod>2026-09-24</lastmod></url>
