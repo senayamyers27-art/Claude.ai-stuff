@@ -100,6 +100,26 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(`${BASE}/#security-plus.learn`);
   await page.waitForSelector("details.lesson");
   check((await page.$$("details.lesson")).length >= 70, "Lessons tab lists every lesson");
+  await page.fill("#lsearch", "ocsp stapling");
+  check(/^[1-9]\d* lessons? match/.test(await page.textContent("#lsearch-n")), "lesson search finds a lesson");
+  await page.fill("#lsearch", "");
+  check(await page.$("details.glossary dl.terms dt") !== null, "Lessons tab has a glossary");
+  await page.click("details.lesson >> nth=1 >> summary");
+  await page.click("details.lesson[open] [data-act=video]");
+  await page.waitForSelector(".ov-slide");
+  check((await page.textContent(".ov-n")).startsWith("1 /"), "lesson overview video opens");
+  await page.keyboard.press("Escape");
+  check(!(await page.$(".ov-wrap")), "overview closes with Escape");
+  const lp = await page.goto(`${BASE}/security-plus/lessons/`);
+  check(lp.status() === 200 && (await page.$$("main li a")).length >= 70, "static lesson index page lists every lesson");
+  await page.goto(`${BASE}/security-plus/#security-plus.practice`);
+  await page.waitForSelector("[data-act=placement]");
+  await page.click("[data-act=placement]");
+  await page.waitForSelector(".opt");
+  for (let i = 0; i < 40 && await page.$(".opt"); i++) { await page.click(".opt >> nth=0"); await page.click("[data-act=next]"); }
+  await page.waitForSelector(".big");
+  check((await page.textContent("#app")).includes("Where to start"), "placement test recommends where to start");
+  check((await page.$$("a.report")).length > 0, "questions have a Report a mistake link");
   }
   for (const pth of ["privacy", "terms", "security", "frameworks"]) {
     const r = await page.goto(`${BASE}/${pth}/`);

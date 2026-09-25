@@ -53,3 +53,29 @@ CertHub.addLessons("<cert-id>", [
 - **Connect to practice.** Where it fits, mention what the learner will see in a lab: a command, a config line, a console screen.
 - **Keep security content defensive.** Explain how an attack works well enough to recognize, detect and prevent it. Don't include working exploit payloads, malware code or step-by-step attack instructions against real systems.
 - **Write in a plain, warm tone,** in second person where natural. Use no marketing language, emoji or exclamation marks.
+
+## Diagrams
+
+Teaching diagrams live in `public/data/diagrams.js` (`CertHub.addDiagrams([...])`). Each diagram has:
+
+- an `id`
+- a `title`
+- a full `alt` text
+- `topics`: `{ certId: [exact topic text] }`
+- an inline `svg`
+
+A diagram shows inside every lesson it's attached to, on that lesson's web page, and in the lesson's overview video.
+
+The site's CSS colors the SVGs for light and dark mode, so they may only use these classes:
+
+- `box` and `box hi`
+- `ln` and `ln mute`
+- `t`, `t s` and `t b`
+- `acc` and `acc-ln`
+- `arrow`
+
+SVGs may not contain `fill`, `stroke`, `style`, links or scripts. `tools/check-data.js` enforces these rules.
+
+## Lesson web pages and overview videos
+
+`tools/build.js` writes a plain HTML page for every lesson at `/<cert>/lessons/<slug>/`, and adds each page to the sitemap. The overview video is built from the lesson itself: its first paragraph, key terms, a diagram, the example, the tip and a check question. The device's text-to-speech voice narrates it. So a well-written lesson gives both a good page and a good video.

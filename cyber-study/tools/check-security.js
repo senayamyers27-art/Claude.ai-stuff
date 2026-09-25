@@ -11,6 +11,8 @@ const fail = (f, m) => { bad++; console.log(`  ✗ ${path.relative(ROOT, f)}: ${
 const walk = d => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]);
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "site.config.json"), "utf8"));
 const apiOrigin = String(cfg.apiOrigin || "").trim().replace(/\/+$/, "").toLowerCase();
+const gc = String(((cfg.analytics || {}).goatcounter) || "").trim().toLowerCase();
+const analyticsOrigin = gc ? `https://${gc}.goatcounter.com` : "";
 const files = walk(PUB).concat(walk(path.join(ROOT, "functions")));
 
 for (const f of files.filter(f => f.endsWith(".html"))) {
@@ -20,13 +22,14 @@ for (const f of files.filter(f => f.endsWith(".html"))) {
   else {
     if (/'unsafe-eval'|script-src[^;]*'unsafe-inline'/.test(csp)) fail(f, "CSP allows unsafe script execution");
     if (!/object-src 'none'/.test(csp)) fail(f, "CSP must set object-src 'none'");
-    // The only outside host allowed is the site's own accounts API, and only for connect-src.
-    const other = csp.split(";").map(d => d.trim()).map(d => d.startsWith("connect-src") && apiOrigin ? d.replace(" " + apiOrigin, "") : d).join(";");
+    // The only outside hosts allowed are the site's own accounts API and its optional page counter, only for connect-src.
+    const other = csp.split(";").map(d => d.trim()).map(d => d.startsWith("connect-src") ? d.replace(" " + apiOrigin, "").replace(" " + analyticsOrigin, "") : d).join(";");
     if (/https?:\/\//.test(other)) fail(f, "CSP allows a third-party host");
   }
   if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(s)) fail(f, "inline <script> (move it to a file)");
   if (/\son[a-z]+\s*=\s*["']/i.test(s)) fail(f, "inline event handler attribute");
-  if (/<(script|link)[^>]+(src|href)="https?:\/\//i.test(s)) fail(f, "loads a script or stylesheet from another site");
+  // A canonical link names the page's own public address; it loads nothing.
+  if (/<script[^>]+src="https?:\/\//i.test(s) || /<link(?![^>]*rel="canonical")[^>]+href="https?:\/\//i.test(s)) fail(f, "loads a script or stylesheet from another site");
   for (const m of s.matchAll(/<a\b[^>]*target="_blank"[^>]*>/gi)) if (!/rel="[^"]*noopener/.test(m[0])) fail(f, "target=_blank link without rel=noopener");
 }
 // Question text in data/ may quote URLs as exam content, and the font licence is verbatim;

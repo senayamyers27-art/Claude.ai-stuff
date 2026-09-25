@@ -3,7 +3,7 @@
 //  - http:// -> https:// (301), in case "Always Use HTTPS" is ever switched off
 //  - www. and *.pages.dev production traffic -> the canonical domain (301)
 //  - preview deployments (branch.*.pages.dev) stay reachable but are hidden from search engines
-const CANONICAL = "";
+const CANONICAL = "senayamyers27-art.github.io";
 const REDIRECT_WWW = true;
 
 export async function onRequest({ request, next }) {
