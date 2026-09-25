@@ -1794,6 +1794,79 @@
   <url><loc>https://senayamyers27-art.github.io/es/isc2-cc/lessons/incident-response-lifecycle-preparation-detection-and-analysis-contain/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/isc2-cc/lessons/business-continuity-and-disaster-recovery-bia-rto-rpo-backups-and-alte/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/isc2-cc/lessons/best-practice-policies-aup-byod-password-privacy-and-security-awarenes/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/control-categories-technical-managerial-operational-physical/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/control-types-preventive-deterrent-detective-corrective-compensating-d/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/cia-triad-aaa-non-repudiation/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/zero-trust-control-plane-vs-data-plane-policy-engine-pep/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/physical-security-and-deception-tech-honeypots-honeynets-honeytokens/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/change-management-approval-cab-impact-analysis-backout-plan-maintenanc/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/symmetric-vs-asymmetric-encryption-key-exchange/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/hashing-salting-key-stretching/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/encryption-levels-full-disk-partition-file-database-record/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/obfuscation-steganography-tokenization-data-masking/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/public-private-keys-key-escrow/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/certificates-ca-csr-root-of-trust-self-signed-wildcard-san/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/revocation-crl-vs-ocsp-ocsp-stapling/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/digital-signatures/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/tpm-hsm-secure-enclave-key-management-system/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/osi-layers-and-where-attacks-happen/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/secure-vs-insecure-protocols-ssh-telnet-sftp-ftp-ldaps-ldap-https-http/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/key-ports-22-25-53-80-443-389-636-3389/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/arp-dns-dhcp-and-their-attacks/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/actors-nation-state-organized-crime-hacktivist-insider-unskilled-attac/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/motivations-espionage-financial-disruption-ideology/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/threat-vectors-email-sms-voice-removable-media-supply-chain-open-ports/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/social-engineering-phishing-vishing-smishing-pretexting-bec-watering-h/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/owasp-top-10-broken-access-control-injection-misconfiguration-integrit/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/sql-injection-xss-stored-reflected-csrf/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/buffer-overflow-race-conditions-toctou-memory-injection/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/threat-modeling/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/malware-ransomware-trojan-worm-spyware-rootkit-logic-bomb-keylogger-fi/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/password-attacks-spraying-brute-force-credential-stuffing/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/crypto-attacks-downgrade-collision-birthday/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/indicators-impossible-travel-account-lockout-resource-consumption-miss/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/segmentation-and-isolation/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/least-privilege-access-control-lists/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/application-allow-listing/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/patching-encryption-monitoring/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/hardening-disable-ports-services-change-defaults-remove-unused-softwar/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/cloud-iaas-paas-saas-and-shared-responsibility/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/iac-serverless-microservices-containers/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/virtualization-risks-vm-escape-sprawl/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/ics-scada-iot-embedded-rtos/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/on-prem-vs-cloud-vs-hybrid-trade-offs/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/firewalls-l4-l7-ngfw-waf-utm/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/ids-vs-ips-inline-vs-tap/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/fail-open-vs-fail-closed/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/802-1x-nac-port-security/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/vpn-ipsec-tls-sd-wan-sase-jump-servers-proxies/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/data-types-and-classifications/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/data-states-at-rest-in-transit-in-use/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/protection-encryption-hashing-masking-tokenization-dlp/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/resilience-ha-clustering-load-balancing-raid/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/backups-sites-hot-warm-cold-rpo-rto/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/secure-baselines-mobile-mdm-byod-cope-cyod/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/wireless-wpa3-sae-radius-eap/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/asset-management-and-disposal-sanitize-destroy-certify/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/vulnerability-scanning-credentialed-false-positives-cvss-cve/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/pen-testing-and-recon-passive-vs-active/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/logs-siem-correlation-alerting-scap-netflow/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/email-security-spf-dkim-dmarc/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/edr-xdr-dlp-ueba/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/iam-provisioning-sso-saml-oauth-openid-connect-ldap/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/mfa-factors-pam-just-in-time-access/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/ir-process-preparation-detection-analysis-containment-eradication-reco/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/tabletop-exercises-and-simulations/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/forensics-order-of-volatility-chain-of-custody-legal-hold-acquisition/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/automation-and-soar-playbooks/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/investigation-data-sources/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/policies-standards-procedures-guidelines/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/risk-register-appetite-tolerance-sle-aro-ale/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/risk-treatment-accept-avoid-transfer-mitigate/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/third-party-risk-sla-mou-msa-sow-nda-right-to-audit/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/compliance-privacy-roles-controller-processor-audits/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/security-plus/lessons/security-awareness-and-phishing-simulations/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/system-and-network-architecture-on-prem-cloud-hybrid-serverless-contai/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/identity-and-access-mfa-sso-federation-pam-just-in-time-access-casb/</loc><lastmod>2026-09-24</lastmod></url>
@@ -1834,6 +1907,61 @@
   <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/incident-reports-executive-summary-who-what-when-where-why-timeline-im/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/root-cause-analysis-and-lessons-learned-feeding-back-into-reporting/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/response-metrics-mean-time-to-detect-respond-and-remediate-alert-volum/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/the-tcp-ip-and-osi-models-layer-names-what-each-layer-does-and-where-d/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/encapsulation-data-segments-packets-frames-and-bits-mac-addresses-vs-i/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/bandwidth-vs-throughput-latency-delay-and-jitter-speed-tests-vs-iperf/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/network-types-lan-wan-man-can-pan-and-wlan/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/cloud-vs-on-premises-public-private-and-hybrid-cloud-saas-paas-and-iaa/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/how-cloud-and-hybrid-work-change-where-apps-run-and-how-users-reach-th/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/tcp-vs-udp-connection-oriented-vs-connectionless-the-three-way-handsha/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/common-protocols-and-ports-ftp-20-21-sftp-ssh-22-tftp-69-http-80-https/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/icmp-and-what-ping-uses-it-for/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/private-ipv4-ranges-10-0-0-0-8-172-16-0-0-12-192-168-0-0-16-vs-public/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/nat-and-pat-how-a-home-router-shares-one-public-address/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/special-ipv4-addresses-loopback-127-0-0-1-apipa-169-254-x-x-broadcast/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/ipv4-format-dotted-decimal-subnet-masks-and-slash-cidr-notation/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/network-address-broadcast-address-usable-host-range-and-host-count-for/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/using-a-subnet-calculator-and-checking-whether-two-hosts-are-on-the-sa/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/ipv6-format-eight-hextets-leading-zero-and-compression-prefix-length-u/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/ipv6-address-types-global-unicast-2000-3-link-local-fe80-10-unique-loc/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/ipv6-address-assignment-slaac-modified-eui-64-dhcpv6-and-dual-stack/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/copper-cable-categories-cat-5e-cat-6-cat-6a-straight-through-vs-crosso/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/coaxial-cable-and-single-mode-vs-multimode-fiber-distance-light-source/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/connectors-rj-45-rj-11-bnc-f-type-lc-sc-and-st-sfp-transceivers/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/sources-of-interference-on-copper-and-wireless-emi-crosstalk-microwave/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/wi-fi-bands-2-4-5-and-6-ghz-and-their-trade-offs-802-11-generations/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/cellular-4g-5g-as-licensed-spectrum-vs-unlicensed-wi-fi-hotspots-and-t/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/what-a-client-needs-to-join-wi-fi-ssid-security-type-and-password-or-c/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/endpoint-types-desktops-laptops-phones-tablets-servers-printers-and-io/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/checking-connectivity-on-windows-linux-macos-android-and-ios-settings/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/cisco-device-leds-system-and-port-lights-green-vs-amber-solid-vs-blink/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/reading-a-network-diagram-to-patch-the-right-cable-into-the-right-port/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/device-ports-rj-45-ethernet-sfp-fiber-console-rj-45-and-usb-management/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/power-over-ethernet-powering-phones-aps-and-cameras-from-the-switch/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/default-gateway-why-a-host-needs-one-and-what-happens-without-it/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/local-vs-remote-networks-and-how-a-router-decides-where-to-send-a-pack/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/layer-2-vs-layer-3-switches-and-routers-vs-switches/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/mac-address-tables-how-a-switch-learns-forwards-floods-and-filters/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/vlans-separating-broadcast-domains-on-one-switch-access-vs-trunk-ports/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/cable-management-and-labeling-in-racks-and-patch-panels/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/troubleshooting-methodology-identify-the-problem-theory-test-plan-fix/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/help-desk-practice-tickets-gathering-information-priorities-escalation/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/wireshark-capturing-on-the-right-interface-simple-display-filters-and/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/ping-tracert-traceroute-ipconfig-ifconfig-ip-and-nslookup-running-them/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/how-firewalls-can-make-ping-or-traceroute-fail-even-when-the-service-w/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/remote-access-and-data-collection-console-cable-and-terminal-emulator/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/cloud-managed-devices-for-example-cisco-meraki-dashboard/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/cisco-ios-basics-user-vs-privileged-exec-help-and-tab-completion/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/show-commands-show-running-config-show-version-show-ip-interface-brief/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/how-firewalls-filter-traffic-permit-and-deny-rules-ports-and-protocols/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/stateful-firewalls-vs-simple-packet-filters-host-based-vs-network-fire/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/cia-triad-confidentiality-integrity-availability/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/vulnerability-threat-exploit-and-risk/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/malware-types-phishing-and-other-social-engineering-dos-and-ddos/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/authentication-basics-strong-passwords-mfa-changing-default-credential/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/home-router-wireless-security-wpa2-vs-wpa3-personal-pre-shared-key-vs/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccst-networking/lessons/why-wep-and-open-networks-should-not-be-used-and-why-wps-should-be-tur/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/osi-model-layers-and-the-data-unit-at-each-layer/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/network-appliances-routers-switches-firewalls-ids-ips-load-balancers-p/</loc><lastmod>2026-09-24</lastmod></url>
