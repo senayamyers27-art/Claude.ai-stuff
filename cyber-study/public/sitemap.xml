@@ -1794,4 +1794,44 @@
   <url><loc>https://senayamyers27-art.github.io/es/isc2-cc/lessons/incident-response-lifecycle-preparation-detection-and-analysis-contain/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/isc2-cc/lessons/business-continuity-and-disaster-recovery-bia-rto-rpo-backups-and-alte/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/isc2-cc/lessons/best-practice-policies-aup-byod-password-privacy-and-security-awarenes/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/system-and-network-architecture-on-prem-cloud-hybrid-serverless-contai/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/identity-and-access-mfa-sso-federation-pam-just-in-time-access-casb/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/logging-log-ingestion-time-synchronization-ntp-log-levels-windows-even/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/network-indicators-beaconing-unusual-bandwidth-irregular-peer-to-peer/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/host-indicators-unusual-processes-masquerading-binaries-unauthorized-s/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/application-indicators-anomalous-activity-new-accounts-unexpected-outp/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/tools-siem-soar-edr-wireshark-tcpdump-sandboxing-cyberchef-reputation/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/email-analysis-headers-spf-dkim-dmarc-impersonation-and-malicious-atta/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/threat-intelligence-actor-types-ttps-confidence-timeliness-relevancy-a/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/threat-hunting-hypotheses-ioc-collection-focus-areas-active-defense-an/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/process-improvement-standardizing-processes-automation-and-orchestrati/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/asset-discovery-and-scan-types-active-vs-passive-credentialed-vs-non-c/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/special-environments-ot-ics-cloud-mobile-and-scanning-without-disrupti/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/scanner-and-tool-output-nessus-openvas-reports-nmap-web-app-scanners-s/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/validating-results-true-false-positives-and-negatives-backported-patch/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/prioritization-cvss-base-metrics-and-vectors-epss-cisa-kev-asset-value/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/common-software-vulnerabilities-injection-xss-ssrf-idor-broken-access/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/recommending-controls-input-validation-output-encoding-parameterized-q/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/compensating-controls-segmentation-and-exceptions-for-systems-that-can/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/vulnerability-response-patching-configuration-management-change-manage/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/risk-management-accept-avoid-transfer-mitigate-inhibitors-to-remediati/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/attack-frameworks-cyber-kill-chain-diamond-model-mitre-att-and-ck-owas/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/ir-lifecycle-nist-sp-800-61-preparation-detection-and-analysis-contain/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/detection-and-analysis-iocs-scoping-impact-severity-and-triage/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/evidence-acquisition-order-of-volatility-chain-of-custody-legal-hold-f/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/memory-and-disk-analysis-basics-volatility-ftk-imager-autopsy/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/containment-strategies-isolation-segmentation-and-when-to-watch-before/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/eradication-and-recovery-reimaging-removing-persistence-restoring-from/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/preparation-ir-plan-playbooks-tools-training-tabletop-exercises-out-of/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/post-incident-activity-root-cause-analysis-lessons-learned-updating-pl/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/vulnerability-reports-affected-hosts-risk-scores-mitigation-recurrence/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/compliance-reports-action-plans-exceptions-and-compensating-controls/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/metrics-and-kpis-trends-top-10-lists-critical-vulnerabilities-zero-day/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/stakeholder-identification-and-communication-technical-teams-system-ow/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/incident-response-communication-legal-hr-public-relations-regulators-l/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/incident-declaration-and-escalation-paths/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/incident-reports-executive-summary-who-what-when-where-why-timeline-im/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/root-cause-analysis-and-lessons-learned-feeding-back-into-reporting/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/response-metrics-mean-time-to-detect-respond-and-remediate-alert-volum/</loc><lastmod>2026-09-24</lastmod></url>
 </urlset>
