@@ -1907,6 +1907,75 @@
   <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/incident-reports-executive-summary-who-what-when-where-why-timeline-im/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/root-cause-analysis-and-lessons-learned-feeding-back-into-reporting/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/response-metrics-mean-time-to-detect-respond-and-remediate-alert-volum/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/isc2-code-of-ethics-preamble-and-the-four-canons-in-priority-order/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/cia-triad-authenticity-non-repudiation-and-privacy/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/least-privilege-need-to-know-separation-of-duties-job-rotation-mandato/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/defense-in-depth-due-care-vs-due-diligence/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/control-categories-technical-administrative-physical-and-types-prevent/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/documenting-and-verifying-functional-security-controls-baselines/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/asset-management-lifecycle-inventory-ownership-classification-retentio/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/data-roles-owner-custodian-user-media-sanitization-clear-purge-destroy/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/change-and-configuration-management-request-impact-analysis-approval-b/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/security-awareness-and-training-phishing-simulations-measuring-effecti/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/physical-security-operations-perimeter-badges-access-control-vestibule/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/authentication-factors-know-have-are-mfa-vs-multi-step/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/biometrics-far-frr-cer/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/single-sign-on-kerberos-device-authentication/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/federation-and-trust-saml-oauth-2-0-openid-connect-one-way-two-way-and/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/internetwork-trust-extranets-third-party-connections-zero-trust/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/identity-lifecycle-provisioning-proofing-maintenance-entitlement-depro/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/access-reviews-recertification-and-privilege-creep/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/privileged-access-management-service-accounts/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/access-control-models-dac-mac-rbac-rule-based-abac/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/physical-vs-logical-access-controls/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/risk-terms-asset-threat-vulnerability-likelihood-impact/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/qualitative-vs-quantitative-analysis-sle-aro-ale/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/risk-treatment-avoid-mitigate-transfer-accept-residual-risk-and-risk-r/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/frameworks-nist-rmf-sp-800-30-iso-27005/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/legal-and-regulatory-concerns-privacy-laws-breach-notification-data-re/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/security-assessments-vulnerability-scanning-credentialed-vs-non-creden/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/vulnerability-management-cve-cvss-prioritization-false-positives-remed/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/monitoring-platforms-siem-log-sources-time-synchronization-log-integri/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/baselines-anomalies-and-alert-tuning/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/analyzing-and-reporting-monitoring-results-escalation/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/incident-lifecycle-preparation-detection-and-analysis-containment-erad/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/events-vs-incidents-triage-and-escalation/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/incident-response-plan-roles-and-communications/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/forensics-order-of-volatility-evidence-handling-chain-of-custody/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/forensic-imaging-write-blockers-hash-verification/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/legal-considerations-in-investigations/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/business-impact-analysis-mtd-rto-rpo/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/bcp-vs-drp-recovery-sites-hot-warm-cold-cloud/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/backup-types-full-incremental-differential-and-restore-testing/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/plan-testing-checklist-tabletop-simulation-parallel-full-interruption/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/why-cryptography-confidentiality-integrity-authentication-non-repudiat/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/symmetric-aes-vs-asymmetric-rsa-ecc-and-hybrid-key-exchange/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/hashing-salting-hmac-and-digital-signatures/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/key-management-generation-distribution-storage-rotation-escrow-destruc/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/secure-protocols-tls-ssh-ipsec-s-mime-sftp/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/forward-secrecy-and-cipher-suite-choices/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/pki-cas-certificates-csrs-chain-of-trust-crl-and-ocsp/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/web-of-trust-vs-hierarchical-trust/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/osi-and-tcp-ip-models-common-ports-and-protocols-ipv4-ipv6/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/network-attacks-arp-poisoning-dns-poisoning-dos-ddos-syn-flood-on-path/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/countermeasures-dai-dnssec-syn-cookies-rate-limiting/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/network-access-control-802-1x-radius-tacacs-nac-posture-checks-port-se/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/segmentation-vlans-dmz-screened-subnets-micro-segmentation-zero-trust/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/vpns-and-ipsec-ah-vs-esp-tunnel-vs-transport/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/security-devices-firewalls-packet-stateful-ngfw-waf-ids-ips-proxies-lo/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/firewall-rule-design-and-implicit-deny/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/wireless-security-wpa2-wpa3-enterprise-vs-personal-rogue-aps-and-evil/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/converged-networks-and-voip-security/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/malware-types-virus-worm-trojan-ransomware-rootkit-logic-bomb-fileless/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/malicious-activity-and-indicators-beaconing-persistence-privilege-esca/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/countermeasures-antimalware-sandboxing-allow-listing-user-training/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/endpoint-security-hids-hips-edr-host-firewalls-hardening-patch-managem/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/mobile-device-management-mdm-uem-byod-vs-cope-containerization-remote/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/cloud-models-and-shared-responsibility-iaas-paas-saas/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/cloud-security-iam-encryption-cspm-misconfigured-storage-data-residenc/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/virtualization-hypervisors-vm-escape-vm-sprawl-snapshots/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sscp/lessons/secure-application-basics-input-validation-owasp-top-10/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cissp/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cissp/lessons/professional-ethics-isc2-code-of-ethics-canons-and-organizational-ethi/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cissp/lessons/security-concepts-cia-triad-authenticity-non-repudiation/</loc><lastmod>2026-09-24</lastmod></url>
