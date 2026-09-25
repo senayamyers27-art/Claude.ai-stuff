@@ -2844,6 +2844,49 @@
   <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/log-tiers-and-retention-analytics-vs-data-lake-auxiliary-custom-tables/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/microsoft-security-copilot-capacity-in-scus-roles-plugins-promptbooks/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/microsoft-purview-audit-for-investigations/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/tenant-setup-custom-domain-names-and-dns-verification-company-branding/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/microsoft-entra-built-in-roles-custom-roles-and-least-privilege-role-a/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/administrative-units-including-restricted-management-administrative-un/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/users-and-groups-security-vs-microsoft-365-groups-assigned-vs-dynamic/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/licenses-direct-vs-group-based-licensing-and-resolving-license-assignm/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/devices-microsoft-entra-registered-microsoft-entra-joined-and-microsof/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/external-identities-b2b-collaboration-guest-invitations-and-redemption/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/cross-tenant-access-settings-inbound-outbound-trust-settings-b2b-direc/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/hybrid-identity-microsoft-entra-connect-sync-vs-microsoft-entra-cloud/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/sign-in-methods-for-hybrid-users-password-hash-sync-pass-through-authe/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/monitoring-sync-health-with-microsoft-entra-connect-health-and-trouble/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/authentication-methods-policy-microsoft-authenticator-passkeys-fido2-w/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/registration-campaigns-combined-security-info-registration-and-system/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/self-service-password-reset-sspr-methods-registration-and-password-wri/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/microsoft-entra-password-protection-global-and-custom-banned-password/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/security-defaults-vs-conditional-access-and-emergency-access-break-gla/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/conditional-access-assignments-conditions-locations-device-platforms-c/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/named-locations-authentication-strengths-sign-in-frequency-persistent/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/testing-policies-with-report-only-mode-and-the-what-if-tool-troublesho/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/microsoft-entra-id-protection-user-risk-vs-sign-in-risk-risk-detection/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/continuous-access-evaluation-cae-and-session-revocation/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/global-secure-access-microsoft-entra-internet-access-and-private-acces/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/managed-identities-system-assigned-vs-user-assigned-and-assigning-them/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/service-principals-and-app-registrations-application-objects-client-se/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/api-permissions-delegated-vs-application-permissions-user-consent-sett/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/app-roles-the-roles-claim-and-assignment-required-on-enterprise-applic/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/enterprise-application-single-sign-on-saml-identifier-reply-url-signin/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/automatic-user-provisioning-to-saas-apps-with-scim-scoping-filters-and/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/microsoft-entra-application-proxy-and-private-network-connectors-for-o/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/microsoft-defender-for-cloud-apps-cloud-discovery-app-governance-and-c/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/monitoring-and-securing-workload-identities-workload-id-premium-risky/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/reviewing-and-removing-unused-or-over-permissioned-applications-and-ex/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/entitlement-management-catalogs-access-packages-assignment-policies-ap/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/connected-organizations-and-access-packages-for-external-users/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/access-reviews-groups-apps-access-packages-and-entra-roles-reviewers-r/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/lifecycle-workflows-for-joiner-mover-and-leaver-tasks-employeehiredate/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/terms-of-use-and-conditional-access/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/privileged-identity-management-pim-eligible-vs-active-assignments-acti/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/pim-for-groups-and-pim-for-azure-resource-roles/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/sign-in-audit-and-provisioning-logs-default-retention-and-diagnostic-s/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/workbooks-kql-queries-in-log-analytics-identity-secure-score-and-micro/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-300/lessons/licensing-microsoft-entra-id-p1-p2-and-microsoft-entra-id-governance-f/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/sc-200/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/sc-200/lessons/defender-xdr-settings-incident-and-alert-email-notifications-alert-tun/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/sc-200/lessons/defender-for-endpoint-configuration-onboarding-device-groups-tamper-pr/</loc><lastmod>2026-09-24</lastmod></url>
