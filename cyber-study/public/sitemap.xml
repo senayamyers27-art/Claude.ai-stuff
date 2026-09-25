@@ -2753,6 +2753,52 @@
   <url><loc>https://senayamyers27-art.github.io/es/terraform/lessons/collaboration-and-governance-teams-and-permissions-run-approvals-polic/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/terraform/lessons/health-assessments-drift-detection-and-continuous-validation/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/terraform/lessons/integrations-vcs-providers-run-triggers-run-tasks-notifications-dynami/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/microsoft-entra-built-in-roles-vs-azure-rbac-roles-scopes-management-g/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/custom-azure-rbac-roles-actions-notactions-dataactions-and-assignable/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/privileged-identity-management-eligible-vs-active-assignments-activati/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/conditional-access-users-and-workload-identities-cloud-apps-conditions/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/mfa-and-authentication-methods-policy-phishing-resistant-methods-fido2/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/managed-identities-system-assigned-vs-user-assigned-and-replacing-stor/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/app-registrations-vs-enterprise-applications-service-principals-api-pe/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/azure-key-vault-rbac-vs-access-policies-soft-delete-and-purge-protecti/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/azure-policy-built-in-vs-custom-definitions-initiatives-effects-deny-a/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/resource-locks-cannotdelete-readonly-management-group-hierarchy-and-go/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/finding-and-fixing-over-privileged-access-with-access-reviews-and-entr/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/storage-authorization-entra-id-with-data-plane-rbac-account-keys-disab/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/shared-access-signatures-user-delegation-vs-service-vs-account-sas-sto/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/storage-encryption-microsoft-managed-vs-customer-managed-keys-infrastr/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/storage-firewall-trusted-services-exceptions-and-defender-for-storage/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/azure-sql-security-entra-only-authentication-server-and-database-firew/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/network-security-groups-and-application-security-groups-service-tags-r/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/azure-virtual-network-manager-security-admin-rules-vs-nsgs/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/private-endpoints-and-private-link-vs-service-endpoints-private-dns-zo/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/azure-firewall-standard-vs-premium-tls-inspection-idps-url-filtering-f/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/web-application-firewall-on-application-gateway-and-front-door-ddos-pr/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/site-to-site-and-point-to-site-vpn-virtual-wan-secured-hubs-microsoft/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/network-watcher-ip-flow-verify-effective-security-rules-vnet-flow-logs/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/security-for-ai-defender-for-ai-services-threat-protection-prompt-inje/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/microsoft-purview-dspm-for-ai-to-find-data-overexposure-to-microsoft-3/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/ai-gateway-in-azure-api-management-in-front-of-microsoft-foundry-model/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/microsoft-entra-agent-id-agent-identities-conditional-access-and-acces/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/vm-disk-protection-encryption-at-host-azure-disk-encryption-server-sid/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/trusted-launch-secure-boot-vtpm-and-boot-integrity-monitoring/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/azure-bastion-and-just-in-time-vm-access-instead-of-public-rdp-ssh/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/defender-for-servers-plan-1-vs-plan-2-vulnerability-assessment-azure-a/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/aks-security-entra-id-integration-azure-rbac-for-kubernetes-private-cl/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/container-registry-security-disable-the-admin-user-rbac-pull-push-role/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/app-service-functions-and-logic-apps-managed-identities-key-vault-refe/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/defender-for-cloud-foundational-cspm-vs-defender-cspm-secure-score-and/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/defender-cspm-features-attack-path-analysis-cloud-security-explorer-ag/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/regulatory-compliance-dashboard-microsoft-cloud-security-benchmark-and/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/workload-protection-plans-servers-storage-sql-containers-key-vault-app/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/multicloud-connectors-for-aws-and-gcp-and-workflow-automation-with-log/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/microsoft-sentinel-workspace-design-data-connectors-azure-monitor-agen/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/sentinel-analytics-rules-scheduled-near-real-time-microsoft-security-i/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/automation-rules-vs-playbooks-incident-management-workbooks-hunting-qu/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/log-tiers-and-retention-analytics-vs-data-lake-auxiliary-custom-tables/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/microsoft-security-copilot-capacity-in-scus-roles-plugins-promptbooks/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/sc-500/lessons/microsoft-purview-audit-for-investigations/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/laptop-hardware-replacement-battery-keyboard-ram-sodimm-vs-soldered-st/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/screen-parts-lcd-vs-oled-panels-backlight-digitizer-touch-layer-webcam/</loc><lastmod>2026-09-24</lastmod></url>
