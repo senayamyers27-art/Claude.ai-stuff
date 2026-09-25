@@ -2627,6 +2627,51 @@
   <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/stream-and-queue-troubleshooting-kinesis-iteratorage-parallelization-f/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/dynamodb-optimization-hot-partitions-key-design-on-demand-vs-provision/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/caching-for-performance-api-gateway-stage-caching-cloudfront-elasticac/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/dockerfiles-for-python-apps-base-images-multi-stage-builds-non-root-us/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/azure-container-registry-basic-standard-and-premium-tiers-geo-replicat/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/build-and-push-images-with-az-acr-build-quick-tasks-and-acr-tasks-trig/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/tags-vs-digests-stable-vs-unique-tags-and-cleaning-up-old-images-with/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/pull-images-without-passwords-managed-identity-with-the-acrpull-role-i/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/app-service-custom-containers-on-linux-websites-port-continuous-deploy/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/azure-container-apps-environments-ingress-external-vs-internal-secrets/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/container-apps-revisions-single-vs-multiple-revision-mode-traffic-spli/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/container-apps-scaling-http-rules-keda-event-rules-for-example-service/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/container-apps-jobs-manual-scheduled-and-event-driven/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/aks-basics-for-developers-deployment-and-service-manifests-kubectl-app/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/cosmos-db-for-nosql-with-the-python-sdk-azure-cosmos-cosmosclient-crea/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/partition-key-design-high-cardinality-even-spread-point-reads-hierarch/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/request-units-point-reads-vs-queries-indexing-policy-include-exclude-p/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/cosmos-db-vector-search-container-vector-policy-path-data-type-dimensi/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/change-feed-change-feed-processor-with-a-lease-container-azure-functio/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/azure-database-for-postgresql-flexible-server-allow-listing-and-enabli/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/pgvector-vector-n-columns-distance-operators-l2-cosine-inner-product-h/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/retrieval-augmented-generation-chunking-embedding-storing-top-k-retrie/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/azure-managed-redis-cache-aside-pattern-ttl-and-invalidation-eviction/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/redis-vector-indexes-and-semantic-caching-of-model-responses/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/choosing-the-store-cosmos-db-vs-postgresql-pgvector-vs-redis-for-a-giv/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/service-bus-queues-vs-topics-and-subscriptions-basic-tier-has-no-topic/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/receive-modes-peek-lock-complete-abandon-dead-letter-defer-vs-receive/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/dead-letter-queues-max-delivery-count-ttl-expiry-reading-the-deadlette/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/sessions-for-ordered-processing-duplicate-detection-scheduled-messages/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/event-grid-system-and-custom-topics-event-subscriptions-filters-event/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/event-grid-delivery-retry-policy-event-time-to-live-dead-lettering-to/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/picking-service-bus-event-grid-or-event-hubs-for-a-scenario/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/azure-functions-python-v2-model-function-app-py-decorators-triggers-an/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/common-triggers-http-auth-levels-timer-six-field-ncrontab-service-bus/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/hosting-plans-flex-consumption-premium-and-dedicated-cold-starts-scale/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/configuration-and-deployment-app-settings-local-settings-json-host-jso/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/managed-identities-system-assigned-vs-user-assigned-defaultazurecreden/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/azure-rbac-data-plane-roles-key-vault-secrets-user-service-bus-data-se/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/key-vault-secrets-keys-and-certificates-versions-soft-delete-and-purge/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/secret-rotation-and-key-vault-events-secretnearexpiry-through-event-gr/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/key-vault-references-in-app-service-functions-and-container-apps-setti/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/azure-app-configuration-key-values-labels-feature-flags-key-vault-refe/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/application-insights-with-the-azure-monitor-opentelemetry-distro-for-p/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/distributed-tracing-across-services-sampling-and-live-metrics/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/kql-where-project-summarize-bin-join-and-render-against-requests-depen/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/alerts-metric-vs-log-search-alerts-and-action-groups/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ai-200/lessons/troubleshooting-app-service-log-stream-container-apps-console-and-syst/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/writing-dockerfiles-base-images-layers-multi-stage-builds-entrypoint-v/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/building-tagging-saving-and-loading-images-with-docker-or-podman-build/</loc><lastmod>2026-09-24</lastmod></url>
