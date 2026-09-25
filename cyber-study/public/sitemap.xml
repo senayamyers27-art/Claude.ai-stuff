@@ -2203,6 +2203,55 @@
   <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/embedded-event-manager-eem-applets/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/orchestration-tools-agent-based-puppet-chef-vs-agentless-ansible/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/ai-in-network-operations-baselining-anomaly-detection-ai-assisted-trou/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/writing-dockerfiles-base-images-layers-multi-stage-builds-entrypoint-v/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/building-tagging-saving-and-loading-images-with-docker-or-podman-build/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/how-pod-command-and-args-override-the-image-entrypoint-and-cmd/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/choosing-a-workload-deployment-statefulset-daemonset-job-cronjob-bare/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/jobs-completions-parallelism-backofflimit-activedeadlineseconds-restar/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/cronjobs-schedule-syntax-concurrencypolicy-history-limits-running-a-jo/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/multi-container-patterns-init-containers-sidecars-including-native-sid/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/ephemeral-volumes-emptydir-including-medium-memory-configmap-secret-pr/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/persistent-storage-persistentvolume-persistentvolumeclaim-storageclass/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/mounting-volumes-with-volumemounts-mountpath-subpath-and-readonly/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/deployments-and-replicasets-how-the-pod-template-labels-and-selectors/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/rolling-updates-maxsurge-maxunavailable-minreadyseconds-the-recreate-s/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/kubectl-rollout-status-history-undo-to-revision-pause-and-resume-kubec/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/blue-green-deployments-by-switching-a-service-selector-between-two-dep/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/canary-releases-with-two-deployments-behind-one-service-weighted-by-re/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/helm-basics-repositories-charts-releases-helm-repo-add-update-search-i/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/helm-values-helm-show-values-set-and-f-values-yaml-helm-template-names/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/kustomize-kustomization-yaml-resources-nameprefix-namespace-commonlabe/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/applying-overlays-with-kubectl-apply-k-and-previewing-with-kubectl-kus/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/api-deprecations-and-removals-finding-current-apiversions-with-kubectl/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/updating-manifests-to-supported-api-groups-networking-k8s-io-v1-ingres/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/liveness-readiness-and-startup-probes-httpget-tcpsocket-exec-and-grpc/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/what-each-probe-failure-does-restart-the-container-vs-remove-the-pod-f/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/kubectl-get-describe-get-events-top-pod-node-metrics-server-for-monito/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/container-logs-kubectl-logs-with-c-f-previous-tail-since-l-and-deploy/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/reading-pod-status-pending-imagepullbackoff-crashloopbackoff-oomkilled/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/debugging-kubectl-exec-kubectl-debug-ephemeral-containers-and-pod-copi/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/output-tricks-for-fast-troubleshooting-o-wide-o-yaml-jsonpath-show-lab/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/extending-kubernetes-customresourcedefinitions-custom-resources-and-op/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/request-flow-authentication-authorization-rbac-and-admission-control-m/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/rbac-objects-role-clusterrole-rolebinding-clusterrolebinding-kubectl-a/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/resource-requests-and-limits-for-cpu-and-memory-units-m-mi-gi-qos-clas/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/namespace-resourcequota-and-limitrange-defaults/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/configmaps-create-from-literals-files-and-env-files-consume-as-env-env/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/secrets-generic-docker-registry-and-tls-types-base64-encoding-vs-encry/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/serviceaccounts-serviceaccountname-token-projection-automountserviceac/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/securitycontext-at-pod-and-container-level-runasuser-runasnonroot-fsgr/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/linux-capabilities-add-drop-and-pod-security-admission-levels-privileg/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/service-types-clusterip-nodeport-loadbalancer-externalname-and-headles/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/selectors-port-vs-targetport-vs-nodeport-named-ports/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/endpointslices-and-why-an-empty-endpoint-list-means-the-selector-or-re/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/cluster-dns-names-service-namespace-svc-cluster-local/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/kubectl-expose-kubectl-create-service-and-kubectl-port-forward/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/networkpolicy-basics-podselector-policytypes-ingress-and-egress-rules/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/networkpolicy-peers-podselector-namespaceselector-ipblock-and-vs-or-ru/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/networkpolicy-needs-a-cni-plugin-that-enforces-it-for-example-calico-o/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/ingress-resources-ingressclassname-host-and-path-rules-pathtype-prefix/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/ingress-controllers-for-example-ingress-nginx-and-testing-with-curl-an/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/laptop-hardware-replacement-battery-keyboard-ram-sodimm-vs-soldered-st/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/screen-parts-lcd-vs-oled-panels-backlight-digitizer-touch-layer-webcam/</loc><lastmod>2026-09-24</lastmod></url>
