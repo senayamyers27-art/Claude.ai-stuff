@@ -5,6 +5,6 @@ module.exports = function appScripts(certIds) {
   const labFiles = fs.readdirSync(path.join(PUB, "data")).filter(f => /^labs-.+\.js$/.test(f)).sort();
   return {
     labFiles,
-    scripts: ["assets/core.js", "data/site.js", "data/catalog.js", "data/lab-map.js", "data/frameworks.js", ...certIds.map(id => `data/gen/${id}.js`), ...labFiles.map(f => `data/${f}`), "assets/engine.js", "assets/labs.js", "assets/pages.js", "assets/frameworks.js", "assets/sync.js", "assets/pro.js", "assets/app.js"]
+    scripts: ["assets/core.js", "data/site.js", "data/catalog.js", "data/lab-map.js", "data/frameworks.js", ...certIds.map(id => `data/gen/${id}.js`), ...labFiles.map(f => `data/${f}`), "assets/engine.js", "assets/labs.js", "assets/pages.js", "assets/frameworks.js", "assets/careers.js", "assets/sync.js", "assets/pro.js", "assets/app.js"]
   };
 };

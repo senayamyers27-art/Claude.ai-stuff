@@ -5,7 +5,7 @@
      node tools/freshness.js [--state old.json] [--state-out new.json] [--out report.md] [--no-fetch]
 
    Checks:
-     - exam details not re-checked in site.config.json "reviewEveryDays"
+     - exam details and lessons not re-checked in site.config.json "reviewEveryDays"
      - plans whose weights are still "to confirm", and planned certs with no content
      - notices starting or ending soon, or already expired
      - security.txt expiry and a missing domain
@@ -31,6 +31,13 @@ if (secDays < 45) action.push(`**Renew security.txt.** It expires ${cfg.security
 for (const id of CertHub.catalog) {
   const c = CertHub.certs[id], p = CertHub.planned[id];
   if (!c) { action.push(`**${p ? p.name : id}: no study content.** Listed on the home page with weights only.`); continue; }
+  // Lessons carry their own last-reviewed date (third argument of CertHub.addLessons).
+  const lf = path.join(PUB, "data/lessons", id + ".js");
+  if (fs.existsSync(lf)) {
+    let meta = {}; CertHub.addLessons = (x, l, m) => { meta = m || {}; }; require(lf);
+    const lage = meta.reviewed ? -days(meta.reviewed) : Infinity;
+    if (lage > (cfg.reviewEveryDays || 180)) action.push(`**${c.name}: review the lessons.** ${meta.reviewed ? `Last reviewed ${meta.reviewed} (${lage} days ago)` : "No review date"}. Check them against the current objectives, fix anything outdated, then update \`reviewed\` at the end of \`public/data/lessons/${id}.js\`.`);
+  }
   const age = -days(c.lastVerified);
   if (age > (cfg.reviewEveryDays || 180)) action.push(`**${c.name}: re-check exam details.** Last checked ${c.lastVerified} (${age} days ago). Confirm weights, format and dates, then update \`lastVerified\` in \`public/data/${id}.js\`.`);
   if (c.status !== "verified") action.push(`**${c.name}: confirm domain weights** against the official outline, then set \`status: "verified"\`.`);
