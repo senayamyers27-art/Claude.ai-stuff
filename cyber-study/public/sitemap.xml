@@ -1834,6 +1834,60 @@
   <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/incident-reports-executive-summary-who-what-when-where-why-timeline-im/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/root-cause-analysis-and-lessons-learned-feeding-back-into-reporting/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cysa-plus/lessons/response-metrics-mean-time-to-detect-respond-and-remediate-alert-volum/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/osi-model-layers-and-the-data-unit-at-each-layer/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/network-appliances-routers-switches-firewalls-ids-ips-load-balancers-p/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/network-functions-cdn-vpn-qos-ttl/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/cloud-concepts-nfv-vpc-security-groups-cloud-gateways-deployment-and-s/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/common-ports-and-protocols-ftp-ssh-telnet-smtp-dns-dhcp-http-s-ntp-snm/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/protocol-types-tcp-udp-icmp-gre-ipsec-and-traffic-types-unicast-multic/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/transmission-media-and-transceivers-copper-categories-single-mode-vs-m/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/topologies-and-architectures-mesh-star-hub-and-spoke-spine-and-leaf-th/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/ipv4-addressing-public-vs-private-rfc-1918-apipa-loopback-classes-subn/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/evolving-use-cases-sdn-and-sd-wan-vxlan-zero-trust-sase-sse-infrastruc/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/ipv6-address-types-dual-stack-tunneling-nat64/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/static-vs-dynamic-routing-ospf-eigrp-and-bgp-route-selection-longest-p/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/nat-and-pat-first-hop-redundancy-fhrp-vrrp-hsrp-subinterfaces/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/vlans-vlan-database-svis-802-1q-trunking-native-and-voice-vlans/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/interface-settings-speed-duplex-mtu-and-jumbo-frames-link-aggregation/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/spanning-tree-protocol-and-loop-prevention/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/wireless-channels-and-bands-2-4-5-and-6-ghz-channel-width-non-overlapp/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/802-11-standards-ssid-bssid-essid-autonomous-vs-controller-based-aps-m/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/wireless-security-wpa2-wpa3-personal-and-enterprise-psk-vs-802-1x-capt/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/physical-installation-idf-mdf-rack-sizes-port-side-exhaust-intake-cabl/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/power-and-environment-ups-pdu-poe-poe-budgets-temperature-humidity-fir/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/documentation-physical-vs-logical-diagrams-rack-diagrams-cable-maps-ip/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/life-cycle-management-end-of-life-support-software-and-firmware-manage/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/change-management-and-configuration-management-baselines-golden-config/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/monitoring-snmp-versions-traps-mibs-flow-data-packet-capture-baselines/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/monitoring-solutions-network-discovery-traffic-analysis-performance-an/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/disaster-recovery-metrics-rpo-rto-mttr-mtbf-hot-warm-and-cold-sites-ac/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/dhcp-scopes-exclusions-reservations-lease-time-options-relay-ip-helper/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/dns-record-types-a-aaaa-cname-mx-txt-ns-ptr-soa-zones-recursive-vs-aut/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/time-protocols-ntp-ptp-and-nts/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/access-and-management-methods-site-to-site-and-client-vpns-ssh-gui-api/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/logical-security-encryption-in-transit-and-at-rest-pki-and-certificate/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/security-principles-least-privilege-role-based-access-cia-triad-defens/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/physical-security-deception-technologies-honeypots-honeynets-risk-term/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/network-segmentation-enforcement-for-iot-iiot-scada-ics-ot-guest-and-b/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/attacks-dos-ddos-vlan-hopping-mac-flooding-arp-and-dns-poisoning-spoof/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/social-engineering-phishing-dumpster-diving-shoulder-surfing-tailgatin/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/device-hardening-disable-unused-ports-and-services-change-default-pass/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/switch-security-port-security-dhcp-snooping-dynamic-arp-inspection-bpd/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/network-access-control-802-1x-mac-filtering-key-management/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/security-rules-acls-implicit-deny-url-and-content-filtering-zones-and/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/the-seven-step-troubleshooting-methodology-and-its-order/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/cabling-issues-wrong-cable-type-signal-degradation-crosstalk-emi-atten/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/interface-issues-increasing-crc-and-runt-giant-counters-port-status-du/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/hardware-issues-poe-power-budget-exceeded-wrong-poe-standard-transceiv/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/switching-issues-stp-loops-incorrect-vlan-assignment-acls/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/routing-issues-routing-tables-default-routes-address-pool-exhaustion-i/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/service-issues-dhcp-scope-exhaustion-duplicate-ips-dns-failures-ntp-is/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/performance-issues-congestion-bottlenecks-bandwidth-latency-packet-los/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/wireless-issues-interference-channel-overlap-signal-degradation-covera/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/software-tools-protocol-analyzer-command-line-ping-traceroute-nslookup/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/hardware-tools-toner-and-probe-cable-tester-cable-certifier-tdr-otdr-l/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/network-plus/lessons/basic-device-commands-show-mac-address-table-show-route-show-interface/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ccna/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ccna/lessons/diagnose-interface-and-cable-issues-copper-and-fiber-collisions-crc-in/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ccna/lessons/hypervisors-type-1-vs-type-2-virtual-machines-and-containers/</loc><lastmod>2026-09-24</lastmod></url>
@@ -1933,4 +1987,49 @@
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/printer-problems-faded-or-streaked-prints-ghost-images-toner-not-fused/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/wired-and-wireless-network-problems-intermittent-or-no-connectivity-ap/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/diagnostic-tools-windows-memory-diagnostic-crystaldiskinfo-event-viewe/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/os-types-and-purposes-windows-macos-linux-chromeos-ios-ipados-android/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/file-systems-ntfs-refs-fat32-exfat-ext4-xfs-apfs-and-their-limits/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/installations-and-upgrades-boot-methods-usb-pxe-iso-clean-vs-in-place/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/windows-10-11-editions-home-pro-enterprise-education-and-which-feature/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/windows-tools-task-manager-mmc-snap-ins-event-viewer-disk-management-t/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/command-line-tools-cd-dir-md-rmdir-robocopy-xcopy-diskpart-format-chkd/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/settings-and-control-panel-accounts-privacy-update-and-security-apps-p/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/windows-networking-workgroup-vs-domain-mapped-drives-and-shares-firewa/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/macos-installing-and-removing-apps-dmg-pkg-app-app-store-system-settin/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/linux-file-and-permission-commands-ls-cp-mv-rm-chmod-chown-sudo-su-pac/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/installing-applications-32-vs-64-bit-ram-cpu-gpu-storage-requirements/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/cloud-productivity-tools-email-synced-storage-collaboration-suites-acc/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/physical-security-access-control-vestibules-badge-readers-video-survei/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/logical-security-least-privilege-zero-trust-mfa-methods-authenticator/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/windows-security-microsoft-defender-antivirus-and-firewall-users-and-g/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/wireless-security-wpa2-vs-wpa3-aes-vs-tkip-radius-tacacs-kerberos-mult/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/malware-virus-trojan-rootkit-ransomware-keylogger-spyware-adware-crypt/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/social-engineering-and-threats-phishing-vishing-smishing-qr-code-phish/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/the-seven-step-malware-removal-procedure-in-order/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/workstation-hardening-data-at-rest-encryption-password-policy-end-user/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/mobile-device-security-screen-locks-remote-wipe-locator-apps-os-update/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/data-destruction-shredding-drilling-degaussing-incineration-erasing-wi/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/soho-router-hardening-default-passwords-firmware-updates-disabling-wps/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/browser-security-trusted-sources-and-hash-checks-extensions-password-m/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/windows-symptoms-blue-screen-bsod-degraded-performance-boot-problems-f/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/windows-fixes-reboot-restart-services-uninstall-reinstall-update-apps/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/using-event-viewer-reliability-monitor-task-manager-and-safe-mode-wind/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/mobile-os-and-app-issues-app-fails-to-launch-close-or-update-slow-resp/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/mobile-security-issues-unofficial-app-stores-jailbreaking-and-rooting/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/pc-security-issues-unable-to-reach-the-network-fake-antivirus-alerts-a/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/browser-security-issues-random-pop-ups-certificate-warnings-redirectio/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/checking-and-repairing-startup-items-scheduled-tasks-browser-extension/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/ticketing-systems-user-and-device-information-descriptions-categories/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/asset-management-inventory-lists-cmdb-asset-tags-and-ids-procurement-l/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/documentation-types-acceptable-use-policy-incident-reports-sops-onboar/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/change-management-request-forms-purpose-and-scope-risk-analysis-change/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/backup-and-recovery-full-incremental-differential-and-synthetic-backup/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/safety-esd-straps-and-mats-grounding-power-handling-lifting-technique/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/environment-safety-data-sheets-battery-and-toner-disposal-temperature/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/prohibited-content-and-privacy-incident-response-and-chain-of-custody/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/professionalism-punctuality-active-listening-avoiding-jargon-handling/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/scripting-basics-bat-ps1-vbs-sh-js-py-use-cases-automation-restarts-dr/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/remote-access-rdp-vpn-vnc-ssh-rmm-spice-winrm-screen-sharing-and-file/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/a-plus-core2/lessons/artificial-intelligence-basics-app-integration-appropriate-use-policy/</loc><lastmod>2026-09-24</lastmod></url>
 </urlset>
