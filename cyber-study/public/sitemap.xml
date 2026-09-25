@@ -2203,6 +2203,48 @@
   <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/embedded-event-manager-eem-applets/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/orchestration-tools-agent-based-puppet-chef-vs-agentless-ansible/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/ai-in-network-operations-baselining-anomaly-detection-ai-assisted-trou/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/architectural-patterns-event-driven-microservices-fan-out-choreography/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/resilient-code-retries-with-exponential-backoff-and-jitter-idempotency/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/messaging-and-streaming-sqs-standard-vs-fifo-message-groups-deduplicat/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/aws-step-functions-standard-vs-express-workflows-retry-catch-task-toke/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/calling-aws-services-with-the-sdks-and-cli-credential-provider-chain-p/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/lambda-configuration-memory-timeout-15-minute-max-ephemeral-tmp-storag/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/lambda-invocation-models-synchronous-asynchronous-retries-destinations/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/lambda-coding-practices-initializing-sdk-clients-and-connections-outsi/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/dynamodb-partition-and-sort-keys-query-vs-scan-lsi-vs-gsi-rcu-wcu-math/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/amazon-s3-from-code-multipart-upload-storage-classes-and-lifecycle-eve/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/caching-strategies-with-elasticache-lazy-loading-write-through-ttls-ch/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/iam-for-applications-execution-roles-instance-profiles-ecs-task-roles/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/resource-based-policies-lambda-permissions-for-s3-sns-api-gateway-s3-b/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/cross-account-access-with-sts-assumerole-and-trust-policies-temporary/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/amazon-cognito-user-pools-sign-up-sign-in-id-access-refresh-tokens-vs/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/api-gateway-authorization-iam-sigv4-cognito-user-pool-authorizers-lamb/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/encryption-at-rest-sse-s3-sse-kms-sse-c-s3-bucket-keys-client-side-enc/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/aws-kms-customer-managed-vs-aws-managed-keys-envelope-encryption-with/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/encryption-in-transit-tls-acm-certificates-us-east-1-for-cloudfront-en/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/secrets-and-configuration-secrets-manager-rotation-vs-systems-manager/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/keeping-sensitive-data-out-of-code-and-logs-default-credential-chain-n/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/presigned-urls-for-temporary-s3-access-iam-access-analyzer-for-least-p/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/preparing-artifacts-zip-packages-vs-container-images-in-ecr-lambda-lay/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/aws-sam-template-structure-sam-build-sam-deploy-guided-sam-local-invok/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/cloudformation-templates-parameters-outputs-and-exports-fn-importvalue/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/aws-cdk-basics-constructs-cdk-bootstrap-cdk-synth-cdk-deploy/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/lambda-versions-and-aliases-weighted-aliases-codedeploy-canary-linear/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/api-gateway-stages-stage-variables-deployments-mock-integrations-canar/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/elastic-beanstalk-deployment-policies-all-at-once-rolling-rolling-with/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/codepipeline-stages-and-actions-manual-approvals-codebuild-buildspec-p/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/codedeploy-appspec-yml-lifecycle-hooks-for-ec2-lambda-and-ecs-the-code/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/testing-in-development-environments-unit-tests-in-ci-integration-tests/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/root-cause-analysis-with-cloudwatch-logs-logs-insights-queries-metrics/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/common-lambda-errors-throttling-429-timeouts-accessdenied-from-the-exe/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/aws-x-ray-segments-subsegments-annotations-vs-metadata-sampling-active/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/custom-metrics-putmetricdata-cloudwatch-embedded-metric-format-high-re/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/cloudwatch-alarms-with-sns-notifications-structured-logging-and-correl/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/lambda-performance-memory-cpu-tuning-cold-starts-provisioned-concurren/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/stream-and-queue-troubleshooting-kinesis-iteratorage-parallelization-f/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/dynamodb-optimization-hot-partitions-key-design-on-demand-vs-provision/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/aws-developer/lessons/caching-for-performance-api-gateway-stage-caching-cloudfront-elasticac/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/writing-dockerfiles-base-images-layers-multi-stage-builds-entrypoint-v/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ckad/lessons/building-tagging-saving-and-loading-images-with-docker-or-podman-build/</loc><lastmod>2026-09-24</lastmod></url>
