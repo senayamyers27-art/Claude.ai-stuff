@@ -240,5 +240,13 @@ CertHub.labRoles = {
   "lab-powershell-admin": ["sysadmin", "techsupport"],
   "lab-azure-admin": ["sysadmin", "entarch"],
   "lab-k8s-cluster-admin": ["sysadmin", "infra"],
-  "lab-postgres-dba": ["dba", "sysadmin"]
+  "lab-postgres-dba": ["dba", "sysadmin"],
+  "lab-frr-ospf-multiarea": ["netops", "infra"],
+  "lab-frr-bgp": ["netops", "infra", "entarch"],
+  "lab-vrrp-failover": ["netops", "infra"],
+  "lab-ipv6-dual-stack": ["netops", "infra", "sysadmin"],
+  "lab-qos-tc": ["netops", "sysadmin"],
+  "lab-junos-cli": ["netops"],
+  "lab-aws-vpc": ["infra", "netops", "entarch"],
+  "lab-wifi-survey": ["netops", "entarch"]
 };

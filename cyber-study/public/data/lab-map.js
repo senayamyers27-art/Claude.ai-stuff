@@ -26,10 +26,10 @@ CertHub.labMap = {
     4: ["lab-threat-intel", "lab-risk-register", "lab-controls-audit"]
   } },
   "ccna": { domains: {
-    1: ["lab-subnetting", "lab-wireshark-basics", "lab-network-troubleshooting", "lab-nmap-discovery", "lab-dns-bind"],
+    1: ["lab-subnetting", "lab-wireshark-basics", "lab-network-troubleshooting", "lab-nmap-discovery", "lab-dns-bind", "lab-ipv6-dual-stack", "lab-wifi-survey"],
     2: ["lab-pt-vlans", "lab-pt-l2-security", "lab-wifi-audit"],
-    3: ["lab-pt-ospf", "lab-network-troubleshooting", "lab-subnetting"],
-    4: ["lab-pt-acl-nat", "lab-firewall-pfsense", "lab-ssh-mfa", "lab-net-monitoring", "lab-radius-aaa", "lab-wireguard-vpn"],
+    3: ["lab-pt-ospf", "lab-network-troubleshooting", "lab-subnetting", "lab-frr-ospf-multiarea", "lab-vrrp-failover", "lab-ipv6-dual-stack"],
+    4: ["lab-pt-acl-nat", "lab-firewall-pfsense", "lab-ssh-mfa", "lab-net-monitoring", "lab-radius-aaa", "lab-wireguard-vpn", "lab-qos-tc"],
     5: ["lab-network-automation", "lab-splunk-siem", "lab-net-monitoring"]
   } },
   "sscp": { domains: {
@@ -42,11 +42,11 @@ CertHub.labMap = {
     7: ["lab-linux-hardening", "lab-appsec-zap", "lab-container-security", "lab-apparmor-mac", "lab-defender-asr", "lab-azure-security-baseline"]
   } },
   "network-plus": { domains: {
-    1: ["lab-subnetting", "lab-wireshark-basics", "lab-dns-bind"],
-    2: ["lab-pt-vlans", "lab-pt-ospf", "lab-wifi-audit", "lab-wireguard-vpn"],
-    3: ["lab-nmap-discovery", "lab-splunk-siem", "lab-bia-backup", "lab-net-monitoring", "lab-db-failover"],
+    1: ["lab-subnetting", "lab-wireshark-basics", "lab-dns-bind", "lab-ipv6-dual-stack", "lab-aws-vpc"],
+    2: ["lab-pt-vlans", "lab-pt-ospf", "lab-wifi-audit", "lab-wireguard-vpn", "lab-frr-ospf-multiarea", "lab-frr-bgp", "lab-wifi-survey"],
+    3: ["lab-nmap-discovery", "lab-splunk-siem", "lab-bia-backup", "lab-net-monitoring", "lab-db-failover", "lab-vrrp-failover", "lab-qos-tc"],
     4: ["lab-firewall-pfsense", "lab-pt-l2-security", "lab-pt-acl-nat", "lab-radius-aaa", "lab-wireguard-vpn"],
-    5: ["lab-network-troubleshooting", "lab-linux-cli", "lab-wireshark-basics", "lab-dns-bind"]
+    5: ["lab-network-troubleshooting", "lab-linux-cli", "lab-wireshark-basics", "lab-dns-bind", "lab-ipv6-dual-stack", "lab-frr-ospf-multiarea"]
   } },
   "isc2-cc": { domains: {
     1: ["lab-home-lab", "lab-hashing-integrity"],
@@ -181,5 +181,27 @@ CertHub.labMap = {
     2: ["lab-powershell-admin"],
     3: ["lab-windows-deployment"],
     7: ["lab-powershell-admin"]
+  } },
+  "ccst-networking": { domains: {
+    2: ["lab-ipv6-dual-stack"],
+    3: ["lab-wifi-survey"],
+    5: ["lab-ipv6-dual-stack"]
+  } },
+  "ccnp-encor": { domains: {
+    1: ["lab-qos-tc", "lab-vrrp-failover", "lab-wifi-survey"],
+    3: ["lab-frr-ospf-multiarea", "lab-frr-bgp", "lab-ipv6-dual-stack"]
+  } },
+  "jncia-junos": { domains: {
+    2: ["lab-junos-cli"],
+    3: ["lab-junos-cli"],
+    4: ["lab-junos-cli"],
+    5: ["lab-junos-cli"],
+    6: ["lab-junos-cli", "lab-frr-ospf-multiarea"],
+    7: ["lab-junos-cli", "lab-frr-bgp"]
+  } },
+  "cwna": { domains: {
+    1: ["lab-wifi-survey"],
+    4: ["lab-wifi-survey"],
+    6: ["lab-wifi-survey"]
   } }
 };
