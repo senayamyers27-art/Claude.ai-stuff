@@ -2448,6 +2448,55 @@
   <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/try-except-except-with-several-exceptions-bare-except-and-except-excep/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/ordering-except-branches-from-specific-to-general/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/pcep/lessons/propagating-exceptions-through-function-boundaries-and-deciding-where/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/import-variants-import-import-as-from-import-from-import-and-what-each/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/qualifying-names-in-nested-modules-and-packages-package-subpackage-mod/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/dir-to-list-the-names-a-module-defines/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/sys-path-where-python-searches-for-modules-and-how-to-extend-it-at-run/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/math-module-ceil-floor-trunc-factorial-hypot-sqrt/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/random-module-random-seed-choice-sample/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/platform-module-platform-machine-processor-system-version-python-imple/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/name-and-the-if-name-main-idiom/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/pycache-and-compiled-pyc-files/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/package-layout-directories-init-py-nested-packages-and-private-name-mo/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/try-except-multiple-except-branches-and-the-order-they-are-checked/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/catching-several-exceptions-in-one-branch-except-e1-e2/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/except-as-e-and-the-args-attribute/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/else-and-finally-branches-and-when-each-runs/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/the-built-in-exception-hierarchy-baseexception-exception-arithmeticerr/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/raise-raise-with-an-instance-and-a-bare-raise-to-re-raise/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/assert-and-assertionerror/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/why-except-exception-does-not-catch-keyboardinterrupt-or-systemexit/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/defining-your-own-exception-classes-and-adding-attributes-to-them/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/character-encoding-ascii-unicode-code-points-utf-8/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/ord-and-chr/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/string-literals-and-escape-sequences-n-t-quotes/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/indexing-negative-indexing-and-slicing-including-steps/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/immutability-why-item-assignment-fails/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/iterating-over-strings-in-and-not-in/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/concatenation-replication-and-comparison-of-strings-and-why-comparing/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/character-tests-isdigit-isalpha-isalnum-isspace-isupper-islower/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/join-split-find-rfind-index-and-the-difference-between-find-and-index/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/sorted-on-strings-versus-list-sort/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/core-ideas-class-object-attribute-method-encapsulation-inheritance-sup/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/instance-variables-versus-class-variables-declaring-initializing-and-s/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/the-dict-attribute-of-objects-and-classes/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/private-attributes-and-name-mangling-name-becomes-classname-name/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/methods-and-the-self-parameter-constructors-init-with-default-argument/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/introspection-hasattr-type-name-module-bases-class/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/single-and-multiple-inheritance-method-overriding-and-super/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/method-resolution-order-mro-diamonds-and-inconsistent-hierarchies/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/isinstance-issubclass-and-the-is-is-not-operators-versus/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/polymorphism-and-the-str-method/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/list-comprehensions-including-if-filters-and-nested-loops/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/lambda-functions-and-functions-that-take-a-lambda-as-an-argument/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/map-and-filter-and-the-fact-that-they-return-one-shot-iterators/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/closures-inner-functions-that-remember-variables-from-an-enclosing-sco/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/generators-yield-next-and-stopiteration/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/file-i-o-open-modes-r-w-a-x-b-t-text-versus-binary/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/stream-handles-and-the-predefined-streams-sys-stdin-sys-stdout-sys-std/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/read-readline-readlines-write-readinto-with-bytearray-close-and-with/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/pcap/lessons/errno-values-for-example-enoent-eacces-on-i-o-errors/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/java-se/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/java-se/lessons/primitive-types-literals-underscores-binary-hex-octal-default-values/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/java-se/lessons/wrapper-classes-autoboxing-unboxing-and-integer-caching-with/</loc><lastmod>2026-09-24</lastmod></url>
