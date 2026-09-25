@@ -3321,6 +3321,67 @@
   <url><loc>https://senayamyers27-art.github.io/es/az-104/lessons/restoring-vms-disks-and-individual-files/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/az-104/lessons/azure-site-recovery-replication-to-a-secondary-region-test-failover-fa/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/az-104/lessons/backup-reports-and-alerts/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/deploying-domain-controllers-install-addsforest-install-addsdomaincont/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/fsmo-roles-schema-master-domain-naming-master-rid-master-pdc-emulator/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/sites-subnets-site-links-link-cost-and-bridging-replication-health-wit/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/forest-external-shortcut-and-realm-trusts-transitivity-and-direction-s/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/users-groups-domain-local-global-universal-ous-and-delegation-of-contr/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/default-domain-policy-vs-fine-grained-password-policies-psos-ad-recycl/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/hybrid-identity-entra-connect-sync-including-staging-mode-vs-entra-clo/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/group-policy-processing-lsdou-enforced-and-block-inheritance-security/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/migrating-ad-objects-between-domains-and-forests-with-admt-and-sid-his/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/windows-admin-center-desktop-vs-gateway-mode-extensions-kerberos-const/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/powershell-remoting-enter-pssession-vs-invoke-command-just-enough-admi/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/azure-arc-enabled-servers-connected-machine-agent-azcmagent-at-scale-o/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/azure-policy-and-machine-configuration-for-arc-enabled-and-azure-serve/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/azure-update-manager-assessments-one-time-updates-maintenance-configur/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/azure-automation-runbooks-and-hybrid-runbook-workers/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/storage-migration-service-inventory-transfer-and-cut-over-of-file-serv/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/azure-migrate-discovery-and-assessment-server-migration-of-hyper-v-vmw/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/upgrading-and-migrating-server-roles-in-place-upgrade-paths-migrating/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/hyper-v-vm-configuration-generation-1-vs-2-dynamic-memory-integration/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/nested-virtualization-requirements-powershell-direct/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/virtual-disks-vhd-vs-vhdx-fixed-dynamic-and-differencing-disks-shared/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/checkpoints-production-vs-standard-why-checkpoints-are-not-backups/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/hyper-v-virtual-switches-external-internal-private-and-switch-embedded/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/live-migration-and-storage-migration-between-hyper-v-hosts-kerberos-vs/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/hyper-v-replica-primary-and-replica-servers-replication-frequency-reco/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/azure-site-recovery-for-hyper-v-and-azure-vms-recovery-plans-test-fail/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/azure-vms-running-windows-server-azure-hybrid-benefit-sysprep-and-azur/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/dns-zones-primary-secondary-stub-and-ad-integrated-replication-scope-s/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/forwarders-conditional-forwarders-and-root-hints-dns-policies-and-zone/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/dnssec-signing-trust-anchors-and-the-name-resolution-policy-table-nrpt/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/azure-dns-private-zones-virtual-network-links-and-auto-registration-az/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/dhcp-scopes-reservations-options-and-relay-authorization-in-ad/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/dhcp-high-availability-failover-in-load-balance-and-hot-standby-modes/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/azure-vnet-addressing-and-static-private-ips-set-on-the-nic/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/hybrid-connectivity-site-to-site-and-point-to-site-vpn-expressroute-az/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/azure-file-sync-sync-groups-cloud-and-server-endpoints-cloud-tiering-p/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/azure-files-with-ad-ds-authentication-share-level-rbac-vs-ntfs-permiss/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/smb-security-encryption-signing-smb-over-quic-removing-smbv1/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/file-server-resource-manager-quotas-and-file-screens-dfs-namespaces-an/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/storage-spaces-resiliency-and-provisioning-refs-vs-ntfs-data-deduplica/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/failover-clustering-validation-cluster-networks-quorum-models-and-witn/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/storage-spaces-direct-minimum-nodes-cache-resiliency-scale-out-file-se/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/storage-replica-synchronous-vs-asynchronous-server-to-server-and-stret/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/security-baselines-osconfig-on-windows-server-2025-microsoft-security/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/credential-guard-and-virtualization-based-security-lsa-protection/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/app-control-for-business-wdac-policies-and-audit-mode-applocker-differ/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/windows-laps-backing-up-local-admin-passwords-to-ad-ds-or-entra-id-rot/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/hardening-domain-controllers-tiered-administration-protected-users-pri/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/windows-defender-firewall-profiles-rules-and-connection-security-ipsec/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/microsoft-defender-for-servers-via-defender-for-cloud-onboarding-arc-a/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/encryption-bitlocker-on-servers-and-azure-vm-disk-encryption-options-s/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/performance-monitor-counters-and-data-collector-sets-baselines-resourc/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/event-logs-custom-views-and-event-subscriptions-windows-event-forwardi/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/windows-admin-center-alerts-and-system-insights-predictive-capacity/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/azure-monitor-agent-data-collection-rules-vm-insights-and-log-analytic/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/troubleshooting-connectivity-and-name-resolution-test-netconnection-re/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/windows-update-time-service-w32tm-and-kerberos-troubleshooting-arc-age/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/azure-vm-troubleshooting-boot-diagnostics-serial-console-run-command-r/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/ad-ds-recovery-directory-services-restore-mode-authoritative-vs-non-au/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/az-802/lessons/backup-windows-server-backup-bare-metal-and-system-state-backup-azure/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/control-plane-and-node-components-kube-apiserver-etcd-kube-scheduler-k/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/preparing-hosts-for-kubeadm-containerd-matching-systemd-cgroup-driver/</loc><lastmod>2026-09-24</lastmod></url>
