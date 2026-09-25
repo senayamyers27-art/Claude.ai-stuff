@@ -10,7 +10,7 @@ fs.readdirSync(path.join(root, "data")).filter(f => /^labs-.+\.js$/.test(f)).for
 const fail = (id, m) => { bad++; console.log(`  ✗ ${id}: ${m}`); };
 for (const id of CertHub.catalog) {
   const f = path.join(root, "data", id + ".js");
-  if (!fs.existsSync(f)) { if (!CertHub.planned[id]) fail(id, "no data file and not listed as planned"); continue; }
+  if (!fs.existsSync(f)) { if (!CertHub.planned[id] && !(CertHub.tracks || []).some(t => t.certs.includes(id))) fail(id, "no data file and not in a track"); else console.log(`${id}: not written yet`); continue; }
   require(f);
   const c = CertHub.certs[id];
   if (!c) { fail(id, "file did not register " + id); continue; }
@@ -40,7 +40,7 @@ for (const id of CertHub.catalog) {
   console.log(`${id}: ${c.questions.length} questions, per domain ${JSON.stringify(per)}, answer positions ${pos.join("/")}, ${c.status}`);
 }
 /* ---------- labs ---------- */
-const TRACKS = ["Foundations", "Networking", "Blue team", "GRC & architecture"], LEVELS = ["Beginner", "Intermediate", "Advanced"];
+const TRACKS = ["Foundations", "Networking", "Blue team", "GRC & architecture", "Systems administration", "Software engineering"], LEVELS = ["Beginner", "Intermediate", "Advanced"];
 for (const l of Object.values(CertHub.labs)) {
   const f = m => fail(l.id, m);
   if (!/^lab-[a-z0-9-]+$/.test(l.id)) f("id must look like lab-some-name");
@@ -54,6 +54,32 @@ for (const l of Object.values(CertHub.labs)) {
   if (!Array.isArray(l.youWillNeed) || !l.youWillNeed.length) f("youWillNeed is empty");
   (l.links || []).forEach(u => { if (!/^https:\/\//.test(u.url)) f(`link must be https: ${u.url}`); });
   (l.requires || []).forEach(r => { if (!CertHub.labs[r]) f(`requires unknown lab ${r}`); });
+}
+/* ---------- frameworks and NICE work roles ---------- */
+require(path.join(root, "data/frameworks.js"));
+{
+  const KINDS = ["Governance & risk", "Controls & standards", "Threat & detection", "Secure development", "Privacy & compliance", "Networking models & standards", "IT service & operations", "Software delivery", "Cloud architecture", "Careers"];
+  const fwIds = new Set();
+  for (const f of CertHub.frameworks || []) {
+    const e = m => fail(`framework ${f.id}`, m);
+    if (!/^[a-z0-9-]+$/.test(f.id || "") || fwIds.has(f.id)) e("needs a unique [a-z0-9-] id"); fwIds.add(f.id);
+    for (const k of ["name", "org", "what", "useWhen", "match"]) if (typeof f[k] !== "string" || !f[k].trim()) e(`missing ${k}`);
+    if (!KINDS.includes(f.kind)) e(`unknown kind ${f.kind}`);
+    if (!Array.isArray(f.parts) || !f.parts.length) e("needs parts");
+    (f.exams || []).forEach(x => { if (!CertHub.catalog.includes(x)) e(`unknown exam ${x}`); });
+    if (f.url && !/^https:\/\//.test(f.url)) e("url must be https");
+    try { new RegExp(f.match); } catch (err) { e("match is not a valid pattern"); }
+  }
+  const roleIds = new Set((CertHub.niceRoles || []).map(r => r.id));
+  for (const r of CertHub.niceRoles || []) for (const k of ["id", "name", "category", "titles", "about"]) if (!r[k]) fail(`role ${r.id}`, `missing ${k}`);
+  for (const id of Object.keys(CertHub.labs)) {
+    const rs = (CertHub.labRoles || {})[id];
+    if (!Array.isArray(rs) || rs.length < 1 || rs.length > 3) fail(id, "needs 1 to 3 NICE work roles in data/frameworks.js labRoles");
+    else rs.forEach(r => { if (!roleIds.has(r)) fail(id, `unknown work role ${r}`); });
+  }
+  for (const id of Object.keys(CertHub.labRoles || {})) if (!CertHub.labs[id]) fail("labRoles", `unknown lab ${id}`);
+  for (const r of roleIds) if (!Object.values(CertHub.labRoles || {}).some(list => list.includes(r))) fail(`role ${r}`, "no lab builds toward this role");
+  console.log(`frameworks: ${(CertHub.frameworks || []).length}, NICE work roles: ${roleIds.size}`);
 }
 const used = new Set();
 for (const [cid, m] of Object.entries(CertHub.labMap || {})) {

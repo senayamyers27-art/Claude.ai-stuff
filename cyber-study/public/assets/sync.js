@@ -180,7 +180,7 @@
         <div class="btns"><button type="submit" class="btn">Email me a sign-in link</button></div>
         <p class="note" id="signin-msg" role="status"></p>
       </form>
-      <p class="note">No password. We email a link that signs you in once and expires in 15 minutes. See the <a href="#privacy">Privacy Policy</a>.</p>
+      <p class="note">No password. We email a link that signs you in once and expires in 15 minutes. Accounts are for ages 13 and up. See the <a href="#terms">Terms</a> and <a href="#privacy">Privacy Policy</a>.</p>
       ${me && me.billing ? `<h2>Pro</h2><div class="panel">${proPitch()}<p class="note" style="margin:0">${PRICE.monthly ? `${esc(PRICE.monthly)} a month or ${esc(PRICE.yearly)} a year. ` : ""}Sign in first, then upgrade from this page.</p></div>` : ""}`;
     }
     const u = me.user, plan = me.plan || "free";
@@ -237,7 +237,7 @@
       <h1>${esc(data.cohort.name)}</h1>
       <p class="meta">${esc(cert ? `${cert.short} ${cert.exam}` : data.cohort.certId)} · ${data.learners.length} learner${data.learners.length === 1 ? "" : "s"}. Shows progress numbers only; learners' lab notes stay private.</p>
       <div class="btns"><button type="button" class="btn ghost sm" data-aact="csv" data-cohort="${esc(id)}">Download CSV</button></div>
-      <div class="scroll"><table class="sectable"><thead><tr><th>Learner</th><th>Answered</th><th>Accuracy</th><th>Days</th><th>Labs done</th><th>Last test</th><th>Last active</th></tr></thead><tbody>
+      <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table class="sectable"><thead><tr><th>Learner</th><th>Answered</th><th>Accuracy</th><th>Days</th><th>Labs done</th><th>Last test</th><th>Last active</th></tr></thead><tbody>
       ${data.learners.map(l => `<tr><td>${esc(l.email)}</td><td>${+l.answered}</td><td>${l.accuracy == null ? "–" : +l.accuracy + "%"}</td><td>${+l.daysChecked}</td><td>${+l.labsDone}</td><td>${l.lastScore == null ? "–" : +l.lastScore + "%"}</td><td>${l.lastActive ? new Date(l.lastActive).toLocaleDateString() : "–"}</td></tr>`).join("") || `<tr><td colspan="7">No learners yet. Share an invite link.</td></tr>`}
       </tbody></table></div>`;
     } catch (e) { $("#app").innerHTML += `<div class="status warn">${esc(e.message)}</div>`; }

@@ -29,6 +29,15 @@
     FREE_Q = (C.questions || []).map(toQ);
     Q = FREE_Q;
     PRO = null;
+    if (!Array.isArray(C.questions)) {
+      // The question bank loads separately; redraw once it arrives.
+      CertHub.loadQuestions(id).then(qs => {
+        if (!C || C.id !== id || !qs) return;
+        FREE_Q = qs.map(toQ);
+        Q = FREE_Q.concat(PRO ? PRO.questions : []);
+        if (active && !(S.quiz && !S.quiz.done)) render();
+      }, e => { if (active && C.id === id) CertHub.ui.toast(e.message); });
+    }
     const p = loadProgress(C.id);
     if (!p.start) p.start = C.start || U.iso(U.nextMonday(today()));
     if (!p.examDate) p.examDate = C.examDate || U.iso(U.addDays(parseD(p.start), W.length * 7 + 1));
@@ -50,7 +59,7 @@
       PRO = { questions: (Array.isArray(b.questions) ? b.questions : []).filter(ok).map(toQ),
         flashcards: (Array.isArray(b.flashcards) ? b.flashcards : []).filter(f => Array.isArray(f) && doms.has(f[0]) && f[1] && f[2]),
         guide: Array.isArray(b.guide) ? b.guide : [] };
-      Q = FREE_Q.concat(PRO.questions);
+      Q = FREE_Q.concat(PRO.questions); // FREE_Q may still be loading; its loader adds PRO back in
       if (active && !(S.quiz && !S.quiz.done)) render();
     });
   }
@@ -105,6 +114,8 @@
     // Top up with earlier weeks' material, then anything else from this week's domain.
     if (qs.length < 10) qs = qs.concat(pickFor(q => !qs.includes(q) && (q.w ? q.w < n : W.some(w => w.n < n && w.dom === q.d)), 10 - qs.length));
     if (qs.length < 10 && wk.dom) qs = qs.concat(pickFor(q => !qs.includes(q) && q.d === wk.dom, 10 - qs.length));
+    // Small domains (a few questions in week 1): fill up from the rest of the bank.
+    if (qs.length < 10) qs = qs.concat(pickFor(q => !qs.includes(q), 10 - qs.length));
     return shuffle(qs);
   }
   // Pro: the real exam's length, weighted by domain, topped up from any domain if one runs short.
@@ -248,6 +259,7 @@
   }
   function practiceView() {
     if (S.quiz) return quizView();
+    if (!Array.isArray(C.questions)) return `<h1>Quizzes & tests</h1><p class="note">Loading questions…</p>`;
     const due = dueIds().length;
     const cnt = d => Q.filter(q => q.d === d).length;
     const ex = examQs().length;
@@ -284,7 +296,7 @@
       <div class="panel"><div class="big">${pct}%</div><p class="meta">${z.score} of ${z.qs.length} correct${z.mode === "test" ? (pct >= 85 ? ". Exam-ready range." : pct >= 75 ? ". Close. Review the misses below." : ". Revisit these topics before moving on.") : ""}</p>
       ${z.kind === "full" ? `<p style="margin:8px 0 0"><span class="chip" style="--c:${passBand(pct)[1]}">${passBand(pct)[0]}</span> <span class="note">Pass estimate. Real exams use scaled scores, so treat 85%+ on full-length exams as your target.</span></p>
       <div class="bars" style="margin-top:12px">${C.domains.map(d => { const qs = z.qs.map((q, i) => [q, i]).filter(([q]) => q.d === d.id); const c = qs.filter(([q, i]) => z.ans[i] === q.a).length; const p = qs.length ? Math.round(100 * c / qs.length) : 0; return `<div class="b" style="--c:${dc(d.id)}"><div class="flex"><span>D${d.id} ${esc(d.name)}</span><strong>${c}/${qs.length}</strong></div><div class="track"><i style="width:${p}%"></i></div></div>`; }).join("")}</div>` : ""}</div>
-      <h2>Review</h2>${z.qs.map((q, i) => { const ok = z.ans[i] === q.a; return `<div class="panel" style="--c:${ok ? "var(--ok)" : "var(--bad)"}"><p style="margin:0 0 6px"><strong>${ok ? "Correct" : "Missed"}</strong> · <span class="note">${esc(domName(q.d))}</span></p><p style="margin:0 0 8px">${esc(q.q)}</p>${ok ? "" : `<p class="note" style="margin:0">Your answer: ${esc(z.ans[i] == null ? "none" : q.o[z.ans[i]])}</p>`}<p style="margin:4px 0 0"><strong>${esc(q.o[q.a])}</strong></p><div class="expl">${esc(q.e)}${q.src ? `<br><small class="note">Source: ${esc(q.src)}</small>` : ""}</div></div>`; }).join("")}`;
+      <h2>Review</h2>${z.qs.map((q, i) => { const ok = z.ans[i] === q.a; return `<div class="panel" style="--c:${ok ? "var(--ok)" : "var(--bad)"}"><p style="margin:0 0 6px"><strong>${ok ? "Correct" : "Missed"}</strong> · <span class="note">${esc(domName(q.d))}</span></p><p class="qtext" style="margin:0 0 8px">${esc(q.q)}</p>${ok ? "" : `<p class="note" style="margin:0">Your answer: ${esc(z.ans[i] == null ? "none" : q.o[z.ans[i]])}</p>`}<p style="margin:4px 0 0"><strong>${esc(q.o[q.a])}</strong></p><div class="expl">${esc(q.e)}${q.src ? `<br><small class="note">Source: ${esc(q.src)}</small>` : ""}</div></div>`; }).join("")}`;
     }
     const q = z.qs[z.i];
     const opts = q.o.map((o, k) => {

@@ -49,7 +49,7 @@
     if (!Array.isArray(lab.rubric) || !lab.rubric.length) return "";
     return `<h2>Grade your project</h2>
     <p class="note">Score your deliverable the way an instructor or hiring manager would. Aim for "Meets" on every row before you publish it.</p>
-    <div class="scroll"><table class="sectable"><thead><tr><th>Criterion</th><th>Needs work</th><th>Meets</th><th>Exceeds</th></tr></thead><tbody>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table class="sectable"><thead><tr><th>Criterion</th><th>Needs work</th><th>Meets</th><th>Exceeds</th></tr></thead><tbody>
     ${lab.rubric.map(r => `<tr><td><strong>${esc(r.criterion)}</strong></td>${[0, 1, 2].map(i => `<td>${esc(String((r.levels || [])[i] || "").replace(/^(Needs work|Meets|Exceeds):\s*/i, ""))}</td>`).join("")}</tr>`).join("")}
     </tbody></table></div>`;
   }

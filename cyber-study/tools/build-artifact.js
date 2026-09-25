@@ -19,7 +19,7 @@ ${body}
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 fs.writeFileSync(path.join(OUT, "index.html"), page);
-const files = ["assets/style.css", "assets/icon.svg", ...fs.readdirSync(path.join(PUB, "assets/fonts")).filter(f => f.endsWith(".woff2")).map(f => "assets/fonts/" + f), ...scripts];
+const files = ["assets/style.css", "assets/icon.svg", ...fs.readdirSync(path.join(PUB, "assets/fonts")).filter(f => f.endsWith(".woff2")).map(f => "assets/fonts/" + f), ...scripts, ...ids.map(id => `data/gen/${id}-q.js`)];
 for (const f of files) { fs.mkdirSync(path.dirname(path.join(OUT, f)), { recursive: true }); fs.copyFileSync(path.join(PUB, f), path.join(OUT, f)); }
 fs.writeFileSync(path.join(OUT, "files.json"), JSON.stringify(Object.fromEntries(files.map(f => [f, path.join(OUT, f)])), null, 1));
 console.log(`Wrote ${OUT} (index.html + ${files.length} files)`);
