@@ -87,7 +87,7 @@
           const fn = a[0].replace(/\(\)$/, "").toLowerCase(), inner = a[0].endsWith("()") ? [] : a.slice(2, -1);
           const f = inner.length ? parseExpr(inner) : null;
           const col = inner.join("");
-          const nm = name || (fn === "count" ? "count_" : `${fn}_${col}`);
+          const nm = name || (fn === "count" ? "count_" : fn === "make_set" ? `set_${col}` : `${fn}_${col}`);
           const agg = { count: g => g.length, dcount: g => new Set(g.map(f)).size, sum: g => g.reduce((s, r) => s + +f(r), 0), avg: g => g.reduce((s, r) => s + +f(r), 0) / g.length, min: g => Math.min(...g.map(f)), max: g => Math.max(...g.map(f)), make_set: g => [...new Set(g.map(f))] }[fn];
           if (!agg) throw new Error(`Unsupported aggregation "${fn}"`);
           return [nm, agg];
@@ -96,9 +96,13 @@
         const groups = new Map();
         rows.forEach(r => { const key = bys.map(([, f]) => f(r)); const k = JSON.stringify(key); if (!groups.has(k)) groups.set(k, { key, rows: [] }); groups.get(k).rows.push(r); });
         if (!bys.length && !groups.size) groups.set("[]", { key: [], rows: [] });
+        ordered = false;
         rows = [...groups.values()].map(g => { const o = {}; bys.forEach(([n], i) => { o[n] = g.key[i]; }); aggs.forEach(([n, f]) => { o[n] = f(g.rows); }); return o; });
       } else throw new Error(`Unsupported operator "${op}"`);
     }
+    // Times are compared as numbers internally; show them as ISO dates.
+    const isTime = k => /Time|Generated$/.test(k);
+    rows = rows.map(r => { const o = {}; for (const k in r) o[k] = isTime(k) && typeof r[k] === "number" && r[k] > 1e11 ? new Date(r[k]).toISOString().replace(".000Z", "Z") : r[k]; return o; });
     return { rows, ordered };
   }
   // Two results match when they have the same columns and rows (row order matters only if sorted).
