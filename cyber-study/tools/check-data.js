@@ -138,7 +138,7 @@ for (const id of CertHub.catalog) {
 }
 console.log(`lessons: ${lessonTotal}${noLessons.length ? `; not written yet for ${noLessons.join(", ")}` : " (every certification)"}`);
 /* ---------- labs ---------- */
-const TRACKS = ["Foundations", "Networking", "Blue team", "GRC & architecture", "Systems administration", "Software engineering"], LEVELS = ["Beginner", "Intermediate", "Advanced"];
+const TRACKS = ["Foundations", "Networking", "Blue team", "GRC & architecture", "Systems administration", "Software engineering", "Cloud computing"], LEVELS = ["Beginner", "Intermediate", "Advanced"];
 for (const l of Object.values(CertHub.labs)) {
   const f = m => fail(l.id, m);
   if (!/^lab-[a-z0-9-]+$/.test(l.id)) f("id must look like lab-some-name");
