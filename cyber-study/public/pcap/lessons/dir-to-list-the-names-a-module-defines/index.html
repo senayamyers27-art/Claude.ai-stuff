@@ -39,7 +39,7 @@
 for name in dir(math):
     if not name.startswith('_'):
         print(name, end=' ')
-# acos acosh asin ... ceil ... sqrt tan tanh tau trunc</code></pre>
+# acos acosh asin ... ceil ... sqrt tan tanh tau trunc ulp</code></pre>
 <p>Called with no argument, <code>dir()</code> lists the names in the current local scope. At the top level of a script that means your module's global names, so it is an easy way to confirm what an import added. Run <code>dir()</code>, then <code>import math as m</code>, then <code>dir()</code> again, and you will see <code>m</code> appear but not <code>math</code>. After <code>from math import *</code>, the list grows by dozens of names at once, which makes the namespace-pollution argument against star imports concrete.</p>
 <p>The list is sorted alphabetically, and because uppercase letters come before lowercase in character order, names beginning with capitals appear before lowercase ones, and dunder names beginning with an underscore appear after uppercase names but before lowercase ones. You do not need to memorize this, but it explains why the output looks the way it does.</p>
 <p><code>dir()</code> works on any object, not only modules. <code>dir('abc')</code> lists string methods, <code>dir([])</code> lists list methods, and <code>dir(SomeClass)</code> lists the class's attributes including inherited ones. This makes it a companion to <code>help()</code>, which prints documentation, and to <code>hasattr()</code>, which tests for a single name. Remember that <code>dir()</code> returns names as strings; to get the actual object behind a name you would use <code>getattr(module, name)</code>.</p>
