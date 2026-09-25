@@ -2066,6 +2066,61 @@
   <url><loc>https://senayamyers27-art.github.io/es/ccna/lessons/configuration-management-with-ansible-agentless-ssh-yaml-playbooks-inv/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ccna/lessons/syslog-message-format-severity-levels-0-7-facilities-logging-to-a-serv/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/ccna/lessons/telemetry-and-aiops-streaming-telemetry-vs-polling-baselines-and-event/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/enterprise-design-two-tier-collapsed-core-and-three-tier-campus-fabric/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/high-availability-redundancy-first-hop-redundancy-protocols-stateful-s/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/sd-wan-control-and-data-plane-manager-validator-controllers-wan-edges/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/sd-wan-benefits-and-limitations-compared-with-traditional-wan/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/sd-access-control-plane-lisp-data-plane-vxlan-policy-plane-trustsec-fa/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/traditional-campus-vs-sd-access-underlay-and-overlay-group-based-polic/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/qos-components-classification-and-marking-dscp-cos-policing-shaping-qu/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/hardware-and-software-switching-process-switching-cef-fib-rib-adjacenc/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/cam-and-tcam-tables-and-what-each-stores/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/punted-traffic-and-its-effect-on-the-control-plane-cpu/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/hypervisors-type-1-vs-type-2-virtual-machines-and-virtual-switching/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/containers-compared-with-virtual-machines/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/vrf-and-vrf-lite-separate-routing-tables-overlapping-addresses-per-vrf/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/gre-tunnels-configuration-keepalives-recursive-routing-problems-mtu-an/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/ipsec-ike-phases-tunnel-vs-transport-mode-crypto-maps-vs-tunnel-protec/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/gre-over-ipsec-and-virtual-tunnel-interfaces-for-routing-protocols-ove/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/lisp-eid-rloc-map-server-and-map-resolver-itr-and-etr/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/vxlan-vni-vtep-udp-encapsulation-overlay-vs-underlay/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/layer-2-static-and-dynamic-802-1q-trunking-dtp-allowed-vlans-and-nativ/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/etherchannel-lacp-pagp-and-static-member-consistency-load-balancing/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/spanning-tree-rstp-and-mst-port-roles-root-placement-bpdu-guard-root-g/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/eigrp-vs-ospf-algorithms-metrics-path-selection-load-balancing-summari/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/eigrp-feasible-successors-variance-stub-routing/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/ospfv2-and-ospfv3-multi-area-adjacencies-network-types-area-types-stub/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/ebgp-between-directly-connected-neighbors-neighbor-states-and-best-pat/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/policy-based-routing-with-route-maps/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/ip-services-ntp-and-ptp-nat-and-pat-hsrp-and-vrrp/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/multicast-igmpv2-v3-pim-sparse-mode-rp-rpf-check-ssm/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/diagnose-problems-with-debugs-conditional-debugs-ping-and-traceroute/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/snmp-versions-v2c-vs-v3-authpriv-traps-and-polling/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/syslog-severity-levels-and-logging-configuration/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/flexible-netflow-flow-records-exporters-and-monitors/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/span-rspan-and-erspan/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/ip-sla-probes-and-object-tracking/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/catalyst-center-formerly-dna-center-workflows-assurance-health-scores/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/netconf-and-restconf-for-configuration-and-operational-data/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/device-access-control-line-and-local-user-authentication-ssh-only-vty/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/aaa-with-tacacs-and-radius-method-lists-and-fallback/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/infrastructure-security-standard-and-extended-acls-placement-and-order/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/control-plane-policing-copp/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/rest-api-security-https-tokens-secret-handling/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/network-security-design-threat-defense-endpoint-security-next-generati/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/cisco-trustsec-sgt-sgacl-and-macsec/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/network-access-control-802-1x-mab-and-webauth/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/layer-2-protections-dhcp-snooping-dynamic-arp-inspection-ip-source-gua/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/python-basics-variables-loops-functions-dictionaries-the-requests-libr/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/json-syntax-and-parsing-json-in-python/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/yang-data-models-and-how-netconf-and-restconf-use-them/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/rest-api-methods-and-response-codes-200-201-204-400-401-403-404-500/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/catalyst-center-intent-apis-token-authentication-and-common-calls/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/sd-wan-manager-rest-apis/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/embedded-event-manager-eem-applets/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/orchestration-tools-agent-based-puppet-chef-vs-agentless-ansible/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/ccnp-encor/lessons/ai-in-network-operations-baselining-anomaly-detection-ai-assisted-trou/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/laptop-hardware-replacement-battery-keyboard-ram-sodimm-vs-soldered-st/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/screen-parts-lcd-vs-oled-panels-backlight-digitizer-touch-layer-webcam/</loc><lastmod>2026-09-24</lastmod></url>
