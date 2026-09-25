@@ -39,7 +39,7 @@
 kubectl create configmap nginx-conf --from-file=default.conf
 kubectl create configmap app-env --from-env-file=app.env
 kubectl get configmap app-config -o yaml</code></pre>
-<p>Pods consume ConfigMaps in three ways. To set a single environment variable, use <code>env</code> with <code>valueFrom.configMapKeyRef</code>, naming the ConfigMap and key; the variable name can differ from the key. To import every key as a variable, use <code>envFrom</code> with <code>configMapRef</code>, optionally with a <code>prefix</code>; keys that are not valid variable names are skipped and reported in an event. To expose keys as files, mount a <code>configMap</code> volume, where each key becomes a file under the mount path.</p>
+<p>Pods consume ConfigMaps in three ways. To set a single environment variable, use <code>env</code> with <code>valueFrom.configMapKeyRef</code>, naming the ConfigMap and key; the variable name can differ from the key. To import every key as a variable, use <code>envFrom</code> with <code>configMapRef</code>, optionally with a <code>prefix</code>; keys that are not valid variable names are skipped and reported in an event (recent Kubernetes versions accept almost any printable characters in names, so this is now rare). To expose keys as files, mount a <code>configMap</code> volume, where each key becomes a file under the mount path.</p>
 <pre class="code" tabindex="0"><code>containers:
 - name: app
   image: app:1.0
