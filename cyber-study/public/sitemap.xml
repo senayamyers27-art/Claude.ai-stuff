@@ -3321,4 +3321,55 @@
   <url><loc>https://senayamyers27-art.github.io/es/az-104/lessons/restoring-vms-disks-and-individual-files/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/az-104/lessons/azure-site-recovery-replication-to-a-secondary-region-test-failover-fa/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/az-104/lessons/backup-reports-and-alerts/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/control-plane-and-node-components-kube-apiserver-etcd-kube-scheduler-k/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/preparing-hosts-for-kubeadm-containerd-matching-systemd-cgroup-driver/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/kubeadm-init-pod-network-cidr-control-plane-endpoint-installing-a-cni/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/static-pods-and-etc-kubernetes-manifests-kubeadm-certificates-check-ex/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/cluster-upgrades-with-kubeadm-one-minor-version-at-a-time-upgrade-plan/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/etcd-backup-and-restore-with-etcdctl-etcdutl-and-the-etcd-pki-pointing/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/highly-available-control-planes-stacked-vs-external-etcd-quorum-load-b/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/rbac-roles-clusterroles-rolebindings-clusterrolebindings-aggregated-an/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/node-maintenance-cordon-drain-uncordon-and-poddisruptionbudgets/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/helm-repo-add-update-upgrade-install-version-values-and-kustomize-kube/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/extension-interfaces-cri-containerd-cri-o-crictl-cni-calico-cilium-fla/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/customresourcedefinitions-custom-resources-and-operators-crd-plus-cont/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/deployments-and-replicasets-as-self-healing-primitives-rolling-updates/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/daemonsets-and-statefulsets-from-an-operator-s-point-of-view-including/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/configmaps-and-secrets-creation-env-and-volume-consumption-immutable-o/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/resource-requests-and-limits-limitrange-and-resourcequota-as-admission/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/scheduling-nodeselector-nodename-node-affinity-required-vs-preferred/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/taints-and-tolerations-noschedule-prefernoschedule-noexecute-and-toler/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/pod-affinity-and-anti-affinity-with-topologykey-topologyspreadconstrai/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/priorityclasses-and-preemption/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/workload-autoscaling-horizontalpodautoscaler-kubectl-autoscale-autosca/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/static-pods-vs-scheduler-placed-pods-what-happens-when-the-scheduler-i/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/kubernetes-network-model-one-ip-per-pod-nat-free-pod-to-pod-traffic-th/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/kube-proxy-modes-iptables-ipvs-nftables-and-how-service-virtual-ips-wo/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/service-types-clusterip-nodeport-30000-32767-loadbalancer-cloud-contro/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/endpointslices-services-without-selectors-externaltrafficpolicy-and-se/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/networkpolicies-default-deny-ingress-and-egress-rules-podselector-name/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/gateway-api-gatewayclass-gateway-listeners-and-allowedroutes-httproute/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/ingress-controllers-ingressclass-and-the-default-class-ingress-rules-p/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/coredns-the-coredns-configmap-and-corefile-forwarding-and-stub-zones-s/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/testing-connectivity-with-temporary-pods-busybox-nicolaka-netshoot-nsl/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/volumes-vs-persistentvolumes-pv-and-pvc-lifecycle-available-bound-rele/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/access-modes-readwriteonce-readonlymany-readwritemany-readwriteoncepod/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/reclaim-policies-retain-and-delete-recycle-deprecated-and-cleaning-up/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/storageclasses-provisioners-and-dynamic-provisioning-the-default-stora/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/volumebindingmode-immediate-vs-waitforfirstconsumer/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/volume-expansion-with-allowvolumeexpansion/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/static-pvs-hostpath-for-labs-local-volumes-with-nodeaffinity-nfs/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/csi-drivers-and-statefulset-volumeclaimtemplates-with-pvc-retention/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/node-problems-notready-kubelet-status-and-journalctl-u-kubelet-kubelet/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/control-plane-problems-static-pod-manifests-crictl-ps-logs-when-the-ap/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/pending-pods-failedscheduling-messages-for-resources-taints-affinity-a/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/resource-monitoring-metrics-server-kubectl-top-nodes-pods-sort-by-desc/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/container-output-streams-kubectl-logs-options-stdout-stderr-vs-log-fil/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/events-kubectl-get-events-with-field-selectors-and-sorting/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/service-and-networking-problems-selectors-readiness-and-endpointslices/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/dns-problems-coredns-pods-and-logs-loop-detection-with-systemd-resolve/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/cluster-access-problems-kubeconfig-contexts-expired-certificates-conne/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/output-handling-for-tasks-o-jsonpath-custom-columns-sort-by-writing-an/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/cka/lessons/stuck-terminating-pods-on-lost-nodes-and-force-deletion/</loc><lastmod>2026-09-24</lastmod></url>
 </urlset>
