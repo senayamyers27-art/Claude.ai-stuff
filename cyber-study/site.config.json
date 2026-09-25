@@ -20,5 +20,9 @@
   "feedbackUrl": "https://github.com/senayamyers27-art/senayamyers27-art.github.io/issues",
   "analytics": {
     "goatcounter": ""
+  },
+  "android": {
+    "package": "",
+    "sha256": []
   }
 }

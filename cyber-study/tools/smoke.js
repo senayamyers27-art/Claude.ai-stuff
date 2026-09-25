@@ -133,6 +133,40 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.click("[data-drill] >> nth=0");
   check(/Correct|Answer:/.test(await page.textContent("#app")), "skill drill gives instant feedback");
   await page.click("[data-act=drillquit]");
+  await page.waitForSelector("[data-act=tcstart]");
+  await page.click("[data-act=tcstart]");
+  await page.click("[data-act=fcflip]");
+  await page.click("[data-act=fcknow]");
+  check(/2 of \d+/.test(await page.textContent(".qhead")), "key-term flashcards can be studied for free");
+  await page.click("[data-act=fcdone]");
+  await page.goto(`${BASE}/#security-plus.learn`);
+  await page.waitForSelector("details.lesson");
+  await page.click("details.lesson >> nth=0 >> summary");
+  await page.click('details.lesson >> nth=0 >> [data-act=rate][data-v="1"]');
+  check((await page.getAttribute('details.lesson >> nth=0 >> [data-act=rate][data-v="1"]', "aria-pressed")) === "true", "a lesson can be rated helpful");
+  // Hands-on practice: a terminal task, a KQL query and a Python exercise, solved with their own solutions.
+  const solveWith = async sel => { await page.click("[data-act=hosol]"); return (await page.textContent("#hosolution")).split("\n"); };
+  await page.goto(`${BASE}/#linux-plus.practice`);
+  await page.waitForSelector("[data-act=hostart]");
+  await page.click("[data-act=hostart] >> nth=0");
+  await page.waitForSelector("#hocmd");
+  for (const c of await solveWith()) { await page.fill("#hocmd", c); await page.press("#hocmd", "Enter"); }
+  check(await page.isVisible("text=All tasks complete."), "terminal task can be completed in the simulated shell");
+  await page.goto(`${BASE}/#sc-200.practice`);
+  await page.waitForSelector("[data-act=hostart]");
+  await page.click("[data-act=hostart] >> nth=0");
+  await page.waitForSelector("[data-act=hokql]:not([disabled])");
+  await page.fill("#hoq", (await solveWith()).join("\n"));
+  await page.click("[data-act=hokql]");
+  check(/expected result/.test(await page.textContent("#horesult")) && (await page.$$("table.kqlt tbody tr")).length > 0, "KQL query task runs and checks the result");
+  await page.goto(`${BASE}/#pcep.practice`);
+  await page.waitForSelector("[data-act=hostart]");
+  await page.click("[data-act=hostart] >> nth=0");
+  await page.fill("#hocode", (await solveWith()).join("\n"));
+  await page.click("[data-act=horun]");
+  await page.waitForFunction(() => /tests pass|couldn't|too long/.test(document.querySelector("#horesult").textContent), null, { timeout: 120000 });
+  check(/(\d+) of \1 tests pass/.test(await page.textContent("#horesult")), "Python exercise runs in the browser and passes its tests");
+  await page.click("[data-act=hoquit]");
   await page.goto(`${BASE}/#security-plus.progress`);
   await page.waitForSelector(".panel.ready");
   check(/\d+\/100/.test(await page.textContent(".panel.ready")), "Progress tab shows an exam readiness score");
@@ -142,6 +176,7 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(`${BASE}/#career-cybersecurity`);
   await page.waitForSelector("details.sq");
   check((await page.$$("details.sq")).length >= 8, "career page has interview practice");
+  { const r = await page.goto(`${BASE}/security-plus/lessons/`); const html = await r.text(); check(!/og:image/.test(html) || /og\/security-plus\.png/.test(html), "certification pages use their own link-preview image"); }
   for (const pth of ["careers/network/", "security-plus/cheat-sheet/"]) { const r = await page.goto(`${BASE}/${pth}`); check(r.status() === 200 && (await page.$("h1")) !== null, `/${pth} static page renders`); }
   }
   for (const pth of ["privacy", "terms", "security", "frameworks"]) {
