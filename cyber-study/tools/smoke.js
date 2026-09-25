@@ -90,6 +90,17 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(`${BASE}/#security-plus`);
   await page.waitForSelector(".labgrid");
   check((await page.$$(".labgrid .labcard")).length >= 1, "study week links to its labs");
+  // Lessons are checked once Security+ has them (docs/LESSON_GUIDE.md).
+  if (require("fs").existsSync(require("path").join(__dirname, "../public/data/lessons/security-plus.js"))) {
+  await page.waitForSelector("details.lesson");
+  await page.click("details.lesson >> nth=0 >> summary");
+  check((await page.$$eval("details.lesson[open] .lbody p", ps => ps.length)) >= 3, "study week teaches each topic with a lesson");
+  await page.click("details.lesson[open] [data-act=read]");
+  check(await page.$("details.lesson .chip") !== null, "a lesson can be marked as read");
+  await page.goto(`${BASE}/#security-plus.learn`);
+  await page.waitForSelector("details.lesson");
+  check((await page.$$("details.lesson")).length >= 70, "Lessons tab lists every lesson");
+  }
   for (const pth of ["privacy", "terms", "security", "frameworks"]) {
     const r = await page.goto(`${BASE}/${pth}/`);
     await page.waitForSelector("h1");

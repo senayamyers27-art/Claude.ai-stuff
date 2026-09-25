@@ -37,6 +37,10 @@ set `status: "check"`.
 - Original wording written from the official objectives. Never copy real exam questions or dumps.
 - Accurate for the current exam version. Leave out anything you're unsure of.
 
+## Lessons
+
+Every plan topic needs a lesson in `public/data/lessons/<id>.js`, matched by its exact topic text. If you change a topic's wording, change its lesson's `t` too. See [LESSON_GUIDE.md](LESSON_GUIDE.md).
+
 ## Checking
 From `cyber-study/`: `node tools/check-data.js` must show no ✗ lines for your cert (it also checks
 weights sum to 100, 4 distinct options, unique ids and stems). Only create your own data file.

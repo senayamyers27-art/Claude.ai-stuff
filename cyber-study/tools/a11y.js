@@ -46,7 +46,13 @@ async function audit(page, label) {
     const go = async (hash, label, wait = "#app h1") => { await page.goto(`${BASE}/${hash}`); await page.waitForSelector(wait); await page.waitForTimeout(150); await audit(page, `${label} (${scheme})`); };
 
     await go("", "home", ".card");
-    for (const id of certIds) for (const tab of ["week", "plan", "practice", "labs", "progress", "guide", "about"]) await go(`#${id}.${tab}`, `${id}.${tab}`);
+    for (const id of certIds) for (const tab of ["week", "learn", "plan", "practice", "labs", "progress", "guide", "about"]) await go(`#${id}.${tab}`, `${id}.${tab}`);
+    // Lessons with every section open.
+    if (fs.existsSync(path.join(__dirname, "../public/data/lessons/security-plus.js"))) {
+      await go("#security-plus.learn", "lessons", "details.lesson");
+      await page.evaluate(() => document.querySelectorAll("details").forEach(d => { d.open = true; }));
+      await audit(page, `lessons expanded (${scheme})`);
+    }
     // A quiz in progress, with feedback shown, then its results.
     await page.goto(`${BASE}/#${certIds[0]}.practice`); await page.waitForSelector("[data-act=drill]");
     await page.click("[data-act=drill]"); await page.click(".opt >> nth=0"); await page.waitForSelector(".expl");
