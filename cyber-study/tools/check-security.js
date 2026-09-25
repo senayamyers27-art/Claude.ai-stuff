@@ -26,7 +26,7 @@ for (const f of files.filter(f => f.endsWith(".html"))) {
     const other = csp.split(";").map(d => d.trim()).map(d => d.startsWith("connect-src") ? d.replace(" " + apiOrigin, "").replace(" " + analyticsOrigin, "") : d).join(";");
     if (/https?:\/\//.test(other)) fail(f, "CSP allows a third-party host");
   }
-  if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(s)) fail(f, "inline <script> (move it to a file)");
+  if (/<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>/i.test(s)) fail(f, "inline <script> (move it to a file)");
   if (/\son[a-z]+\s*=\s*["']/i.test(s)) fail(f, "inline event handler attribute");
   // A canonical link names the page's own public address; it loads nothing.
   if (/<script[^>]+src="https?:\/\//i.test(s) || /<link(?![^>]*rel="canonical")[^>]+href="https?:\/\//i.test(s)) fail(f, "loads a script or stylesheet from another site");

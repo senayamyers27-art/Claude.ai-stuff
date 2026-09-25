@@ -4,6 +4,7 @@ const fs = require("fs"), path = require("path");
 const root = path.join(__dirname, "..", "public");
 global.CertHub = { certs: {}, labs: {}, register(c) { this.certs[c.id] = c; }, registerLabs(l) { l.forEach(x => { if (this.labs[x.id]) console.log(`  ✗ duplicate lab id ${x.id}`) || bad++; this.labs[x.id] = x; }); } };
 let bad = 0;
+const loadExtra = require("./extra");
 require(path.join(root, "data/catalog.js"));
 require(path.join(root, "data/lab-map.js"));
 fs.readdirSync(path.join(root, "data")).filter(f => /^labs-.+\.js$/.test(f)).forEach(f => require(path.join(root, "data", f)));
@@ -14,6 +15,18 @@ for (const id of CertHub.catalog) {
   require(f);
   const c = CertHub.certs[id];
   if (!c) { fail(id, "file did not register " + id); continue; }
+  // More questions and difficulty levels (data/extra/<id>.js) are checked as part of the bank.
+  const ex = loadExtra(root, id);
+  if (ex && ex.error) fail(id, ex.error);
+  else if (ex) {
+    if (ex.questions.length < 30) fail(id, "extra questions: add 30 or more");
+    c.questions = c.questions.concat(ex.questions); c.extraWhys = ex.whys;
+    const miss = c.questions.filter(q => ![1, 2, 3].includes(ex.levels[q[0]]));
+    if (miss.length) fail(id, `${miss.length} questions have no difficulty level (1, 2 or 3), e.g. ${miss[0][0]}`);
+    const lv = [1, 2, 3].map(n => c.questions.filter(q => ex.levels[q[0]] === n).length);
+    if (lv.some(n => n < c.questions.length * 0.15)) fail(id, `difficulty levels are lopsided (easy/medium/hard ${lv.join("/")}); aim for a mix`);
+    Object.keys(ex.levels).forEach(k => { if (!c.questions.some(q => q[0] === k)) fail(id, `level for unknown question ${k}`); });
+  }
   const sum = c.domains.reduce((a, d) => a + d.w, 0);
   if (sum !== 100) fail(id, `weights sum to ${sum}`);
   const doms = new Set(c.domains.map(d => d.id));
@@ -75,15 +88,17 @@ for (const id of CertHub.catalog) {
 /* ---------- simulations, wrong-answer notes, Spanish lessons, careers ---------- */
 {
   const K = require("./check-content");
-  const counts = { pbq: 0, whys: 0, es: 0 };
+  const counts = { pbq: 0, whys: 0, es: 0, handson: 0 };
   let cur;
   CertHub.addPbqs = (id, l) => { cur = { id, l }; };
   CertHub.addWhys = (id, m) => { cur = { id, m }; };
+  CertHub.addHandson = (id, h) => { cur = { id, h }; };
   const loadAs = (dir, id, kind) => { const f = path.join(root, "data", dir, id + ".js"); if (!fs.existsSync(f)) return null; cur = null; if (kind === "es") CertHub.addLessons = (i, l, meta) => { cur = { id: i, l, meta }; }; require(f); if (!cur || cur.id !== id) { fail(id, `${dir}/${id}.js must register "${id}"`); return null; } return cur; };
   for (const id of CertHub.catalog) {
     const c = CertHub.certs[id]; if (!c) continue;
     const p = loadAs("pbq", id); if (p) { K.pbqs(c, p.l, m => fail(id, m)); counts.pbq++; }
-    const w = loadAs("whys", id); if (w) { K.whys(c, w.m, m => fail(id, m)); counts.whys++; }
+    const ho = loadAs("handson", id); if (ho) { K.handson(c, ho.h, m => fail(id, m)); counts.handson++; }
+    const w = loadAs("whys", id); if (w && c.extraWhys) Object.assign(w.m, c.extraWhys); if (w) { K.whys(c, w.m, m => fail(id, m)); counts.whys++; }
     const e = loadAs("lessons-es", id, "es"); if (e) { if (!e.meta || e.meta.lang !== "es") fail(id, 'Spanish lessons need { lang: "es" }'); K.spanish(c, e.l, planTopics(c), m => fail(id, m)); counts.es++; }
     if (fs.existsSync(path.join(root, "data/lessons", id + ".js"))) { const r = ((CertHub.lessonMetaById || {})[id] || {}).reviewed; if (!/^\d{4}-\d{2}-\d{2}$/.test(r || "")) fail(id, 'lessons need a last-reviewed date: CertHub.addLessons(id, [...], { reviewed: "YYYY-MM-DD" })'); }
   }
@@ -94,7 +109,7 @@ for (const id of CertHub.catalog) {
     if (!CertHub.niceRoles) { require(path.join(root, "data/frameworks.js")); }
     K.careers(list, iv, CertHub.tracks, new Set((CertHub.niceRoles || []).map(r => r.id)), CertHub.labs, m => fail("careers", m));
   }
-  console.log(`simulations: ${counts.pbq} certifications, wrong-answer notes: ${counts.whys}, Spanish lessons: ${counts.es}`);
+  console.log(`simulations: ${counts.pbq} certifications, wrong-answer notes: ${counts.whys}, Spanish lessons: ${counts.es}, hands-on: ${counts.handson}`);
 }
 /* ---------- diagrams (data/diagrams.js): SVG colored by the site's CSS, attached by topic text ---------- */
 {

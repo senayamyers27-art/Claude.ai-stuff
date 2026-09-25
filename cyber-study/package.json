@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "node tools/build.js",
-    "check": "node tools/check-data.js && node tools/build.js --check && node tools/check-security.js",
+    "check": "node tools/check-data.js && node tools/check-python.js && node tools/build.js --check && node tools/check-security.js",
     "test": "node tools/smoke.js",
     "test:api": "node --test api/test/*.test.js",
     "test:accounts": "node tools/accounts-e2e.js",
@@ -16,6 +16,7 @@
     "start": "node tools/serve.js 8000",
     "api:dev": "node api/dev-server.js 8787 http://localhost:8000",
     "start:accounts": "node tools/serve.js 8000 http://localhost:8787",
+    "og-images": "node tools/og-images.js",
     "freshness": "node tools/freshness.js",
     "live-check": "node tools/live-check.js",
     "cloudflare-config": "node tools/cloudflare-config.js",

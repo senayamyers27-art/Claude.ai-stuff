@@ -5,7 +5,7 @@
    http://localhost:8787 from api/dev-server.js, turns on accounts for local testing) */
 const http = require("http"), fs = require("fs"), path = require("path");
 const PUB = path.join(__dirname, "..", "public");
-const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".txt": "text/plain; charset=utf-8", ".xml": "application/xml" };
+const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8", ".wasm": "application/wasm", ".zip": "application/zip", ".png": "image/png", ".css": "text/css; charset=utf-8", ".json": "application/json", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".txt": "text/plain; charset=utf-8", ".xml": "application/xml" };
 const redirects = fs.readFileSync(path.join(PUB, "_redirects"), "utf8").split("\n").filter(l => l && !l.startsWith("#")).map(l => l.trim().split(/\s+/));
 const globalHeaders = {};
 (fs.readFileSync(path.join(PUB, "_headers"), "utf8").split(/\n(?=\/)/).find(b => b.startsWith("/*\n")) || "").split("\n").slice(1)
