@@ -59,7 +59,7 @@ fw.commit()    # makes it running</code></pre>
 <h2>Key terms</h2>
 <dl class="terms"><dt>Declarative</dt><dd>Describing the desired end state and letting the tool compute the changes, as Terraform does.</dd><dt>Idempotent</dt><dd>Producing the same result no matter how many times an operation runs, a design goal of Ansible modules.</dd><dt>Terraform state</dt><dd>The file where Terraform records the resources it manages and their current values.</dd><dt>pan-os-python</dt><dd>Palo Alto's Python SDK that models firewall and Panorama configuration as an object tree.</dd></dl>
 <div class="panel ex"><strong>Real-world example</strong><p>A cloud team deploys VM-Series firewalls with Terraform. They add the panos provider to the same repository so each new application's address objects and security rules are defined next to its infrastructure, reviewed in a pull request, planned, applied and then committed through their pipeline.</p></div>
-<div class="status notice"><strong>Exam tip:</strong> Terraform is declarative and state-based, Ansible runs ordered idempotent tasks, pan-os-python is the SDK both build on. All of them change the candidate configuration, so a commit is still required.</div>
+<div class="status notice"><strong>Exam tip:</strong> Terraform is declarative and state-based, Ansible runs ordered idempotent tasks, pan-os-python is the Python SDK the Ansible collection builds on. All of them change the candidate configuration, so a commit is still required.</div>
 <h2>Check yourself</h2>
 <details class="sq"><summary>Which tool records managed resources in a state file?</summary><p>Terraform.</p></details>
 <details class="sq"><summary>What is the Ansible collection for PAN-OS called?</summary><p>paloaltonetworks.panos.</p></details>
