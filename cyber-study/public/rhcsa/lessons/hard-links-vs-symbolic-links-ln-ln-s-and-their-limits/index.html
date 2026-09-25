@@ -40,7 +40,7 @@
 ln -s /etc/httpd/conf/httpd.conf /root/httpd.conf
 ls -li /data                  # same inode number, link count 2
 readlink -f /root/httpd.conf  # where the symlink really points</code></pre>
-<p>The limits are what the exam asks about. Hard links cannot cross file systems, because inode numbers are only unique within one file system; trying gives an 'Invalid cross-device link' error. Ordinary users cannot create hard links to directories, which prevents loops in the tree. Symbolic links have neither restriction: they can point to directories and to files on other file systems or even to paths that do not exist yet. The price is that they break when the target moves.</p>
+<p>The limits are what the exam asks about. Hard links cannot cross file systems, because inode numbers are only unique within one file system; trying gives an 'Invalid cross-device link' error. Hard links to directories are not allowed (not even for root), which prevents loops in the tree. Symbolic links have neither restriction: they can point to directories and to files on other file systems or even to paths that do not exist yet. The price is that they break when the target moves.</p>
 <p>Watch the argument order: <code>ln</code> takes the existing target first and the new name second, just like <code>cp</code>. With symlinks, a relative target is interpreted relative to the link's own directory, not your current directory, so <code>ln -s ../conf/app.conf /etc/app.conf</code> points to <code>/conf/app.conf</code>. Using absolute targets avoids that confusion.</p>
 <p>Also note that a symlink's own permissions (always shown as rwxrwxrwx) are ignored; access is decided by the target's permissions.</p>
 <h2>Key terms</h2>
