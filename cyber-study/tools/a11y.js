@@ -63,6 +63,15 @@ async function audit(page, label) {
     await page.click('.modal [data-v="1"]'); await page.waitForSelector(".big");
     await audit(page, `test results (${scheme})`);
     await page.click("[data-act=quit]");
+    // Exam simulation, skill drill, cheat sheet, careers.
+    await go("#security-plus.practice", "practice with simulations", "[data-act=simstart]");
+    await page.click("[data-act=simstart] >> nth=0"); await page.waitForSelector("[data-act=simcheck]"); await audit(page, `simulation (${scheme})`);
+    await page.click("[data-act=simcheck]"); await page.waitForSelector(".expl"); await audit(page, `simulation result (${scheme})`);
+    await page.click("[data-act=simquit] >> nth=0");
+    await page.click("[data-act=drillstart][data-kind=ports]"); await page.waitForSelector("[data-drill]"); await audit(page, `skill drill (${scheme})`);
+    await page.click("[data-act=drillquit]");
+    await go("#security-plus.cheat", "cheat sheet", ".panel.cheat");
+    await go("#careers", "careers", ".card"); await go("#career-cybersecurity", "career page", "details.sq");
     await go("#labs", "lab library"); await go("#lab-home-lab", "lab page"); await go("#portfolio", "portfolio");
     await go("#frameworks", "frameworks");
     await page.evaluate(() => document.querySelectorAll("details").forEach(d => { d.open = true; }));

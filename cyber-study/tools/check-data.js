@@ -42,7 +42,7 @@ for (const id of CertHub.catalog) {
 /* ---------- lessons ---------- */
 // data/lessons/<id>.js: one lesson per plan topic, matched by the exact topic text.
 CertHub.lessons = {};
-CertHub.addLessons = (id, list) => { CertHub.lessons[id] = list; };
+CertHub.addLessons = (id, list, meta) => { CertHub.lessons[id] = list; (CertHub.lessonMetaById = CertHub.lessonMetaById || {})[id] = meta || {}; };
 const planTopics = c => (c.weeks ? c.weeks.filter(w => w.dom).flatMap(w => w.topics) : c.domains.flatMap(d => d.topics || [])).filter(t => !/^Checkpoint test/i.test(t));
 const pair = x => Array.isArray(x) && x.length === 2 && x.every(y => typeof y === "string" && y.trim());
 let lessonTotal = 0; const noLessons = [];
@@ -71,6 +71,30 @@ for (const id of CertHub.catalog) {
   const missing = topics.filter(t => !seen.has(t));
   if (missing.length) fail(id, `${missing.length} plan topics have no lesson, e.g. "${missing[0]}"`);
   lessonTotal += list.length;
+}
+/* ---------- simulations, wrong-answer notes, Spanish lessons, careers ---------- */
+{
+  const K = require("./check-content");
+  const counts = { pbq: 0, whys: 0, es: 0 };
+  let cur;
+  CertHub.addPbqs = (id, l) => { cur = { id, l }; };
+  CertHub.addWhys = (id, m) => { cur = { id, m }; };
+  const loadAs = (dir, id, kind) => { const f = path.join(root, "data", dir, id + ".js"); if (!fs.existsSync(f)) return null; cur = null; if (kind === "es") CertHub.addLessons = (i, l, meta) => { cur = { id: i, l, meta }; }; require(f); if (!cur || cur.id !== id) { fail(id, `${dir}/${id}.js must register "${id}"`); return null; } return cur; };
+  for (const id of CertHub.catalog) {
+    const c = CertHub.certs[id]; if (!c) continue;
+    const p = loadAs("pbq", id); if (p) { K.pbqs(c, p.l, m => fail(id, m)); counts.pbq++; }
+    const w = loadAs("whys", id); if (w) { K.whys(c, w.m, m => fail(id, m)); counts.whys++; }
+    const e = loadAs("lessons-es", id, "es"); if (e) { if (!e.meta || e.meta.lang !== "es") fail(id, 'Spanish lessons need { lang: "es" }'); K.spanish(c, e.l, planTopics(c), m => fail(id, m)); counts.es++; }
+    if (fs.existsSync(path.join(root, "data/lessons", id + ".js"))) { const r = ((CertHub.lessonMetaById || {})[id] || {}).reviewed; if (!/^\d{4}-\d{2}-\d{2}$/.test(r || "")) fail(id, 'lessons need a last-reviewed date: CertHub.addLessons(id, [...], { reviewed: "YYYY-MM-DD" })'); }
+  }
+  const cf = path.join(root, "data/careers.js");
+  if (fs.existsSync(cf)) {
+    let list = null, iv = null; CertHub.addCareers = l => { list = l; }; CertHub.addInterview = m => { iv = m; };
+    require(cf);
+    if (!CertHub.niceRoles) { require(path.join(root, "data/frameworks.js")); }
+    K.careers(list, iv, CertHub.tracks, new Set((CertHub.niceRoles || []).map(r => r.id)), CertHub.labs, m => fail("careers", m));
+  }
+  console.log(`simulations: ${counts.pbq} certifications, wrong-answer notes: ${counts.whys}, Spanish lessons: ${counts.es}`);
 }
 /* ---------- diagrams (data/diagrams.js): SVG colored by the site's CSS, attached by topic text ---------- */
 {

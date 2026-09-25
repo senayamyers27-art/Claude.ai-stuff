@@ -120,6 +120,29 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.waitForSelector(".big");
   check((await page.textContent("#app")).includes("Where to start"), "placement test recommends where to start");
   check((await page.$$("a.report")).length > 0, "questions have a Report a mistake link");
+  check((await page.$$("details.whys")).length > 0, "missed questions explain why the other options are wrong");
+  await page.click("[data-act=quit]");
+  await page.waitForSelector("[data-act=simstart]");
+  await page.click("[data-act=simstart] >> nth=0");
+  await page.waitForSelector("[data-act=simcheck]");
+  await page.click("[data-act=simcheck]");
+  check(/correct \(\d+%\)/.test(await page.textContent(".expl")), "exam simulation can be answered and scored");
+  await page.click("[data-act=simquit] >> nth=0");
+  await page.click("[data-act=drillstart][data-kind=ports]");
+  await page.waitForSelector("[data-drill]");
+  await page.click("[data-drill] >> nth=0");
+  check(/Correct|Answer:/.test(await page.textContent("#app")), "skill drill gives instant feedback");
+  await page.click("[data-act=drillquit]");
+  await page.goto(`${BASE}/#security-plus.progress`);
+  await page.waitForSelector(".panel.ready");
+  check(/\d+\/100/.test(await page.textContent(".panel.ready")), "Progress tab shows an exam readiness score");
+  await page.goto(`${BASE}/#security-plus.cheat`);
+  await page.waitForSelector(".panel.cheat");
+  check((await page.$$(".panel.cheat")).length === 5, "cheat sheet covers every domain");
+  await page.goto(`${BASE}/#career-cybersecurity`);
+  await page.waitForSelector("details.sq");
+  check((await page.$$("details.sq")).length >= 8, "career page has interview practice");
+  for (const pth of ["careers/network/", "security-plus/cheat-sheet/"]) { const r = await page.goto(`${BASE}/${pth}`); check(r.status() === 200 && (await page.$("h1")) !== null, `/${pth} static page renders`); }
   }
   for (const pth of ["privacy", "terms", "security", "frameworks"]) {
     const r = await page.goto(`${BASE}/${pth}/`);
