@@ -29,6 +29,13 @@ const apiOrigin = (() => {
   return v.toLowerCase();
 })();
 
+// Optional privacy-friendly page counts (GoatCounter: no cookies, no personal data). Empty = off.
+const analyticsOrigin = (() => {
+  const code = String(((cfg.analytics || {}).goatcounter) || "").trim().toLowerCase();
+  if (!code) return "";
+  if (!/^[a-z0-9][a-z0-9-]{1,48}$/.test(code)) { console.error(`site.config.json analytics.goatcounter must be your GoatCounter code (the part before .goatcounter.com), got "${code}"`); process.exit(1); }
+  return `https://${code}.goatcounter.com`;
+})();
 global.CertHub = { certs: {}, register(c) { this.certs[c.id] = c; } };
 require(path.join(PUB, "data/catalog.js"));
 const ids = CertHub.catalog.filter(id => fs.existsSync(path.join(PUB, "data", id + ".js")));
@@ -52,7 +59,7 @@ function out(rel, content) {
 /* ---------- security policy (one source for <meta> and _headers) ---------- */
 const CSP = [
   "default-src 'self'", "script-src 'self'", "style-src 'self' 'unsafe-inline'", "font-src 'self'",
-  "img-src 'self' data:", `connect-src 'self'${apiOrigin ? " " + apiOrigin : ""}`, "manifest-src 'self'", "worker-src 'self'",
+  "img-src 'self' data:", `connect-src 'self'${apiOrigin ? " " + apiOrigin : ""}${analyticsOrigin ? " " + analyticsOrigin : ""}`, "manifest-src 'self'", "worker-src 'self'",
   "object-src 'none'", "base-uri 'self'", "form-action 'none'", "frame-ancestors 'none'", "upgrade-insecure-requests"
 ].join("; ");
 // frame-ancestors is ignored in <meta>, so the meta copy drops it; _headers carries the full policy.
@@ -110,7 +117,8 @@ CertHub.site = ${JSON.stringify({
   feedbackUrl: httpsOr(cfg.feedbackUrl),
   // Display prices for Pro (the amounts charged are set in Stripe; keep them the same).
   pro: Object.fromEntries(["monthly", "yearly"].map(k => [k, /^[$€£]\d{1,4}(\.\d{2})?$/.test(String((cfg.pro || {})[k] || "")) ? cfg.pro[k] : ""])),
-  apiUrl: apiOrigin
+  apiUrl: apiOrigin,
+  analytics: analyticsOrigin
 }, null, 2)};
 `);
 
@@ -133,6 +141,77 @@ ${shell}
 </body>
 </html>
 `));
+
+/* ---------- lesson pages: plain HTML copies of every lesson, for search engines and sharing ---------- */
+// The app loads lessons on demand with JavaScript; these pages carry the same text as real HTML.
+CertHub.addLessons = (id, list) => { CertHub.lessonData = CertHub.lessonData || {}; CertHub.lessonData[id] = list; };
+CertHub.addDiagrams = list => { CertHub.diagramList = list; };
+require(path.join(PUB, "data/diagrams.js"));
+const slugify = t => t.toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 70).replace(/-+$/, "") || "lesson";
+const inl = x => esc(x).replace(/`([^`\n]+)`/g, "<code>$1</code>");
+const par = x => /^```/.test(x) ? `<pre class="code" tabindex="0"><code>${esc(x.replace(/^```[a-z]*\n?/i, "").replace(/\n?```$/, ""))}</code></pre>` : `<p>${inl(x)}</p>`;
+const lessonPages = [];
+certs.forEach(c => {
+  const f = path.join(PUB, "data/lessons", c.id + ".js");
+  if (!fs.existsSync(f)) return;
+  require(f);
+  const list = (CertHub.lessonData || {})[c.id] || [];
+  const plan = (c.weeks ? c.weeks.filter(w => w.dom).map(w => [w.dom, w.topics]) : c.domains.map(d => [d.id, d.topics || []]));
+  const domOf = t => (plan.find(([, ts]) => ts.includes(t)) || [])[0];
+  const used = new Set();
+  const items = list.map(l => { let sl = slugify(l.t), k = 2; while (used.has(sl)) sl = `${slugify(l.t)}-${k++}`; used.add(sl); return { l, slug: sl, dom: domOf(l.t) }; });
+  const top = `<header class="top"><div class="bar"><a class="brand" href="../../">${esc(cfg.siteName)}</a></div></header>`;
+  const cta = `<div class="panel startcard"><div class="grow"><strong>Study ${esc(c.short)} for free</strong><br><span class="note">A week-by-week plan with every lesson, quizzes, checkpoint tests, a practice exam and hands-on labs.</span></div><a class="btn sm" href="${"../../"}${c.id}/">Open the ${esc(c.short)} study plan</a></div>`;
+  // Index of all lessons for the certification.
+  out(`public/${c.id}/lessons/index.html`, `${head({ title: `${c.short} ${c.exam} Lessons: Free Study Guide`, desc: `${items.length} free lessons covering every ${c.name} (${c.exam}) exam topic, with key terms, examples, exam tips and self-check questions.`, prefix: "../../", urlPath: `/${c.id}/lessons/`, scripts: [] })}
+<body>
+${top.replace(/\.\.\/\.\.\//g, "../../")}
+<main class="wrap lesson-page">
+<p class="crumbs"><a href="../../">All certifications</a> / <a href="../">${esc(c.short)}</a> / Lessons</p>
+<h1>${esc(c.short)} ${esc(c.exam)} lessons</h1>
+<p class="meta">${items.length} free lessons, one for every topic in the ${esc(c.name)} study plan.</p>
+${cta}
+${c.domains.map(d => { const its = items.filter(x => x.dom === d.id); return its.length ? `<h2>Domain ${d.id}: ${esc(d.name)}</h2><div class="panel"><ul class="clean">${its.map(x => `<li><a href="${x.slug}/">${esc(x.l.t)}</a></li>`).join("")}</ul></div>` : ""; }).join("\n")}
+</main>
+</body>
+</html>
+`);
+  items.forEach((x, i) => {
+    const l = x.l, d = c.domains.find(d => d.id === x.dom), prev = items[i - 1], next = items[i + 1];
+    const figs = (CertHub.diagramList || []).filter(g => ((g.topics || {})[c.id] || []).includes(l.t)).map(g => `<figure class="diagram">${g.svg.replace(/^<svg /, `<svg role="img" aria-label="${esc(g.alt)}" focusable="false" `)}<figcaption>${esc(g.title)}</figcaption></figure>`).join("");
+    const desc = String(l.body[0] || "").replace(/`/g, "").split(/(?<=[.!?])\s+/).slice(0, 2).join(" ").slice(0, 155);
+    out(`public/${c.id}/lessons/${x.slug}/index.html`, `${head({ title: `${l.t.length > 60 ? l.t.slice(0, 58).replace(/[\s,:;]+\S*$/, "") + "…" : l.t} · ${c.short} Lesson`, desc, prefix: "../../../", urlPath: `/${c.id}/lessons/${x.slug}/`, scripts: [] })}
+<body>
+<header class="top"><div class="bar"><a class="brand" href="../../../">${esc(cfg.siteName)}</a></div></header>
+<main class="wrap lesson-page">
+<p class="crumbs"><a href="../../../">All certifications</a> / <a href="../../">${esc(c.short)}</a> / <a href="../">Lessons</a></p>
+<p class="note">${esc(c.name)} ${esc(c.exam)}${d ? ` · Domain ${d.id}: ${esc(d.name)}` : ""}</p>
+<h1>${esc(l.t)}</h1>
+<article class="lbody">
+${l.body.map((p, j) => par(p) + (j === 0 ? figs : "")).join("\n")}
+<h2>Key terms</h2>
+<dl class="terms">${l.terms.map(([a, b]) => `<dt>${inl(a)}</dt><dd>${inl(b)}</dd>`).join("")}</dl>
+<div class="panel ex"><strong>Real-world example</strong><p>${inl(l.example)}</p></div>
+<div class="status notice"><strong>Exam tip:</strong> ${inl(l.tip)}</div>
+<h2>Check yourself</h2>
+${l.check.map(([q, a]) => `<details class="sq"><summary>${inl(q)}</summary><p>${inl(a)}</p></details>`).join("\n")}
+</article>
+${cta}
+<nav class="pager" aria-label="More lessons">${prev ? `<a href="../${prev.slug}/">← ${esc(prev.l.t.slice(0, 60))}</a>` : "<span></span>"}${next ? `<a href="../${next.slug}/">${esc(next.l.t.slice(0, 60))} →</a>` : ""}</nav>
+</main>
+</body>
+</html>
+`);
+  });
+  lessonPages.push([`/${c.id}/lessons/`, c.lastVerified], ...items.map(x => [`/${c.id}/lessons/${x.slug}/`, c.lastVerified]));
+});
+// Lesson pages that no longer match a lesson are removed.
+if (!CHECK) certs.forEach(c => {
+  const dir = path.join(PUB, c.id, "lessons");
+  if (!fs.existsSync(dir)) return;
+  const keep = new Set(lessonPages.map(([u]) => u));
+  fs.readdirSync(dir, { withFileTypes: true }).filter(e => e.isDirectory() && !keep.has(`/${c.id}/lessons/${e.name}/`)).forEach(e => fs.rmSync(path.join(dir, e.name), { recursive: true }));
+});
 
 const POLICY = { support: ["Support This Site", "Ways to help keep Cyber Cert Study free: share it, send feedback, or donate."], install: ["Install the App", "Add Cyber Cert Study to your phone's home screen. Works offline, no app store needed."], privacy: ["Privacy Policy", "No accounts, cookies, analytics or tracking. Your progress stays in your browser."], terms: ["Terms of Use", "Terms for using the study plans and labs, including authorized-use-only lab rules."], security: ["Security", "How the site is secured and how to report a vulnerability."], frameworks: ["Security Frameworks", "NIST CSF, ATT&CK, CIS Controls, ISO 27001, OWASP and more: what each framework is, which exams test it, and labs that use it. Plus NICE cybersecurity job roles."] };
 Object.entries(POLICY).forEach(([id, [t, d]]) => out(`public/${id}/index.html`, `${head({ title: `${t} · ${cfg.siteName}`, desc: d, prefix: "../", urlPath: `/${id}/`, scripts: APP_SCRIPTS })}
@@ -187,12 +266,15 @@ out("public/_redirects", `# Generated by tools/build.js. Shorthand paths -> stud
 /cc /isc2-cc/ 301
 `);
 
+// GitHub Pages serves a custom domain when the site has a CNAME file naming it.
+if (domain && !domain.endsWith(".github.io")) out("public/CNAME", domain + "\n");
+else if (!CHECK && fs.existsSync(path.join(PUB, "CNAME"))) fs.rmSync(path.join(PUB, "CNAME"));
 out("public/robots.txt", `User-agent: *
 Allow: /
 ${origin ? `\nSitemap: ${origin}/sitemap.xml\n` : ""}`);
 
 // lastmod comes from each data file's lastVerified date, so the sitemap stays deterministic.
-const urls = [["/", certs.map(c => c.lastVerified).filter(Boolean).sort().pop()]].concat(certs.map(c => [`/${c.id}/`, c.lastVerified]), [["/frameworks/"], ["/install/"], ["/support/"], ["/privacy/"], ["/terms/"], ["/security/"]]);
+const urls = [["/", certs.map(c => c.lastVerified).filter(Boolean).sort().pop()]].concat(certs.map(c => [`/${c.id}/`, c.lastVerified]), [["/frameworks/"], ["/install/"], ["/support/"], ["/privacy/"], ["/terms/"], ["/security/"]], lessonPages);
 out("public/sitemap.xml", origin ? `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(([u, d]) => `  <url><loc>${origin}${u}</loc>${d ? `<lastmod>${d}</lastmod>` : ""}</url>`).join("\n")}

@@ -72,6 +72,31 @@ for (const id of CertHub.catalog) {
   if (missing.length) fail(id, `${missing.length} plan topics have no lesson, e.g. "${missing[0]}"`);
   lessonTotal += list.length;
 }
+/* ---------- diagrams (data/diagrams.js): SVG colored by the site's CSS, attached by topic text ---------- */
+{
+  let D = [];
+  CertHub.addDiagrams = list => { D = list; };
+  require(path.join(root, "data/diagrams.js"));
+  const OKEL = new Set("svg g defs marker rect circle ellipse line polyline polygon path text tspan".split(" "));
+  const OKCLS = new Set("box hi ln mute t s b acc acc-ln arrow".split(" "));
+  const ids = new Set();
+  D.forEach(d => {
+    const F = m => fail(`diagram ${d && d.id}`, m);
+    if (!/^[a-z0-9-]+$/.test(d.id || "") || ids.has(d.id)) F("bad or duplicate id"); ids.add(d.id);
+    if (!d.title || !d.alt || d.alt.length < 60) F("needs a title and a full alt text");
+    const svg = String(d.svg || "");
+    if (!/^<svg viewBox="[\d. ]+" xmlns="http:\/\/www\.w3\.org\/2000\/svg">[\s\S]*<\/svg>$/.test(svg)) F("svg must be one <svg viewBox> element");
+    for (const m of svg.matchAll(/<\/?([a-zA-Z:]+)/g)) if (!OKEL.has(m[1])) F("element not allowed: " + m[1]);
+    if (/\s(on\w+|style|href|xlink:href|fill|stroke)=/.test(svg)) F("no style, link, event or color attributes (use classes)");
+    for (const m of svg.matchAll(/class="([^"]*)"/g)) m[1].split(/\s+/).forEach(k => { if (!OKCLS.has(k)) F("class not allowed: " + k); });
+    for (const [cid, list] of Object.entries(d.topics || {})) {
+      const c = CertHub.certs[cid]; if (!c) { F("unknown certification " + cid); continue; }
+      const all = planTopics(c);
+      (list || []).forEach(t => { if (!all.includes(t)) F(`${cid}: no plan topic "${String(t).slice(0, 60)}"`); });
+    }
+  });
+  console.log(`diagrams: ${D.length}`);
+}
 console.log(`lessons: ${lessonTotal}${noLessons.length ? `; not written yet for ${noLessons.join(", ")}` : " (every certification)"}`);
 /* ---------- labs ---------- */
 const TRACKS = ["Foundations", "Networking", "Blue team", "GRC & architecture", "Systems administration", "Software engineering"], LEVELS = ["Beginner", "Intermediate", "Advanced"];
