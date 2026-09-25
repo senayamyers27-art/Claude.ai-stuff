@@ -2949,6 +2949,54 @@
   <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/vm-series-bootstrapping-init-cfg-txt-bootstrap-xml-content-license-sof/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/form-factors-pa-series-vm-series-cn-series-cloud-ngfw-for-aws-and-azur/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/strata-cloud-manager-and-cloud-delivered-management/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/initial-setup-default-management-ip-192-168-1-99-admin-account-forced/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/administrator-accounts-admin-profiles-trusted-hosts-mfa-for-admins-pas/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/firmware-management-the-upgrade-path-config-backups-and-restore/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/vdoms-what-they-separate-root-vdom-when-to-use-multi-vdom/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/fgcp-ha-active-passive-vs-active-active-heartbeat-links-primary-electi/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/ha-operations-session-pickup-config-sync-checksums-get-system-ha-statu/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/security-fabric-root-and-downstream-fortigates-authorization-fortianal/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/automation-stitches-triggers-and-actions-email-webhook-cli-script-quar/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/logging-log-types-traffic-event-security-severity-memory-disk-fortiana/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/fortigate-vm-and-cloud-deployments-vm-licensing-public-cloud-images-cl/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/diagnostics-get-system-performance-status-diagnose-sys-top-conserve-mo/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/firewall-policy-matching-incoming-outgoing-interface-source-address-us/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/address-objects-and-groups-fqdn-and-geography-objects-internet-service/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/policy-logging-policy-lookup-tool-policy-id-vs-sequence-schedules/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/source-nat-outgoing-interface-address-ip-pools-overload-one-to-one-fix/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/central-snat-table-and-when-to-use-it/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/destination-nat-with-vips-static-nat-port-forwarding-vip-groups/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/firewall-authentication-local-users-ldap-regular-bind-radius-and-tacac/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/active-captive-portal-vs-passive-authentication-authentication-timeout/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/fsso-collector-agent-dc-agent-mode-vs-polling-mode-group-filters-diagn/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/two-factor-authentication-with-fortitoken/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/ssl-ssh-inspection-certificate-inspection-vs-deep-inspection-ca-trust/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/inspection-modes-flow-based-vs-proxy-based-set-per-policy-profile-base/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/web-filtering-fortiguard-categories-and-actions-allow-monitor-warning/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/dns-filtering-and-safe-search/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/application-control-sensors-categories-application-overrides-filter-ov/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/antivirus-flow-vs-proxy-scanning-signature-databases-fortisandbox-clou/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/ips-sensors-and-signature-filters-rate-based-signatures-botnet-c-and-c/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/dos-policies-and-anomaly-thresholds/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/security-profile-logs-and-troubleshooting-fortiguard-connectivity-diag/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/route-lookup-order-policy-routes-then-the-routing-table-longest-match/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/static-routes-administrative-distance-priority-ecmp-and-load-balancing/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/routing-table-vs-routing-database-get-router-info-routing-table-all-an/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/reverse-path-forwarding-rpf-check/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/link-health-monitors-and-blackhole-routes/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/sd-wan-members-and-zones-and-routes-that-point-to-the-zone/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/performance-slas-probes-latency-jitter-packet-loss-sla-targets/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/sd-wan-rules-manual-best-quality-lowest-cost-sla-maximize-bandwidth-sl/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/sd-wan-monitoring-and-troubleshooting-diagnose-sys-sdwan-health-check/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/ipsec-basics-ikev1-vs-ikev2-phase-1-and-phase-2-proposals-dh-groups-pf/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/route-based-interface-mode-vs-policy-based-ipsec/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/site-to-site-with-static-peers-and-dial-up-dynamic-peers/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/routes-and-firewall-policies-needed-for-tunnel-traffic/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/redundant-vpns-two-tunnels-route-distance-priority-dpd-tunnel-monitori/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/topologies-hub-and-spoke-full-mesh-partial-mesh-advpn-short-cuts/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/troubleshooting-diagnose-vpn-ike-gateway-list-diagnose-vpn-tunnel-list/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/fortinet-fortigate/lessons/remote-access-vpn-on-fortios-7-6-forticlient-dial-up-ipsec-and-the-ssl/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/laptop-hardware-replacement-battery-keyboard-ram-sodimm-vs-soldered-st/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/screen-parts-lcd-vs-oled-panels-backlight-digitizer-touch-layer-webcam/</loc><lastmod>2026-09-24</lastmod></url>
