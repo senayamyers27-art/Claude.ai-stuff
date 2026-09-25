@@ -51,7 +51,7 @@ static String fee(Payment p) {
         case Voucher v -&gt; &quot;none&quot;;
     };
 }</code></pre>
-<p>The compiler uses sealing for exhaustiveness. Because <code>Payment</code> has exactly three permitted subtypes, a switch over it with a case for each needs no <code>default</code>. Note that <code>case Voucher v</code> also covers <code>GiftVoucher</code>, since it is a subclass of <code>Voucher</code>. <code>non-sealed</code> is a contextual keyword with a hyphen, one of the few in Java.</p>
+<p>The compiler uses sealing for exhaustiveness. Because <code>Payment</code> has exactly three permitted subtypes, a switch over it with a case for each needs no <code>default</code>. Note that <code>case Voucher v</code> also covers <code>GiftVoucher</code>, since it is a subclass of <code>Voucher</code>. <code>non-sealed</code> is a contextual keyword with a hyphen, the only hyphenated keyword in Java.</p>
 <p>Sealing is about who may subclass; it does not affect who may use the type. A sealed class may still be abstract or concrete, and a sealed class can itself be instantiated if it is not abstract. Think of it as a design statement: &quot;these are all the kinds there are.&quot;</p>
 <h2>Key terms</h2>
 <dl class="terms"><dt>Sealed class</dt><dd>A class or interface that allows only the direct subtypes named in its permits clause (or in the same file).</dd><dt>permits clause</dt><dd>The list of classes or interfaces allowed to directly extend or implement a sealed type.</dd><dt>non-sealed</dt><dd>A modifier for a permitted subclass that reopens the hierarchy so any class may extend it.</dd><dt>Exhaustive hierarchy</dt><dd>A closed set of subtypes that lets the compiler verify a switch handles every case.</dd></dl>
