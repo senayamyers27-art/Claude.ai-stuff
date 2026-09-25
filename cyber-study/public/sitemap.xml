@@ -2918,6 +2918,37 @@
   <url><loc>https://senayamyers27-art.github.io/es/sc-200/lessons/normalized-hunting-with-asim-parsers-across-vendors/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/sc-200/lessons/threat-intelligence-ti-indicators-taxii-feeds-threat-analytics-reports/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/sc-200/lessons/graph-based-hunting-sentinel-graph-and-hunting-graphs-with-blast-radiu/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/interface-types-layer-3-layer-2-virtual-wire-tap-loopback-tunnel-vlan/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/security-zones-zone-types-one-zone-per-interface-intrazone-vs-interzon/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/zone-protection-profiles-flood-reconnaissance-packet-based-and-interfa/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/routing-virtual-routers-vs-logical-routers-advanced-routing-engine-sta/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/policy-based-forwarding-with-path-monitoring-service-routes-dhcp-serve/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/nat-on-layer-3-interfaces-source-nat-dipp-dynamic-ip-static-destinatio/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/high-availability-active-passive-vs-active-active-ha1-ha2-ha3-and-back/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/site-to-site-ipsec-ike-gateway-ike-and-ipsec-crypto-profiles-tunnel-in/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/quantum-resistant-ikev2-vpns-post-quantum-preshared-keys-and-gre-tunne/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/globalprotect-portal-gateways-internal-external-authentication-connect/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/administrator-accounts-dynamic-roles-vs-admin-role-profiles-api-and-cl/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/server-profiles-ldap-radius-tacacs-saml-kerberos-authentication-profil/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/authentication-policy-and-authentication-portal/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/virtual-systems-vsys-creation-interfaces-zones-routers-per-vsys-shared/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/logging-log-types-log-forwarding-profiles-syslog-snmp-email-http-serve/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/software-and-content-updates-pan-os-upgrade-paths-and-base-images-ha-u/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/certificate-management-cas-forward-trust-untrust-ssl-inbound-inspectio/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/decryption-exclusions-for-pinned-and-sensitive-apps/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/user-id-sources-server-monitoring-syslog-listener-globalprotect-xml-ap/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/management-plane-permitted-ips-service-routes-candidate-vs-running-con/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/web-proxy-explicit-and-transparent-on-supported-pan-os-11-x-platforms/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/panorama-device-groups-and-hierarchy-pre-rules-and-post-rules-template/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/panorama-commit-and-push-workflow-panorama-modes-panorama-management-o/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/pan-os-xml-api-keygen-config-op-commit-and-rest-api-api-only-admin-rol/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/infrastructure-as-code-terraform-panos-provider-ansible-paloaltonetwor/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/external-dynamic-lists-ip-domain-url-and-dynamic-address-groups-with-t/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/auto-tagging-from-log-forwarding-profiles-and-http-server-profiles-for/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/vm-series-bootstrapping-init-cfg-txt-bootstrap-xml-content-license-sof/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/form-factors-pa-series-vm-series-cn-series-cloud-ngfw-for-aws-and-azur/</loc><lastmod>2026-09-24</lastmod></url>
+  <url><loc>https://senayamyers27-art.github.io/es/palo-alto-ngfw/lessons/strata-cloud-manager-and-cloud-delivered-management/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/laptop-hardware-replacement-battery-keyboard-ram-sodimm-vs-soldered-st/</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://senayamyers27-art.github.io/es/a-plus-core1/lessons/screen-parts-lcd-vs-oled-panels-backlight-digitizer-touch-layer-webcam/</loc><lastmod>2026-09-24</lastmod></url>
