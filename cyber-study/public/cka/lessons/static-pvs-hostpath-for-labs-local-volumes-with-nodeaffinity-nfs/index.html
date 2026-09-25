@@ -61,7 +61,7 @@ spec:
   accessModes: [ReadWriteMany]
   storageClassName: nfs
   nfs: {server: 10.0.0.20, path: /exports/shared}</code></pre>
-<p>For all static PVs, the claim must match exactly on class, access mode and size, and capacity is a label for matching rather than a quota: a hostPath PV of 1Gi does not stop a Pod from writing more. Remember that manually created PVs default to the Retain reclaim policy.</p>
+<p>For all static PVs, the claim must match on class and access mode and request no more than the PV's capacity, and capacity is a label for matching rather than a quota: a hostPath PV of 1Gi does not stop a Pod from writing more. Remember that manually created PVs default to the Retain reclaim policy.</p>
 <h2>Key terms</h2>
 <dl class="terms"><dt>Static provisioning</dt><dd>Creating PV objects manually for existing storage.</dd><dt>hostPath</dt><dd>A volume type mounting a directory from the node's filesystem; suitable for labs only.</dd><dt>local volume</dt><dd>A PV for node-attached storage that requires nodeAffinity to pin Pods to that node.</dd><dt>NFS volume</dt><dd>Network file storage identified by server and path, usable read-write from many nodes.</dd></dl>
 <div class="panel ex"><strong>Real-world example</strong><p>A task asks for a PV named pv-analytics of 100Mi, ReadWriteMany, hostPath /pv/data-analytics. You write the manifest with storageClassName matching the provided PVC, apply it, and <code>kubectl get pv,pvc</code> shows both Bound.</p></div>
