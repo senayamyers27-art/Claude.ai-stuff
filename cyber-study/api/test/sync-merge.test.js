@@ -75,3 +75,8 @@ test("cert progress: objective stats and flashcard schedule merge like stats and
   assert.deepEqual(m.objs, { "2.3": { c: 5, t: 9 }, "4.1": { c: 1, t: 1 } });
   assert.deepEqual(m.cards, { c1: { box: 2, due: 900 }, c2: { box: 0, due: 5 } });
 });
+
+test("cert progress: lessons read on any device stay read", () => {
+  const m = plain(mergePlan({ read: { la: true } }, { read: { lb: true, la: false } }));
+  assert.deepEqual(m.read, { la: true, lb: true });
+});

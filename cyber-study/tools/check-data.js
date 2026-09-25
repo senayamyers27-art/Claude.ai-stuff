@@ -39,6 +39,40 @@ for (const id of CertHub.catalog) {
   if (!c.weeks) c.domains.forEach(d => { if (!(d.topics || []).length) fail(id, `domain ${d.id} has no topics`); });
   console.log(`${id}: ${c.questions.length} questions, per domain ${JSON.stringify(per)}, answer positions ${pos.join("/")}, ${c.status}`);
 }
+/* ---------- lessons ---------- */
+// data/lessons/<id>.js: one lesson per plan topic, matched by the exact topic text.
+CertHub.lessons = {};
+CertHub.addLessons = (id, list) => { CertHub.lessons[id] = list; };
+const planTopics = c => (c.weeks ? c.weeks.filter(w => w.dom).flatMap(w => w.topics) : c.domains.flatMap(d => d.topics || [])).filter(t => !/^Checkpoint test/i.test(t));
+const pair = x => Array.isArray(x) && x.length === 2 && x.every(y => typeof y === "string" && y.trim());
+let lessonTotal = 0; const noLessons = [];
+for (const id of CertHub.catalog) {
+  const c = CertHub.certs[id]; if (!c) continue;
+  const f = path.join(root, "data/lessons", id + ".js");
+  if (!fs.existsSync(f)) { noLessons.push(id); continue; }
+  require(f);
+  const list = CertHub.lessons[id];
+  if (!Array.isArray(list)) { fail(id, "lessons file did not call CertHub.addLessons with its id"); continue; }
+  const topics = planTopics(c), want = new Set(topics), seen = new Set();
+  if (want.size !== topics.length) fail(id, "two plan topics have the same text, so their lessons can't be told apart");
+  list.forEach((l, i) => {
+    const L = m => fail(id, `lesson ${i + 1} (${String(l && l.t).slice(0, 50)}): ${m}`);
+    if (!l || typeof l.t !== "string") return L("needs t, the exact topic text");
+    if (!want.has(l.t)) L("doesn't match any topic in the plan (the text must match exactly)");
+    if (seen.has(l.t)) L("duplicate lesson"); seen.add(l.t);
+    if (!Array.isArray(l.body) || l.body.length < 3 || l.body.length > 8 || !l.body.every(p => typeof p === "string" && p.trim().length >= 40)) L("body needs 3 to 8 paragraphs");
+    else if (l.body.join(" ").split(/\s+/).length < 180) L("body is too short (aim for 250 to 600 words)");
+    if (!Array.isArray(l.terms) || l.terms.length < 3 || !l.terms.every(pair)) L("terms needs at least 3 [term, definition] pairs");
+    if (typeof l.example !== "string" || l.example.trim().length < 80) L("example needs a real-world scenario");
+    if (typeof l.tip !== "string" || l.tip.trim().length < 30) L("tip needs an exam tip");
+    if (!Array.isArray(l.check) || l.check.length < 2 || !l.check.every(pair)) L("check needs at least 2 [question, answer] pairs");
+    if (/https?:\/\//.test(JSON.stringify(l))) L("no links inside lessons");
+  });
+  const missing = topics.filter(t => !seen.has(t));
+  if (missing.length) fail(id, `${missing.length} plan topics have no lesson, e.g. "${missing[0]}"`);
+  lessonTotal += list.length;
+}
+console.log(`lessons: ${lessonTotal}${noLessons.length ? `; not written yet for ${noLessons.join(", ")}` : " (every certification)"}`);
 /* ---------- labs ---------- */
 const TRACKS = ["Foundations", "Networking", "Blue team", "GRC & architecture", "Systems administration", "Software engineering"], LEVELS = ["Beginner", "Intermediate", "Advanced"];
 for (const l of Object.values(CertHub.labs)) {
