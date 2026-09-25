@@ -38,6 +38,7 @@
 <pre class="code" tabindex="0"><code>import os, requests
 s = requests.Session()
 BASE = os.environ[&quot;MANAGER_URL&quot;]  # SD-WAN Manager HTTPS address
+user, password = os.environ[&quot;MANAGER_USER&quot;], os.environ[&quot;MANAGER_PASS&quot;]
 s.post(BASE + &quot;/j_security_check&quot;,
        data={&quot;j_username&quot;: user, &quot;j_password&quot;: password}, verify=&quot;ca.pem&quot;)
 xsrf = s.get(BASE + &quot;/dataservice/client/token&quot;, verify=&quot;ca.pem&quot;).text

@@ -47,7 +47,7 @@
 <p>Common validity mistakes that exam questions use: single quotes around strings or keys, a trailing comma after the last item in an object or array, missing commas between pairs, unquoted keys, comments (JSON has none), and Python-style <code>True</code>, <code>False</code> or <code>None</code> instead of <code>true</code>, <code>false</code> and <code>null</code>. Whitespace and indentation do not matter to validity.</p>
 <p>Python's built-in <code>json</code> module converts between JSON text and Python objects. <code>json.loads(text)</code> parses a JSON string into Python (loads means load string); <code>json.load(file)</code> reads from a file object. <code>json.dumps(obj, indent=2)</code> turns Python data into a JSON string, and <code>json.dump(obj, file)</code> writes to a file. The mapping is: object to dict, array to list, string to str, number to int or float, true and false to True and False, null to None.</p>
 <pre class="code" tabindex="0"><code>import json
-data = json.loads(raw_text)
+data = json.loads(raw_text)  # raw_text holds the JSON document above as a string
 print(data[&quot;hostname&quot;])                 # core-sw1
 print(data[&quot;interfaces&quot;][1][&quot;status&quot;])   # down
 up = [i[&quot;name&quot;] for i in data[&quot;interfaces&quot;] if i[&quot;status&quot;] == &quot;up&quot;]

@@ -55,6 +55,7 @@ for key, value in inventory[0].items():
 <p>The <code>requests</code> library makes HTTP calls simple. <code>requests.get(url, headers=..., auth=..., verify=...)</code> sends a GET; <code>requests.post(url, json=payload)</code> sends a POST with a JSON body. The returned response object has <code>status_code</code> (such as 200), <code>text</code> (the raw body), <code>json()</code> (the body parsed into Python dictionaries and lists) and <code>headers</code>. <code>raise_for_status()</code> raises an exception for 4xx and 5xx codes. In the example below, <code>user</code> and <code>password</code> would come from environment variables or a vault rather than being hard-coded, and <code>verify</code> points to the CA certificate so the server's identity is checked.</p>
 <pre class="code" tabindex="0"><code>import os, requests
 BASE = os.environ[&quot;DEVICE_URL&quot;]  # the device's HTTPS address
+user, password = os.environ[&quot;API_USER&quot;], os.environ[&quot;API_PASS&quot;]
 url = BASE + &quot;/restconf/data/ietf-interfaces:interfaces&quot;
 headers = {&quot;Accept&quot;: &quot;application/yang-data+json&quot;}
 resp = requests.get(url, headers=headers, auth=(user, password), verify=&quot;ca.pem&quot;)

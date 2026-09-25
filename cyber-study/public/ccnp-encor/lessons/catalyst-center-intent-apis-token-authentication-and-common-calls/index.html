@@ -38,6 +38,7 @@
 <pre class="code" tabindex="0"><code>import os, requests
 from requests.auth import HTTPBasicAuth
 BASE = os.environ[&quot;CC_URL&quot;]  # Catalyst Center HTTPS address
+user, password = os.environ[&quot;CC_USER&quot;], os.environ[&quot;CC_PASS&quot;]
 r = requests.post(BASE + &quot;/dna/system/api/v1/auth/token&quot;,
                   auth=HTTPBasicAuth(user, password), verify=&quot;ca.pem&quot;)
 token = r.json()[&quot;Token&quot;]
