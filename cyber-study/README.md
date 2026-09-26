@@ -24,13 +24,53 @@ cyber-study/
     data/catalog.js       home page order, planned certifications
     data/<cert-id>.js     domains, weights, plan, notices, question bank
     data/labs-*.js        lab library (see LABS_FORMAT.md)
+    data/lab-index.js     short entry per lab, loaded on every page  (generated)
     data/lab-map.js       which labs go with which study weeks
+    data/gen/<id>.js      plan summary for cards; <id>-plan.js is the full weekly
+                          plan, <id>-q.js the question bank           (generated)
+    data/news.js          What's new entries (#whats-new), English and Spanish
+    data/lessons-es/ questions-es/ pbq-es/ handson-es/ examday-es.js
+                          Spanish translations, used when the interface is in Spanish
     _headers _redirects robots.txt sitemap.xml manifest.webmanifest sw.js
     .well-known/security.txt                                        (all generated)
   functions/_middleware.js  HTTPS + canonical-host redirects         (generated)
   tools/                  build, checks, smoke test, local server, maintenance scripts
   package.json            pinned dev tools: playwright (tests), wrangler (deploys)
 ```
+
+## Spanish
+
+The header's Español button (or a `?lang=es` link) switches the interface to Spanish. Each kind of
+content has its own Spanish file with the same ids as the English one; when a file is missing the
+English is shown. Keep translations in step when the English changes:
+
+- `data/ui-es.js`: interface text (exact strings plus patterns with numbers).
+- `data/lessons-es/<id>.js`: lessons, keyed by the English topic text.
+- `data/questions-es/<id>.js`: practice questions, same option order as English.
+- `data/pbq-es/<id>.js`: exam simulations, same structure; fill-in answers also accept the English answers.
+- `data/handson-es/<id>.js`: hands-on titles, prompts, hints, explanations and check labels only.
+- `data/examday-es.js`: the exam-day guides.
+
+The build also writes Spanish lesson and cheat-sheet pages under `/es/` with `hreflang` links
+between the two languages.
+
+## Practice VM (#vm)
+
+A real Linux machine that runs in the browser with the [v86](https://github.com/copy/v86) emulator:
+Ubuntu 24.04 (i386) tools (bash, coreutils, util-linux, sudo, useradd, procps, iproute2, vim-tiny,
+BusyBox for cron and syslog) on a small Linux 6.8 kernel built from Ubuntu's source. The learner is
+`student` / `student` with sudo; root's password is `root`. There's no network inside the VM, and it
+resets when the page is left. The files (about 17 MB, not precached) are in `public/vendor/vm/`, with
+`NOTICE.txt` (licenses and the GPL source offer) and `SOURCES.txt` (exact package versions).
+
+Rebuild on Ubuntu 24.04 as root after changing `tools/vm/` (see the comment at the top of
+`tools/vm/build-vm.sh` for the packages it needs): `bash tools/vm/build-vm.sh`. The smoke test boots it;
+set `SKIP_VM=1` to skip that.
+
+## Social sharing kit
+
+`docs/social/` has post images and ready-to-paste posts. Regenerate them after changing the name,
+domain or certification count: `CHROMIUM_PATH=/path/to/chromium node tools/social-kit.js`.
 
 ## Everyday commands
 

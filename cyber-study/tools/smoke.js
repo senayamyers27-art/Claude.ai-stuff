@@ -28,7 +28,7 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     p.on("console", m => { if (m.type() === "error") errors.push(`${p.url()}: ${m.text()}`); });
     p.on("dialog", d => d.accept());
   });
-  ctx.on("request", r => { if (!r.url().startsWith(BASE) && !r.url().startsWith("data:")) foreign.push(r.url()); });
+  ctx.on("request", r => { if (!r.url().startsWith(BASE) && !r.url().startsWith("data:") && !r.url().startsWith("blob:" + BASE)) foreign.push(r.url()); });
   const page = await ctx.newPage();
   page.setDefaultTimeout(8000);
 
@@ -64,6 +64,22 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await page.click("[data-act=quit]");
     for (const t of ["plan", "labs", "progress", "about"]) { await page.click(`[data-tab=${t}]`); await page.waitForTimeout(50); }
     check(!!(await page.$("#app h1")), "plan, labs, progress and about tabs render");
+  }
+
+  // Practice VM: boots Linux in the page (about 20 s). SKIP_VM=1 skips it.
+  if (!process.env.SKIP_VM) {
+    console.log("Practice VM");
+    await page.goto(`${BASE}/#vm`);
+    await page.waitForSelector("#vmstart");
+    await page.click("#vmstart");
+    const ready = await page.waitForFunction(() => /Ready/.test((document.querySelector("#vmstatus") || {}).textContent || ""), null, { timeout: 150000 }).then(() => true, () => false);
+    check(ready, "practice VM boots to a shell");
+    if (ready) {
+      await page.keyboard.type("echo SMOKE-$((2+3)); sudo -n true 2>&1 | head -1\n");
+      const ran = await page.waitForFunction(() => /SMOKE-5/.test((document.querySelector(".xterm-rows") || {}).innerText || ""), null, { timeout: 15000 }).then(() => true, () => false);
+      check(ran, "practice VM runs commands");
+    }
+    await page.goto(`${BASE}/#home`);
   }
 
   console.log("Labs");

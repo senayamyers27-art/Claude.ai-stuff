@@ -9,7 +9,7 @@ const OUT = path.resolve(process.argv[2] || path.join(ROOT, "dist-artifact"));
 global.CertHub = { certs: {}, register(c) { this.certs[c.id] = c; } };
 require(path.join(PUB, "data/catalog.js"));
 const ids = CertHub.catalog.filter(id => fs.existsSync(path.join(PUB, "data", id + ".js")));
-const scripts = ["assets/theme.js", ...require("./app-scripts")(ids).scripts];
+const scripts = ["assets/theme.js", ...require("./app-scripts")(ids, { fullLabs: true }).scripts];
 const body = fs.readFileSync(path.join(__dirname, "templates/home.html"), "utf8").trim();
 const page = `<title>StudyToCert</title>
 <link rel="stylesheet" href="assets/style.css">
@@ -19,7 +19,7 @@ ${body}
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 fs.writeFileSync(path.join(OUT, "index.html"), page);
-const files = ["assets/style.css", "assets/icon.svg", ...fs.readdirSync(path.join(PUB, "assets/fonts")).filter(f => f.endsWith(".woff2")).map(f => "assets/fonts/" + f), ...scripts, ...ids.map(id => `data/gen/${id}-q.js`)];
+const files = ["assets/style.css", "assets/icon.svg", ...fs.readdirSync(path.join(PUB, "assets/fonts")).filter(f => f.endsWith(".woff2")).map(f => "assets/fonts/" + f), ...scripts, ...ids.map(id => `data/gen/${id}-q.js`), ...ids.map(id => `data/gen/${id}-plan.js`)];
 for (const f of files) { fs.mkdirSync(path.dirname(path.join(OUT, f)), { recursive: true }); fs.copyFileSync(path.join(PUB, f), path.join(OUT, f)); }
 fs.writeFileSync(path.join(OUT, "files.json"), JSON.stringify(Object.fromEntries(files.map(f => [f, path.join(OUT, f)])), null, 1));
 console.log(`Wrote ${OUT} (index.html + ${files.length} files)`);

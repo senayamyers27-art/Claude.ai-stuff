@@ -1,0 +1,7 @@
+
+  StudyToCert practice VM: Ubuntu 24.04 tools on a small Linux kernel, running in your browser.
+  You are "student" (password: student) and can use sudo. The root password is "root".
+  Nothing leaves this page and there is no internet. Reloading the page starts a fresh VM.
+
+  Try: whoami, sudo -l, ls -l /etc, ps aux, ip addr, df -h, tail /var/log/syslog
+
