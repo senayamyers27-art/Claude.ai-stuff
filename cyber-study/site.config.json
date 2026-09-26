@@ -9,6 +9,7 @@
   "reviewEveryDays": 180,
   "cloudflarePagesProject": "cyber-cert-study",
   "apiOrigin": "",
+  "turnstileSiteKey": "",
   "pro": {
     "monthly": "$7",
     "yearly": "$49"

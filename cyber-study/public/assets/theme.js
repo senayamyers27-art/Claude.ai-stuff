@@ -13,7 +13,9 @@ try {
     var refuse = function (what, s) { var e = new TypeError("Blocked unsafe " + what); console.error(e.message, String(s).slice(0, 200)); throw e; };
     trustedTypes.createPolicy("default", {
       createHTML: function (s) { return DANGER.test(s) ? refuse("HTML", s) : s; },
-      createScriptURL: function (u) { var x = new URL(u, location.href); return x.origin === location.origin || x.protocol === "blob:" ? u : refuse("script URL", u); },
+      // Same-origin scripts and the emulator's blob: worker; plus Cloudflare's Turnstile script, which the CSP
+      // only allows when the optional sign-in bot check is configured.
+      createScriptURL: function (u) { var x = new URL(u, location.href); return x.origin === location.origin || x.protocol === "blob:" || (x.origin === "https://challenges.cloudflare.com" && x.pathname === "/turnstile/v0/api.js") ? u : refuse("script URL", u); },
       createScript: function (s) { return refuse("dynamic script", s); }
     });
   }

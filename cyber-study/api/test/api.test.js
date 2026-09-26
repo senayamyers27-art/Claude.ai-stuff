@@ -67,12 +67,12 @@ test("sign in with an emailed link, then sign out", async () => {
   assert.equal(after.json.user, null, "session is gone after sign-out");
 });
 
-test("session cookie is Secure, HttpOnly and SameSite=Lax; only its hash is stored", async () => {
+test("session cookie is Secure, HttpOnly and SameSite=Strict; only its hash is stored", async () => {
   const env = makeEnv();
   const r1 = await call(env, "POST", "/v1/auth/magic-link", { body: { email: "a@example.com" } });
   const r2 = await call(env, "POST", "/v1/auth/magic-link/verify", { body: { token: new URL(r1.json.devLink).searchParams.get("signin") } });
   const sc = r2.headers.get("set-cookie");
-  for (const part of ["Secure", "HttpOnly", "SameSite=Lax", "Path=/"]) assert.ok(sc.includes(part), part);
+  for (const part of ["Secure", "HttpOnly", "SameSite=Strict", "Path=/"]) assert.ok(sc.includes(part), part);
   const value = sc.split(";")[0].split("=")[1];
   const rows = (await env.DB.prepare("SELECT token_hash FROM sessions").all()).results;
   assert.equal(rows.length, 1);

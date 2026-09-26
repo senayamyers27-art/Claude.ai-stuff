@@ -29,6 +29,16 @@ const apiOrigin = (() => {
   return v.toLowerCase();
 })();
 
+// Optional Cloudflare Turnstile bot check on the sign-in form (only with accounts). Empty = off, and no
+// request ever goes to Cloudflare. The matching secret is the API's TURNSTILE_SECRET_KEY.
+const TURNSTILE = "https://challenges.cloudflare.com";
+const turnstileSiteKey = (() => {
+  const k = String(cfg.turnstileSiteKey || "").trim();
+  if (!k || !apiOrigin) return "";
+  if (!/^[0-9A-Za-z_-]{10,80}$/.test(k)) { console.error(`site.config.json turnstileSiteKey doesn't look like a Turnstile site key, got "${k}"`); process.exit(1); }
+  return k;
+})();
+
 // Optional privacy-friendly page counts (GoatCounter: no cookies, no personal data). Empty = off.
 const analyticsOrigin = (() => {
   const code = String(((cfg.analytics || {}).goatcounter) || "").trim().toLowerCase();
@@ -77,9 +87,9 @@ const styleTag = (prefix, rel) => { const a = asset(rel); return `<link rel="sty
 
 /* ---------- security policy (one source for <meta> and _headers) ---------- */
 const CSP = [
-  "default-src 'self'", "script-src 'self' 'wasm-unsafe-eval'", "style-src 'self'", "style-src-elem 'self' 'unsafe-inline'", "style-src-attr 'none'", "font-src 'self'",
+  "default-src 'self'", `script-src 'self' 'wasm-unsafe-eval'${turnstileSiteKey ? " " + TURNSTILE : ""}`, "style-src 'self'", "style-src-elem 'self' 'unsafe-inline'", "style-src-attr 'none'", "font-src 'self'",
   "img-src 'self' data:", `connect-src 'self'${apiOrigin ? " " + apiOrigin : ""}${analyticsOrigin ? " " + analyticsOrigin : ""}`, "manifest-src 'self'", "worker-src 'self' blob:",
-  "object-src 'none'", "base-uri 'self'", "form-action 'none'", "frame-ancestors 'none'", "upgrade-insecure-requests",
+  ...(turnstileSiteKey ? [`frame-src ${TURNSTILE}`] : []), "object-src 'none'", "base-uri 'self'", "form-action 'none'", "frame-ancestors 'none'", "upgrade-insecure-requests",
   // Trusted Types: HTML and script URLs must pass the one policy defined in assets/theme.js.
   "require-trusted-types-for 'script'", "trusted-types default"
 ].join("; ");
@@ -198,6 +208,7 @@ CertHub.site = ${JSON.stringify({
   // Display prices for Pro (the amounts charged are set in Stripe; keep them the same).
   pro: Object.fromEntries(["monthly", "yearly"].map(k => [k, /^[$€£]\d{1,4}(\.\d{2})?$/.test(String((cfg.pro || {})[k] || "")) ? cfg.pro[k] : ""])),
   apiUrl: apiOrigin,
+  turnstileSiteKey,
   analytics: analyticsOrigin,
   // Optional hosted newsletter sign-up form (Buttondown, Mailchimp, Substack...). The home page links to it.
   newsletter: { url: httpsOr((cfg.newsletter || {}).url), blurb: String((cfg.newsletter || {}).blurb || "").slice(0, 160) }

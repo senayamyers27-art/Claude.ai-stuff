@@ -3,7 +3,7 @@
    directory index pages, trailing-slash redirects, _redirects rules and _headers (global block).
    Usage: node tools/serve.js [port] [api-origin]   (default 8000; api-origin, e.g.
    http://localhost:8787 from api/dev-server.js, turns on accounts for local testing) */
-const http = require("http"), fs = require("fs"), path = require("path");
+const http = require("http"), fs = require("fs"), path = require("path"), crypto = require("crypto");
 const PUB = path.join(__dirname, "..", "public");
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8", ".wasm": "application/wasm", ".zip": "application/zip", ".png": "image/png", ".css": "text/css; charset=utf-8", ".json": "application/json", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".txt": "text/plain; charset=utf-8", ".xml": "application/xml" };
 const redirects = fs.readFileSync(path.join(PUB, "_redirects"), "utf8").split("\n").filter(l => l && !l.startsWith("#")).map(l => l.trim().split(/\s+/));
@@ -13,6 +13,10 @@ const globalHeaders = {};
 
 function serve(port, { apiOrigin = "" } = {}) {
   // With an API origin, the pages allow connecting to it and data/site.js points at it.
+  const SITE_JS = path.join(PUB, "data/site.js");
+  const siteJs = () => fs.readFileSync(SITE_JS, "utf8").replace(/"apiUrl": "[^"]*"/, `"apiUrl": ${JSON.stringify(apiOrigin)}`);
+  // The rewritten data/site.js needs a matching integrity hash in the pages that load it.
+  const withSri = html => html.replace(/(src="[^"]*data\/site\.js\?v=[^"]*" integrity=")[^"]*/g, (m, a) => a + "sha384-" + crypto.createHash("sha384").update(siteJs()).digest("base64"));
   const withApi = text => apiOrigin ? text.replace(/connect-src 'self'/g, `connect-src 'self' ${apiOrigin}`) : text;
   const headers = Object.fromEntries(Object.entries(globalHeaders).map(([k, v]) => [k, withApi(v)]));
   const server = http.createServer((req, res) => {
@@ -29,8 +33,8 @@ function serve(port, { apiOrigin = "" } = {}) {
     if (!fs.existsSync(file) || path.basename(file).startsWith("_")) { status = 404; file = path.join(PUB, "404.html"); }
     const type = TYPES[path.extname(file)] || "application/octet-stream";
     res.writeHead(status, { "Content-Type": type, ...headers });
-    if (apiOrigin && file.endsWith(".html")) return res.end(withApi(fs.readFileSync(file, "utf8")));
-    if (apiOrigin && file === path.join(PUB, "data/site.js")) return res.end(fs.readFileSync(file, "utf8").replace(/"apiUrl": "[^"]*"/, `"apiUrl": ${JSON.stringify(apiOrigin)}`));
+    if (apiOrigin && file.endsWith(".html")) return res.end(withSri(withApi(fs.readFileSync(file, "utf8"))));
+    if (apiOrigin && file === SITE_JS) return res.end(siteJs());
     fs.createReadStream(file).pipe(res);
   });
   return new Promise(ok => server.listen(port, () => ok(server)));

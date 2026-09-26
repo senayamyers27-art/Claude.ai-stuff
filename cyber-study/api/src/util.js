@@ -43,6 +43,8 @@ export async function readJson(request, maxBytes = 16 * 1024) {
   const text = await request.text();
   if (text.length > maxBytes) throw new HttpError(413, "too_large", "Request is too large.");
   if (!text) return {};
+  // Only JSON bodies: HTML forms can't send this type cross-site without a CORS preflight.
+  if (!/^application\/json(;|$)/i.test(request.headers.get("content-type") || "")) throw new HttpError(415, "unsupported_type", "Send the request body as JSON.");
   try {
     const v = JSON.parse(text);
     if (v === null || typeof v !== "object" || Array.isArray(v)) throw new Error();

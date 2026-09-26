@@ -63,6 +63,27 @@
   }
   const mergeDoc = (docKey, local, server) => docKey === "labs" ? mergeLabs(local, server) : mergePlan(local, server);
 
+  /* ---------- optional Turnstile bot check on sign-in (site.config.json turnstileSiteKey) ---------- */
+  const TS_KEY = (CertHub.site && CertHub.site.turnstileSiteKey) || "";
+  let tsToken = "", tsWidget = null, tsLoading = null;
+  function turnstile() {
+    const box = $("#ts-box");
+    if (!TS_KEY || !box || box.dataset.ready) return;
+    box.dataset.ready = "1";
+    tsLoading = tsLoading || new Promise((res, rej) => {
+      const s = document.createElement("script");
+      s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      s.async = true; s.onload = res; s.onerror = () => rej(new Error("The bot check couldn't load. Check your connection and reload the page."));
+      document.head.appendChild(s);
+    });
+    tsLoading.then(() => {
+      if (!document.contains(box)) return;
+      tsToken = "";
+      tsWidget = window.turnstile.render(box, { sitekey: TS_KEY, action: "signin", callback: t => { tsToken = t; }, "expired-callback": () => { tsToken = ""; }, "error-callback": () => { tsToken = ""; } });
+    }, e => { const m = $("#signin-msg"); if (m) m.textContent = e.message; });
+  }
+  function turnstileReset() { tsToken = ""; if (tsWidget != null && window.turnstile) window.turnstile.reset(tsWidget); }
+
   /* ---------- API client ---------- */
   async function api(method, path, body) {
     const res = await fetch(API + path, {
@@ -180,6 +201,7 @@
       <form id="signin-form" class="panel" novalidate>
         <label for="signin-email"><strong>Email</strong></label>
         <input type="email" id="signin-email" autocomplete="email" required placeholder="you@example.com" class="textin">
+        ${TS_KEY ? `<div id="ts-box" class="tsbox"></div>` : ""}
         <div class="btns"><button type="submit" class="btn">Email me a sign-in link</button></div>
         <p class="note" id="signin-msg" role="status"></p>
       </form>
@@ -370,7 +392,9 @@
       if (f.id === "signin-form") {
         const msg = $("#signin-msg");
         msg.textContent = "Sending…";
-        const { data } = await api("POST", "/v1/auth/magic-link", { email: $("#signin-email").value });
+        if (TS_KEY && !tsToken) { msg.textContent = "Complete the check that you're not a bot first."; return; }
+        const { data } = await api("POST", "/v1/auth/magic-link", TS_KEY ? { email: $("#signin-email").value, turnstile: tsToken } : { email: $("#signin-email").value });
+        turnstileReset();
         msg.textContent = data.message;
         if (data.devLink) msg.innerHTML = `${esc(data.message)} <a href="${esc(data.devLink)}">Development sign-in link</a>`;
       } else if (f.id === "org-form") {
@@ -399,7 +423,7 @@
         await api("POST", `/v1/orgs/${f.dataset.org}/cohorts`, { name: $("#cohort-name").value, certId: $("#cohort-cert").value });
         orgPanel(f.dataset.org);
       }
-    } catch (err) { ui.toast(err.message); if (f.id === "signin-form") $("#signin-msg").textContent = err.message; }
+    } catch (err) { ui.toast(err.message); if (f.id === "signin-form") { $("#signin-msg").textContent = err.message; turnstileReset(); } }
   });
 
   document.addEventListener("click", async e => {
@@ -485,7 +509,7 @@
   }
 
   CertHub.accountViews = {
-    account: () => { setTimeout(() => { renderStatus(); if (signedIn()) classPanel(); }, 0); return accountView(); },
+    account: () => { setTimeout(() => { renderStatus(); if (signedIn()) classPanel(); else turnstile(); }, 0); return accountView(); },
     cohort: cohortView,
     join: joinView,
     classRoster: classView

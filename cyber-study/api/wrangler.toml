@@ -13,12 +13,19 @@ SITE_ORIGIN = "https://example.com"
 EMAIL_FROM = "StudyToCert <signin@example.com>"
 STRIPE_TAX = "off"
 
+# Per-address request limit at the edge (see API_LIMIT in src/index.js): 120 requests a minute.
+[[ratelimits]]
+name = "API_LIMIT"
+namespace_id = "1001"
+simple = { limit = 120, period = 60 }
+
 [[d1_databases]]
 binding = "DB"
 database_name = "cyber-cert-study"
 database_id = "00000000-0000-0000-0000-000000000000"
 migrations_dir = "migrations"
 
-# Secrets (never in this file): EMAIL_API_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET.
+# Secrets (never in this file): EMAIL_API_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, and optionally
+# TURNSTILE_SECRET_KEY (a bot check on sign-in requests; set turnstileSiteKey in site.config.json too).
 # Price ids (plain vars, set by the deploy workflow when present): STRIPE_PRICE_PRO_MONTHLY,
 # STRIPE_PRICE_PRO_YEARLY, STRIPE_PRICE_ORG_SEAT.

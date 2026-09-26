@@ -28,8 +28,11 @@ for (const f of files.filter(f => f.endsWith(".html"))) {
     // Inline style attributes stay blocked: the app uses data-style (applied by assets/theme.js) instead.
     if (/style-src [^;]*'unsafe-inline'/.test(csp) || !/style-src-attr 'none'/.test(csp)) fail(f, "CSP must block inline style attributes (style-src-attr 'none')");
     if (!/require-trusted-types-for 'script'/.test(csp)) fail(f, "CSP must require Trusted Types");
-    // The only outside hosts allowed are the site's own accounts API and its optional page counter, only for connect-src.
-    const other = csp.split(";").map(d => d.trim()).map(d => d.startsWith("connect-src") ? d.replace(" " + apiOrigin, "").replace(" " + analyticsOrigin, "") : d).join(";");
+    // The only outside hosts allowed are the site's own accounts API and its optional page counter (connect-src),
+    // and the optional Turnstile check.
+    // With accounts and a Turnstile site key, the sign-in bot check may load from Cloudflare (script and frame only).
+    const ts = apiOrigin && String(cfg.turnstileSiteKey || "").trim() ? " https://challenges.cloudflare.com" : "\0";
+    const other = csp.split(";").map(d => d.trim()).map(d => d.startsWith("connect-src") ? d.replace(" " + apiOrigin, "").replace(" " + analyticsOrigin, "") : /^(script|frame)-src /.test(d) ? d.replace(ts, "") : d).join(";");
     if (/https?:\/\//.test(other)) fail(f, "CSP allows a third-party host");
   }
   // Every script and stylesheet the page loads must carry an integrity hash that matches the file.
