@@ -331,7 +331,7 @@
         ${l.example ? `<div class="panel ex"><strong>${tr("Real-world example")}</strong>${[].concat(l.example).map(para).join("")}</div>` : ""}
         ${l.tip ? `<div class="status notice"><strong>${tr("Exam tip:")}</strong> ${inline(l.tip)}</div>` : ""}
         ${l.check && l.check.length ? `<h3>${tr("Check yourself")}</h3><p class="note">${tr("Answer out loud first, then open to check.")}</p>${l.check.map(([q, a]) => `<details class="sq"><summary>${inline(q)}</summary><p>${inline(a)}</p></details>`).join("")}` : ""}
-        <div class="btns">${readBtn(t)}${n ? `<button class="btn ghost sm" data-act="weekly" data-w="${n}">Quiz me on week ${n}</button>` : ""}</div>
+        <div class="btns" data-ui>${readBtn(t)}${n ? `<button class="btn ghost sm" data-act="weekly" data-w="${n}">Quiz me on week ${n}</button>` : ""}</div>
         ${rateHtml(t)}
         ${reportLink(`${C.short} lesson: ${t.slice(0, 80)}`, `Certification: ${C.name} (${C.exam})\nLesson: ${t}`)}
       </div></details></li>`;
@@ -339,7 +339,7 @@
   // "Was this helpful?" per lesson, kept with progress; a "No" offers the report link.
   function rateHtml(t) {
     const k = lessonKey(t), v = (S.p.ratings || {})[k];
-    return `<div class="rate" data-k="${k}"><span>Was this lesson helpful?</span> <button type="button" class="btn ghost sm" data-act="rate" data-k="${k}" data-v="1" aria-pressed="${v === 1}">Yes</button><button type="button" class="btn ghost sm" data-act="rate" data-k="${k}" data-v="0" aria-pressed="${v === 0}">No</button>
+    return `<div class="rate" data-ui data-k="${k}"><span>Was this lesson helpful?</span> <button type="button" class="btn ghost sm" data-act="rate" data-k="${k}" data-v="1" aria-pressed="${v === 1}">Yes</button><button type="button" class="btn ghost sm" data-act="rate" data-k="${k}" data-v="0" aria-pressed="${v === 0}">No</button>
       <span class="note" role="status">${v === 1 ? "Thanks for letting us know." : v === 0 ? "Thanks. Use Report a mistake below to say what was unclear or wrong." : ""}</span></div>`;
   }
   // The lesson that best covers a question: same week (or domain), most shared words.
@@ -364,12 +364,12 @@
   // Why the chosen wrong answer is wrong, then the other wrong options behind a disclosure.
   function whyHtml(q, picked) {
     if (!q.why) return "";
-    const mine = picked != null && picked !== q.a && q.why[picked] ? `<br><strong>Why "${esc(q.o[picked])}" is wrong:</strong> ${esc(q.why[picked])}` : "";
+    const mine = picked != null && picked !== q.a && q.why[picked] ? `<br><strong data-ui>Why "${esc(q.o[picked])}" is wrong:</strong> ${esc(q.why[picked])}` : "";
     const others = q.o.map((o, i) => [o, i]).filter(([, i]) => i !== q.a && i !== picked && q.why[i]);
-    return mine + (others.length ? `<details class="whys"><summary>Why the other options are wrong</summary><ul class="clean">${others.map(([o, i]) => `<li><strong>${esc(o)}</strong>: ${esc(q.why[i])}</li>`).join("")}</ul></details>` : "");
+    return mine + (others.length ? `<details class="whys"><summary data-ui>Why the other options are wrong</summary><ul class="clean">${others.map(([o, i]) => `<li><strong>${esc(o)}</strong>: ${esc(q.why[i])}</li>`).join("")}</ul></details>` : "");
   }
-  const lessonLink = q => { const t = lessonFor(q); return t ? `<button type="button" class="linkbtn" data-act="golesson" data-k="${lessonKey(t)}">Review the lesson: ${esc(t.length > 70 ? t.slice(0, 68) + "…" : t)}</button>` : ""; };
-  const reportLink = (title, body) => { const u = CertHub.reportUrl(title, body); return u ? `<a class="report" href="${esc(u)}" target="_blank" rel="noopener">Report a mistake</a>` : ""; };
+  const lessonLink = q => { const t = lessonFor(q); return t ? `<button type="button" class="linkbtn" data-ui data-act="golesson" data-k="${lessonKey(t)}">Review the lesson: ${esc(t.length > 70 ? t.slice(0, 68) + "…" : t)}</button>` : ""; };
+  const reportLink = (title, body) => { const u = CertHub.reportUrl(title, body); return u ? `<a class="report" data-ui href="${esc(u)}" target="_blank" rel="noopener">Report a mistake</a>` : ""; };
   const qReport = q => reportLink(`${C.short}: question ${q.id}`, `Certification: ${C.name} (${C.exam})\nQuestion ${q.id}: ${q.q}\nMarked answer: ${q.o[q.a]}`);
   const diagramHtml = t => CertHub.diagramsFor(C.id, t).map(d => `<figure class="diagram">${d.svg.replace(/^<svg /, `<svg role="img" aria-label="${esc(d.alt)}" focusable="false" `)}<figcaption>${esc(d.title)}</figcaption></figure>`).join("");
   const lessonTopics = w => w.dom ? w.topics.filter(t => !/^Checkpoint test/i.test(t)) : [];
@@ -1018,7 +1018,7 @@
     <div class="flex note"><span>Question ${z.i + 1} of ${z.qs.length}</span><span>Domain ${q.d}${q.lv ? ` · ${LEVELS[q.lv]}` : ""}</span></div>
     <div class="prog" style="--c:${dc(q.d)}"><i style="width:${100 * (z.i + 1) / z.qs.length}%"></i></div>
     <p class="q">${esc(q.q)}</p>${opts}
-    ${z.revealed ? `<div class="expl" role="status" style="--c:${z.picked === q.a ? "var(--ok)" : "var(--bad)"}"><strong>${z.picked === q.a ? "Correct." : "Not quite."}</strong> ${esc(q.e)}${whyHtml(q, z.picked)}${q.src ? `<br><small class="note">Source: ${esc(q.src)}</small>` : ""}${z.picked !== q.a ? `<br>${lessonLink(q)}` : ""}<br>${qReport(q)}</div>` : ""}
+    ${z.revealed ? `<div class="expl" role="status" style="--c:${z.picked === q.a ? "var(--ok)" : "var(--bad)"}"><strong data-ui>${z.picked === q.a ? "Correct." : "Not quite."}</strong> ${esc(q.e)}${whyHtml(q, z.picked)}${q.src ? `<br><small class="note" data-ui>Source: ${esc(q.src)}</small>` : ""}${z.picked !== q.a ? `<br>${lessonLink(q)}` : ""}<br>${qReport(q)}</div>` : ""}
     <div class="btns">${z.mode === "test" && z.i > 0 ? `<button class="btn ghost" data-act="prev">Back</button>` : ""}
     ${(z.mode === "learn" && z.revealed) || z.mode === "test" ? `<button class="btn" data-act="next">${z.i + 1 === z.qs.length ? "Finish" : "Next"}</button>` : ""}
     ${z.mode === "test" ? `<button class="btn ghost" data-act="finish">Submit test</button>` : ""}</div>`;

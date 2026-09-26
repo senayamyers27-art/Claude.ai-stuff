@@ -220,15 +220,19 @@
   const i18n = (() => {
     let dict = null, pats = [], obs = null, busy = false;
     const lang = () => store.get("certhub:lang") === "es" ? "es" : "en";
-    const SKIP = "script,style,pre,code,textarea,input,select,.lbody,.q,.opt,.expl,.hoprompt,.termout,.kqlt,.steps-list,[data-content],[lang='en']";
+    const SKIP = "script,style,pre,code,textarea,input,.lbody,.q,.opt,.expl,.hoprompt,.termout,.kqlt,.steps-list,[data-content],[lang='en']";
+    // Interface pieces inside content areas (lesson buttons, quiz feedback) are marked data-ui and still translated.
+    const skipped = el => { const s = el.closest(SKIP); if (!s) return false; const u = el.closest("[data-ui]"); return !(u && s.contains(u)); };
     const tr = s => { const k = s.trim(); if (!k || !/[A-Za-z]/.test(k)) return null; const d = dict.get(k); if (d != null) return s.replace(k, d); for (const [re, to] of pats) if (re.test(k)) return s.replace(k, k.replace(re, to)); return null; };
-    function node(n) { const p = n.parentElement; if (!p || p.closest(SKIP)) return; const t = tr(n.nodeValue); if (t != null && t !== n.nodeValue) n.nodeValue = t; }
+    function node(n) { const p = n.parentElement; if (!p || skipped(p)) return; const t = tr(n.nodeValue); if (t != null && t !== n.nodeValue) n.nodeValue = t; }
     function walk(root) {
       if (!dict || !root) return;
       if (root.nodeType === 3) return node(root);
-      if (root.nodeType !== 1 || (root.closest && root.closest(SKIP))) return;
+      if (root.nodeType !== 1) return;
+      if (root.matches && root.matches("input,textarea")) { ["placeholder", "aria-label", "title"].forEach(a => { const v = root.getAttribute(a); if (v) { const t = tr(v); if (t != null) root.setAttribute(a, t); } }); return; }
+      // Content containers are still walked: marked interface pieces inside them (data-ui) get translated.
       const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let n; const list = []; while ((n = w.nextNode())) list.push(n); list.forEach(node);
-      [root, ...root.querySelectorAll("[placeholder],[aria-label],[title]")].forEach(el => { if (!el.getAttribute || (el !== root && el.closest(SKIP) && !el.matches("input,textarea,select"))) return; ["placeholder", "aria-label", "title"].forEach(a => { const v = el.getAttribute(a); if (v) { const t = tr(v); if (t != null) el.setAttribute(a, t); } }); });
+      [root, ...root.querySelectorAll("[placeholder],[aria-label],[title]")].forEach(el => { if (!el.getAttribute || (el !== root && skipped(el) && !el.matches("input,textarea,select"))) return; ["placeholder", "aria-label", "title"].forEach(a => { const v = el.getAttribute(a); if (v) { const t = tr(v); if (t != null) el.setAttribute(a, t); } }); });
     }
     function start() {
       if (lang() !== "es" || obs) return Promise.resolve();
