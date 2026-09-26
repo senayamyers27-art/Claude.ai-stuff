@@ -51,7 +51,9 @@ labFiles.forEach(f => require(path.join(PUB, "data", f)));
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const changed = [];
+const generated = {}; // this run's output by path, so hashes match what the build writes (also in --check mode)
 function out(rel, content) {
+  generated[rel] = content;
   const file = path.join(ROOT, rel);
   const old = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : null;
   if (old === content) return;
@@ -59,11 +61,27 @@ function out(rel, content) {
   if (!CHECK) { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, content); }
 }
 
+/* ---------- Subresource Integrity ---------- */
+// Every script and stylesheet a page references carries a content hash in its URL (so no cache can pair an old
+// file with a new page) and an integrity hash (so the browser refuses a file that was changed after the build).
+const sri = {};
+function asset(rel) {
+  if (!sri[rel]) {
+    const g = generated["public/" + rel], buf = g != null ? Buffer.from(g) : fs.readFileSync(path.join(PUB, rel));
+    sri[rel] = { url: `${rel}?v=${crypto.createHash("sha256").update(buf).digest("hex").slice(0, 12)}`, integrity: "sha384-" + crypto.createHash("sha384").update(buf).digest("base64") };
+  }
+  return sri[rel];
+}
+const scriptTag = (prefix, rel, defer = true) => { const a = asset(rel); return `<script src="${prefix}${a.url}" integrity="${a.integrity}"${defer ? " defer" : ""}></script>`; };
+const styleTag = (prefix, rel) => { const a = asset(rel); return `<link rel="stylesheet" href="${prefix}${a.url}" integrity="${a.integrity}">`; };
+
 /* ---------- security policy (one source for <meta> and _headers) ---------- */
 const CSP = [
   "default-src 'self'", "script-src 'self' 'wasm-unsafe-eval'", "style-src 'self' 'unsafe-inline'", "font-src 'self'",
   "img-src 'self' data:", `connect-src 'self'${apiOrigin ? " " + apiOrigin : ""}${analyticsOrigin ? " " + analyticsOrigin : ""}`, "manifest-src 'self'", "worker-src 'self' blob:",
-  "object-src 'none'", "base-uri 'self'", "form-action 'none'", "frame-ancestors 'none'", "upgrade-insecure-requests"
+  "object-src 'none'", "base-uri 'self'", "form-action 'none'", "frame-ancestors 'none'", "upgrade-insecure-requests",
+  // Trusted Types: HTML and script URLs must pass the one policy defined in assets/theme.js.
+  "require-trusted-types-for 'script'", "trusted-types default"
 ].join("; ");
 // frame-ancestors is ignored in <meta>, so the meta copy drops it; _headers carries the full policy.
 const CSP_META = CSP.replace("; frame-ancestors 'none'", "");
@@ -104,9 +122,9 @@ function head({ title, desc, prefix, urlPath, scripts, lang = "en", ld = null, o
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="${prefix}manifest.webmanifest">
 <link rel="preload" href="${prefix}assets/fonts/public-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="${prefix}assets/style.css">
-<script src="${prefix}assets/theme.js"></script>
-${scripts.map(s => `<script src="${prefix}${s}" defer></script>`).join("\n")}
+${styleTag(prefix, "assets/style.css")}
+${scriptTag(prefix, "assets/theme.js", false)}
+${scripts.map(s => scriptTag(prefix, s)).join("\n")}
 </head>`;
 }
 
@@ -635,7 +653,8 @@ walk(PUB).filter(f => !/(^|\/)(sw\.js|_headers|_redirects|robots\.txt|sitemap\.x
     // Only the app shell and study plans install up front; question banks, lessons, simulations and hands-on data are
     // cached the first time they're opened (or all at once with "Save for offline"). Source-only files (whys, extra) never load.
     const lesson = /^\/data\/(lessons|lessons-es|questions-es|extra|whys|pbq|pbq-es|handson|handson-es)\//.test(rel) || /^\/data\/gen\/[^/]+-q\.js$/.test(rel) || rel === "/data/ui-es.js" || rel === "/data/examday.js" || rel === "/data/examday-es.js" || rel.startsWith("/vendor/");
-    if (!authoredCert && !lesson && (rel.startsWith("/assets/") || rel.startsWith("/data/") || rel === "/manifest.webmanifest")) precache.push(rel);
+    // Files pages reference by hashed URL are cached under that URL, so offline pages find them.
+    if (!authoredCert && !lesson && (rel.startsWith("/assets/") || rel.startsWith("/data/") || rel === "/manifest.webmanifest")) precache.push(sri[rel.slice(1)] ? "/" + sri[rel.slice(1)].url : rel);
   });
 const VERSION = hash.digest("hex").slice(0, 12);
 // The practice VM's files (about 40 MB) get their own cache, kept across site updates until the VM itself changes.

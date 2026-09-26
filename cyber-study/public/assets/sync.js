@@ -288,7 +288,7 @@
 
   const JOIN_KEY = "certhub:join";
   async function joinView(code) {
-    const shell = body => { $("#app").innerHTML = `<p class="crumbs"><a href="#account">Account</a> / Join a class</p>${body}`; };
+    const shell = body => { $("#app").innerHTML = `<p class="crumbs"><a href="#account">Account</a> / Join a class</p>${/* html: callers pass markup built with esc() */ body}`; };
     if (!API) return shell(`<h1>Join a class</h1><div class="status">Accounts aren't available on this site, so classes aren't either.</div>`);
     if (!signedIn()) {
       try { sessionStorage.setItem(JOIN_KEY, code); } catch (e) {}

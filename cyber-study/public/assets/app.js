@@ -11,7 +11,7 @@
     const c = certs[id] || CertHub.planned[id];
     if (!c) return "";
     const built = !!certs[id];
-    const stack = `<div class="stack" aria-hidden="true">${c.domains.map(d => `<i style="--c:${dc(d.id)};flex:${d.w}"></i>`).join("")}</div>`;
+    const stack = `<div class="stack" aria-hidden="true">${c.domains.map(d => `<i style="--c:${dc(d.id)};flex:${esc(d.w)}"></i>`).join("")}</div>`;
     const badge = c.status === "verified" ? `<span class="badge ok">Weights verified</span>` : `<span class="badge check">Weights to confirm</span>`;
     let foot;
     if (built) {
@@ -20,7 +20,7 @@
       const plan = buildPlan(c);
       const labCount = new Set(plan.weeks.flatMap(w => w.labRefs || []).filter(l => labs[l])).size;
       const days = Object.values(p.checks).filter(Boolean).length;
-      foot = `<span>${plan.weeks.length} weeks · ${c.qCount ?? (c.questions || []).length} questions${labCount ? ` · ${labCount} labs` : ""}</span><span>${s.t ? `${Math.round(100 * s.c / s.t)}% of ${s.t} answered` : days ? `${days} days checked` : "Not started"}</span>`;
+      foot = `<span>${plan.weeks.length} weeks · ${esc(c.qCount) ?? (c.questions || []).length} questions${labCount ? ` · ${labCount} labs` : ""}</span><span>${s.t ? `${Math.round(100 * s.c / s.t)}% of ${esc(s.t)} answered` : days ? `${days} days checked` : "Not started"}</span>`;
     } else foot = `<span>Study plan not written yet</span>`;
     const inner = `<span class="vendor">${esc(c.vendor)} · ${esc(c.exam)}</span>
       <h2>${esc(c.name)}</h2>
@@ -47,7 +47,7 @@
       return { c, wk, due, last };
     }).filter(Boolean).sort((a, b) => b.last - a.last).slice(0, 4);
     if (!rows.length) return "";
-    return `<h2>Continue studying</h2><div class="panel">${rows.map(r => `<div class="row"><div class="grow"><a href="#${esc(r.c.id)}.week"><strong>${esc(r.c.short)} ${esc(r.c.exam)}</strong></a><br><span class="note">Week ${r.wk}${r.due ? ` · ${r.due} review${r.due > 1 ? "s" : ""} due` : ""}</span></div><a class="btn sm" href="#${esc(r.c.id)}.week">Today's plan</a></div>`).join("")}</div>`;
+    return `<h2>Continue studying</h2><div class="panel">${rows.map(r => `<div class="row"><div class="grow"><a href="#${esc(r.c.id)}.week"><strong>${esc(r.c.short)} ${esc(r.c.exam)}</strong></a><br><span class="note">Week ${esc(r.wk)}${r.due ? ` · ${esc(r.due)} review${r.due > 1 ? "s" : ""} due` : ""}</span></div><a class="btn sm" href="#${esc(r.c.id)}.week">Today's plan</a></div>`).join("")}</div>`;
   }
   function trackPicker() {
     const cur = curTrack();
@@ -97,7 +97,7 @@
   }
   function pickerHtml() {
     const st = pickState();
-    const chips = (name, list, cur) => `<div class="trackpick" role="group" aria-label="${name}">${list.map(([k, l]) => `<button type="button" class="chipbtn" data-pick="${name === "Goal" ? "g" : "l"}:${k}" aria-pressed="${cur === k}">${esc(l)}</button>`).join("")}</div>`;
+    const chips = (name, list, cur) => `<div class="trackpick" role="group" aria-label="${esc(name)}">${list.map(([k, l]) => `<button type="button" class="chipbtn" data-pick="${name === "Goal" ? "g" : "l"}:${esc(k)}" aria-pressed="${cur === k}">${esc(l)}</button>`).join("")}</div>`;
     return `<h2 id="pick" tabindex="-1">Pick your first certification</h2>
     <div class="panel"><p class="pickq">What do you want to work in?</p>${chips("Goal", PICK_GOALS, st.g)}
       <p class="pickq">Where are you starting from?</p>${chips("Starting point", PICK_LEVELS, st.l)}
@@ -164,7 +164,7 @@
     ${trackPicker()}
     <div id="trackcards">${trackCards()}</div>
     <h2>Your progress</h2>
-    ${(() => { const st = CertHub.activity.streak(); return `<div class="panel startcard"><div class="grow"><strong>${st.current ? `${st.current}-day study streak` : "Start a study streak"}</strong><br><span class="note">${st.current ? (st.today ? "You studied today. " : "Study today to keep it going. ") : "Answer a question or read a lesson each day. "}${st.best ? `Best: ${st.best} days.` : ""}</span></div><button type="button" class="btn ghost sm" data-gact="reminder">Set a daily reminder</button></div>`; })()}
+    ${(() => { const st = CertHub.activity.streak(); return `<div class="panel startcard"><div class="grow"><strong>${st.current ? `${esc(st.current)}-day study streak` : "Start a study streak"}</strong><br><span class="note">${st.current ? (st.today ? "You studied today. " : "Study today to keep it going. ") : "Answer a question or read a lesson each day. "}${st.best ? `Best: ${esc(st.best)} days.` : ""}</span></div><button type="button" class="btn ghost sm" data-gact="reminder">Set a daily reminder</button></div>`; })()}
     <div class="panel">
       <p class="note" style="margin:0">Progress, lab notes and checkmarks are saved in this browser only. Nothing is sent anywhere. Back up to move them to another device.</p>
       <div class="btns"><button type="button" class="btn ghost sm no-framed" data-gact="download">Download backup</button><button type="button" class="btn ghost sm" data-gact="copybackup">Copy backup</button><label class="btn ghost sm" for="imp">Restore from file</label><input type="file" id="imp" accept="application/json" class="hide"><button type="button" class="btn ghost sm" data-gact="pasterestore">Restore from text</button></div>
@@ -172,7 +172,7 @@
     ${newsHtml()}
     <h2>Appearance</h2>
     <div class="panel"><p class="note" style="margin:0">Accent color for buttons and highlights. Use the button at the top right to switch between light, dark and your device's setting.</p>
-      <div class="swatches" role="group" aria-label="Accent color">${CertHub.ACCENTS.map(([k, l, c]) => `<button type="button" class="chipbtn swatch" data-accent="${k}" aria-pressed="${CertHub.accent() === k}" style="--sw:${c}"><i aria-hidden="true"></i>${l}</button>`).join("")}</div></div>
+      <div class="swatches" role="group" aria-label="Accent color">${CertHub.ACCENTS.map(([k, l, c]) => `<button type="button" class="chipbtn swatch" data-accent="${esc(k)}" aria-pressed="${CertHub.accent() === k}" style="--sw:${esc(c)}"><i aria-hidden="true"></i>${esc(l)}</button>`).join("")}</div></div>
     <div class="panel installcard supportcard"><div class="grow"><strong>Keep it free</strong><br><span class="note">No ads and no tracking. Share it, report a mistake${CertHub.site && CertHub.site.support && CertHub.site.support.url ? " or chip in" : ""} to help.</span></div><a class="btn ghost sm" href="#support">Support this site</a></div>`;
   }
 
@@ -196,7 +196,7 @@
   // The Account tab only appears when the site has an accounts API configured.
   const navItems = () => CertHub.sync && CertHub.sync.enabled ? NAV.concat([["account", "Account"]]) : NAV;
   function topNav(cur) {
-    $("#tabs").innerHTML = navItems().map(([k, l]) => `<a role="tab" href="#${k}" aria-selected="${cur === k}">${l}</a>`).join("");
+    $("#tabs").innerHTML = navItems().map(([k, l]) => `<a role="tab" href="#${esc(k)}" aria-selected="${cur === k}">${esc(l)}</a>`).join("");
     $("#count").innerHTML = "";
   }
   // Route tokens come from the URL, so only look them up as the objects' own keys

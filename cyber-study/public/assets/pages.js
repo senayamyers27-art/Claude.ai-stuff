@@ -140,7 +140,7 @@
   }
 
   function security() {
-    const row = (what, how) => `<tr><td><strong>${what}</strong></td><td>${how}</td></tr>`;
+    const row = (what, how) => `<tr><td><strong>${U.esc(what)}</strong></td><td>${/* html: authored text with <code> tags, all calls are literals below */ how}</td></tr>`;
     return `<h1>Security</h1>
     <p class="meta">How ${SITE} protects visitors, and how to report a problem. Last reviewed ${EFFECTIVE}.</p>
     <div class="status notice">${accounts()
@@ -196,7 +196,7 @@
       : I.prompt
       ? `<div class="btns"><button type="button" class="btn" data-gact="install">Install StudyToCert</button></div>`
       : "";
-    const step = (n, t) => `<li><strong>${n}</strong> ${t}</li>`;
+    const step = (n, t) => `<li><strong>${U.esc(n)}</strong> ${U.esc(t)}</li>`;
     return `<h1>Install the app</h1>
     <p class="meta">Add ${SITE} to your phone's home screen. It opens full screen like any app, works with no connection, and keeps your progress, lab notes and portfolio on the device.</p>
     ${state}

@@ -2,7 +2,8 @@
 /* Static security lint for everything that gets deployed (public/ and functions/).
    Fails on: missing or weakened CSP, inline scripts or event handlers, third-party
    script/style/font hosts, plain http:// links, target=_blank without rel=noopener,
-   eval-style JavaScript, and missing security headers. */
+   eval-style JavaScript, missing security headers, and scripts or stylesheets without a correct
+   Subresource Integrity hash. */
 const fs = require("fs"), path = require("path");
 const ROOT = path.join(__dirname, "..");
 const PUB = path.join(ROOT, "public");
@@ -14,6 +15,8 @@ const apiOrigin = String(cfg.apiOrigin || "").trim().replace(/\/+$/, "").toLower
 const gc = String(((cfg.analytics || {}).goatcounter) || "").trim().toLowerCase();
 const analyticsOrigin = gc ? `https://${gc}.goatcounter.com` : "";
 const files = walk(PUB).concat(walk(path.join(ROOT, "functions")));
+const sriOf = {}; // file -> "sha384-..." of its current contents
+const sha384 = file => sriOf[file] || (sriOf[file] = "sha384-" + require("crypto").createHash("sha384").update(fs.readFileSync(file)).digest("base64"));
 
 for (const f of files.filter(f => f.endsWith(".html"))) {
   const s = fs.readFileSync(f, "utf8");
@@ -25,6 +28,14 @@ for (const f of files.filter(f => f.endsWith(".html"))) {
     // The only outside hosts allowed are the site's own accounts API and its optional page counter, only for connect-src.
     const other = csp.split(";").map(d => d.trim()).map(d => d.startsWith("connect-src") ? d.replace(" " + apiOrigin, "").replace(" " + analyticsOrigin, "") : d).join(";");
     if (/https?:\/\//.test(other)) fail(f, "CSP allows a third-party host");
+  }
+  // Every script and stylesheet the page loads must carry an integrity hash that matches the file.
+  for (const m of s.matchAll(/<script\b[^>]*\bsrc="([^"]+)"[^>]*>|<link\b[^>]*rel="stylesheet"[^>]*>/gi)) {
+    const tag = m[0], ref = m[1] || (tag.match(/href="([^"]+)"/) || [])[1], integ = (tag.match(/integrity="([^"]+)"/) || [])[1];
+    if (!integ) { fail(f, `no integrity hash on ${ref}`); continue; }
+    const target = path.join(path.dirname(f), ref.replace(/[?#].*$/, ""));
+    if (!fs.existsSync(target)) fail(f, `references a missing file ${ref}`);
+    else if (integ !== sha384(target)) fail(f, `integrity hash doesn't match ${ref} (rebuild with node tools/build.js)`);
   }
   if (/<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>/i.test(s)) fail(f, "inline <script> (move it to a file)");
   if (/\son[a-z]+\s*=\s*["']/i.test(s)) fail(f, "inline event handler attribute");

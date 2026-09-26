@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "node tools/build.js",
-    "check": "node tools/check-data.js && node tools/check-python.js && node tools/build.js --check && node tools/check-security.js",
+    "check": "node tools/check-data.js && node tools/check-python.js && node tools/build.js --check && node tools/check-security.js && node tools/check-xss.js",
     "test": "node tools/smoke.js",
     "test:api": "node --test api/test/*.test.js",
     "test:accounts": "node tools/accounts-e2e.js",
@@ -23,6 +23,8 @@
     "deploy": "wrangler pages deploy public --project-name cyber-cert-study"
   },
   "devDependencies": {
+    "acorn": "8.18.0",
+    "acorn-walk": "8.3.5",
     "axe-core": "4.13.0",
     "playwright": "1.56.1",
     "wrangler": "4.138.0"
