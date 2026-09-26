@@ -29,8 +29,8 @@ Status: **Met**, **Partly** (with the gap named), or **N/A** (nothing in scope).
 | V3 Web Frontend Security | Partly | CSP with no inline script, no `eval` and no inline style attributes; Trusted Types; Subresource Integrity on every script and stylesheet; HSTS; `nosniff`; strict referrer policy; `rel=noopener` on new-window links; `__Host-` `SameSite=Strict` cookie. **Gap:** on GitHub Pages the CSP is a `<meta>` tag, so `frame-ancestors` and `X-Frame-Options` can't be sent (clickjacking). Fixed by moving to Cloudflare Pages (`CLOUDFLARE_MOVE.md`). |
 | V4 API and Web Service | Met | CORS allows only the site's origin, with credentials; every state-changing request must carry the site's `Origin` and a JSON body; responses carry `Cache-Control: no-store`, `nosniff` and a `default-src 'none'` CSP; HTTP methods are matched per route. |
 | V5 File Handling | N/A | Nobody can upload files. Downloads (exports, CSVs) are generated, with fixed file names. |
-| V6 Authentication | Met | Passwordless: single-use sign-in links with 256-bit random tokens, 15-minute expiry, stored only as SHA-256 hashes, redeemed atomically. Rate limits per address and per IP; optional Turnstile bot check. The same response whether or not an account exists (no enumeration). Passkeys are planned (`BACKEND_DESIGN.md`). |
-| V7 Session Management | Met | 256-bit random session tokens, hash stored; `__Host-` prefix, `Secure`, `HttpOnly`, `SameSite=Strict`; 30-day sliding expiry with a 90-day absolute limit; at most 10 sessions per user; sign-out deletes the session on the server; account deletion ends every session. Tested in `api/test/`. |
+| V6 Authentication | Met | Passwordless: passkeys (WebAuthn with user verification required, one-time challenges, origin and relying-party checks, signature counters to catch cloned authenticators) or single-use sign-in links with 256-bit random tokens, 15-minute expiry, stored only as SHA-256 hashes, redeemed atomically. Rate limits per address and per IP; optional Turnstile bot check. The same response whether or not an account exists (no enumeration). Tested in `api/test/passkeys.test.js` with a software authenticator and in the browser test with Chrome's virtual authenticator. |
+| V7 Session Management | Met | 256-bit random session tokens, hash stored; `__Host-` prefix, `Secure`, `HttpOnly`, `SameSite=Strict`; 30-day sliding expiry with a 90-day absolute limit; at most 10 sessions per user; sign-out deletes the session on the server; the account page lists every signed-in device and can end any of them or all others; account deletion ends every session. Tested in `api/test/`. |
 | V8 Authorization | Met | Every route checks ownership or role on the server (class teacher or member, organization role, Pro entitlement for Pro content). Cross-account cases are tested in `api/test/classes.test.js`. |
 | V9 Self-contained Tokens | N/A | No JWTs or other self-contained tokens; sessions are opaque and checked against the database. |
 | V10 OAuth and OIDC | N/A | Not used. |
@@ -70,6 +70,4 @@ Status: **Met**, **Partly** (with the gap named), or **N/A** (nothing in scope).
 
 1. **Clickjacking protection on GitHub Pages:** needs response headers; move to Cloudflare Pages (`CLOUDFLARE_MOVE.md`).
 2. **HSTS preload:** after the move (`CLOUDFLARE_MOVE.md`, step 7).
-3. **Passkeys** for accounts, before accounts launch widely (`BACKEND_DESIGN.md`).
-4. **A list of your signed-in devices with "sign out everywhere"** in the account page. Sessions already end after 90 days and are capped at 10.
-5. **Repository settings** in `GITHUB_SETTINGS.md` that only the owner can turn on.
+3. **Repository settings** in `GITHUB_SETTINGS.md` that only the owner can turn on.

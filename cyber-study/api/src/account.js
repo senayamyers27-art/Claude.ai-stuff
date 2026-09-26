@@ -13,11 +13,12 @@ export async function exportAccount(env, user) {
   const classesJoined = (await q("SELECT c.id, c.name, c.teacher_name, m.display_name, m.show_email, m.consented_at, m.joined_at FROM class_members m JOIN classes c ON c.id = m.class_id WHERE m.user_id = ?", user.id).all()).results || [];
   const subs = (await q("SELECT plan, status, seats, current_period_end, updated_at FROM subscriptions WHERE user_id = ?", user.id).all()).results || [];
   const sessions = (await q("SELECT created_at, expires_at, user_agent FROM sessions WHERE user_id = ?", user.id).all()).results || [];
+  const passkeys = (await q("SELECT name, created_at, last_used_at FROM passkeys WHERE user_id = ?", user.id).all()).results || [];
   return {
     exportedAt: new Date().toISOString(),
     user: u,
     progress: docs.map(d => ({ key: d.doc_key, version: d.version, updatedAt: d.updated_at, body: JSON.parse(d.body) })),
-    organizations: orgs, cohorts, classesTaught, classesJoined, subscriptions: subs, sessions
+    organizations: orgs, cohorts, classesTaught, classesJoined, subscriptions: subs, sessions, passkeys
   };
 }
 

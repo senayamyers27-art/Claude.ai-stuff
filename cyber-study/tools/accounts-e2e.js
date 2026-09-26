@@ -234,6 +234,38 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await tch.waitForSelector("text=No students yet");
     check(true, "after the student leaves, the roster no longer shows them");
 
+    console.log("Passkeys and signed-in devices");
+    const pk = await device(), other = await device();
+    // Chrome's virtual authenticator stands in for a phone or laptop with a fingerprint reader.
+    const cdp = await pk.context().newCDPSession(pk);
+    await cdp.send("WebAuthn.enable");
+    await cdp.send("WebAuthn.addVirtualAuthenticator", { options: { protocol: "ctap2", transport: "internal", hasResidentKey: true, hasUserVerification: true, isUserVerified: true, automaticPresenceSimulation: true } });
+    await signIn(pk, "passkey.user@example.com");
+    await pk.click("[data-aact=passkey-add]");
+    await pk.waitForSelector("#modal-in");
+    await pk.fill("#modal-in", "Test laptop");
+    await pk.click('.modal [type="submit"]');
+    await pk.waitForSelector('#passkeypanel >> text=Test laptop');
+    check(true, "a passkey can be added and named");
+    await signIn(other, "passkey.user@example.com");
+    await pk.reload(); await pk.waitForSelector("#devicepanel [data-aact=session-others]");
+    check(/This device/.test(await pk.textContent("#devicepanel")) && (await pk.$$("#devicepanel .row")).length === 2, "devices list shows both sessions and marks this one");
+    await pk.click("[data-aact=signout]");
+    await pk.waitForSelector("[data-aact=passkey-signin]");
+    await pk.click("[data-aact=passkey-signin]");
+    await pk.waitForSelector("[data-aact=signout]");
+    check(/passkey\.user@example\.com/.test(await pk.textContent("#app")), "signs in with the passkey, no email needed");
+    await pk.waitForSelector("#devicepanel [data-aact=session-others]");
+    await pk.click("#devicepanel [data-aact=session-others]");
+    await pk.click('.modal [data-v="1"]');
+    await pk.waitForFunction(() => !document.querySelector("#devicepanel [data-aact=session-others]"));
+    await other.reload(); await other.waitForSelector("#signin-form");
+    check(true, "sign out everywhere else ends the other device's session");
+    await pk.click("[data-aact=passkey-del]");
+    await pk.click('.modal [data-v="1"]');
+    await pk.waitForFunction(() => !/Test laptop/.test(document.getElementById("passkeypanel").textContent));
+    check(true, "a passkey can be removed");
+
     console.log("Delete account");
     await b.goto(BASE + "/#account");
     await b.click("[data-aact=delete]");

@@ -53,6 +53,15 @@ const PARTIAL = process.env.ALLOW_PARTIAL === "1";
 const tryRequire = f => { try { require(f); return true; } catch (e) { if (!PARTIAL) throw e; console.warn(`skipped (does not load yet): ${path.relative(ROOT, f)}`); return false; } };
 const ids = CertHub.catalog.filter(id => fs.existsSync(path.join(PUB, "data", id + ".js")) && tryRequire(path.join(PUB, "data", id + ".js")));
 const certs = ids.map(id => CertHub.certs[id]);
+// Certification comparisons (data/compare.js): pages under /compare/, linked from each certification's page.
+const comparisons = [];
+CertHub.addComparisons = l => { comparisons.push(...l); };
+if (fs.existsSync(path.join(PUB, "data/compare.js"))) require(path.join(PUB, "data/compare.js"));
+comparisons.forEach(x => {
+  if (!CertHub.certs[x.a] || !CertHub.certs[x.b]) { console.error(`data/compare.js: unknown certification in ${x.a} vs ${x.b}`); process.exit(1); }
+  if (!["a", "b", "either"].includes(x.first)) { console.error(`data/compare.js: first must be "a", "b" or "either" in ${x.a} vs ${x.b}`); process.exit(1); }
+  x.slug = `${x.a}-vs-${x.b}`;
+});
 // Lab libraries: every data/labs-*.js file, in name order.
 const { labFiles, scripts: APP_SCRIPTS } = require("./app-scripts")(ids);
 const loadExtra = require("./extra");
@@ -208,6 +217,7 @@ CertHub.site = ${JSON.stringify({
   // Display prices for Pro (the amounts charged are set in Stripe; keep them the same).
   pro: Object.fromEntries(["monthly", "yearly"].map(k => [k, /^[$€£]\d{1,4}(\.\d{2})?$/.test(String((cfg.pro || {})[k] || "")) ? cfg.pro[k] : ""])),
   apiUrl: apiOrigin,
+  compare: comparisons.map(x => [x.a, x.b]),
   turnstileSiteKey,
   analytics: analyticsOrigin,
   // Optional hosted newsletter sign-up form (Buttondown, Mailchimp, Substack...). The home page links to it.
@@ -532,6 +542,69 @@ ${secs(v.sections)}
   }
 }
 
+/* ---------- comparison pages (/compare/ and /compare/<a>-vs-<b>/, data/compare.js) ---------- */
+{
+  if (comparisons.length) {
+    const byId = id => certs.find(c => c.id === id);
+    const top = pre => `<header class="top"><div class="bar"><a class="brand" href="${pre}">${BRAND_HTML}</a></div></header>`;
+    const name = c => `${c.short} (${c.exam})`;
+    const tracksOf = c => (CertHub.tracks || []).filter(t => t.certs.includes(c.id)).map(t => t.name).join(", ") || "–";
+    const facts = (A, B) => [
+      ["Vendor", A.vendor, B.vendor],
+      ["Exam", A.exam, B.exam],
+      ["Questions", (A.examInfo || {}).questions, (B.examInfo || {}).questions],
+      ["Time", (A.examInfo || {}).minutes ? `${A.examInfo.minutes} minutes` : "", (B.examInfo || {}).minutes ? `${B.examInfo.minutes} minutes` : ""],
+      ["To pass", (A.examInfo || {}).pass, (B.examInfo || {}).pass],
+      ["Free study plan here", A.weeks ? `${A.weeks.length} weeks` : "", B.weeks ? `${B.weeks.length} weeks` : ""],
+      ["Career tracks", tracksOf(A), tracksOf(B)]
+    ].map(([k, a, b]) => `<tr><th scope="row">${esc(k)}</th><td>${esc(a || "–")}</td><td>${esc(b || "–")}</td></tr>`).join("");
+    const domains = c => `<ul class="clean">${c.domains.map(d => `<li>${esc(d.name)} <span class="note">${esc(d.w)}%</span></li>`).join("")}</ul>`;
+    out("public/compare/index.html", `${head({ title: `Compare Certifications · ${cfg.siteName}`, desc: "Side-by-side comparisons of popular IT and cybersecurity certifications: who each is for, which to take first, and how the exams differ.", prefix: "../", urlPath: "/compare/", scripts: [], ld: crumbs([["Home", "/"], ["Compare", "/compare/"]]) })}
+<body>
+${top("../")}
+<main class="wrap lesson-page">
+<p class="crumbs"><a href="../">All certifications</a> / Compare</p>
+<h1>Compare certifications</h1>
+<p class="meta">Which one should you take? Each comparison shows who the certification is for, which to take first, and how the exams differ.</p>
+<div class="panel"><ul class="clean">${comparisons.map(x => `<li><a href="${x.slug}/">${esc(byId(x.a).short)} vs ${esc(byId(x.b).short)}</a></li>`).join("")}</ul></div>
+</main>
+</body>
+</html>
+`);
+    extraPages.push(["/compare/"]);
+    comparisons.forEach(x => {
+      const A = byId(x.a), B = byId(x.b), title = `${A.short} vs ${B.short}`;
+      const first = x.first === "a" ? `Take ${A.short} first.` : x.first === "b" ? `Take ${B.short} first.` : "Either order works.";
+      const related = comparisons.filter(y => y !== x && [y.a, y.b].some(id => id === x.a || id === x.b));
+      out(`public/compare/${x.slug}/index.html`, `${head({ title: `${title}: Which Should You Take? · ${cfg.siteName}`, desc: `${A.name} or ${B.name}? ${x.summary}`.slice(0, 155), prefix: "../../", urlPath: `/compare/${x.slug}/`, scripts: [], ld: crumbs([["Home", "/"], ["Compare", "/compare/"], [title, `/compare/${x.slug}/`]]) })}
+<body>
+${top("../../")}
+<main class="wrap lesson-page">
+<p class="crumbs"><a href="../../">All certifications</a> / <a href="../">Compare</a> / ${esc(title)}</p>
+<h1>${esc(title)}: which should you take?</h1>
+<p class="meta">${esc(x.summary)}</p>
+<h2>Which first?</h2>
+<div class="panel"><p><strong>${esc(first)}</strong> ${esc(x.firstWhy)}</p></div>
+<h2>Who each one is for</h2>
+<div class="panel"><p><strong>${esc(name(A))}:</strong> ${esc(x.forA)}</p><p><strong>${esc(name(B))}:</strong> ${esc(x.forB)}</p></div>
+<h2>Key differences</h2>
+<div class="panel"><ul class="clean">${x.differences.map(d => `<li>${esc(d)}</li>`).join("")}</ul></div>
+<h2>Side by side</h2>
+<div class="tablewrap" tabindex="0"><table class="kqlt"><caption class="sr-only">${esc(title)} exam facts</caption><thead><tr><th scope="col"><span class="sr-only">Item</span></th><th scope="col">${esc(A.short)}</th><th scope="col">${esc(B.short)}</th></tr></thead><tbody>${facts(A, B)}</tbody></table></div>
+<h2>Exam domains</h2>
+<div class="cmpgrid"><div class="panel"><h3>${esc(name(A))}</h3>${domains(A)}</div><div class="panel"><h3>${esc(name(B))}</h3>${domains(B)}</div></div>
+<p class="note">Exam details come from each vendor's published objectives as recorded in the study plans; confirm them on the vendor's page before you book.</p>
+<div class="panel startcard"><div class="grow"><strong>Study either one for free</strong><br><span class="note">Week-by-week lessons, quizzes, exam simulations and hands-on labs.</span></div><a class="btn sm" href="../../${A.id}/">${esc(A.short)} plan</a> <a class="btn sm" href="../../${B.id}/">${esc(B.short)} plan</a></div>
+${related.length ? `<h2>Related comparisons</h2><div class="panel"><ul class="clean">${related.map(y => `<li><a href="../${y.slug}/">${esc(byId(y.a).short)} vs ${esc(byId(y.b).short)}</a></li>`).join("")}</ul></div>` : ""}
+</main>
+</body>
+</html>
+`);
+      extraPages.push([`/compare/${x.slug}/`]);
+    });
+  }
+}
+
 // Lesson pages that no longer match a lesson are removed.
 if (!CHECK) certs.forEach(c => {
   const keep = new Set(lessonPages.map(([u]) => u));
@@ -667,7 +740,7 @@ walk(PUB).filter(f => !/(^|\/)(sw\.js|_headers|_redirects|robots\.txt|sitemap\.x
     // Lessons and the Python engine (about 13 MB) are cached the first time someone uses them.
     // Only the app shell and study plans install up front; question banks, lessons, simulations and hands-on data are
     // cached the first time they're opened (or all at once with "Save for offline"). Source-only files (whys, extra) never load.
-    const lesson = /^\/data\/(lessons|lessons-es|questions-es|extra|whys|pbq|pbq-es|handson|handson-es)\//.test(rel) || /^\/data\/gen\/[^/]+-q\.js$/.test(rel) || rel === "/data/ui-es.js" || rel === "/data/examday.js" || rel === "/data/examday-es.js" || rel.startsWith("/vendor/");
+    const lesson = /^\/data\/(lessons|lessons-es|questions-es|extra|whys|pbq|pbq-es|handson|handson-es)\//.test(rel) || /^\/data\/gen\/[^/]+-q\.js$/.test(rel) || /^\/data\/[a-z0-9-]+-es\.js$/.test(rel) || rel === "/data/examday.js" || rel.startsWith("/vendor/");
     // Files pages reference by hashed URL are cached under that URL, so offline pages find them.
     if (!authoredCert && !lesson && (rel.startsWith("/assets/") || rel.startsWith("/data/") || rel === "/manifest.webmanifest")) precache.push(sri[rel.slice(1)] ? "/" + sri[rel.slice(1)].url : rel);
   });

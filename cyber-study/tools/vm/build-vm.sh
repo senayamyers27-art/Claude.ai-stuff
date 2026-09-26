@@ -57,7 +57,7 @@ mkdir -p proc sys dev run tmp root home/student etc/skel var/log var/tmp var/spo
 cp usr/share/openssh/sshd_config etc/ssh/sshd_config; cp usr/share/base-files/profile etc/profile; cp usr/share/base-files/dot.profile root/.profile; cp usr/share/base-files/dot.bashrc root/.bashrc
 cp -a "$HERE/overlay/." .
 rm -f etc/update-motd.d/*   # just our own welcome text (/etc/motd)
-chmod 440 etc/sudoers.d/student
+chmod 440 etc/sudoers etc/sudoers.d/student
 sed -i 's|^SHELL=/bin/sh|SHELL=/bin/bash|' etc/default/useradd
 # Same PATH for everyone as a normal Ubuntu install (/etc/environment), so admin tools are found.
 sed -i 's|^ENV_PATH.*|ENV_PATH\tPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin|' etc/login.defs

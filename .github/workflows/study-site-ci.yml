@@ -63,3 +63,15 @@ jobs:
 
       - name: Accessibility check (WCAG 2.2 AA, axe-core)
         run: npm run test:a11y
+
+      - name: Layout check (phone and desktop, light and dark)
+        run: npm run test:layout -- --shots
+
+      - name: Keep the layout screenshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: layout-shots
+          path: cyber-study/layout-shots/
+          retention-days: 14
+          if-no-files-found: ignore

@@ -94,6 +94,7 @@ npm run check       # data checks + generated files in sync + security and XSS l
 npm test            # headless browser smoke test of every page, including offline mode
 npm run test:api    # accounts API tests (see "Optional accounts" below)
 npm run test:a11y   # accessibility: axe-core WCAG 2.2 AA on every view, light and dark
+npm run test:layout # every kind of view fits phone and desktop screens (--shots saves screenshots)
 node tools/sbom.js --out sbom.cdx.json   # CycloneDX SBOM of everything the site ships
 node tools/vuln-check.js                 # look up shipped components in the OSV database
 node tools/integrity-check.js            # compare the live site with the repository
