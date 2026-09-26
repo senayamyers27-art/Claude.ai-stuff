@@ -28,8 +28,8 @@ for (const f of files.filter(f => f.endsWith(".html"))) {
   }
   if (/<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>/i.test(s)) fail(f, "inline <script> (move it to a file)");
   if (/\son[a-z]+\s*=\s*["']/i.test(s)) fail(f, "inline event handler attribute");
-  // A canonical link names the page's own public address; it loads nothing.
-  if (/<script[^>]+src="https?:\/\//i.test(s) || /<link(?![^>]*rel="canonical")[^>]+href="https?:\/\//i.test(s)) fail(f, "loads a script or stylesheet from another site");
+  // Canonical and alternate-language links name public addresses of this site's pages; they load nothing.
+  if (/<script[^>]+src="https?:\/\//i.test(s) || /<link(?![^>]*rel="(?:canonical|alternate)")[^>]+href="https?:\/\//i.test(s)) fail(f, "loads a script or stylesheet from another site");
   for (const m of s.matchAll(/<a\b[^>]*target="_blank"[^>]*>/gi)) if (!/rel="[^"]*noopener/.test(m[0])) fail(f, "target=_blank link without rel=noopener");
 }
 // Question text in data/ may quote URLs as exam content, and the font licence is verbatim;

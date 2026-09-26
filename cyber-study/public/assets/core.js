@@ -83,7 +83,19 @@
     const c = certs[id];
     if (!c || !c.hasPbqs) return Promise.resolve(null);
     if (pbqs[id]) return Promise.resolve(pbqs[id]);
-    return loadScript(`data/pbq/${id}.js`).then(() => pbqs[id] || null);
+    // Spanish mode uses the translated set when there is one (same ids, so saved results still match).
+    const es = c.hasPbqsEs && i18n.lang() === "es";
+    if (!es) return loadScript(`data/pbq/${id}.js`).then(() => pbqs[id] || null);
+    // Fill-in answers accept the English words too, so "Low" counts as well as "Bajo".
+    return loadScript(`data/pbq-es/${id}.js`).then(() => {
+      const t = pbqs[id]; delete pbqs[id];
+      return loadScript(`data/pbq/${id}.js`).then(() => {
+        const en = pbqs[id] || [];
+        if (!t) return en.length ? en : null;
+        t.forEach(p => { const e = en.find(x => x.id === p.id); if (p.type === "fill" && e && Array.isArray(e.fields)) p.fields.forEach((f, i) => { const ef = e.fields[i]; if (ef && Array.isArray(ef.answers)) f.answers = [...new Set(f.answers.concat(ef.answers))]; }); });
+        return (pbqs[id] = t);
+      });
+    });
   }
   function addPbqs(id, list) { if (Array.isArray(list)) pbqs[id] = list.filter(p => p && p.id && p.type); }
   // Hands-on exercises (Python, terminal, KQL): data/handson/<id>.js.
@@ -92,9 +104,23 @@
     const c = certs[id];
     if (!c || !c.hasHandson) return Promise.resolve(null);
     if (handson[id]) return Promise.resolve(handson[id]);
-    return loadScript(`data/handson/${id}.js`).then(() => handson[id] || null);
+    return loadScript(`data/handson/${id}.js`).then(() => {
+      if (!handson[id] || !c.hasHandsonEs || i18n.lang() !== "es") return handson[id] || null;
+      return loadScript(`data/handson-es/${id}.js`).then(() => handson[id]);
+    });
   }
   function addHandson(id, h) { if (h && Array.isArray(h.items)) handson[id] = { items: h.items.filter(x => x && x.id && x.kind), tables: h.tables || {}, captures: h.captures || {} }; }
+  // Spanish text for hands-on exercises: { itemId: { title, prompt, hint, explain, labels: [check/test/question labels in order] } }.
+  // Only the words learners read change; commands, setup, checks and answers stay as they are.
+  function addHandsonEs(id, m) {
+    const h = handson[id]; if (!h || !m || typeof m !== "object") return;
+    h.items.forEach(x => {
+      const t = m[x.id]; if (!t) return;
+      ["title", "prompt", "hint", "explain"].forEach(k => { if (typeof t[k] === "string" && t[k]) x[k] = t[k]; });
+      const list = x.checks || x.tests || x.questions;
+      if (Array.isArray(t.labels) && Array.isArray(list) && t.labels.length === list.length) list.forEach((c, i) => { if (c && typeof t.labels[i] === "string" && t.labels[i]) c.label = t.labels[i]; });
+    });
+  }
   // Career pages and interview practice: data/careers.js.
   const careers = { list: null, interview: {} };
   const loadCareers = () => loadScript("data/careers.js").then(() => careers);
@@ -412,7 +438,7 @@
     if (!s) return { state: "new", pct: 0 };
     if (s.done) return { state: "done", pct: 100 };
     const n = Object.values(s.steps || {}).filter(Boolean).length;
-    return { state: n ? "doing" : "new", pct: Math.round(100 * n / lab.steps.length) };
+    return { state: n ? "doing" : "new", pct: Math.round(100 * n / ((lab.steps && lab.steps.length) || lab.stepCount || 1)) };
   }
 
   /* ---------- study streak (this browser only) ---------- */
@@ -504,7 +530,11 @@
     i18n, addUiEs: d => i18n.add(d), U, store, certs, buildPlan, loadProgress, saveProgress, freshProgress, applyTheme, themeButton, ACCENTS, accent, setAccent, exportAll, importAll, activeNotices,
     backupText, restoreText, ui, install, labs, labOrder, loadLabProgress, saveLabProgress, labStatus,
     register(c) { certs[c.id] = c; if (Array.isArray(c.questions)) c.qCount = c.questions.length; },
-    loadQuestions, addQuestions, loadLessons, addLessons, lessonMeta, addDiagrams, diagramsFor, loadPbqs, addPbqs, loadQuestionsEs, addQuestionsEs, loadHandson, addHandson, loadCareers, addCareers, addInterview, careers, loadScript, activity, reminderIcs, addReminder, reportUrl, downloadFile, makeBadge, BASE,
-    registerLabs(list) { list.forEach(l => { if (!labs[l.id]) labOrder.push(l.id); labs[l.id] = l; }); }
+    loadQuestions, addQuestions, loadLessons, addLessons, lessonMeta, addDiagrams, diagramsFor, loadPbqs, addPbqs, loadQuestionsEs, addQuestionsEs, loadHandson, addHandson, addHandsonEs, loadCareers, addCareers, addInterview, careers, loadScript, activity, reminderIcs, addReminder, reportUrl, downloadFile, makeBadge, BASE,
+    // data/lab-index.js registers a short entry for every lab (enough for cards and counts); the full labs
+    // (data/labs-*.js) load on first use and replace them.
+    registerLabs(list, meta) { list.forEach(l => { if (!labs[l.id]) labOrder.push(l.id); if (!(meta && meta.index && labs[l.id])) labs[l.id] = meta && meta.index ? Object.assign({ stub: true }, l) : l; }); },
+    labsLoaded: () => !CertHub.labFiles || labOrder.every(id => !labs[id].stub),
+    loadLabs() { return CertHub.labsLoaded() ? Promise.resolve(true) : Promise.all((CertHub.labFiles || []).map(f => loadScript("data/" + f))).then(r => r.every(Boolean)); }
   };
 })();
