@@ -1,0 +1,48 @@
+name: Study site integrity
+
+# Proves the live site is byte-for-byte a build from this repository: reads the build version
+# from the live /sw.js, finds that commit on main, and compares every published file's hash with
+# it (tools/integrity-check.js). A mismatch fails the run and GitHub emails the repository owner;
+# see cyber-study/docs/INCIDENT_RESPONSE.md.
+
+on:
+  schedule:
+    - cron: "17 */6 * * *" # every 6 hours
+  workflow_run:
+    workflows: ["Study site to GitHub Pages"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: study-site-integrity
+  cancel-in-progress: false
+
+jobs:
+  integrity:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: cyber-study
+    steps:
+      - name: Checkout main with history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+
+      - name: Compare the live site with the repository
+        run: |
+          # Right after a publish the host's cache can still serve the old build for a few minutes.
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then sleep 120; fi
+          node tools/integrity-check.js --ref HEAD

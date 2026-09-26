@@ -37,7 +37,8 @@ PKGS=$(for p in $PKGS; do case " $SKIP $ALL " in *" $p "*) ;; *) a=$(apt-cache s
 rm -rf debs rootfs && mkdir -p debs rootfs && chmod 777 debs
 (cd debs && apt-get download $PKGS $ALL >/dev/null)
 for d in debs/*.deb; do dpkg-deb -x "$d" rootfs; done
-(cd debs && ls *.deb) > packages.txt
+# One line per package; "source:" names the Ubuntu source package when it differs (security advisories use source names).
+(cd debs && for d in *.deb; do s=$(dpkg-deb -f "$d" Source); if [ -n "$s" ]; then echo "$d  source: $s"; else echo "$d"; fi; done) > packages.txt
 cd rootfs
 # Merged /usr like a normal Ubuntu install.
 for d in bin sbin lib; do if [ -d "$d" ] && [ ! -L "$d" ]; then mkdir -p "usr/$d"; cp -a "$d"/. "usr/$d"/; rm -rf "$d"; fi; ln -sfn "usr/$d" "$d"; done

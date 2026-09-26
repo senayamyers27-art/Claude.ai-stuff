@@ -1,0 +1,65 @@
+name: Study site provenance
+
+# After "Study site CI" passes on main: records exactly what was built and signs it.
+# - site-manifest.txt: the SHA-256 of every file in cyber-study/public.
+# - sbom.cdx.json: CycloneDX software bill of materials (tools/sbom.js).
+# Both get a signed SLSA build provenance attestation (Sigstore), so anyone can check that a copy
+# of the site came from this repository's CI:
+#   gh attestation verify site-manifest.txt --repo senayamyers27-art/Claude.ai-stuff
+# then compare downloaded files with `sha256sum -c site-manifest.txt`.
+
+on:
+  workflow_run:
+    workflows: ["Study site CI"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  provenance:
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write      # Sigstore signing identity for the attestation
+      attestations: write  # store the attestation on this repository
+    defaults:
+      run:
+        working-directory: cyber-study
+    steps:
+      - name: Checkout the tested commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+
+      - name: Build the manifest and SBOM
+        run: |
+          (cd public && find . -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum) > site-manifest.txt
+          node tools/sbom.js --out sbom.cdx.json
+          echo "$(wc -l < site-manifest.txt) files in the manifest" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: |
+            cyber-study/site-manifest.txt
+            cyber-study/sbom.cdx.json
+
+      - name: Keep the manifest and SBOM
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: site-provenance
+          path: |
+            cyber-study/site-manifest.txt
+            cyber-study/sbom.cdx.json
+          retention-days: 90
