@@ -16,7 +16,22 @@
 
   /* ---------- loading ---------- */
   const loadCss = href => new Promise(res => { if (document.querySelector(`link[href="${href}"]`)) return res(); const l = document.createElement("link"); l.rel = "stylesheet"; l.href = href; l.onload = l.onerror = () => res(); document.head.appendChild(l); });
-  const libs = () => Promise.all([CertHub.loadScript(V + "xterm.js"), CertHub.loadScript(V + "libv86.js"), CertHub.loadScript("data/vmlabs.js"), loadCss(CertHub.BASE + V + "xterm.css")])
+  // Lab data, with the Spanish text (data/vmlabs-es.js) laid over it in Spanish mode. Commands in steps are the same
+  // in both languages, so only titles, intros, steps and check labels are replaced.
+  let labsLoading = null;
+  const loadLabs = () => labsLoading || (labsLoading = CertHub.loadScript("data/vmlabs.js").then(() => {
+    if (CertHub.i18n.lang() !== "es") return;
+    return CertHub.loadScript("data/vmlabs-es.js").then(() => {
+      const es = CertHub.vmLabsEs || {};
+      CertHub.vmLabs.labs.forEach(l => {
+        const t = es[l.id];
+        if (!t || (t.steps || []).length !== l.steps.length || (t.checks || []).length !== l.checks.length) return;
+        Object.assign(l, { title: t.title, intro: t.intro, steps: t.steps });
+        l.checks.forEach((c, i) => { c.label = t.checks[i]; });
+      });
+    }, () => {});
+  }));
+  const libs = () => Promise.all([CertHub.loadScript(V + "xterm.js"), CertHub.loadScript(V + "libv86.js"), loadLabs(), loadCss(CertHub.BASE + V + "xterm.css")])
     .then(r => { if (!r[0] || !r[1] || !window.V86 || !window.Terminal) throw new Error("The VM couldn't load. Check your connection and try again."); });
   const config = () => cfgP || (cfgP = fetch(CertHub.BASE + V + "config.json").then(r => r.json()).catch(e => { cfgP = null; throw e; }));
   // The snapshot is fetched once per page visit and shared by every VM on the page.
@@ -200,7 +215,7 @@
   }
   // Inline code in lab steps becomes a button that types it into the right machine ("On client: ..." steps).
   const stepHtml = (s, lab) => {
-    const host = lab.mode === "network" ? (/^On client:/i.test(s) ? "client" : "server") : "lab";
+    const host = lab.mode === "network" ? (/^(On|En) client:/i.test(s) ? "client" : "server") : "lab";
     return esc(s).replace(/`([^`\n]+)`/g, (m, c) => `<button type="button" class="vmcode" data-vmtype="${/* html: already escaped by esc(s) */ c}" data-vmhost="${host}" title="Type it into ${host}">${/* html: already escaped by esc(s) */ c}</button>`);
   };
   function labView(lab) {
@@ -287,7 +302,7 @@
     };
     if (CertHub.vmLabs) return draw();
     app.innerHTML = `<p class="meta" role="status">Loading…</p>`;
-    CertHub.loadScript("data/vmlabs.js").then(() => { if (location.hash === "#" + head) document.title = `${draw()} · StudyToCert`; });
+    loadLabs().then(() => { if (location.hash === "#" + head) document.title = `${draw()} · StudyToCert`; });
     return "Practice VMs";
   }
 

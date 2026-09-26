@@ -922,6 +922,11 @@
     app.querySelectorAll(".learn-dom").forEach(sec => { sec.hidden = !!q && !sec.querySelector(".learn-week:not([hidden])"); });
     const n = $("#lsearch-n"); if (n) n.textContent = q ? `${shown} lesson${shown === 1 ? "" : "s"} match "${qs.trim()}".` : "";
   }
+  // Links to the comparison pages (/compare/<a>-vs-<b>/) that include this certification.
+  function compareLinks() {
+    const list = ((CertHub.site || {}).compare || []).filter(p => p.includes(C.id) && CertHub.certs[p[0]] && CertHub.certs[p[1]]);
+    return list.length ? `<p class="note no-print">Compare: ${list.map(([a, b]) => `<a href="/compare/${esc(a)}-vs-${esc(b)}/">${esc(CertHub.certs[a].short)} vs ${esc(CertHub.certs[b].short)}</a>`).join(" · ")}</p>` : "";
+  }
   function learnView() {
     const head = `<h1>Lessons</h1>`;
     if (LES === null) return head + `<p class="note">Loading lessons…</p>`;
@@ -1187,6 +1192,7 @@
     ${C.status === "verified" ? `<div class="status">${esc(C.statusNote || "")}</div>` : checkBanner()}
     ${noticeHtml()}
     <p class="note no-print"><a href="#exam-day">Exam-day guide</a>: scoring, question types, pacing and check-in${CertHub.examDay ? ` for ${esc(C.vendor || "this vendor")}` : ""}.</p>
+    ${compareLinks()}
     ${C.lastVerified ? `<p class="note">Exam details last checked ${esc(fmtLong(parseD(C.lastVerified)))}.</p>` : ""}
     <h2>Exam format</h2>
     <div class="panel">

@@ -130,7 +130,23 @@
   }
   // Career pages and interview practice: data/careers.js.
   const careers = { list: null, interview: {} };
-  const loadCareers = () => loadScript("data/careers.js").then(() => careers);
+  // In Spanish mode, data/careers-es.js and data/interview-es.js replace the text; lists must match the English.
+  let careersLoading = null;
+  const loadCareers = () => careersLoading || (careersLoading = loadScript("data/careers.js").then(() => {
+    if (i18n.lang() !== "es" || !careers.list) return careers;
+    return Promise.all([loadScript("data/careers-es.js"), loadScript("data/interview-es.js")]).then(() => {
+      const t = CertHub.careersEs || {}, iv = CertHub.interviewEs || {}, same = (a, b) => Array.isArray(a) && Array.isArray(b) && a.length === b.length;
+      careers.list.forEach(c => {
+        const e = t[c.track];
+        if (!e || !same(e.path, c.path) || !same(e.jobs, c.jobs) || !same(e.skills, c.skills) || !same(e.firstSteps, c.firstSteps)) return;
+        Object.assign(c, { title: e.title, intro: e.intro, skills: e.skills, firstSteps: e.firstSteps });
+        c.path.forEach((p, i) => { p.why = e.path[i]; });
+        c.jobs.forEach((j, i) => { [j.title, j.level, j.does] = e.jobs[i]; });
+      });
+      Object.keys(careers.interview).forEach(r => { if (same(iv[r], careers.interview[r])) careers.interview[r] = iv[r]; });
+      return careers;
+    }, () => careers);
+  }));
   function addCareers(list) { if (Array.isArray(list)) careers.list = list; }
   function addInterview(map) { if (map && typeof map === "object") careers.interview = map; }
 
