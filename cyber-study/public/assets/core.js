@@ -77,6 +77,13 @@
     return loadScript(`data/questions-es/${id}.js`).then(() => qEs[id] || null);
   }
   function addQuestionsEs(id, m) { if (m && typeof m === "object") qEs[id] = m; }
+  // Full weekly plans: data/gen/<id>-plan.js, loaded when a certification's page opens.
+  function loadPlan(id) {
+    const c = certs[id];
+    if (!c || !c.lite) return Promise.resolve(!!c);
+    return loadScript(`data/gen/${id}-plan.js`).then(ok => ok && !c.lite);
+  }
+  function addPlanDetail(id, d) { const c = certs[id]; if (!c || !d) return; Object.assign(c, d); c.lite = false; }
   // Exam simulations (performance-based questions): data/pbq/<id>.js.
   const pbqs = {};
   function loadPbqs(id) {
@@ -179,6 +186,8 @@
     return out;
   }
   function buildPlan(c) {
+    // Before the full plan has loaded, a short summary (title, domain and labs of each week) stands in.
+    if (c.lite && Array.isArray(c.plan)) return { weeks: c.plan.map(([title, dom, labRefs], i) => ({ n: i + 1, title, dom, labRefs, topics: [], notes: [], study: [] })), checkpoints: [], phases: [], lite: true };
     const map = (window.CertHub && window.CertHub.labMap || {})[c.id] || {};
     if (c.weeks) {
       return {
@@ -530,7 +539,7 @@
     i18n, addUiEs: d => i18n.add(d), U, store, certs, buildPlan, loadProgress, saveProgress, freshProgress, applyTheme, themeButton, ACCENTS, accent, setAccent, exportAll, importAll, activeNotices,
     backupText, restoreText, ui, install, labs, labOrder, loadLabProgress, saveLabProgress, labStatus,
     register(c) { certs[c.id] = c; if (Array.isArray(c.questions)) c.qCount = c.questions.length; },
-    loadQuestions, addQuestions, loadLessons, addLessons, lessonMeta, addDiagrams, diagramsFor, loadPbqs, addPbqs, loadQuestionsEs, addQuestionsEs, loadHandson, addHandson, addHandsonEs, loadCareers, addCareers, addInterview, careers, loadScript, activity, reminderIcs, addReminder, reportUrl, downloadFile, makeBadge, BASE,
+    loadQuestions, addQuestions, loadPlan, addPlanDetail, loadLessons, addLessons, lessonMeta, addDiagrams, diagramsFor, loadPbqs, addPbqs, loadQuestionsEs, addQuestionsEs, loadHandson, addHandson, addHandsonEs, loadCareers, addCareers, addInterview, careers, loadScript, activity, reminderIcs, addReminder, reportUrl, downloadFile, makeBadge, BASE,
     // data/lab-index.js registers a short entry for every lab (enough for cards and counts); the full labs
     // (data/labs-*.js) load on first use and replace them.
     registerLabs(list, meta) { list.forEach(l => { if (!labs[l.id]) labOrder.push(l.id); if (!(meta && meta.index && labs[l.id])) labs[l.id] = meta && meta.index ? Object.assign({ stub: true }, l) : l; }); },

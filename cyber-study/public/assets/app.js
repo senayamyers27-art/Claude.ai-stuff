@@ -226,10 +226,13 @@
     if (!/^[a-z0-9-]{1,64}$/.test(head || "")) head = "home";
     if (tab && !/^([a-z]{1,16}|video-l[a-z0-9]{1,14})$/.test(tab)) tab = "";
     // The home page and a few light pages only need the lab index; everything else waits for the full labs.
-    if (!CertHub.labsLoaded() && !LIGHT.has(head)) {
+    if ((!CertHub.labsLoaded() && !LIGHT.has(head)) || (own(certs, head) && certs[head].lite)) {
       $("#app").innerHTML = `<p class="meta" role="status">Loading…</p>`;
       const want = location.hash;
-      CertHub.loadLabs().then(() => { if (location.hash === want) route(); });
+      Promise.all([CertHub.loadLabs(), own(certs, head) ? CertHub.loadPlan(head) : true]).then(r => {
+        if (location.hash !== want) return;
+        if (r.every(Boolean)) route(); else $("#app").innerHTML = `<p class="meta" role="status">This page couldn't load. Check your connection and try again.</p>`;
+      });
       return;
     }
     const prev = view;

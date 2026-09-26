@@ -1295,7 +1295,7 @@
         render();
       },
       offline: () => {
-        const base = CertHub.BASE, urls = [`data/lessons/${C.id}.js`, "data/diagrams.js", `data/gen/${C.id}-q.js`].concat(C.hasLessonsEs ? [`data/lessons-es/${C.id}.js`] : [], C.hasPbqs ? [`data/pbq/${C.id}.js`] : [], C.hasHandson ? [`data/handson/${C.id}.js`] : [], LANG === "es" && C.hasQuestionsEs ? [`data/questions-es/${C.id}.js`] : [], LANG === "es" && C.hasPbqsEs ? [`data/pbq-es/${C.id}.js`] : [], LANG === "es" && C.hasHandsonEs ? [`data/handson-es/${C.id}.js`] : []).map(u => base + u);
+        const base = CertHub.BASE, urls = [`data/lessons/${C.id}.js`, "data/diagrams.js", `data/gen/${C.id}-q.js`, `data/gen/${C.id}-plan.js`].concat(C.hasLessonsEs ? [`data/lessons-es/${C.id}.js`] : [], C.hasPbqs ? [`data/pbq/${C.id}.js`] : [], C.hasHandson ? [`data/handson/${C.id}.js`] : [], LANG === "es" && C.hasQuestionsEs ? [`data/questions-es/${C.id}.js`] : [], LANG === "es" && C.hasPbqsEs ? [`data/pbq-es/${C.id}.js`] : [], LANG === "es" && C.hasHandsonEs ? [`data/handson-es/${C.id}.js`] : []).map(u => base + u);
         const ctl = navigator.serviceWorker && navigator.serviceWorker.controller;
         if (!ctl) { CertHub.ui.toast("Offline saving needs the installed app or a second visit. Reload and try again."); return; }
         const ch = new MessageChannel();
