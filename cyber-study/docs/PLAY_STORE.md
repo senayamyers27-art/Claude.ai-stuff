@@ -24,8 +24,8 @@ bubblewrap init --manifest https://senayamyers27-art.github.io/manifest.webmanif
 
 1. **Answer the prompts.**
    - Package ID: pick one and never change it, for example `io.github.senayamyers27art.certstudy`.
-   - App name: Cyber Cert Study.
-   - Launcher name: Cert Study.
+   - App name: StudyToCert.
+   - Launcher name: StudyToCert.
    - Theme colors: keep the manifest's colors.
    - Signing key: let Bubblewrap create one. **Back up the keystore file and its passwords.** Without them you can't publish updates.
 2. **Build the package:** run `bubblewrap build`. This produces an `.aab` file, which is what you upload to Play, and an `.apk` for testing on your own phone.

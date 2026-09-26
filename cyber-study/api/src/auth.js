@@ -19,9 +19,9 @@ export async function requestMagicLink(env, request, body) {
   const link = `${env.SITE_ORIGIN}/?signin=${token}#account`;
   const sent = await sendEmail(env, {
     to: email,
-    subject: "Your Cyber Cert Study sign-in link",
-    text: `Sign in to Cyber Cert Study:\n\n${link}\n\nThis link works once and expires in 15 minutes. If you didn't ask for it, ignore this email.`,
-    html: `<p>Sign in to Cyber Cert Study:</p><p><a href="${link}">Sign in</a></p><p>This link works once and expires in 15 minutes. If you didn't ask for it, ignore this email.</p>`
+    subject: "Your StudyToCert sign-in link",
+    text: `Sign in to StudyToCert:\n\n${link}\n\nThis link works once and expires in 15 minutes. If you didn't ask for it, ignore this email.`,
+    html: `<p>Sign in to StudyToCert:</p><p><a href="${link}">Sign in</a></p><p>This link works once and expires in 15 minutes. If you didn't ask for it, ignore this email.</p>`
   });
   // Same response whether or not the address has an account, so emails can't be enumerated.
   const res = { ok: true, message: "Check your email for a sign-in link." };

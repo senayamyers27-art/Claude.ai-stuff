@@ -1,6 +1,6 @@
 {
-  "siteName": "Cyber Cert Study",
-  "description": "Free study plans for cybersecurity certifications: weekly topics, labs, quizzes, timed checkpoint tests, weighted practice exams and spaced review.",
+  "siteName": "StudyToCert",
+  "description": "Free study plans for IT and cybersecurity certifications: week-by-week lessons, hands-on labs, quizzes, practice exams and spaced review.",
   "domain": "senayamyers27-art.github.io",
   "redirectWww": true,
   "hstsPreload": false,
@@ -18,6 +18,10 @@
     "url": ""
   },
   "feedbackUrl": "https://github.com/senayamyers27-art/senayamyers27-art.github.io/issues",
+  "newsletter": {
+    "url": "",
+    "blurb": ""
+  },
   "analytics": {
     "goatcounter": ""
   },

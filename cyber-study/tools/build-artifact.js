@@ -11,7 +11,7 @@ require(path.join(PUB, "data/catalog.js"));
 const ids = CertHub.catalog.filter(id => fs.existsSync(path.join(PUB, "data", id + ".js")));
 const scripts = ["assets/theme.js", ...require("./app-scripts")(ids).scripts];
 const body = fs.readFileSync(path.join(__dirname, "templates/home.html"), "utf8").trim();
-const page = `<title>Cyber Cert Study</title>
+const page = `<title>StudyToCert</title>
 <link rel="stylesheet" href="assets/style.css">
 ${scripts.map(s => s === "assets/theme.js" ? `<script src="${s}"></script>` : `<script src="${s}" defer></script>`).join("\n")}
 ${body}
