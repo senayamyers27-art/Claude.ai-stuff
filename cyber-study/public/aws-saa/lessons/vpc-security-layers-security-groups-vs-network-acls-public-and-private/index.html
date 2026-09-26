@@ -38,6 +38,7 @@
 <p class="crumbs"><a href="../../../">All certifications</a> / <a href="../../">Solutions Architect Associate</a> / <a href="../">Lessons</a></p>
 <p class="note">AWS Certified Solutions Architect – Associate SAA-C03 · Domain 1: Design Secure Architectures</p>
 <h1>VPC security layers: security groups vs network ACLs, public and private subnets, NAT gateways, bastion hosts vs Session Manager</h1>
+<p class="btns"><a class="btn sm" href="../../#aws-saa.video-l1hjf7a0">▶ Watch the overview video</a></p>
 <p class="note">Last reviewed September 25, 2026</p>
 <article class="lbody">
 <p>A virtual private cloud (VPC) is your private network in an AWS Region, defined by an IPv4 CIDR block such as <code>10.0.0.0/16</code>. You divide it into subnets, each in one Availability Zone (AZ). What makes a subnet public is its route table: a public subnet has a route <code>0.0.0.0/0</code> pointing to an internet gateway, and instances there need a public or Elastic IP address to be reachable. A private subnet has no route to the internet gateway, so nothing on the internet can start a connection to it.</p>
