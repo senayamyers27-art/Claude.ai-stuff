@@ -1046,7 +1046,7 @@
     ${z.mode === "test" ? `<button class="btn ghost" data-act="finish">Submit test</button>` : ""}</div>`;
   }
   // Certifications whose objectives the practice VMs' graded labs cover (see data/vmlabs.js).
-  const VM_CERTS = new Set(["linux-plus", "rhcsa", "a-plus-core2", "server-plus", "security-plus", "network-plus", "cysa-plus"]);
+  const VM_CERTS = new Set(["linux-plus", "rhcsa", "a-plus-core2", "server-plus", "security-plus", "network-plus", "cysa-plus", "sscp", "isc2-cc", "securityx"]);
   function labsView() {
     const all = planLabs();
     const lp = CertHub.loadLabProgress();

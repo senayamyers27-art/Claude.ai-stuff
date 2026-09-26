@@ -12,6 +12,12 @@ const HOSTS = { lab: ["lab", "10.10.0.30/24", "1e"], server: ["server", "10.10.0
 
 // Reference solutions (as root). "client:" / "server:" pick the machine in network labs.
 const SOLVE = {
+  "ssh-investigation": ["echo '203.0.113.45 deploy' > /root/incident/findings.txt; iptables -I INPUT -s 203.0.113.45 -j DROP; mkdir -p /etc/iptables; iptables-save > /etc/iptables/rules.v4; usermod -L deploy"],
+  "ssh-hardening": ["printf 'PermitRootLogin no\\nMaxAuthTries 3\\nLoginGraceTime 30\\nX11Forwarding no\\n' > /etc/ssh/sshd_config.d/10-hardening.conf; sshd -t && systemctl reload ssh"],
+  "file-integrity": ["echo /opt/app/bin/backup.sh > /root/incident/changed.txt; cp -p /opt/app/release/backup.sh /opt/app/bin/"],
+  "sudo-audit": ["rm /etc/sudoers.d/90-temp; gpasswd -d intern sudo >/dev/null; usermod -L -e 1 contractor"],
+  "permissions-audit": ["chmod u-s /usr/local/bin/findx; chown root:root /etc/app.conf; chmod 640 /etc/app.conf; chmod 1777 /srv/share"],
+  persistence: ["echo 'sys-update-helper.service 4444' > /root/incident/listener.txt; systemctl disable --now sys-update-helper >/dev/null 2>&1; rm /etc/systemd/system/sys-update-helper.service; systemctl daemon-reload; crontab -l | grep -v sysupd | crontab -; rm -r /usr/local/lib/.sysupd; sleep 1"],
   users: ["groupadd devs; useradd -m -s /bin/bash -G devs alex; echo 'alex:Tr41n-ing!' | chpasswd; chage -M 90 alex"],
   "shared-dir": ["groupadd -f devs; mkdir -p /srv/projects; chown root:devs /srv/projects; chmod 2770 /srv/projects; touch /srv/projects/plan.txt; chmod 640 /srv/projects/plan.txt"],
   acl: ["useradd -m bob; echo 'Q3 numbers' > /srv/report.txt; chmod 600 /srv/report.txt; setfacl -m u:bob:r /srv/report.txt"],
