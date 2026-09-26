@@ -1,4 +1,4 @@
-# Cyber Cert Study
+# StudyToCert
 
 A static study website with plans for several cybersecurity certifications, grown out of the
 Security+ Study Hub. It's a separate site from 11:Eleven: it deploys to its own domain on
@@ -112,6 +112,14 @@ which is installable on phones.
 GitHub Pages can't send custom response headers, so the Content-Security-Policy comes from each
 page's `<meta>` tag, HTTPS/HSTS come from github.io itself, and the `_headers`, `_redirects` and
 Pages Function only apply on Cloudflare.
+
+**Custom domain (www.studytocert.com):** see `docs/CUSTOM_DOMAIN.md` for the DNS records and the
+order to switch in. Don't set `"domain"` until DNS resolves, or github.io redirects to a dead domain.
+
+**Newsletter (optional):** set `"newsletter": {"url": "https://…", "blurb": "…"}` in
+`site.config.json` to the sign-up page of a hosted newsletter service (Buttondown, Mailchimp,
+Substack and so on). The home page then shows a "Get study tips by email" card linking to it. The
+site itself never collects email addresses. Leave `url` empty to hide the card.
 
 ## Launch checklist
 

@@ -10,7 +10,7 @@ workers_dev = false
 [vars]
 APP_ENV = "production"
 SITE_ORIGIN = "https://example.com"
-EMAIL_FROM = "Cyber Cert Study <signin@example.com>"
+EMAIL_FROM = "StudyToCert <signin@example.com>"
 STRIPE_TAX = "off"
 
 [[d1_databases]]

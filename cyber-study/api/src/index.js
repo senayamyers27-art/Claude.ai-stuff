@@ -1,4 +1,4 @@
-/* Cyber Cert Study API (Cloudflare Worker).
+/* StudyToCert API (Cloudflare Worker).
    See ../docs/BACKEND_DESIGN.md. The static site works without this; it only calls the API
    when someone signs in. */
 import { HttpError, readJson, notFound } from "./util.js";

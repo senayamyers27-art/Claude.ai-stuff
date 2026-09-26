@@ -44,12 +44,12 @@ What remains needs your accounts, payment details and secrets, so only you can d
 
 - [ ] **Create a Resend account** (or another supported provider) and verify your domain for sending.
 - [ ] **Add the secret** `STUDY_API_EMAIL_KEY`.
-- [ ] **Add the variable** `STUDY_API_EMAIL_FROM`, for example `Cyber Cert Study <signin@your-domain>`.
+- [ ] **Add the variable** `STUDY_API_EMAIL_FROM`, for example `StudyToCert <signin@your-domain>`.
 
 ## 4. Stripe (payments)
 
 1. [ ] **Create the account.** Set up a Stripe account and finish business verification. Work in **test mode** first.
-2. [ ] **Create products.** Make a product "Cyber Cert Study Pro" with a monthly price and a yearly price. `site.config.json` shows $7 and $49; change both places if you choose other prices. Optionally add a per-seat price for group licenses.
+2. [ ] **Create products.** Make a product "StudyToCert Pro" with a monthly price and a yearly price. `site.config.json` shows $7 and $49; change both places if you choose other prices. Optionally add a per-seat price for group licenses.
 3. [ ] **Add the price ids as variables:**
    - `STRIPE_PRICE_PRO_MONTHLY`
    - `STRIPE_PRICE_PRO_YEARLY`

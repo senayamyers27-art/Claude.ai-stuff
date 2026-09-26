@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 140">
-<rect x="14" y="14" width="112" height="112" rx="26" fill="#16202C"/>
-<text x="70" y="82" text-anchor="middle" font-family="Public Sans, Segoe UI, Arial, sans-serif" font-weight="800" font-size="40" fill="#fff" letter-spacing="-1">CCS</text>
-<path d="M32 100 H108" stroke="#2D5BD0" stroke-width="5" stroke-linecap="round"/><circle cx="38" cy="100" r="5" fill="#2D5BD0"/><circle cx="70" cy="100" r="5" fill="#12806A"/><circle cx="102" cy="100" r="6" fill="#E8B444"/>
-<text x="146" y="72" font-family="Public Sans, Segoe UI, Arial, sans-serif" font-weight="800" font-size="40" fill="#E7ECF1">Cyber Cert Study</text>
-<text x="148" y="104" font-family="Public Sans, Segoe UI, Arial, sans-serif" font-weight="500" font-size="20" fill="#5A6573">Free plans. Real skills. Pass the exam.</text>
-</svg>

@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 140">
-<path d="M70 14 L118 32 V70 C118 100 96 120 70 130 C44 120 22 100 22 70 V32 Z" fill="#2D5BD0"/>
-<path d="M70 26 L106 40 V70 C106 92 90 108 70 116 C50 108 34 92 34 70 V40 Z" fill="#1E3F95"/>
-<path d="M50 72 L64 86 L92 56" stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-<text x="140" y="74" font-family="Public Sans, Segoe UI, Arial, sans-serif" font-weight="800" font-size="40" fill="#E7ECF1">Cyber Cert Study</text>
-<g><path d="M142 100 H420" stroke="#2D5BD0" stroke-width="5" stroke-linecap="round"/><circle cx="150" cy="100" r="7" fill="#fff" stroke="#2D5BD0" stroke-width="4"/><circle cx="285" cy="100" r="7" fill="#fff" stroke="#12806A" stroke-width="4"/><circle cx="420" cy="100" r="8" fill="#E8B444"/></g>
-</svg>

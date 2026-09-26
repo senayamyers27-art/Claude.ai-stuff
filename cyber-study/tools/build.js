@@ -98,7 +98,7 @@ function head({ title, desc, prefix, urlPath, scripts, lang = "en", ld = null, o
 <link rel="icon" href="${prefix}assets/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="${prefix}assets/icons/apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Cert Study">
+<meta name="apple-mobile-web-app-title" content="StudyToCert">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="${prefix}manifest.webmanifest">
 <link rel="preload" href="${prefix}assets/fonts/public-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -150,7 +150,9 @@ CertHub.site = ${JSON.stringify({
   // Display prices for Pro (the amounts charged are set in Stripe; keep them the same).
   pro: Object.fromEntries(["monthly", "yearly"].map(k => [k, /^[$€£]\d{1,4}(\.\d{2})?$/.test(String((cfg.pro || {})[k] || "")) ? cfg.pro[k] : ""])),
   apiUrl: apiOrigin,
-  analytics: analyticsOrigin
+  analytics: analyticsOrigin,
+  // Optional hosted newsletter sign-up form (Buttondown, Mailchimp, Substack...). The home page links to it.
+  newsletter: { url: httpsOr((cfg.newsletter || {}).url), blurb: String((cfg.newsletter || {}).blurb || "").slice(0, 160) }
 }, null, 2)};
 `);
 
@@ -435,7 +437,7 @@ if (!CHECK) certs.forEach(c => {
   });
 });
 
-const POLICY = { support: ["Support This Site", "Ways to help keep Cyber Cert Study free: share it, send feedback, or donate."], install: ["Install the App", "Add Cyber Cert Study to your phone's home screen. Works offline, no app store needed."], privacy: ["Privacy Policy", apiOrigin ? "No ads or tracking. Accounts are optional; joining a class shares a progress summary with the teacher only after you agree." : "No accounts, cookies, analytics or tracking. Your progress stays in your browser."], terms: ["Terms of Use", "Terms for using the study plans and labs, including authorized-use-only lab rules."], security: ["Security", "How the site is secured and how to report a vulnerability."], frameworks: ["Security Frameworks", "NIST CSF, ATT&CK, CIS Controls, ISO 27001, OWASP and more: what each framework is, which exams test it, and labs that use it. Plus NICE cybersecurity job roles."] };
+const POLICY = { support: ["Support This Site", "Ways to help keep StudyToCert free: share it, send feedback, or donate."], install: ["Install the App", "Add StudyToCert to your phone's home screen. Works offline, no app store needed."], privacy: ["Privacy Policy", apiOrigin ? "No ads or tracking. Accounts are optional; joining a class shares a progress summary with the teacher only after you agree." : "No accounts, cookies, analytics or tracking. Your progress stays in your browser."], terms: ["Terms of Use", "Terms for using the study plans and labs, including authorized-use-only lab rules."], security: ["Security", "How the site is secured and how to report a vulnerability."], frameworks: ["Security Frameworks", "NIST CSF, ATT&CK, CIS Controls, ISO 27001, OWASP and more: what each framework is, which exams test it, and labs that use it. Plus NICE cybersecurity job roles."] };
 Object.entries(POLICY).forEach(([id, [t, d]]) => out(`public/${id}/index.html`, `${head({ title: `${t} · ${cfg.siteName}`, desc: d, prefix: "../", urlPath: `/${id}/`, scripts: APP_SCRIPTS })}
 <body data-route="${id}">
 ${shell}
@@ -524,7 +526,7 @@ Preferred-Languages: en
 ${origin ? `Canonical: ${origin}/.well-known/security.txt\n` : ""}`);
 
 out("public/manifest.webmanifest", JSON.stringify({
-  name: cfg.siteName, short_name: "Cert Study", description: cfg.description,
+  name: cfg.siteName, short_name: "StudyToCert", description: cfg.description,
   id: "/", start_url: "/", scope: "/", display: "standalone", orientation: "any",
   background_color: "#EEF1F4", theme_color: "#EEF1F4", categories: ["education"],
   icons: [
