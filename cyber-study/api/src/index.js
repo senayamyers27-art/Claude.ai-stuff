@@ -8,6 +8,7 @@ import { listDocs, putDoc, MAX_DOC_BYTES } from "./progress.js";
 import { entitlementsFor, createCheckout, createPortal, handleWebhook, billingEnabled } from "./billing.js";
 import { createOrg, createCohort, listCohorts, createInvite, acceptInvite, cohortSummary, summaryCsv } from "./orgs.js";
 import { exportAccount, deleteAccount } from "./account.js";
+import { registerOptions, registerVerify, signinOptions, signinVerify, listPasskeys, deletePasskey, listSessions, endSession, endOtherSessions } from "./passkeys.js";
 import { listClasses, createClass, updateClass, deleteClass, rotateCode, previewJoin, joinClass, leaveClass, removeStudent, roster, rosterCsv } from "./classes.js";
 
 const SECURITY_HEADERS = {
@@ -86,6 +87,11 @@ async function route(request, env) {
     const { user, cookie } = await verifyMagicLink(env, request, await readJson(request));
     return json(env, request, { user: { id: user.id, email: user.email } }, 200, { "Set-Cookie": cookie });
   }
+  if (path === "/v1/auth/passkey/options" && method === "POST") return json(env, request, await signinOptions(env, request));
+  if (path === "/v1/auth/passkey/verify" && method === "POST") {
+    const { user, cookie } = await signinVerify(env, request, await readJson(request));
+    return json(env, request, { user: { id: user.id, email: user.email } }, 200, { "Set-Cookie": cookie });
+  }
   if (path === "/v1/auth/logout" && method === "POST") {
     const u = await currentUser(env, request);
     if (u) await logout(env, request, u);
@@ -156,6 +162,17 @@ async function route(request, env) {
     if (!m[2]) return json(env, request, r);
     return new Response(rosterCsv(r), { headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="class-roster.csv"`, ...SECURITY_HEADERS, ...cors(env, request) } });
   }
+
+  // Passkeys and signed-in devices.
+  if (path === "/v1/passkeys") {
+    if (method === "GET") return json(env, request, await listPasskeys(env, user));
+    if (method === "POST") return json(env, request, await registerVerify(env, request, user, await readJson(request)));
+  }
+  if (path === "/v1/passkeys/options" && method === "POST") return json(env, request, await registerOptions(env, request, user));
+  if ((m = path.match(/^\/v1\/passkeys\/([A-Za-z0-9_-]{16,1024})$/)) && method === "DELETE") return json(env, request, await deletePasskey(env, request, user, m[1]));
+  if (path === "/v1/sessions" && method === "GET") return json(env, request, await listSessions(env, user));
+  if (path === "/v1/sessions/others" && method === "DELETE") return json(env, request, await endOtherSessions(env, request, user));
+  if ((m = path.match(/^\/v1\/sessions\/([0-9a-f]{16})$/)) && method === "DELETE") return json(env, request, await endSession(env, request, user, m[1]));
 
   if (path === "/v1/account/export" && method === "GET") return json(env, request, await exportAccount(env, user), 200, { "Content-Disposition": 'attachment; filename="cyber-cert-study-account.json"' });
   if (path === "/v1/account" && method === "DELETE") {

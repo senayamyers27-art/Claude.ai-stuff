@@ -427,6 +427,26 @@
         wrap.querySelector('[data-v="1"]').focus();
       });
     },
+    // Asks for one line of text; resolves to the text, or null when cancelled.
+    prompt(message, { value = "", ok = "OK", cancel = "Cancel", max = 60 } = {}) {
+      return new Promise(resolve => {
+        const prev = document.activeElement;
+        const wrap = document.createElement("div");
+        wrap.className = "modal-wrap";
+        wrap.innerHTML = `<form class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-msg" novalidate><label id="modal-msg" for="modal-in"></label><input type="text" id="modal-in" class="textin" autocomplete="off"><div class="btns"><button type="submit" class="btn"></button><button type="button" class="btn ghost" data-v="0"></button></div></form>`;
+        wrap.querySelector("#modal-msg").textContent = message;
+        const input = wrap.querySelector("#modal-in"); input.value = value; input.maxLength = max;
+        wrap.querySelector('[type="submit"]').textContent = ok;
+        wrap.querySelector('[data-v="0"]').textContent = cancel;
+        const close = v => { wrap.remove(); document.removeEventListener("keydown", key); if (prev && prev.focus) prev.focus(); resolve(v); };
+        const key = e => { if (e.key === "Escape") close(null); };
+        wrap.querySelector("form").addEventListener("submit", e => { e.preventDefault(); close(input.value.trim()); });
+        wrap.addEventListener("click", e => { if (e.target.closest('[data-v="0"]') || e.target === wrap) close(null); });
+        document.addEventListener("keydown", key);
+        document.body.appendChild(wrap);
+        input.focus(); input.select();
+      });
+    },
     toast(message) {
       let t = document.getElementById("toast");
       if (!t) { t = document.createElement("div"); t.id = "toast"; t.className = "toast"; t.setAttribute("role", "status"); document.body.appendChild(t); }

@@ -69,18 +69,24 @@ export async function verifyMagicLink(env, request, body) {
     await env.DB.prepare("INSERT INTO users (id, email, created_at) VALUES (?, ?, ?)").bind(user.id, email, t).run();
     await audit(env, request, { actor: user.id, action: "user.created" });
   }
+  return { user, cookie: await createSession(env, request, user, "email") };
+}
+
+// __Host- prefix: Secure, Path=/ and no Domain, so no subdomain can set or read it. SameSite=Strict: the API
+// is on a subdomain of the site (same site), so the site's own requests carry it and no other site's do.
+// A new session for this user (after an email link or a passkey); returns the Set-Cookie value.
+export async function createSession(env, request, user, method) {
+  const t = now();
   const session = randomHex(32);
   await env.DB.prepare("INSERT INTO sessions (token_hash, user_id, created_at, expires_at, user_agent) VALUES (?, ?, ?, ?, ?)")
     .bind(await sha256Hex(session), user.id, t, t + SESSION_TTL, (request.headers.get("user-agent") || "").slice(0, 200)).run();
   // Keep only the newest sessions for this user.
   await env.DB.prepare("DELETE FROM sessions WHERE user_id = ? AND token_hash NOT IN (SELECT token_hash FROM sessions WHERE user_id = ? ORDER BY created_at DESC, rowid DESC LIMIT ?)")
     .bind(user.id, user.id, MAX_SESSIONS).run();
-  await audit(env, request, { actor: user.id, action: "session.created" });
-  return { user, cookie: sessionCookie(session, SESSION_TTL) };
+  await audit(env, request, { actor: user.id, action: "session.created", target: method });
+  return sessionCookie(session, SESSION_TTL);
 }
 
-// __Host- prefix: Secure, Path=/ and no Domain, so no subdomain can set or read it. SameSite=Strict: the API
-// is on a subdomain of the site (same site), so the site's own requests carry it and no other site's do.
 export function sessionCookie(value, ttlMs) {
   return `${SESSION_COOKIE}=${value}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=${Math.floor(ttlMs / 1000)}`;
 }
