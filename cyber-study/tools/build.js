@@ -77,7 +77,7 @@ const styleTag = (prefix, rel) => { const a = asset(rel); return `<link rel="sty
 
 /* ---------- security policy (one source for <meta> and _headers) ---------- */
 const CSP = [
-  "default-src 'self'", "script-src 'self' 'wasm-unsafe-eval'", "style-src 'self' 'unsafe-inline'", "font-src 'self'",
+  "default-src 'self'", "script-src 'self' 'wasm-unsafe-eval'", "style-src 'self'", "style-src-elem 'self' 'unsafe-inline'", "style-src-attr 'none'", "font-src 'self'",
   "img-src 'self' data:", `connect-src 'self'${apiOrigin ? " " + apiOrigin : ""}${analyticsOrigin ? " " + analyticsOrigin : ""}`, "manifest-src 'self'", "worker-src 'self' blob:",
   "object-src 'none'", "base-uri 'self'", "form-action 'none'", "frame-ancestors 'none'", "upgrade-insecure-requests",
   // Trusted Types: HTML and script URLs must pass the one policy defined in assets/theme.js.

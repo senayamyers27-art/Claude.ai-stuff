@@ -81,9 +81,9 @@
     const why = shown && picked !== q.a && q.why && q.why[picked] ? `<br><span data-ui><strong>Why this answer is wrong:</strong></span> ${inline(q.why[picked])}` : "";
     return `<div class="qhead"><strong>Daily review</strong><a class="btn ghost sm" href="#home">Stop</a></div>
     <div class="flex note"><span>Question ${esc(S.i + 1)} of ${S.items.length}</span><span>${esc(x.c.short)}${x.due ? " · review" : ""}</span></div>
-    <div class="prog"><i style="width:${100 * (S.i + 1) / S.items.length}%"></i></div>
+    <div class="prog"><i data-style="width:${100 * (S.i + 1) / S.items.length}%"></i></div>
     <p class="q">${esc(q.q)}</p>${opts}
-    ${shown ? `<div class="expl" role="status" style="--c:${picked === q.a ? "var(--ok)" : "var(--bad)"}"><strong data-ui>${picked === q.a ? "Correct." : "Not quite."}</strong> ${inline(q.e)}${why}</div><div class="btns"><button type="button" class="btn" data-rv="next">${S.i + 1 === S.items.length ? "Finish" : "Next"}</button></div>` : ""}`;
+    ${shown ? `<div class="expl" role="status" data-style="--c:${picked === q.a ? "var(--ok)" : "var(--bad)"}"><strong data-ui>${picked === q.a ? "Correct." : "Not quite."}</strong> ${inline(q.e)}${why}</div><div class="btns"><button type="button" class="btn" data-rv="next">${S.i + 1 === S.items.length ? "Finish" : "Next"}</button></div>` : ""}`;
   }
   const draw = () => { const a = $("#app"); if (a && CertHub.reviewActive()) a.innerHTML = view(); };
 

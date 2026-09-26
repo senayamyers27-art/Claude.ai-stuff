@@ -245,7 +245,7 @@
     const box = $("#vmresults"); status("Checking your work…");
     const res = await runChecks(lab); if (!S) return;
     const passed = res.filter(r => r.ok).length, all = passed === res.length;
-    box.innerHTML = `<div class="panel" style="--c:${all ? "var(--ok)" : "var(--warn)"}"><p><strong>${all ? "Lab complete. Nice work." : `${passed} of ${res.length} checks pass.`}</strong></p><ul class="checks">${res.map(r => `<li class="${r.ok ? "ok" : "no"}"><span aria-hidden="true">${r.ok ? "✓" : "✗"}</span> ${esc(r.c.label)}<span class="sr-only">${r.ok ? " (passed)" : " (not yet)"}</span></li>`).join("")}</ul></div>`;
+    box.innerHTML = `<div class="panel" data-style="--c:${all ? "var(--ok)" : "var(--warn)"}"><p><strong>${all ? "Lab complete. Nice work." : `${passed} of ${res.length} checks pass.`}</strong></p><ul class="checks">${res.map(r => `<li class="${r.ok ? "ok" : "no"}"><span aria-hidden="true">${r.ok ? "✓" : "✗"}</span> ${esc(r.c.label)}<span class="sr-only">${r.ok ? " (passed)" : " (not yet)"}</span></li>`).join("")}</ul></div>`;
     status(all ? "All checks pass." : "Keep going, then check again.");
     CertHub.activity.mark();
     if (all) { const d = done(); d[lab.id] = { when: Date.now() }; store.set(LABS_KEY, d); }
@@ -263,7 +263,7 @@
     const score = total ? Math.round(100 * got / total) : 0, pass = score >= CertHub.vmLabs.exam.pass;
     const r = store.get(EXAM_KEY, {}); r.last = { score, when: Date.now() }; r.best = Math.max(r.best || 0, score); store.set(EXAM_KEY, r);
     CertHub.activity.mark();
-    box.innerHTML = `<div class="panel" style="--c:${pass ? "var(--ok)" : "var(--bad)"}"><div class="big">${score}%</div><p class="meta">${pass ? "Pass." : "Not a pass yet."} ${got} of ${total} checks across ${rows.length} tasks.</p>
+    box.innerHTML = `<div class="panel" data-style="--c:${pass ? "var(--ok)" : "var(--bad)"}"><div class="big">${score}%</div><p class="meta">${pass ? "Pass." : "Not a pass yet."} ${got} of ${total} checks across ${rows.length} tasks.</p>
       ${rows.map(x => `<h3>${esc(x.lab.title)} <small class="note">${esc(x.p)}/${esc(x.n)}</small></h3><ul class="checks">${x.res.filter(r => !r.c.keep || !r.ok).map(r => `<li class="${r.ok ? "ok" : "no"}"><span aria-hidden="true">${r.ok ? "✓" : "✗"}</span> ${esc(r.c.label)}</li>`).join("")}</ul><p class="note"><a href="#vm-lab-${esc(x.lab.id)}">Practice this lab</a></p>`).join("")}
       <div class="btns"><button type="button" class="btn" data-vm="exam">Take another exam</button></div></div>`;
     status("Exam scored. The VM stays open so you can look around.");

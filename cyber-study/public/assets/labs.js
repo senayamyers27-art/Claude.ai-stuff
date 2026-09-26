@@ -15,11 +15,11 @@
 
   function card(lab, tag) {
     const st = labStatus(lab);
-    return `<a class="labcard" href="#${esc(lab.id)}" style="--c:${trackColor(lab.track)}">
-      <span class="labtop"><span class="chip" style="--c:${trackColor(lab.track)}">${esc(lab.track)}</span>${tag ? `<span class="note">${esc(tag)}</span>` : ""}</span>
+    return `<a class="labcard" href="#${esc(lab.id)}" data-style="--c:${trackColor(lab.track)}">
+      <span class="labtop"><span class="chip" data-style="--c:${trackColor(lab.track)}">${esc(lab.track)}</span>${tag ? `<span class="note">${esc(tag)}</span>` : ""}</span>
       <strong>${esc(lab.title)}</strong>
       <span class="note">${esc(lab.level)} · ${hours(lab.minutes)} · ${esc(lab.cost)}</span>
-      <span class="labprog" aria-hidden="true"><i style="width:${esc(st.pct)}%"></i></span>
+      <span class="labprog" aria-hidden="true"><i data-style="width:${esc(st.pct)}%"></i></span>
       <span class="labstate ${esc(st.state)}">${esc(STATE[st.state])}${st.state === "doing" ? ` · ${esc(st.pct)}% of steps` : ""}</span>
     </a>`;
   }
@@ -72,16 +72,16 @@
     const req = (lab.requires || []).map(id => labs[id]).filter(Boolean);
     return `<p class="crumbs"><a href="#labs">Labs</a> / ${esc(lab.track)}</p>
     <h1>${esc(lab.title)}</h1>
-    <p class="meta"><span class="chip" style="--c:${trackColor(lab.track)}">${esc(lab.track)}</span> ${esc(lab.level)} · about ${hours(lab.minutes)} · ${esc(lab.cost)}</p>
+    <p class="meta"><span class="chip" data-style="--c:${trackColor(lab.track)}">${esc(lab.track)}</span> ${esc(lab.level)} · about ${hours(lab.minutes)} · ${esc(lab.cost)}</p>
     <p class="lede">${esc(lab.summary)}</p>
-    <div class="panel realworld"><strong>On the job</strong><p>${esc(lab.realWorld)}</p>${nice().rolesFor(lab).length ? `<p class="note" style="margin:8px 0 0">Builds skills for these <a href="#frameworks">NICE work roles</a>: ${nice().rolesFor(lab).map(r => `<strong>${esc(r.name)}</strong> (${esc(r.titles)})`).join("; ")}</p>` : ""}</div>
+    <div class="panel realworld"><strong>On the job</strong><p>${esc(lab.realWorld)}</p>${nice().rolesFor(lab).length ? `<p class="note" data-style="margin:8px 0 0">Builds skills for these <a href="#frameworks">NICE work roles</a>: ${nice().rolesFor(lab).map(r => `<strong>${esc(r.name)}</strong> (${esc(r.titles)})`).join("; ")}</p>` : ""}</div>
     ${usesLinux(lab) ? `<div class="panel installcard vmcard"><div class="grow"><strong>Practice the Linux commands in your browser</strong><br><span class="note">The practice VMs are real Ubuntu servers with systemd, SSH, LVM and iptables, including a two-machine network, with nothing to install. Steps that need the internet or a desktop still need your home lab.</span></div><a class="btn sm" href="#vm">Open the practice VM</a></div>` : ""}
     ${lab.safety ? `<div class="status warn"><strong>Safety:</strong> ${esc(lab.safety)}</div>` : ""}
     ${req.length ? `<p class="note">Do first: ${req.map(r => `<a href="#${esc(r.id)}">${esc(r.title)}</a> (${esc(STATE[labStatus(r).state].toLowerCase())})`).join(", ")}</p>` : ""}
     <h2>You'll need</h2>
     <div class="panel"><ul class="clean">${lab.youWillNeed.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
-    <div class="flex" style="margin-top:28px"><h2 style="margin:0">Steps</h2><span class="note" id="stepcount">${Object.values(s.steps || {}).filter(Boolean).length} of ${lab.steps.length} done</span></div>
-    <div class="prog" style="--c:${trackColor(lab.track)};margin:10px 0 4px"><i id="stepbar" style="width:${st.state === "done" ? 100 : esc(st.pct)}%"></i></div>
+    <div class="flex" data-style="margin-top:28px"><h2 data-style="margin:0">Steps</h2><span class="note" id="stepcount">${Object.values(s.steps || {}).filter(Boolean).length} of ${lab.steps.length} done</span></div>
+    <div class="prog" data-style="--c:${trackColor(lab.track)};margin:10px 0 4px"><i id="stepbar" data-style="width:${st.state === "done" ? 100 : esc(st.pct)}%"></i></div>
     <ol class="steps-list">${lab.steps.map((x, i) => `<li class="${s.steps && s.steps[i] ? "checked" : ""}">
       <label class="stephead"><input type="checkbox" data-lstep="${i}" ${s.steps && s.steps[i] ? "checked" : ""}><span class="stepnum">${i + 1}</span><strong>${esc(x.title)}</strong></label>
       <div class="stepbody"><p>${esc(x.body)}</p>
@@ -97,7 +97,7 @@
     <div class="panel"><strong>Deliverable</strong><p>${esc(lab.deliverable)}</p>
       <strong>Resume bullet</strong><p class="resume">${esc(lab.resume)}</p>
       <div class="btns"><button type="button" class="btn ghost sm" data-lact="copyresume">Copy resume bullet</button><button type="button" class="btn ghost sm" data-lact="copywriteup">Copy write-up (Markdown)</button></div></div>
-    <div class="btns"><button type="button" class="btn" data-lact="done">${s.done ? "Mark as not done" : "Mark lab complete"}</button>${s.done ? `<span class="note" style="align-self:center">Finished ${new Date(s.done).toLocaleDateString()}</span>` : ""}</div>
+    <div class="btns"><button type="button" class="btn" data-lact="done">${s.done ? "Mark as not done" : "Mark lab complete"}</button>${s.done ? `<span class="note" data-style="align-self:center">Finished ${new Date(s.done).toLocaleDateString()}</span>` : ""}</div>
     ${lab.interview && lab.interview.length ? `<h2>Interview practice</h2><div class="panel">${lab.interview.map(q => { const [a, ...b] = q.split(" — "); return `<details class="sq"><summary>${esc(a)}</summary><p>${esc(b.join(" — ") || "")}</p></details>`; }).join("")}</div>` : ""}
     ${lab.cleanup && lab.cleanup.length ? `<h2>Clean up</h2><div class="panel"><ul class="clean">${lab.cleanup.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}
     ${lab.links && lab.links.length ? `<h2>Official docs</h2><div class="panel"><ul class="clean">${lab.links.map(l => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a></li>`).join("")}</ul></div>` : ""}
@@ -159,7 +159,7 @@ ${lab.deliverable}
     <div class="figs3"><div class="fig"><b>${done.length}</b><span>labs finished</span></div><div class="fig"><b>${hours(mins)}</b><span>hands-on time</span></div><div class="fig"><b>${new Set(done.map(l => l.track)).size}</b><span>of ${TRACKS.length} tracks</span></div></div>
     ${done.length ? `<div class="btns"><button type="button" class="btn" data-lact="copybullets">Copy all resume bullets</button><button type="button" class="btn ghost" data-lact="copyportfolio">Copy full portfolio (Markdown)</button></div>
     <h2>Finished labs</h2>
-    <div class="panel">${done.map(l => `<div class="row"><div class="grow"><a href="#${esc(l.id)}"><strong>${esc(l.title)}</strong></a><br><span class="note">${esc(l.track)} · finished ${new Date(lp[l.id].done).toLocaleDateString()}</span><p class="resume" style="margin:6px 0 0">${esc(l.resume)}</p></div></div>`).join("")}</div>`
+    <div class="panel">${done.map(l => `<div class="row"><div class="grow"><a href="#${esc(l.id)}"><strong>${esc(l.title)}</strong></a><br><span class="note">${esc(l.track)} · finished ${new Date(lp[l.id].done).toLocaleDateString()}</span><p class="resume" data-style="margin:6px 0 0">${esc(l.resume)}</p></div></div>`).join("")}</div>`
     : `<div class="status">No finished labs yet. Mark a lab complete and it shows up here with its resume bullet.</div>`}
     ${done.length ? rolesSummary(done) : ""}
     ${trackBadges(lp)}

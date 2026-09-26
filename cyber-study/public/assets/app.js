@@ -11,7 +11,7 @@
     const c = certs[id] || CertHub.planned[id];
     if (!c) return "";
     const built = !!certs[id];
-    const stack = `<div class="stack" aria-hidden="true">${c.domains.map(d => `<i style="--c:${dc(d.id)};flex:${esc(d.w)}"></i>`).join("")}</div>`;
+    const stack = `<div class="stack" aria-hidden="true">${c.domains.map(d => `<i data-style="--c:${dc(d.id)};flex:${esc(d.w)}"></i>`).join("")}</div>`;
     const badge = c.status === "verified" ? `<span class="badge ok">Weights verified</span>` : `<span class="badge check">Weights to confirm</span>`;
     let foot;
     if (built) {
@@ -25,10 +25,10 @@
     const inner = `<span class="vendor">${esc(c.vendor)} · ${esc(c.exam)}</span>
       <h2>${esc(c.name)}</h2>
       <p>${esc(c.blurb)}</p>
-      ${built ? CertHub.activeNotices(c).slice(0, 1).map(n => `<p class="note" style="color:var(--ink)">${esc(n.text)}</p>`).join("") : ""}
+      ${built ? CertHub.activeNotices(c).slice(0, 1).map(n => `<p class="note" data-style="color:var(--ink)">${esc(n.text)}</p>`).join("") : ""}
       ${stack}
       <div class="cardfoot">${badge}${foot}</div>`;
-    return built ? `<a class="card" href="#${esc(id)}">${inner}</a>` : `<div class="card" aria-disabled="true" style="opacity:.7">${inner}</div>`;
+    return built ? `<a class="card" href="#${esc(id)}">${inner}</a>` : `<div class="card" aria-disabled="true" data-style="opacity:.7">${inner}</div>`;
   }
   /* ---------- career tracks ---------- */
   const TRACKS = CertHub.tracks || [{ id: "all", name: "All", certs: CertHub.catalog }];
@@ -135,7 +135,7 @@
   const loc = n => CertHub.i18n.lang() === "es" && n.es && n.es.title && Array.isArray(n.es.items) ? n.es : n;
   function newsView() {
     return `<h1>What's new</h1><p class="meta">New certifications, features and content, newest first.</p>
-    ${NEWS().map(n => { const t = loc(n); return `<section class="panel"${t !== n ? " data-content" : ""}><p class="note" style="margin:0">${esc(newsDate(n.date))}</p><h2 style="margin-top:4px">${esc(t.title)}</h2><ul class="clean">${t.items.map(i => `<li>${esc(i)}</li>`).join("")}</ul></section>`; }).join("")}`;
+    ${NEWS().map(n => { const t = loc(n); return `<section class="panel"${t !== n ? " data-content" : ""}><p class="note" data-style="margin:0">${esc(newsDate(n.date))}</p><h2 data-style="margin-top:4px">${esc(t.title)}</h2><ul class="clean">${t.items.map(i => `<li>${esc(i)}</li>`).join("")}</ul></section>`; }).join("")}`;
   }
   function newsCard() {
     const n = NEWS()[0]; if (!n) return "";
@@ -155,7 +155,7 @@
       ${newsCard()}
       <div class="btns"><button type="button" class="btn" data-jump="pick">Pick your first certification</button><button type="button" class="btn ghost" data-jump="tracks-h">See all ${nCerts} certifications</button><a class="btn ghost" href="#labs">Browse ${labList.length} labs</a>${doneLabs ? `<a class="btn ghost" href="#portfolio">Your portfolio (${doneLabs})</a>` : ""}</div>
     </section>
-    ${CertHub.install.installed() ? "" : `<div class="panel installcard"><div class="grow"><strong>Get the app on your phone</strong><br><span class="note">Install it from your browser: it opens full screen and works offline. No app store needed.</span></div><div class="btns" style="margin:0">${CertHub.install.prompt ? `<button type="button" class="btn sm" data-gact="install">Install</button>` : ""}<a class="btn ghost sm" href="#install">How to install</a></div></div>`}
+    ${CertHub.install.installed() ? "" : `<div class="panel installcard"><div class="grow"><strong>Get the app on your phone</strong><br><span class="note">Install it from your browser: it opens full screen and works offline. No app store needed.</span></div><div class="btns" data-style="margin:0">${CertHub.install.prompt ? `<button type="button" class="btn sm" data-gact="install">Install</button>` : ""}<a class="btn ghost sm" href="#install">How to install</a></div></div>`}
     ${CertHub.review ? CertHub.review.homeCard() : ""}
     ${continueHtml()}
     ${pickerHtml()}
@@ -166,13 +166,13 @@
     <h2>Your progress</h2>
     ${(() => { const st = CertHub.activity.streak(); return `<div class="panel startcard"><div class="grow"><strong>${st.current ? `${esc(st.current)}-day study streak` : "Start a study streak"}</strong><br><span class="note">${st.current ? (st.today ? "You studied today. " : "Study today to keep it going. ") : "Answer a question or read a lesson each day. "}${st.best ? `Best: ${esc(st.best)} days.` : ""}</span></div><button type="button" class="btn ghost sm" data-gact="reminder">Set a daily reminder</button></div>`; })()}
     <div class="panel">
-      <p class="note" style="margin:0">Progress, lab notes and checkmarks are saved in this browser only. Nothing is sent anywhere. Back up to move them to another device.</p>
+      <p class="note" data-style="margin:0">Progress, lab notes and checkmarks are saved in this browser only. Nothing is sent anywhere. Back up to move them to another device.</p>
       <div class="btns"><button type="button" class="btn ghost sm no-framed" data-gact="download">Download backup</button><button type="button" class="btn ghost sm" data-gact="copybackup">Copy backup</button><label class="btn ghost sm" for="imp">Restore from file</label><input type="file" id="imp" accept="application/json" class="hide"><button type="button" class="btn ghost sm" data-gact="pasterestore">Restore from text</button></div>
     </div>
     ${newsHtml()}
     <h2>Appearance</h2>
-    <div class="panel"><p class="note" style="margin:0">Accent color for buttons and highlights. Use the button at the top right to switch between light, dark and your device's setting.</p>
-      <div class="swatches" role="group" aria-label="Accent color">${CertHub.ACCENTS.map(([k, l, c]) => `<button type="button" class="chipbtn swatch" data-accent="${esc(k)}" aria-pressed="${CertHub.accent() === k}" style="--sw:${esc(c)}"><i aria-hidden="true"></i>${esc(l)}</button>`).join("")}</div></div>
+    <div class="panel"><p class="note" data-style="margin:0">Accent color for buttons and highlights. Use the button at the top right to switch between light, dark and your device's setting.</p>
+      <div class="swatches" role="group" aria-label="Accent color">${CertHub.ACCENTS.map(([k, l, c]) => `<button type="button" class="chipbtn swatch" data-accent="${esc(k)}" aria-pressed="${CertHub.accent() === k}" data-style="--sw:${esc(c)}"><i aria-hidden="true"></i>${esc(l)}</button>`).join("")}</div></div>
     <div class="panel installcard supportcard"><div class="grow"><strong>Keep it free</strong><br><span class="note">No ads and no tracking. Share it, report a mistake${CertHub.site && CertHub.site.support && CertHub.site.support.url ? " or chip in" : ""} to help.</span></div><a class="btn ghost sm" href="#support">Support this site</a></div>`;
   }
 

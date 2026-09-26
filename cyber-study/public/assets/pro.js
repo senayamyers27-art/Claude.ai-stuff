@@ -30,7 +30,7 @@
       if (!pro.available) return "";
       const signed = !!(me() && me().user);
       return `<div class="panel pro-teaser"><span class="chip pro">Pro</span> ${esc(what)}
-        <div class="btns"><a class="btn sm" href="#account">${signed ? "See Pro" : "Sign in to get Pro"}</a>${PRICE.monthly ? `<span class="note" style="align-self:center">${esc(PRICE.monthly)}/month or ${esc(PRICE.yearly)}/year</span>` : ""}</div></div>`;
+        <div class="btns"><a class="btn sm" href="#account">${signed ? "See Pro" : "Sign in to get Pro"}</a>${PRICE.monthly ? `<span class="note" data-style="align-self:center">${esc(PRICE.monthly)}/month or ${esc(PRICE.yearly)}/year</span>` : ""}</div></div>`;
     }
   };
 

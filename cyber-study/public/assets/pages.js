@@ -148,7 +148,7 @@
       : "The site stores nothing about you on a server: there are no accounts, no database and no cookies. That removes most of the risks a typical website has."}</div>
     <h2>In the browser</h2>
     <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table class="sectable"><tbody>
-      ${row("Content Security Policy", "Scripts, styles, fonts and connections are allowed only from the site itself. No inline scripts, <code>eval</code> or third-party code. Plugins (<code>object-src</code>) are blocked.")}
+      ${row("Content Security Policy", "Scripts, styles, fonts and connections are allowed only from the site itself. No inline scripts, inline style attributes, <code>eval</code> or third-party code. Trusted Types check every piece of HTML the app writes into the page. Plugins (<code>object-src</code>) are blocked.")}
       ${row("No third parties", counts() ? "Fonts are self-hosted and there are no ads or CDNs. The only outside service is a cookie-free page counter (see the Privacy Policy). An automated check fails if any page loads code from another site." : "Fonts are self-hosted and there are no analytics, ads or CDNs, so no outside service sees your visits. An automated test fails if any page requests another site.")}
       ${row("Output escaping", "All content is escaped before it's placed on the page, which prevents injected HTML or script (XSS). A lint check blocks unescaped values.")}
       ${row("Clickjacking protection", "<code>frame-ancestors 'none'</code> and <code>X-Frame-Options: DENY</code> stop other sites from framing the pages.")}

@@ -25,6 +25,9 @@ for (const f of files.filter(f => f.endsWith(".html"))) {
   else {
     if (/'unsafe-eval'|script-src[^;]*'unsafe-inline'/.test(csp)) fail(f, "CSP allows unsafe script execution");
     if (!/object-src 'none'/.test(csp)) fail(f, "CSP must set object-src 'none'");
+    // Inline style attributes stay blocked: the app uses data-style (applied by assets/theme.js) instead.
+    if (/style-src [^;]*'unsafe-inline'/.test(csp) || !/style-src-attr 'none'/.test(csp)) fail(f, "CSP must block inline style attributes (style-src-attr 'none')");
+    if (!/require-trusted-types-for 'script'/.test(csp)) fail(f, "CSP must require Trusted Types");
     // The only outside hosts allowed are the site's own accounts API and its optional page counter, only for connect-src.
     const other = csp.split(";").map(d => d.trim()).map(d => d.startsWith("connect-src") ? d.replace(" " + apiOrigin, "").replace(" " + analyticsOrigin, "") : d).join(";");
     if (/https?:\/\//.test(other)) fail(f, "CSP allows a third-party host");
@@ -39,6 +42,7 @@ for (const f of files.filter(f => f.endsWith(".html"))) {
   }
   if (/<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>/i.test(s)) fail(f, "inline <script> (move it to a file)");
   if (/\son[a-z]+\s*=\s*["']/i.test(s)) fail(f, "inline event handler attribute");
+  if (/<[a-z][^>]*\sstyle\s*=/i.test(s) || /<style\b/i.test(s)) fail(f, "inline style (the CSP blocks it; use a class or data-style)");
   // Canonical and alternate-language links name public addresses of this site's pages; they load nothing.
   if (/<script[^>]+src="https?:\/\//i.test(s) || /<link(?![^>]*rel="(?:canonical|alternate)")[^>]+href="https?:\/\//i.test(s)) fail(f, "loads a script or stylesheet from another site");
   for (const m of s.matchAll(/<a\b[^>]*target="_blank"[^>]*>/gi)) if (!/rel="[^"]*noopener/.test(m[0])) fail(f, "target=_blank link without rel=noopener");
@@ -52,6 +56,7 @@ for (const f of files.filter(f => /\.(html|js|css|webmanifest|txt)$/.test(f) && 
   const VENDOR_OK = { "vendor/vm/xterm.css": ["http://bellard.org/jslinux/"], "vendor/vm/libv86.js": ["http://host"] };
   const ok = Object.entries(VENDOR_OK).find(([k]) => f.replace(/\\/g, "/").endsWith(k));
   for (const m of s.matchAll(/http:\/\/[^\s"'<>)]+/g)) if (!/^http:\/\/(www\.w3\.org|www\.sitemaps\.org|localhost|127\.0\.0\.1)/.test(m[0]) && !(ok && ok[1].includes(m[0]))) fail(f, `insecure URL ${m[0]}`);
+  if (f.endsWith(".js") && f.includes(`assets${path.sep}`) && /\sstyle="/.test(s)) fail(f, "style=\"\" attribute in app markup (the CSP blocks it; use data-style)");
   if (f.endsWith(".js") && /\beval\s*\(|new Function\s*\(|document\.write\s*\(|setTimeout\s*\(\s*["'`]/.test(s)) fail(f, "eval-style code");
 }
 // Engine and home page render with innerHTML, so every data value must pass through esc().

@@ -264,11 +264,11 @@
   const DOMAINS_SHORT = d => DOM[d].name;
   function routeMap(active) {
     const now = weekNow();
-    return `<div class="route" aria-label="${W.length}-week route"><div class="line" style="min-width:${Math.max(W.length * 40, 300)}px">${W.map(w => {
+    return `<div class="route" aria-label="${W.length}-week route"><div class="line" data-style="min-width:${Math.max(W.length * 40, 300)}px">${W.map(w => {
       const done = DAYS().every((_, i) => S.p.checks[`${w.n}-${i}`]) || (w.n < now && today() >= parseD(S.p.start));
-      return `<button class="stop ${done ? "done" : ""} ${w.n === active ? "now" : ""}" style="--c:${dc(w.dom)}" data-week="${esc(w.n)}" aria-label="Week ${esc(w.n)}: ${esc(w.title)}"><span class="dot">${esc(w.n)}</span><small>${fmt(weekStart(w.n))}</small></button>`;
+      return `<button class="stop ${done ? "done" : ""} ${w.n === active ? "now" : ""}" data-style="--c:${dc(w.dom)}" data-week="${esc(w.n)}" aria-label="Week ${esc(w.n)}: ${esc(w.title)}"><span class="dot">${esc(w.n)}</span><small>${fmt(weekStart(w.n))}</small></button>`;
     }).join("")}</div></div>
-    <div class="legend">${C.domains.map(d => `<span style="--c:${dc(d.id)}">D${esc(d.id)} ${esc(d.name)}</span>`).join("")}</div>`;
+    <div class="legend">${C.domains.map(d => `<span data-style="--c:${dc(d.id)}">D${esc(d.id)} ${esc(d.name)}</span>`).join("")}</div>`;
   }
   function checkBanner() {
     return C.status === "verified" ? "" : `<div class="status warn"><strong>Check before relying on this.</strong> ${esc(C.statusNote || "Domain weights haven't been confirmed against the current official outline.")}</div>`;
@@ -290,7 +290,7 @@
     return `${routeMap(n)}
     <h1>Week ${esc(n)}: ${esc(w.title)}</h1>
     <p class="meta">${fmt(weekStart(n))} – ${fmt(U.addDays(weekStart(n), 6))}${pre && n === 1 ? " · starts " + fmtLong(weekStart(1)) : ""}</p>
-    <p style="margin:10px 0 0"><span class="chip" style="--c:${dc(w.dom)}">${w.dom ? `Domain ${esc(w.dom)} · ${esc(DOM[w.dom].w)}% of exam` : "All domains"}</span> <span class="note">${esc(w.obj)}</span></p>
+    <p data-style="margin:10px 0 0"><span class="chip" data-style="--c:${dc(w.dom)}">${w.dom ? `Domain ${esc(w.dom)} · ${esc(DOM[w.dom].w)}% of exam` : "All domains"}</span> <span class="note">${esc(w.obj)}</span></p>
     ${noticeHtml()}
     ${n === 1 ? checkBanner() : ""}
     ${!S.p.placement && !S.p.history.length ? `<div class="panel startcard"><div class="grow"><strong>New to ${esc(C.short)}?</strong><br><span class="note">Take a short placement test to find what you already know and which weeks to focus on.</span></div><button class="btn sm" data-act="placement">Take the placement test</button></div>` : ""}
@@ -307,7 +307,7 @@
     <h2>Hands-on labs</h2>
     ${labs.length ? `<p class="note">Step-by-step, in your own home lab. Each one ends with a portfolio write-up and a resume bullet.</p>
     <div class="labgrid">${labs.map(l => CertHub.labCard(l)).join("")}</div>` : ""}
-    ${w.lab ? `<div class="panel"><strong>Quick exercise</strong><p style="margin:6px 0 0">${esc(w.lab)}</p></div>` : ""}
+    ${w.lab ? `<div class="panel"><strong>Quick exercise</strong><p data-style="margin:6px 0 0">${esc(w.lab)}</p></div>` : ""}
     ${w.notes && w.notes.length ? `<h2>${esc(C.notesLabel || "Reread")}</h2><div class="panel"><ul class="clean">${w.notes.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>` : ""}
     <h2>Daily plan</h2>
     <div class="panel"><ul class="days">${DAYS().map(([d, t], i) => { const k = `${n}-${i}`; const c = !!S.p.checks[k]; const text = i === 3 ? "Hands-on: " + (labs.length ? labs.map(l => l.title).join("; ") : w.lab) : t; return `<li class="${c ? "checked" : ""}"><label><input type="checkbox" data-check="${esc(k)}" ${c ? "checked" : ""}><span class="d">${esc(d)}</span><span class="t">${esc(text)}</span></label></li>`; }).join("")}</ul></div>
@@ -331,7 +331,7 @@
     const r = isRead(t);
     return `<li><details class="lesson" data-k="${lessonKey(t)}"${l.tt ? ` lang="es"` : ""}><summary><span class="grow">${esc(l.tt || t)}</span>${r ? `<span class="chip done">${tr("Read")}</span>` : ""}</summary>
       <div class="lbody">
-        <div class="btns" style="margin-top:0"><button type="button" class="btn ghost sm" data-act="video" data-k="${lessonKey(t)}">${tr("▶ Watch the overview")}</button></div>
+        <div class="btns" data-style="margin-top:0"><button type="button" class="btn ghost sm" data-act="video" data-k="${lessonKey(t)}">${tr("▶ Watch the overview")}</button></div>
         ${(l.body || []).map((x, i) => para(x) + (i === 0 ? diagramHtml(t) : "")).join("")}
         ${l.terms && l.terms.length ? `<h3>${tr("Key terms")}</h3><dl class="terms">${l.terms.map(([a, b]) => `<dt>${inline(a)}</dt><dd>${inline(b)}</dd>`).join("")}</dl>` : ""}
         ${l.example ? `<div class="panel ex"><strong>${tr("Real-world example")}</strong>${[].concat(l.example).map(para).join("")}</div>` : ""}
@@ -382,15 +382,15 @@
   function weekLessons(w) {
     const ts = lessonTopics(w);
     const head = `<h2>This week's lessons</h2>`;
-    if (LES === null && ts.length) return head + `<p class="note">Loading lessons…</p><div class="panel wk" style="--c:${dc(w.dom)}"><ul class="clean">${w.topics.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>`;
-    if (!LES || !ts.some(t => LES.has(t))) return `<h2>What you're covering</h2><div class="panel wk" style="--c:${dc(w.dom)}"><ul class="clean">${w.topics.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>`;
+    if (LES === null && ts.length) return head + `<p class="note">Loading lessons…</p><div class="panel wk" data-style="--c:${dc(w.dom)}"><ul class="clean">${w.topics.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>`;
+    if (!LES || !ts.some(t => LES.has(t))) return `<h2>What you're covering</h2><div class="panel wk" data-style="--c:${dc(w.dom)}"><ul class="clean">${w.topics.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>`;
     const done = ts.filter(t => LES.has(t) && isRead(t)).length, all = ts.filter(t => LES.has(t)).length;
     return head + `<p class="note">Open each topic to read its lesson: an explanation, key terms, a real-world example, an exam tip and questions to check yourself. ${done} of ${all} read.</p>
     ${playWeekBtn(w)}
-    <div class="panel wk" style="--c:${dc(w.dom)}"><ul class="clean lessons">${w.topics.map(t => lessonHtml(t, 0)).join("")}</ul></div>`;
+    <div class="panel wk" data-style="--c:${dc(w.dom)}"><ul class="clean lessons">${w.topics.map(t => lessonHtml(t, 0)).join("")}</ul></div>`;
   }
   // A playlist of a week's lesson overview videos.
-  const playWeekBtn = w => { const n = lessonTopics(w).filter(t => LES && LES.has(t)).length; return n ? `<div class="btns no-print" style="margin:6px 0"><button type="button" class="btn sm" data-act="playweek" data-w="${esc(w.n)}">▶ Watch this week's overview videos (${n})</button></div>` : ""; };
+  const playWeekBtn = w => { const n = lessonTopics(w).filter(t => LES && LES.has(t)).length; return n ? `<div class="btns no-print" data-style="margin:6px 0"><button type="button" class="btn sm" data-act="playweek" data-w="${esc(w.n)}">▶ Watch this week's overview videos (${n})</button></div>` : ""; };
   /* ---------- lesson overview video: narrated slides built from the lesson ---------- */
   const plain = x => String(x || "").replace(/`/g, "");
   const sentences = x => plain(x).split(/(?<=[.!?])\s+(?=[A-Z0-9"(])/).filter(Boolean);
@@ -492,9 +492,9 @@
     if (due) items.push(`<li><button type="button" class="linkbtn" data-act="review">Review ${due} question${due > 1 ? "s" : ""} due today</button></li>`);
     if (di === 4) items.push(`<li><button type="button" class="linkbtn" data-act="weekly" data-w="${esc(n)}">Take the week ${esc(n)} quiz</button></li>`);
     if (SIMS && SIMS.length && di === 3) { const next = SIMS.find(p => p.d === w.dom && !(S.p.sims || {})[p.id]); if (next) items.push(`<li>Try a simulation: <button type="button" class="linkbtn" data-act="gosim" data-id="${esc(next.id)}">${esc(next.title)}</button></li>`); }
-    return `<div class="panel today"><div class="flex"><h2 style="margin:0">Today · ${esc(day)}</h2><label class="note"><input type="checkbox" data-check="${esc(k)}" ${doneToday ? "checked" : ""}> Done</label></div>
-      <p style="margin:8px 0 6px">${esc(di === 3 ? "Hands-on: " + (weekLabs(w).map(l => l.title).join("; ") || w.lab) : text)}</p>
-      ${items.length ? `<ul class="clean">${esc(items.join(""))}</ul>` : `<p class="note" style="margin:0">Nothing else due today. Nice work.</p>`}</div>`;
+    return `<div class="panel today"><div class="flex"><h2 data-style="margin:0">Today · ${esc(day)}</h2><label class="note"><input type="checkbox" data-check="${esc(k)}" ${doneToday ? "checked" : ""}> Done</label></div>
+      <p data-style="margin:8px 0 6px">${esc(di === 3 ? "Hands-on: " + (weekLabs(w).map(l => l.title).join("; ") || w.lab) : text)}</p>
+      ${items.length ? `<ul class="clean">${esc(items.join(""))}</ul>` : `<p class="note" data-style="margin:0">Nothing else due today. Nice work.</p>`}</div>`;
   }
   // Exam readiness, 0-100: weighted domain accuracy (trusted as more questions are answered), lessons read,
   // the best recent practice exam, and a penalty for an overdue review queue.
@@ -519,10 +519,10 @@
   }
   function readinessHtml() {
     const r = readiness();
-    return `<div class="panel ready"><div class="flex"><div><strong>Exam readiness</strong><br><span class="chip" style="--c:${esc(r.band[1])}">${esc(r.band[0])}</span></div><div class="big" style="margin:0">${esc(r.score)}<small>/100</small></div></div>
-      <div class="track" aria-hidden="true"><i style="width:${esc(r.score)}%;background:${esc(r.band[1])}"></i></div>
-      ${r.tips.length ? `<ul class="clean">${r.tips.map(t => `<li>${esc(t)}</li>`).join("")}</ul>` : `<p class="note" style="margin:8px 0 0">Everything points to ready. Book the exam while it's fresh.</p>`}
-      <p class="note" style="margin:8px 0 0">An estimate from your quiz accuracy by domain (weighted like the exam), lessons read, recent practice exams and review backlog. It isn't the real exam's scoring.</p></div>`;
+    return `<div class="panel ready"><div class="flex"><div><strong>Exam readiness</strong><br><span class="chip" data-style="--c:${esc(r.band[1])}">${esc(r.band[0])}</span></div><div class="big" data-style="margin:0">${esc(r.score)}<small>/100</small></div></div>
+      <div class="track" aria-hidden="true"><i data-style="width:${esc(r.score)}%;background:${esc(r.band[1])}"></i></div>
+      ${r.tips.length ? `<ul class="clean">${r.tips.map(t => `<li>${esc(t)}</li>`).join("")}</ul>` : `<p class="note" data-style="margin:8px 0 0">Everything points to ready. Book the exam while it's fresh.</p>`}
+      <p class="note" data-style="margin:8px 0 0">An estimate from your quiz accuracy by domain (weighted like the exam), lessons read, recent practice exams and review backlog. It isn't the real exam's scoring.</p></div>`;
   }
   // Plan badge: every lesson read and a practice exam at 80% or better.
   function badgeState() {
@@ -561,7 +561,7 @@
     ${C.domains.map(d => {
       const ts = W.filter(w => w.dom === d.id).flatMap(lessonTopics).filter(t => LES.has(t)); if (!ts.length) return "";
       const ls = ts.map(lessonOf);
-      return `<h2 style="--c:${dc(d.id)}">Domain ${esc(d.id)}: ${esc(d.name)} <small class="note">${esc(d.w)}%</small></h2>
+      return `<h2 data-style="--c:${dc(d.id)}">Domain ${esc(d.id)}: ${esc(d.name)} <small class="note">${esc(d.w)}%</small></h2>
       <div class="panel cheat"><h3>Exam tips</h3><ul class="clean">${ls.map(l => `<li>${inline(l.tip)}</li>`).join("")}</ul>
       <h3>Key terms</h3><dl class="terms">${ls.flatMap(l => l.terms || []).filter((x, i, a) => a.findIndex(y => y[0].toLowerCase() === x[0].toLowerCase()) === i).map(([a, b]) => `<dt>${inline(a)}</dt><dd>${inline(b)}</dd>`).join("")}</dl></div>`;
     }).join("")}${ports}`;
@@ -576,9 +576,9 @@
     const rows = C.domains.filter(d => pl.dom[d.id] != null).map(d => ({ d, pct: pl.dom[d.id], week: (W.find(w => w.dom === d.id) || {}).n })).sort((a, b) => a.pct - b.pct);
     const focus = rows.filter(r => r.pct < 70), strong = rows.filter(r => r.pct >= 85);
     return `<h2>Where to start</h2><div class="panel">
-      ${focus.length ? `<p style="margin:0 0 8px"><strong>Focus first on:</strong></p><ul class="clean">${focus.map(r => `<li>Domain ${esc(r.d.id)}: ${esc(r.d.name)} (${esc(r.pct)}%) ${r.week ? `<button type="button" class="linkbtn" data-open="${esc(r.week)}">Go to week ${esc(r.week)}</button>` : ""}</li>`).join("")}</ul>` : `<p style="margin:0">No weak domains. Follow the plan in order and aim for 85%+ on each checkpoint.</p>`}
-      ${strong.length ? `<p class="note" style="margin:10px 0 0">You already know a lot of ${strong.map(r => `Domain ${r.d.id}`).join(", ")}. Skim those lessons and spend the saved time on your focus areas.</p>` : ""}
-      <p class="note" style="margin:10px 0 0">A placement test is short, so treat this as a starting point. Retake it any time from Quizzes &amp; tests.</p></div>`;
+      ${focus.length ? `<p data-style="margin:0 0 8px"><strong>Focus first on:</strong></p><ul class="clean">${focus.map(r => `<li>Domain ${esc(r.d.id)}: ${esc(r.d.name)} (${esc(r.pct)}%) ${r.week ? `<button type="button" class="linkbtn" data-open="${esc(r.week)}">Go to week ${esc(r.week)}</button>` : ""}</li>`).join("")}</ul>` : `<p data-style="margin:0">No weak domains. Follow the plan in order and aim for 85%+ on each checkpoint.</p>`}
+      ${strong.length ? `<p class="note" data-style="margin:10px 0 0">You already know a lot of ${strong.map(r => `Domain ${r.d.id}`).join(", ")}. Skim those lessons and spend the saved time on your focus areas.</p>` : ""}
+      <p class="note" data-style="margin:10px 0 0">A placement test is short, so treat this as a starting point. Retake it any time from Quizzes &amp; tests.</p></div>`;
   }
   /* ---------- exam simulations (performance-based questions) ---------- */
   const SIM_TYPE = { match: "Matching", order: "Put in order", select: "Select all that apply", fill: "Fill in" };
@@ -625,7 +625,7 @@
     <p class="q">${esc(p.prompt)}</p>
     ${p.context ? `<pre class="code ctx" tabindex="0">${esc(p.context)}</pre>` : ""}
     ${body}
-    ${st.done ? `<div class="expl" role="status" style="--c:${st.pct === 100 ? "var(--ok)" : "var(--bad)"}"><strong>${esc(st.ok)} of ${esc(st.tot)} correct (${esc(st.pct)}%).</strong> ${esc(p.explain)}</div>` : ""}
+    ${st.done ? `<div class="expl" role="status" data-style="--c:${st.pct === 100 ? "var(--ok)" : "var(--bad)"}"><strong>${esc(st.ok)} of ${esc(st.tot)} correct (${esc(st.pct)}%).</strong> ${esc(p.explain)}</div>` : ""}
     <div class="btns">${st.done ? `<button class="btn" data-act="simretry">Try again</button><button class="btn ghost" data-act="simquit">All simulations</button>` : `<button class="btn" data-act="simcheck">Check answers</button>`}</div>`;
   }
 
@@ -836,7 +836,7 @@
     const help = `<div class="btns"><button class="btn ghost sm" data-act="hohint" aria-expanded="${esc(st.hint)}">Hint</button><button class="btn ghost sm" data-act="hosol" aria-expanded="${esc(st.sol)}">${st.sol ? "Hide solution" : "Show solution"}</button><button class="btn ghost sm" data-act="horeset">Start over</button></div>
     ${st.hint ? `<p class="note">${inline(x.hint)}</p>` : ""}
     ${st.sol ? `<pre class="code" id="hosolution" tabindex="0" aria-label="Solution">${esc(Array.isArray(x.solution) ? x.solution.join("\n") : x.solution)}</pre>` : ""}
-    ${st.passed || st.sol ? `<div class="expl" style="--c:var(--ok)">${inline(x.explain)}</div>` : ""}`;
+    ${st.passed || st.sol ? `<div class="expl" data-style="--c:var(--ok)">${inline(x.explain)}</div>` : ""}`;
     if (x.kind === "code") {
       const res = st.results;
       return head + `<label for="hocode" class="lbl">Your code <span class="note">(Tab indents 4 spaces; press Esc, then Tab, to leave the editor)</span></label>
@@ -928,8 +928,8 @@
     const done = all.filter(isRead).length;
     return head + `<p class="meta">A short lesson for every topic in your ${W.length}-week plan, in plan order. Read a lesson, answer its check questions, then take that week's quiz. ${done} of ${all.length} read. <a href="/${esc(C.id)}/lessons/">Open as web pages to share</a></p>
     <div class="status notice no-print"><strong>▶ Overview videos:</strong> every lesson has a short narrated video. Press "Watch this week's overview videos" to play a week in a row, or open any lesson and press "▶ Watch the overview".</div>
-    <div class="panel bars"><div class="b"><div class="track"><i style="width:${all.length ? Math.round(100 * done / all.length) : 0}%"></i></div></div></div>
-    <div class="btns no-print" style="margin-top:6px">
+    <div class="panel bars"><div class="b"><div class="track"><i data-style="width:${all.length ? Math.round(100 * done / all.length) : 0}%"></i></div></div></div>
+    <div class="btns no-print" data-style="margin-top:6px">
       <button type="button" class="btn ghost sm" data-tab="cheat">Cheat sheet</button>
       ${C.hasLessonsEs ? `<button type="button" class="btn ghost sm" data-act="lang" aria-pressed="${LANG === "es"}">${LANG === "es" ? "Read in English" : "Leer en español"}</button>` : ""}
       ${"serviceWorker" in navigator ? `<button type="button" class="btn ghost sm" data-act="offline">Save for offline</button>` : ""}
@@ -942,10 +942,10 @@
       const ws = W.filter(w => w.dom === d.id && lessonTopics(w).some(t => LES.has(t)));
       if (!ws.length) return "";
       const n = ws.flatMap(lessonTopics).filter(t => LES.has(t));
-      return `<section class="learn-dom"><h2 style="--c:${dc(d.id)}">Domain ${esc(d.id)}: ${esc(d.name)}</h2>
+      return `<section class="learn-dom"><h2 data-style="--c:${dc(d.id)}">Domain ${esc(d.id)}: ${esc(d.name)}</h2>
       <p class="note">${esc(d.w)}% of the exam · ${n.filter(isRead).length} of ${n.length} read</p>
       ${ws.map(w => `<div class="learn-week"><h3>Week ${esc(w.n)}${ws.length > 1 || w.title !== d.name ? `: ${esc(w.title)}` : ""}</h3>${playWeekBtn(w)}
-      <div class="panel wk" style="--c:${dc(d.id)}"><ul class="clean lessons">${lessonTopics(w).map(t => lessonHtml(t, w.n)).join("")}</ul></div></div>`).join("")}</section>`;
+      <div class="panel wk" data-style="--c:${dc(d.id)}"><ul class="clean lessons">${lessonTopics(w).map(t => lessonHtml(t, w.n)).join("")}</ul></div></div>`).join("")}</section>`;
     }).join("")}`;
   }
 
@@ -956,7 +956,7 @@
     <h1>${esc(C.short)} study planner</h1>
     <p class="meta">${esc(C.name)} · ${W.length} weeks, ${fmtLong(weekStart(1))} to the week of ${fmtLong(weekStart(W.length))}${S.p.examDate ? ` · exam ${fmtLong(parseD(S.p.examDate))}` : " · exam date: ____________"}</p>
     <p class="note">Tick a box for each day you study. Days: ${DAYS().map(([d], i) => `${d} ${short[i].toLowerCase()}`).join(" · ")}.</p>
-    ${W.map(w => `<section class="pweek" style="--c:${dc(w.dom)}"><div class="pwhead"><strong>Week ${esc(w.n)}: ${esc(w.title)}</strong><span class="note">${fmt(weekStart(w.n))} – ${fmt(U.addDays(weekStart(w.n), 6))}</span></div>
+    ${W.map(w => `<section class="pweek" data-style="--c:${dc(w.dom)}"><div class="pwhead"><strong>Week ${esc(w.n)}: ${esc(w.title)}</strong><span class="note">${fmt(weekStart(w.n))} – ${fmt(U.addDays(weekStart(w.n), 6))}</span></div>
       <p class="pwtopics">${w.topics.map(t => esc(t)).join(" · ")}</p>
       <div class="pdays">${DAYS().map(([d], i) => `<span class="pday"><i class="box${S.p.checks[`${w.n}-${i}`] ? " on" : ""}" aria-hidden="true"></i>${esc(d)}</span>`).join("")}<span class="pnote">Quiz score: ______</span></div></section>`).join("")}
     <p class="note">StudyToCert · free study plans for IT certifications</p></div>`;
@@ -970,9 +970,9 @@
     ${checkBanner()}
     <div class="btns no-print"><button type="button" class="btn ghost sm" data-act="planner">Printable study planner</button></div>
     ${routeMap(now)}
-    ${PLAN.phases.map(([a, b, t]) => `<h2>${esc(t)}</h2>` + W.slice(a - 1, b).map(w => `<details class="week" style="--c:${dc(w.dom)}" ${w.n === now ? "open" : ""}><summary><span class="num">W${esc(w.n)}</span><span class="grow"><strong>${esc(w.title)}</strong><br><span class="note">${fmt(weekStart(w.n))} · ${esc(w.obj)}</span></span></summary>
+    ${PLAN.phases.map(([a, b, t]) => `<h2>${esc(t)}</h2>` + W.slice(a - 1, b).map(w => `<details class="week" data-style="--c:${dc(w.dom)}" ${w.n === now ? "open" : ""}><summary><span class="num">W${esc(w.n)}</span><span class="grow"><strong>${esc(w.title)}</strong><br><span class="note">${fmt(weekStart(w.n))} · ${esc(w.obj)}</span></span></summary>
       <ul class="clean">${w.topics.map(t => `<li>${esc(t)}</li>`).join("")}</ul>
-      ${w.notes && w.notes.length ? `<p class="note" style="margin-top:8px">Reread: ${esc(w.notes.join(", "))}</p>` : ""}
+      ${w.notes && w.notes.length ? `<p class="note" data-style="margin-top:8px">Reread: ${esc(w.notes.join(", "))}</p>` : ""}
       <div class="btns"><button class="btn ghost sm" data-open="${esc(w.n)}">Open week</button><button class="btn ghost sm" data-act="weekly" data-w="${esc(w.n)}">Quiz</button></div></details>`).join("")).join("")}`;
   }
   function practiceView() {
@@ -1023,10 +1023,10 @@
       const pct = Math.round(100 * z.score / z.qs.length);
       return `<div class="qhead"><strong>${esc(z.title)}</strong><button class="btn ghost sm" data-act="quit">Done</button></div>
       <div class="panel"><div class="big">${pct}%</div><p class="meta">${esc(z.score)} of ${z.qs.length} correct${z.mode === "test" ? (pct >= 85 ? ". Exam-ready range." : pct >= 75 ? ". Close. Review the misses below." : ". Revisit these topics before moving on.") : ""}</p>
-      ${z.kind === "full" ? `<p style="margin:8px 0 0"><span class="chip" style="--c:${esc(passBand(pct)[1])}">${esc(passBand(pct)[0])}</span> <span class="note">Pass estimate. Real exams use scaled scores, so treat 85%+ on full-length exams as your target.</span></p>
-      <div class="bars" style="margin-top:12px">${C.domains.map(d => { const qs = z.qs.map((q, i) => [q, i]).filter(([q]) => q.d === d.id); const c = qs.filter(([q, i]) => z.ans[i] === q.a).length; const p = qs.length ? Math.round(100 * c / qs.length) : 0; return `<div class="b" style="--c:${dc(d.id)}"><div class="flex"><span>D${esc(d.id)} ${esc(d.name)}</span><strong>${c}/${qs.length}</strong></div><div class="track"><i style="width:${p}%"></i></div></div>`; }).join("")}</div>` : ""}</div>
+      ${z.kind === "full" ? `<p data-style="margin:8px 0 0"><span class="chip" data-style="--c:${esc(passBand(pct)[1])}">${esc(passBand(pct)[0])}</span> <span class="note">Pass estimate. Real exams use scaled scores, so treat 85%+ on full-length exams as your target.</span></p>
+      <div class="bars" data-style="margin-top:12px">${C.domains.map(d => { const qs = z.qs.map((q, i) => [q, i]).filter(([q]) => q.d === d.id); const c = qs.filter(([q, i]) => z.ans[i] === q.a).length; const p = qs.length ? Math.round(100 * c / qs.length) : 0; return `<div class="b" data-style="--c:${dc(d.id)}"><div class="flex"><span>D${esc(d.id)} ${esc(d.name)}</span><strong>${c}/${qs.length}</strong></div><div class="track"><i data-style="width:${p}%"></i></div></div>`; }).join("")}</div>` : ""}</div>
       ${z.kind === "placement" ? placementHtml() : ""}
-      <h2>Review</h2>${z.qs.map((q, i) => { const ok = z.ans[i] === q.a; return `<div class="panel" style="--c:${ok ? "var(--ok)" : "var(--bad)"}"><p style="margin:0 0 6px"><strong>${ok ? "Correct" : "Missed"}</strong> · <span class="note">${esc(domName(q.d))}</span></p><p class="qtext" style="margin:0 0 8px">${esc(q.q)}</p>${ok ? "" : `<p class="note" style="margin:0">Your answer: ${esc(z.ans[i] == null ? "none" : q.o[z.ans[i]])}</p>`}<p style="margin:4px 0 0"><strong>${esc(q.o[q.a])}</strong></p><div class="expl">${esc(q.e)}${whyHtml(q, z.ans[i])}${q.src ? `<br><small class="note">Source: ${esc(q.src)}</small>` : ""}${ok ? "" : `<br>${lessonLink(q)}`}<br>${qReport(q)}</div></div>`; }).join("")}`;
+      <h2>Review</h2>${z.qs.map((q, i) => { const ok = z.ans[i] === q.a; return `<div class="panel" data-style="--c:${ok ? "var(--ok)" : "var(--bad)"}"><p data-style="margin:0 0 6px"><strong>${ok ? "Correct" : "Missed"}</strong> · <span class="note">${esc(domName(q.d))}</span></p><p class="qtext" data-style="margin:0 0 8px">${esc(q.q)}</p>${ok ? "" : `<p class="note" data-style="margin:0">Your answer: ${esc(z.ans[i] == null ? "none" : q.o[z.ans[i]])}</p>`}<p data-style="margin:4px 0 0"><strong>${esc(q.o[q.a])}</strong></p><div class="expl">${esc(q.e)}${whyHtml(q, z.ans[i])}${q.src ? `<br><small class="note">Source: ${esc(q.src)}</small>` : ""}${ok ? "" : `<br>${lessonLink(q)}`}<br>${qReport(q)}</div></div>`; }).join("")}`;
     }
     const q = z.qs[z.i];
     const opts = q.o.map((o, k) => {
@@ -1036,9 +1036,9 @@
     }).join("");
     return `<div class="qhead"><strong>${esc(z.title)}</strong><span>${z.end ? `<span class="timer" id="timer" aria-label="Time left"></span> · ` : ""}<button class="btn ghost sm" data-act="quit">Quit</button></span></div>
     <div class="flex note"><span>Question ${esc(z.i + 1)} of ${z.qs.length}</span><span>Domain ${esc(q.d)}${q.lv ? ` · ${esc(LEVELS[q.lv])}` : ""}</span></div>
-    <div class="prog" style="--c:${dc(q.d)}"><i style="width:${100 * (z.i + 1) / z.qs.length}%"></i></div>
+    <div class="prog" data-style="--c:${dc(q.d)}"><i data-style="width:${100 * (z.i + 1) / z.qs.length}%"></i></div>
     <p class="q">${esc(q.q)}</p>${opts}
-    ${z.revealed ? `<div class="expl" role="status" style="--c:${z.picked === q.a ? "var(--ok)" : "var(--bad)"}"><strong data-ui>${z.picked === q.a ? "Correct." : "Not quite."}</strong> ${esc(q.e)}${whyHtml(q, z.picked)}${q.src ? `<br><small class="note" data-ui>Source: ${esc(q.src)}</small>` : ""}${z.picked !== q.a ? `<br>${lessonLink(q)}` : ""}<br>${qReport(q)}</div>` : ""}
+    ${z.revealed ? `<div class="expl" role="status" data-style="--c:${z.picked === q.a ? "var(--ok)" : "var(--bad)"}"><strong data-ui>${z.picked === q.a ? "Correct." : "Not quite."}</strong> ${esc(q.e)}${whyHtml(q, z.picked)}${q.src ? `<br><small class="note" data-ui>Source: ${esc(q.src)}</small>` : ""}${z.picked !== q.a ? `<br>${lessonLink(q)}` : ""}<br>${qReport(q)}</div>` : ""}
     <div class="btns">${z.mode === "test" && z.i > 0 ? `<button class="btn ghost" data-act="prev">Back</button>` : ""}
     ${(z.mode === "learn" && z.revealed) || z.mode === "test" ? `<button class="btn" data-act="next">${z.i + 1 === z.qs.length ? "Finish" : "Next"}</button>` : ""}
     ${z.mode === "test" ? `<button class="btn ghost" data-act="finish">Submit test</button>` : ""}</div>`;
@@ -1068,12 +1068,12 @@
     ${readinessHtml()}
     ${badgeHtml()}
     <div class="panel startcard"><div class="grow"><strong>Study streak: ${esc(CertHub.activity.streak().current)} day${CertHub.activity.streak().current === 1 ? "" : "s"}</strong><br><span class="note">Best: ${esc(CertHub.activity.streak().best)} days. A day counts when you answer a question, read a lesson or check off a study day.</span></div><button class="btn ghost sm" data-act="reminder">Set a daily reminder</button></div>
-    ${weak ? `<div class="status">Weakest so far: <strong>Domain ${esc(weak.d)}</strong> at ${esc(weak.pct)}%. <button class="btn ghost sm" style="margin-left:6px" data-act="drill-d" data-d="${esc(weak.d)}">Drill it</button></div>` : ""}
+    ${weak ? `<div class="status">Weakest so far: <strong>Domain ${esc(weak.d)}</strong> at ${esc(weak.pct)}%. <button class="btn ghost sm" data-style="margin-left:6px" data-act="drill-d" data-d="${esc(weak.d)}">Drill it</button></div>` : ""}
     <h2>Accuracy by domain</h2>
-    <div class="panel bars">${rows.map(r => `<div class="b" style="--c:${dc(r.d)}"><div class="flex"><span>D${esc(r.d)} ${esc(DOM[r.d].name)} <span class="note">(${esc(DOM[r.d].w)}%)</span></span><strong>${r.pct == null ? "–" : esc(r.pct) + "%"}</strong></div><div class="track"><i style="width:${esc(r.pct) || 0}%"></i></div><span class="note">${esc(r.c)}/${esc(r.t)} answered</span></div>`).join("")}</div>
+    <div class="panel bars">${rows.map(r => `<div class="b" data-style="--c:${dc(r.d)}"><div class="flex"><span>D${esc(r.d)} ${esc(DOM[r.d].name)} <span class="note">(${esc(DOM[r.d].w)}%)</span></span><strong>${r.pct == null ? "–" : esc(r.pct) + "%"}</strong></div><div class="track"><i data-style="width:${esc(r.pct) || 0}%"></i></div><span class="note">${esc(r.c)}/${esc(r.t)} answered</span></div>`).join("")}</div>
     ${Pro().available ? (Pro().active ? scoreReport(rows) : `<h2>Score report <span class="chip pro">Pro</span></h2>` + Pro().teaser("See your predicted score, weakest exam objectives, your trend over time and whether you're ready to book.")) : ""}
     <h2>Recent quizzes and tests</h2>
-    <div class="panel">${S.p.history.length ? S.p.history.slice(0, 15).map(h => `<div class="row"><div class="grow">${esc(h.title)}<br><span class="note">${new Date(h.at).toLocaleDateString()}</span></div><strong>${Math.round(100 * h.score / h.total)}%</strong></div>`).join("") : `<p class="note" style="margin:0">Take this week's quiz to start tracking.</p>`}</div>
+    <div class="panel">${S.p.history.length ? S.p.history.slice(0, 15).map(h => `<div class="row"><div class="grow">${esc(h.title)}<br><span class="note">${new Date(h.at).toLocaleDateString()}</span></div><strong>${Math.round(100 * h.score / h.total)}%</strong></div>`).join("") : `<p class="note" data-style="margin:0">Take this week's quiz to start tracking.</p>`}</div>
     <h2>Dates</h2>
     <div class="panel">
       <div class="row"><div class="grow"><label for="start">Plan start</label><br><span class="note">Week 1 begins on this day. Pick a Monday.</span></div><input type="date" id="start" value="${esc(S.p.start)}"></div>
@@ -1081,7 +1081,7 @@
       <div class="row"><div class="grow"><label for="pace">Study pace</label><br><span class="note">The ${W.length}-week plan takes about ${Math.round(W.length * pace())} weeks at this pace${C.hoursPerWeek ? `, at ${esc(C.hoursPerWeek)} hours per plan week` : ""}. <button type="button" class="linkbtn" data-act="fitpace">Fit the plan to my test date</button></span></div><select id="pace">${PACES.map(([f, l]) => `<option value="${esc(f)}" ${f === pace() ? "selected" : ""}>${esc(l)}</option>`).join("")}${PACES.some(([f]) => f === pace()) ? "" : `<option value="${pace()}" selected>Custom (${pace()}×)</option>`}</select></div>
     </div>
     <h2>Your data</h2>
-    <div class="panel"><p class="note" style="margin:0">Progress is saved only in this browser. Back it up to move it to another device.</p>
+    <div class="panel"><p class="note" data-style="margin:0">Progress is saved only in this browser. Back it up to move it to another device.</p>
       <div class="btns"><button class="btn ghost sm no-framed" data-act="export">Download backup</button><button class="btn ghost sm" data-act="copybackup">Copy backup</button><label class="btn ghost sm" for="imp">Restore from file</label><input type="file" id="imp" accept="application/json" class="hide"><button class="btn ghost sm" data-act="pasterestore">Restore from text</button><button class="btn ghost sm" data-act="reset">Reset ${esc(C.short)} progress</button></div>
       <p class="note" id="datamsg" role="status"></p></div>`;
   }
@@ -1089,7 +1089,7 @@
   function scoreReport(rows) {
     const answered = rows.reduce((a, r) => a + r.t, 0);
     const head = `<h2>Score report <span class="chip pro">Pro</span></h2>`;
-    if (answered < 30) return head + `<div class="panel"><p class="note" style="margin:0">Answer at least 30 questions (${answered} so far) to get a predicted score. Weekly quizzes, drills and full-length exams all count.</p></div>`;
+    if (answered < 30) return head + `<div class="panel"><p class="note" data-style="margin:0">Answer at least 30 questions (${answered} so far) to get a predicted score. Weekly quizzes, drills and full-length exams all count.</p></div>`;
     // Predicted score: accuracy in each domain weighted by that domain's share of the exam.
     const seen = rows.filter(r => r.t >= 10);
     const wsum = seen.reduce((a, r) => a + DOM[r.d].w, 0);
@@ -1109,13 +1109,13 @@
     const objs = Object.entries(S.p.objs || {}).filter(([, o]) => o.t >= 3).map(([k, o]) => ({ k, pct: Math.round(100 * o.c / o.t), t: o.t })).sort((a, b) => a.pct - b.pct || b.t - a.t).slice(0, 6);
     return head + `<div class="panel">
       <div class="row"><div class="grow"><span class="note">Predicted score</span><div class="big">${predicted == null ? "–" : predicted + "%"}</div><span class="note">From ${answered} answers, weighted by exam domain${coverage < 100 ? `; covers ${coverage}% of the exam so far` : ""}.</span></div>
-      <div><span class="chip" style="--c:${color}">${verdict}</span></div></div>
-      <p style="margin:10px 0 0">${esc(advice)}</p>
-      ${lastFull != null ? `<p class="note" style="margin:6px 0 0">Latest full-length exam: ${lastFull}% (${fulls.length} taken).</p>` : ""}
+      <div><span class="chip" data-style="--c:${color}">${verdict}</span></div></div>
+      <p data-style="margin:10px 0 0">${esc(advice)}</p>
+      ${lastFull != null ? `<p class="note" data-style="margin:6px 0 0">Latest full-length exam: ${lastFull}% (${fulls.length} taken).</p>` : ""}
     </div>
-    ${recent.length >= 2 ? `<h3>Trend</h3><div class="panel"><div class="trend" role="img" aria-label="Last ${recent.length} scores">${recent.map(h => { const p = Math.round(100 * h.score / h.total); return `<span class="tbar" style="height:${Math.max(4, p)}%;--c:${p >= 85 ? "var(--ok)" : p >= 75 ? "var(--warn)" : "var(--bad)"}" title="${esc(h.title)}: ${p}%"></span>`; }).join("")}</div>
-      <p class="note" style="margin:8px 0 0">Last ${recent.length} quizzes and tests, oldest to newest.${last5 != null && prev5 != null ? ` Average ${last5}% for the latest 5, ${last5 >= prev5 ? "up" : "down"} ${Math.abs(last5 - prev5)} points on the 5 before.` : ""}</p></div>` : ""}
-    ${objs.length ? `<h3>Weakest objectives</h3><div class="panel">${objs.map(o => `<div class="row"><div class="grow">Objective ${esc(o.k)}<br><span class="note">${esc(o.t)} answered</span></div><strong>${esc(o.pct)}%</strong></div>`).join("")}<p class="note" style="margin:8px 0 0">Look these up in the official exam objectives and reread them before your next drill.</p></div>` : ""}`;
+    ${recent.length >= 2 ? `<h3>Trend</h3><div class="panel"><div class="trend" role="img" aria-label="Last ${recent.length} scores">${recent.map(h => { const p = Math.round(100 * h.score / h.total); return `<span class="tbar" data-style="height:${Math.max(4, p)}%;--c:${p >= 85 ? "var(--ok)" : p >= 75 ? "var(--warn)" : "var(--bad)"}" title="${esc(h.title)}: ${p}%"></span>`; }).join("")}</div>
+      <p class="note" data-style="margin:8px 0 0">Last ${recent.length} quizzes and tests, oldest to newest.${last5 != null && prev5 != null ? ` Average ${last5}% for the latest 5, ${last5 >= prev5 ? "up" : "down"} ${Math.abs(last5 - prev5)} points on the 5 before.` : ""}</p></div>` : ""}
+    ${objs.length ? `<h3>Weakest objectives</h3><div class="panel">${objs.map(o => `<div class="row"><div class="grow">Objective ${esc(o.k)}<br><span class="note">${esc(o.t)} answered</span></div><strong>${esc(o.pct)}%</strong></div>`).join("")}<p class="note" data-style="margin:8px 0 0">Look these up in the official exam objectives and reread them before your next drill.</p></div>` : ""}`;
   }
 
   /* ---------- free flashcards from lesson key terms ---------- */
@@ -1149,8 +1149,8 @@
     const guide = C.domains.map(d => ({ d, g: PRO.guide.find(x => x && x.domain === d.id) })).filter(x => x.g);
     return intro + `<p class="meta">${cards.length} flashcards · ${learned} learned · ${dueN(0)} due today. Cards you know come back after 1, 3, 7 and 14 days; cards you miss come back tomorrow.</p>
     ${S.fc ? flashcardHtml() : cards.length ? `<div class="panel no-print"><div class="row"><div class="grow"><h3>Study flashcards</h3><span class="note">Up to 20 due cards at a time</span></div><select id="fcsel" aria-label="Domain"><option value="0">All domains (${dueN(0)} due)</option>${C.domains.map(d => `<option value="${esc(d.id)}">D${esc(d.id)} ${esc(d.name)} (${dueN(d.id)})</option>`).join("")}</select><button class="btn" data-act="fcstart">Start</button></div></div>` : `<p class="note">No flashcards for ${esc(C.short)} yet.</p>`}
-    ${guide.length ? `<div class="flex no-print" style="margin-top:28px"><h2 style="margin:0">Study guide</h2><button class="btn ghost sm" data-act="printguide">Print or save as PDF</button></div>
-    <div class="guide">${guide.map(({ d, g }) => `<details class="week" style="--c:${dc(d.id)}"><summary><span class="num">D${esc(d.id)}</span><span class="grow"><strong>${esc(d.name)}</strong><br><span class="note">${esc(d.w)}% of the exam</span></span></summary>
+    ${guide.length ? `<div class="flex no-print" data-style="margin-top:28px"><h2 data-style="margin:0">Study guide</h2><button class="btn ghost sm" data-act="printguide">Print or save as PDF</button></div>
+    <div class="guide">${guide.map(({ d, g }) => `<details class="week" data-style="--c:${dc(d.id)}"><summary><span class="num">D${esc(d.id)}</span><span class="grow"><strong>${esc(d.name)}</strong><br><span class="note">${esc(d.w)}% of the exam</span></span></summary>
       <p>${esc(g.summary || "")}</p>
       ${(Array.isArray(g.sections) ? g.sections : []).map(sec => `<h3>${esc(sec.title || "")}</h3><ul class="clean">${(Array.isArray(sec.points) ? sec.points : []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>`).join("")}
       ${Array.isArray(g.examTips) && g.examTips.length ? `<div class="status notice"><strong>Exam tips</strong><ul class="clean">${g.examTips.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}
@@ -1161,7 +1161,7 @@
     if (fc.i >= fc.deck.length) return `<div class="panel"><div class="big">${esc(fc.known)}/${esc(fc.seen)}</div><p class="meta">cards known on the first try this session.</p><div class="btns"><button class="btn" data-act="fcdone">Done</button></div></div>`;
     const f = fc.deck[fc.i];
     return `<div class="qhead"><strong>Flashcards</strong><span class="note">${esc(fc.i + 1)} of ${fc.deck.length} · <button class="btn ghost sm" data-act="fcdone">Stop</button></span></div>
-    <div class="flashcard ${fc.flipped ? "flipped" : ""}" style="--c:${dc(f[0])}">
+    <div class="flashcard ${fc.flipped ? "flipped" : ""}" data-style="--c:${dc(f[0])}">
       <span class="note">Domain ${esc(f[0])}</span>
       <p class="q">${esc(f[1])}</p>
       ${fc.flipped ? `<div class="expl">${esc(f[2])}</div>` : ""}
@@ -1194,7 +1194,7 @@
       ${x.extra ? `<div class="row"><span class="note">${esc(x.extra)}</span></div>` : ""}
     </div>
     <h2>Domains and weights</h2>
-    <div class="panel bars">${C.domains.map(d => `<div class="b" style="--c:${dc(d.id)}"><div class="flex"><span>D${esc(d.id)} ${esc(d.name)}</span><strong>${esc(d.w)}%</strong></div><div class="track"><i style="width:${esc(d.w)}%"></i></div></div>`).join("")}</div>
+    <div class="panel bars">${C.domains.map(d => `<div class="b" data-style="--c:${dc(d.id)}"><div class="flex"><span>D${esc(d.id)} ${esc(d.name)}</span><strong>${esc(d.w)}%</strong></div><div class="track"><i data-style="width:${esc(d.w)}%"></i></div></div>`).join("")}</div>
     <h2>Official sources</h2>
     <div class="panel"><ul class="clean">${(C.sources || []).map(s => `<li><a href="${esc(s.url)}" rel="noopener" target="_blank">${esc(s.label)}</a></li>`).join("")}</ul>
     <p class="note">Always check the vendor's current objectives before booking. Exams are revised every few years.</p></div>`;
