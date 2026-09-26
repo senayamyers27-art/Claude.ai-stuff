@@ -131,13 +131,16 @@
   /* ---------- what's new (data/news.js) ---------- */
   const NEWS = () => (Array.isArray(CertHub.news) ? CertHub.news : []).filter(n => n && /^\d{4}-\d{2}-\d{2}$/.test(n.date) && n.title && Array.isArray(n.items));
   const newsDate = d => { try { return new Date(d + "T12:00:00").toLocaleDateString(CertHub.i18n.lang() === "es" ? "es" : "en", { year: "numeric", month: "long", day: "numeric" }); } catch (e) { return d; } };
+  // Spanish mode shows each entry's own Spanish text (marked as content so the interface dictionary leaves it alone).
+  const loc = n => CertHub.i18n.lang() === "es" && n.es && n.es.title && Array.isArray(n.es.items) ? n.es : n;
   function newsView() {
     return `<h1>What's new</h1><p class="meta">New certifications, features and content, newest first.</p>
-    ${NEWS().map(n => `<section class="panel"><p class="note" style="margin:0">${esc(newsDate(n.date))}</p><h2 style="margin-top:4px">${esc(n.title)}</h2><ul class="clean">${n.items.map(i => `<li>${esc(i)}</li>`).join("")}</ul></section>`).join("")}`;
+    ${NEWS().map(n => { const t = loc(n); return `<section class="panel"${t !== n ? " data-content" : ""}><p class="note" style="margin:0">${esc(newsDate(n.date))}</p><h2 style="margin-top:4px">${esc(t.title)}</h2><ul class="clean">${t.items.map(i => `<li>${esc(i)}</li>`).join("")}</ul></section>`; }).join("")}`;
   }
   function newsCard() {
     const n = NEWS()[0]; if (!n) return "";
-    return `<p class="note newsline"><strong>New:</strong> ${esc(n.title)}. <a href="#whats-new">See what's new</a></p>`;
+    const t = loc(n);
+    return `<p class="note newsline"><strong>New:</strong> <span${t !== n ? " data-content" : ""}>${esc(t.title)}.</span> <a href="#whats-new">See what's new</a></p>`;
   }
 
   function homeView() {
