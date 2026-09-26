@@ -155,6 +155,25 @@
     if (out.length < N) out = out.concat(pickFor(q => !out.includes(q), N - out.length));
     return shuffle(out.slice(0, N));
   }
+  // Smart practice: more questions from weaker domains, at a level that matches how you're doing there.
+  function smartQs(n = 15) {
+    const st = S.p.stats || {};
+    const info = C.domains.map(d => { const x = st[d.id] || { c: 0, t: 0 }, acc = x.t >= 5 ? x.c / x.t : 0.55; return { d, acc, w: d.w * Math.max(0.15, 1.2 - acc) }; });
+    const tw = info.reduce((a, r) => a + r.w, 0), used = new Set(); let out = [];
+    info.forEach(r => {
+      const k = Math.max(1, Math.round(n * r.w / tw)), want = r.acc < 0.6 ? [1, 2] : r.acc < 0.8 ? [2, 3] : [3, 2];
+      let pool = shuffle(Q.filter(q => q.d === r.d.id && !used.has(q.id)));
+      pool.sort((a, b) => (want.indexOf(a.lv) < 0 ? 9 : want.indexOf(a.lv)) - (want.indexOf(b.lv) < 0 ? 9 : want.indexOf(b.lv)));
+      pool.slice(0, k).forEach(q => { used.add(q.id); out.push(q); });
+    });
+    return shuffle(out).slice(0, n);
+  }
+  // Hard mode: an exam-length test from the hardest questions, weighted like the real exam.
+  function hardQs() {
+    const N = C.examSim.questions; let out = [];
+    C.domains.forEach(d => { const k = Math.round(N * d.w / 100), hard = shuffle(Q.filter(q => q.d === d.id && q.lv === 3)), mid = shuffle(Q.filter(q => q.d === d.id && q.lv === 2)); out = out.concat(hard.concat(mid).slice(0, k)); });
+    return shuffle(out);
+  }
   function examQs() {
     const N = C.examSim.questions;
     let out = [];
@@ -847,6 +866,7 @@
     <div class="panel">
       <div class="row"><div class="grow"><h3>Placement test</h3><span class="note">${S.p.placement ? `Last taken ${esc(fmt(new Date(S.p.placement.at)))}. Retake it to see where you stand now.` : "A few questions from every domain to find what you already know and where to start"}</span></div><button class="btn ${S.p.placement ? "ghost" : ""}" data-act="placement">${S.p.placement ? "Retake" : "Start"}</button></div>
       <div class="row"><div class="grow"><h3>Weekly quiz</h3><span class="note">10 questions with instant feedback</span></div><select id="wsel" aria-label="Week">${W.map(w => `<option value="${w.n}" ${w.n === weekNow() ? "selected" : ""}>Week ${w.n}</option>`).join("")}</select><button class="btn" data-act="weekly-sel">Start</button></div>
+      <div class="row"><div class="grow"><h3>Smart practice</h3><span class="note">15 questions picked for you: more from your weaker domains, harder where you're already strong</span></div><button class="btn" data-act="smart">Start</button></div>
       <div class="row"><div class="grow"><h3>Review queue</h3><span class="note">Questions you missed, spaced 1, 3, 7 and 14 days apart</span></div><button class="btn" data-act="review" ${due ? "" : "disabled"}>${due ? `Review ${due}` : "Nothing due"}</button></div>
       <div class="row"><div class="grow"><h3>Domain drill</h3><span class="note">15 random questions</span></div><select id="dsel" aria-label="Domain">${C.domains.map(d => `<option value="${d.id}">D${d.id} (${cnt(d.id)})</option>`).join("")}</select>${Q.some(q => q.lv) ? `<select id="lvsel" aria-label="Difficulty"><option value="0">Any level</option>${[1, 2, 3].map(n => `<option value="${n}">${LEVELS[n]}</option>`).join("")}</select>` : ""}<button class="btn" data-act="drill">Start</button></div>
     </div>
@@ -859,6 +879,7 @@
     <div class="panel">${PLAN.checkpoints.map(c => `<div class="row"><div class="grow"><h3>Domain ${c.dom}: ${esc(DOM[c.dom].name)}</h3><span class="note">End of week ${c.after} · ${Math.min(25, cnt(c.dom))} questions, ${Math.max(5, Math.round(30 * Math.min(25, cnt(c.dom)) / 25))} minutes</span></div><button class="btn ghost" data-act="checkpoint" data-d="${c.dom}">Start</button></div>`).join("")}</div>
     <h2>Full practice exam</h2>
     <div class="panel"><div class="row"><div class="grow"><h3>Exam simulation</h3><span class="note">Weighted like the real exam. ${ex} questions available now${ex < C.examSim.questions ? ` (the real exam has ${C.examSim.questions})` : ""}, ${examMinutes(ex)} minutes at the real exam's pace.</span></div><button class="btn" data-act="exam">Start</button></div>
+    ${Q.some(q => q.lv === 3) ? `<div class="row"><div class="grow"><h3>Hard mode exam</h3><span class="note">Only medium and hard questions, weighted like the real exam. A good test in your last week.</span></div><button class="btn ghost" data-act="hardexam">Start</button></div>` : ""}
     ${fullExamRow()}</div>
     ${Pro().available && !Pro().active ? Pro().teaser(`Get about 300 more ${C.short} questions and full-length ${C.examSim.questions}-question exams with a pass estimate.`) : ""}`;
   }
@@ -1095,6 +1116,8 @@
       "drill-d": () => drill(d),
       checkpoint: () => cp(d),
       exam: () => { const qs = examQs(); startQuiz({ title: "Practice exam", qs, mode: "test", minutes: examMinutes(qs.length) }); },
+      smart: () => { const qs = smartQs(); if (!qs.length) return; startQuiz({ title: "Smart practice", qs, mode: "learn" }); },
+      hardexam: () => { const qs = hardQs(); startQuiz({ title: "Hard mode exam", qs, mode: "test", minutes: examMinutes(qs.length) }); },
       fullexam: () => { if (!PRO) return; startQuiz({ title: "Full-length exam", qs: fullExamQs(), mode: "test", minutes: C.examSim.minutes, kind: "full" }); },
       fcstart: () => {
         const dom = +$("#fcsel").value, sched = S.p.cards || {}, now = today().getTime() + 1000;
