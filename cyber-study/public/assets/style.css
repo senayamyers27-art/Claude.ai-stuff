@@ -366,3 +366,4 @@ td.nowrap{white-space:nowrap}
 .certificate h1{font-size:34px;margin:10px 0} .certificate h2{margin:8px 0 16px}
 .certificate ul{display:inline-block;text-align:left}
 @media print{.certificate{border:3px solid #16202C;margin-top:40px}}
+.ov-voice select{max-width:170px;font-size:13px;padding:4px 6px}

@@ -391,22 +391,31 @@
   const first = (x, n) => sentences(x).slice(0, n).join(" ");
   function overviewSlides(t) {
     const l = lessonOf(t), d = DOM[(W.find(w => w.topics.includes(t)) || {}).dom] || null, es = !!l.tt;
-    const K = es ? { idea: "La idea principal", how: "Cómo funciona", terms: "Términos clave", real: "En el mundo real", tip: "Consejo para el examen", check: "Comprueba lo que sabes", pause: "Pausa y responde en voz alta; luego lee la lección completa para comprobar.", ov: "Resumen" } : { idea: "The big idea", how: "How it works", terms: "Key terms", real: "In the real world", tip: "Exam tip", check: "Check yourself", pause: "Pause and answer out loud, then read the full lesson to check.", ov: "Overview" };
+    const K = es ? { idea: "La idea principal", how: "Cómo funciona", terms: "Términos clave", real: "En el mundo real", tip: "Consejo para el examen", check: "Comprueba lo que sabes", pause: "Pausa y responde en voz alta; luego lee la lección completa para comprobar.", ov: "Resumen", hi: "¡Hola! Vamos a ver", hiEnd: "en un minuto.", ideaSay: "Primero, la idea principal.", howSay: "Ahora, cómo funciona.", termsSay: "Estos son los términos que tienes que dominar.", realSay: "Veámoslo en el mundo real.", tipSay: "Y aquí va un consejo que te dará puntos en el examen.", checkSay: "¡Tu turno!", bye: "¡Buen trabajo! Sigue así." } : { idea: "The big idea", how: "How it works", terms: "Key terms", real: "In the real world", tip: "Exam tip", check: "Check yourself", pause: "Pause and answer out loud, then read the full lesson to check.", ov: "Overview", hi: "Hey there! Let's break down", hiEnd: "in about a minute.", ideaSay: "First, the big idea.", howSay: "Now, here's how it works.", termsSay: "Here are the key terms you'll want to nail.", realSay: "Let's see it in the real world.", tipSay: "And here's a tip that can earn you points on exam day.", checkSay: "Your turn!", bye: "Nice work! Keep that momentum going." };
     const prose = (l.body || []).filter(x => !/^```/.test(x));
-    const out = [{ h: `<p class="ov-kicker">${esc(C.short)}${d ? ` · Domain ${d.id}: ${esc(d.name)}` : ""}</p><h2 class="ov-title">${esc(l.tt || t)}</h2><p class="ov-sub">${K.ov}</p>`, say: `${K.ov}. ${plain(l.tt || t)}.` }];
-    if (prose[0]) out.push({ h: `<p class="ov-kicker">${K.idea}</p><p class="ov-lead">${esc(first(prose[0], 2))}</p>`, say: first(prose[0], 2) });
+    const out = [{ h: `<p class="ov-kicker">${esc(C.short)}${d ? ` · Domain ${d.id}: ${esc(d.name)}` : ""}</p><h2 class="ov-title">${esc(l.tt || t)}</h2><p class="ov-sub">${K.ov}</p>`, say: `${K.hi} ${plain(l.tt || t)}, ${K.hiEnd}` }];
+    if (prose[0]) out.push({ h: `<p class="ov-kicker">${K.idea}</p><p class="ov-lead">${esc(first(prose[0], 2))}</p>`, say: K.ideaSay + " " + first(prose[0], 2) });
     const how = prose.slice(1, 4).map(x => first(x, 1)).filter(Boolean);
-    if (how.length) out.push({ h: `<p class="ov-kicker">${K.how}</p><ul class="ov-list">${how.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`, say: how.join(" ") });
+    if (how.length) out.push({ h: `<p class="ov-kicker">${K.how}</p><ul class="ov-list">${how.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`, say: K.howSay + " " + how.join(" ") });
     CertHub.diagramsFor(C.id, t).slice(0, 1).forEach(g => out.push({ h: `<p class="ov-kicker">${esc(g.title)}</p><div class="ov-fig">${g.svg.replace(/^<svg /, `<svg role="img" aria-label="${esc(g.alt)}" focusable="false" `)}</div>`, say: g.alt }));
     const terms = (l.terms || []).slice(0, 4);
-    if (terms.length) out.push({ h: `<p class="ov-kicker">${K.terms}</p><dl class="ov-terms">${terms.map(([a, b]) => `<dt>${esc(plain(a))}</dt><dd>${esc(first(b, 1))}</dd>`).join("")}</dl>`, say: K.terms + ". " + terms.map(([a, b]) => `${plain(a)}: ${first(b, 1)}`).join(" ") });
-    if (l.example) out.push({ h: `<p class="ov-kicker">${K.real}</p><p class="ov-lead">${esc(first(l.example, 2))}</p>`, say: K.real + ". " + first(l.example, 2) });
-    if (l.tip) out.push({ h: `<p class="ov-kicker">${K.tip}</p><p class="ov-lead">${esc(plain(l.tip))}</p>`, say: K.tip + ". " + plain(l.tip) });
-    if (l.check && l.check[0]) out.push({ h: `<p class="ov-kicker">${K.check}</p><p class="ov-lead">${esc(plain(l.check[0][0]))}</p><p class="ov-sub">${K.pause}</p>`, say: K.check + ". " + plain(l.check[0][0]) + " " + K.pause });
+    if (terms.length) out.push({ h: `<p class="ov-kicker">${K.terms}</p><dl class="ov-terms">${terms.map(([a, b]) => `<dt>${esc(plain(a))}</dt><dd>${esc(first(b, 1))}</dd>`).join("")}</dl>`, say: K.termsSay + " " + terms.map(([a, b]) => `${plain(a)}: ${first(b, 1)}`).join(" ") });
+    if (l.example) out.push({ h: `<p class="ov-kicker">${K.real}</p><p class="ov-lead">${esc(first(l.example, 2))}</p>`, say: K.realSay + " " + first(l.example, 2) });
+    if (l.tip) out.push({ h: `<p class="ov-kicker">${K.tip}</p><p class="ov-lead">${esc(plain(l.tip))}</p>`, say: K.tipSay + " " + plain(l.tip) });
+    if (l.check && l.check[0]) out.push({ h: `<p class="ov-kicker">${K.check}</p><p class="ov-lead">${esc(plain(l.check[0][0]))}</p><p class="ov-sub">${K.pause}</p>`, say: K.checkSay + " " + plain(l.check[0][0]) + " " + K.pause + " " + K.bye });
     out.lang = es ? "es-US" : "en-US";
     return out;
   }
   // opts.queue: more lessons to play after this one (a week's playlist). opts.autoplay false: open paused.
+  // Narrator voice: the learner's choice if saved, otherwise the most natural, lively voice the device offers.
+  const PREFERRED = [/Aria.*(Natural|Online)/i, /Jenny.*(Natural|Online)/i, /Ava.*(Natural|Online|Premium|Enhanced)/i, /Emma.*(Natural|Online)/i, /(Natural|Online|Neural)/i, /Google US English/i, /Samantha/i, /Ava/i, /Allison|Susan|Zoe/i, /Google español de Estados Unidos|Google español/i, /Paulina|Monica|Dalia|Elvira/i];
+  function voicesFor(lang) { const all = ("speechSynthesis" in window ? speechSynthesis.getVoices() : []).filter(v => v.lang && v.lang.toLowerCase().startsWith(lang.slice(0, 2))); return all; }
+  function pickVoice(lang) {
+    const list = voicesFor(lang); if (!list.length) return null;
+    const saved = CertHub.store.get("certhub:voice-" + lang.slice(0, 2)); const s = saved && list.find(v => v.name === saved); if (s) return s;
+    for (const re of PREFERRED) { const v = list.find(x => re.test(x.name) && x.lang.toLowerCase() === lang.toLowerCase()) || list.find(x => re.test(x.name)); if (v) return v; }
+    return list.find(v => v.lang.toLowerCase() === lang.toLowerCase()) || list[0];
+  }
   function playOverview(t, opts = {}) {
     const queue = opts.queue || [], slides = overviewSlides(t), tts = "speechSynthesis" in window && typeof SpeechSynthesisUtterance === "function";
     const back = opts.back || document.activeElement;
@@ -418,8 +427,11 @@
       <div class="ov-stage" aria-live="polite"></div>
       <div class="ov-bar" aria-hidden="true"><i></i></div>
       <div class="ov-ctl"><button type="button" class="btn ghost sm" data-ov="prev" aria-label="Previous slide">⏮</button><button type="button" class="btn sm" data-ov="play"></button><button type="button" class="btn ghost sm" data-ov="next" aria-label="Next slide">⏭</button>
-        ${tts ? `<button type="button" class="btn ghost sm" data-ov="sound"></button>` : ""}<button type="button" class="btn ghost sm" data-ov="rate" aria-label="Playback speed">1×</button><span class="note ov-n"></span></div></div>`;
+        ${tts ? `<button type="button" class="btn ghost sm" data-ov="sound"></button>` : ""}<button type="button" class="btn ghost sm" data-ov="rate" aria-label="Playback speed">1×</button>${tts ? `<label class="ov-voice"><span class="sr-only">Narrator voice</span><select data-ov-voice aria-label="Narrator voice"></select></label>` : ""}<span class="note ov-n"></span></div></div>`;
     const $o = sel => wrap.querySelector(sel);
+    // Fill the voice list (voices can load a moment after the page does).
+    const fillVoices = () => { const sel = $o("[data-ov-voice]"); if (!sel) return; const list = voicesFor(slides.lang), cur = pickVoice(slides.lang); sel.innerHTML = list.length ? list.map(v => `<option value="${esc(v.name)}" ${cur && v.name === cur.name ? "selected" : ""}>${esc(v.name.replace(/^Microsoft /, "").replace(/ - .*$/, ""))}</option>`).join("") : `<option>Default voice</option>`; };
+    if (tts) { fillVoices(); speechSynthesis.addEventListener("voiceschanged", fillVoices); wrap.addEventListener("change", e => { const sel = e.target.closest("[data-ov-voice]"); if (sel) { CertHub.store.set("certhub:voice-" + slides.lang.slice(0, 2), sel.value); run(); } }); }
     const stop = () => { gen++; clearTimeout(timer); if (tts) speechSynthesis.cancel(); };
     const show = () => {
       $o(".ov-stage").innerHTML = `<div class="ov-slide">${slides[i].h}</div>`;
@@ -434,7 +446,8 @@
       const my = gen, text = slides[i].say;
       const fallback = () => { timer = setTimeout(() => advance(my), Math.max(2500, text.split(/\s+/).length / (2.6 * rate) * 1000)); };
       if (sound) {
-        const u = new SpeechSynthesisUtterance(text); u.rate = rate; u.lang = slides.lang;
+        const u = new SpeechSynthesisUtterance(text); u.rate = rate * 1.06; u.pitch = 1.12; u.lang = slides.lang;
+        const v = pickVoice(slides.lang); if (v) u.voice = v;
         u.onend = () => { timer = setTimeout(() => advance(my), 500); };
         u.onerror = () => { if (my === gen) fallback(); };
         speechSynthesis.speak(u);
@@ -792,7 +805,9 @@
   }
   function hoFwRun() {
     const st = S.ho; hoFwRead(); if (!CertHub.fw) return;
-    st.results = st.x.tests.map(t => { const r = CertHub.fw.evaluate(st.rules, t.flow, st.x.setup || {}); return { ok: r.action === t.expect, action: r.action, rule: r.rule }; });
+    const warn = new Set();
+    st.results = st.x.tests.map(t => { const r = CertHub.fw.evaluate(st.rules, t.flow, st.x.setup || {}); (r.warnings || []).forEach(w => warn.add(w)); return { ok: r.action === t.expect, action: r.action, rule: r.rule }; });
+    st.warnings = [...warn];
     if (st.results.every(r => r.ok)) hoPass(st); render(); focusSoon("#horesult");
   }
   const FW_COLS = [["name", "Name"], ["from", "From zone"], ["to", "To zone"], ["src", "Source"], ["dst", "Destination"], ["app", "Application"], ["service", "Service"], ["action", "Action"]];
@@ -856,7 +871,7 @@
       return head + `<p class="note">Zones: ${esc((set.zones || []).join(", "))}${set.addresses ? ` · Addresses: ${esc(Object.entries(set.addresses).map(([k, v]) => `${k} (${v})`).join(", "))}` : ""}${set.services ? ` · Services: ${esc(Object.entries(set.services).map(([k, v]) => `${k} (${v})`).join(", "))}` : ""}. Rules are checked top to bottom; the first match wins. List several values with commas, or use any.</p>
       <div class="tablewrap" tabindex="0"><table class="kqlt fwt"><thead><tr><th scope="col">#</th>${FW_COLS.map(([, h]) => `<th scope="col">${h}</th>`).join("")}<th scope="col"><span class="sr-only">Move or delete</span></th></tr></thead><tbody>${st.rules.map((r, i) => `<tr><td>${i + 1}</td>${FW_COLS.map(([k, h]) => `<td>${k === "action" ? `<select data-fwr="${i}" data-fwk="action" aria-label="Rule ${i + 1} ${h}">${["allow", "deny"].map(a => `<option ${r.action === a ? "selected" : ""}>${a}</option>`).join("")}</select>` : `<input type="text" data-fwr="${i}" data-fwk="${k}" value="${esc(fwList(r[k] ?? (k === "name" ? "" : "any")))}" aria-label="Rule ${i + 1} ${h}" autocomplete="off" autocapitalize="off" spellcheck="false">`}</td>`).join("")}<td class="nowrap"><button type="button" class="btn ghost sm" data-act="fwup" data-i="${i}" ${i ? "" : "disabled"} aria-label="Move rule ${i + 1} up">↑</button><button type="button" class="btn ghost sm" data-act="fwdel" data-i="${i}" aria-label="Delete rule ${i + 1}">✕</button></td></tr>`).join("")}</tbody></table></div>
       <div class="btns"><button class="btn ghost sm" data-act="fwadd">Add rule</button><button class="btn" data-act="fwrun">Run test traffic</button></div>
-      <div id="horesult" tabindex="-1" role="status">${st.results ? `<ul class="clean hochecks">${x.tests.map((t, i) => { const r = st.results[i]; return `<li>${r.ok ? `<span class="simok" aria-label="as expected">✓</span>` : `<span class="simbad" aria-label="not as expected">✗</span>`} ${inline(t.label)} <span class="note">→ ${esc(r.action)}${r.rule ? ` by ${esc(r.rule)}` : " (no rule matched)"}; expected ${esc(t.expect)}</span></li>`; }).join("")}</ul>${st.passed ? `<p><strong>Every test behaves as required.</strong></p>` : ""}` : ""}</div>` + help;
+      <div id="horesult" tabindex="-1" role="status">${st.results ? `<ul class="clean hochecks">${x.tests.map((t, i) => { const r = st.results[i]; return `<li>${r.ok ? `<span class="simok" aria-label="as expected">✓</span>` : `<span class="simbad" aria-label="not as expected">✗</span>`} ${inline(t.label)} <span class="note">→ ${esc(r.action)}${r.rule ? ` by ${esc(r.rule)}` : " (no rule matched)"}; expected ${esc(t.expect)}</span></li>`; }).join("")}</ul>${st.warnings && st.warnings.length ? `<div class="status notice"><strong>Check these names:</strong><ul class="clean">${st.warnings.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>` : ""}${st.passed ? `<p><strong>Every test behaves as required.</strong></p>` : ""}` : ""}</div>` + help;
     }
     if (x.kind === "tf") {
       if (!CertHub.tf) return head + `<p class="note">Loading…</p>`;
