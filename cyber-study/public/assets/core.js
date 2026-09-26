@@ -94,7 +94,7 @@
     if (handson[id]) return Promise.resolve(handson[id]);
     return loadScript(`data/handson/${id}.js`).then(() => handson[id] || null);
   }
-  function addHandson(id, h) { if (h && Array.isArray(h.items)) handson[id] = { items: h.items.filter(x => x && x.id && x.kind), tables: h.tables || {} }; }
+  function addHandson(id, h) { if (h && Array.isArray(h.items)) handson[id] = { items: h.items.filter(x => x && x.id && x.kind), tables: h.tables || {}, captures: h.captures || {} }; }
   // Career pages and interview practice: data/careers.js.
   const careers = { list: null, interview: {} };
   const loadCareers = () => loadScript("data/careers.js").then(() => careers);
