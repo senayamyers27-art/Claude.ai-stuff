@@ -371,6 +371,47 @@ ${c.roles.map(r => `<h3>${esc(roleName(r))}</h3><div class="panel">${(interview[
   }
 }
 
+/* ---------- exam-day guide pages (data/examday.js) ---------- */
+{
+  const f = path.join(PUB, "data/examday.js");
+  if (fs.existsSync(f)) {
+    let D = null; CertHub.addExamDay = d => { D = d; }; require(f);
+    const top = pre => `<header class="top"><div class="bar"><a class="brand" href="${pre}">${esc(cfg.siteName)}</a></div></header>`;
+    const secs = list => list.map(s => `<h2>${esc(s.h)}</h2><div class="panel"><ul class="clean">${s.points.map(x => `<li>${esc(x).replace(/`([^`\n]+)`/g, "<code>$1</code>")}</li>`).join("")}</ul></div>`).join("\n");
+    const certLinks = (ids, pre) => ids.filter(id => certs.some(c => c.id === id)).map(id => { const c = certs.find(x => x.id === id); return `<a href="${pre}${id}/">${esc(c.short)} ${esc(c.exam)}</a>`; }).join(", ");
+    out("public/exam-day/index.html", `${head({ title: `Exam-Day Guides · ${cfg.siteName}`, desc: "What to expect on certification exam day, vendor by vendor: scoring, question types, pacing, check-in, online proctoring and retakes.", prefix: "../", urlPath: "/exam-day/", scripts: [], ld: crumbs([["Home", "/"], ["Exam-day guides", "/exam-day/"]]) })}
+<body>
+${top("../")}
+<main class="wrap lesson-page">
+<h1>Exam-day guides</h1>
+<p class="meta">What to expect on the day, vendor by vendor. Always confirm policies on the vendor's official page before you book.</p>
+<div class="panel"><ul class="clean">${D.vendors.map(v => `<li><a href="${v.id}/">${esc(v.name)}</a></li>`).join("")}</ul></div>
+${secs(D.general)}
+</main>
+</body>
+</html>
+`);
+    extraPages.push(["/exam-day/"]);
+    D.vendors.forEach(v => {
+      out(`public/exam-day/${v.id}/index.html`, `${head({ title: `${v.name} Exam Day · ${cfg.siteName}`, desc: String(v.intro).slice(0, 155), prefix: "../../", urlPath: `/exam-day/${v.id}/`, scripts: [], ld: crumbs([["Home", "/"], ["Exam-day guides", "/exam-day/"], [v.name, `/exam-day/${v.id}/`]]) })}
+<body>
+${top("../../")}
+<main class="wrap lesson-page">
+<p class="crumbs"><a href="../../">All certifications</a> / <a href="../">Exam-day guides</a> / ${esc(v.name)}</p>
+<h1>${esc(v.name)} exam day</h1>
+<p class="meta">${esc(v.intro)}</p>
+<p class="note">Covers: ${certLinks(v.certs, "../../")}</p>
+${secs(v.sections)}
+<p class="note">Policies change. Check the vendor's candidate handbook and your booking confirmation for the current rules.</p>
+</main>
+</body>
+</html>
+`);
+      extraPages.push([`/exam-day/${v.id}/`]);
+    });
+  }
+}
+
 // Lesson pages that no longer match a lesson are removed.
 if (!CHECK) certs.forEach(c => {
   const keep = new Set(lessonPages.map(([u]) => u));

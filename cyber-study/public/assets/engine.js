@@ -1227,7 +1227,7 @@
       anki: () => {
         const q = x => `"${String(x).replace(/"/g, '""')}"`;
         const rows = termCards().map(([d, a, b]) => [a, b, `${C.id} domain-${d}`]);
-        const qs = FREE_Q.map(x => [x.q + "<br><br>" + x.o.map((o, i) => `${"ABCD"[i]}. ${o}`).join("<br>"), `${"ABCD"[x.a]}. ${x.o[x.a]}<br><br>${x.e}`, `${C.id} domain-${x.d} question`]);
+        const qs = FREE_Q.map(x => [x.q + "<br><br>" + x.o.map((o, i) => `${"ABCD"[i]}. ${o}`).join("<br>"), "ABCD"[x.a] + ". " + x.o[x.a] + "<br><br>" + x.e, `${C.id} domain-${x.d} question`]);
         const lines = ["#separator:Comma", "#html:true", "#tags column:3", ...rows.concat(t.dataset.q ? qs : []).map(r => r.map(q).join(","))];
         CertHub.downloadFile(`${C.id}-${t.dataset.q ? "questions" : "key-terms"}-anki.csv`, lines.join("\n") + "\n", "text/csv");
       },
