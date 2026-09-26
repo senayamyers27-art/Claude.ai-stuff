@@ -62,7 +62,8 @@ function handson(c, h, F) {
   const doms = new Set(c.domains.map(d => d.id)), ids = new Set();
   if (!h || !Array.isArray(h.items) || h.items.length < 6) return F("needs 6 or more hands-on items");
   const kql = require("../public/assets/kql.js");
-  const TERMS = { shell: "shell", kube: "kube", ios: "ios", pwsh: "pwsh" };
+  const TERMS = { shell: "shell", kube: "kube", ios: "ios", pwsh: "pwsh", aws: "awscli", az: "azcli" };
+  const eng = n => { try { return require(`../public/assets/${n}.js`); } catch (e) { return null; } };
   h.items.forEach((x, i) => {
     const E = m => F(`hands-on ${i + 1} (${x && x.id}): ${m}`);
     if (!/^[a-z0-9-]{2,40}$/.test(x.id || "") || ids.has(x.id)) E("id must be unique lowercase-with-dashes"); ids.add(x.id);
@@ -89,7 +90,27 @@ function handson(c, h, F) {
       if (!Array.isArray(x.tables) || !x.tables.length || !x.tables.every(t => h.tables && Array.isArray(h.tables[t]) && h.tables[t].length)) E("kql tables must name sample tables in h.tables");
       try { const r = kql.run(x.solution, h.tables || {}); if (!r.rows.length) E("solution returns no rows"); if (x.starter) { const s0 = kql.run(x.starter, h.tables || {}); if (kql.same(s0, r)) E("starter already gives the answer"); } }
       catch (e) { E("solution query failed: " + e.message); }
-    } else E("kind must be code, kql or a simulator: " + Object.keys(TERMS).join(", "));
+    } else if (x.kind === "pcap") {
+      const pk = x.packets || (h.captures || {})[x.capture], P = eng("pcap");
+      if (!Array.isArray(pk) || pk.length < 10) return E("pcap needs 10+ packets (inline or in h.captures)");
+      if (!pk.every(p => Number.isInteger(p.no) && p.src && p.dst && p.proto && p.info && Array.isArray(p.layers))) E("every packet needs no, t, src, dst, proto, len, info and layers");
+      if (!Array.isArray(x.questions) || x.questions.length < 2 || !x.questions.every(q => str(q.label, 10) && Array.isArray(q.answers) && q.answers.length && q.answers.every(a => str(a)))) E("pcap needs 2+ questions with accepted answers");
+      if (!P) return E("no packet filter engine public/assets/pcap.js");
+      (x.filters || []).forEach(f => { try { const r = P.filter(pk, f.expr); if (typeof f.count === "number" && r.length !== f.count) E(`filter "${f.expr}" returns ${r.length}, expected ${f.count}`); } catch (e) { E(`filter "${f.expr}" failed: ${e.message}`); } });
+    } else if (x.kind === "fw") {
+      const F = eng("fw"); if (!F) return E("no firewall engine public/assets/fw.js");
+      if (!Array.isArray(x.tests) || x.tests.length < 3 || !x.tests.every(t => str(t.label, 5) && t.flow && ["allow", "deny"].includes(t.expect))) return E("fw needs 3+ tests with label, flow and expect allow|deny");
+      const pass = rules => x.tests.every(t => F.evaluate(rules, t.flow, x.setup || {}).action === t.expect);
+      try { if (!Array.isArray(x.solution) || !pass(x.solution)) E("the solution rules don't give the expected result for every test"); if (pass(x.rules || [])) E("the starting rules already pass every test"); } catch (e) { E("firewall error: " + e.message); }
+    } else if (x.kind === "tf") {
+      const T = eng("tf"); if (!T) return E("no Terraform engine public/assets/tf.js");
+      if (!Array.isArray(x.checks) || x.checks.length < 2 || !x.checks.every(k => str(k.label, 5) && str(k.type))) return E("tf needs 2+ checks with a label");
+      try {
+        const r = T.plan(x.solution, x.prior || {}); if (!r.ok) E("solution plan fails: " + r.text.split("\n")[0]);
+        else x.checks.forEach(k => { if (!T.check(r, k)) E(`solution doesn't satisfy "${k.label}"`); });
+        const r0 = T.plan(x.starter || "", x.prior || {}); if (r0.ok && x.checks.every(k => T.check(r0, k))) E("the starter already satisfies every check");
+      } catch (e) { E("terraform engine error: " + e.message); }
+    } else E("kind must be code, kql, pcap, fw, tf or a simulator: " + Object.keys(TERMS).join(", "));
   });
 }
 

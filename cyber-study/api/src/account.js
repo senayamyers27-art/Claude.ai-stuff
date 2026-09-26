@@ -9,13 +9,15 @@ export async function exportAccount(env, user) {
   const docs = (await q("SELECT doc_key, body, version, updated_at FROM progress_docs WHERE user_id = ?", user.id).all()).results || [];
   const orgs = (await q("SELECT o.id, o.name, m.role, m.joined_at FROM org_members m JOIN orgs o ON o.id = m.org_id WHERE m.user_id = ?", user.id).all()).results || [];
   const cohorts = (await q("SELECT c.id, c.name, c.cert_id FROM cohort_members m JOIN cohorts c ON c.id = m.cohort_id WHERE m.user_id = ?", user.id).all()).results || [];
+  const classesTaught = (await q("SELECT id, name, cert_id, teacher_name, join_code, created_at FROM classes WHERE teacher_id = ?", user.id).all()).results || [];
+  const classesJoined = (await q("SELECT c.id, c.name, c.teacher_name, m.display_name, m.show_email, m.consented_at, m.joined_at FROM class_members m JOIN classes c ON c.id = m.class_id WHERE m.user_id = ?", user.id).all()).results || [];
   const subs = (await q("SELECT plan, status, seats, current_period_end, updated_at FROM subscriptions WHERE user_id = ?", user.id).all()).results || [];
   const sessions = (await q("SELECT created_at, expires_at, user_agent FROM sessions WHERE user_id = ?", user.id).all()).results || [];
   return {
     exportedAt: new Date().toISOString(),
     user: u,
     progress: docs.map(d => ({ key: d.doc_key, version: d.version, updatedAt: d.updated_at, body: JSON.parse(d.body) })),
-    organizations: orgs, cohorts, subscriptions: subs, sessions
+    organizations: orgs, cohorts, classesTaught, classesJoined, subscriptions: subs, sessions
   };
 }
 

@@ -7,6 +7,7 @@ import { listDocs, putDoc, MAX_DOC_BYTES } from "./progress.js";
 import { entitlementsFor, createCheckout, createPortal, handleWebhook, billingEnabled } from "./billing.js";
 import { createOrg, createCohort, listCohorts, createInvite, acceptInvite, cohortSummary, summaryCsv } from "./orgs.js";
 import { exportAccount, deleteAccount } from "./account.js";
+import { listClasses, createClass, updateClass, deleteClass, rotateCode, previewJoin, joinClass, leaveClass, removeStudent, roster, rosterCsv } from "./classes.js";
 
 const SECURITY_HEADERS = {
   "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
@@ -115,6 +116,28 @@ async function route(request, env) {
     const s = await cohortSummary(env, user, m[1]);
     if (!m[2]) return json(env, request, s);
     return new Response(summaryCsv(s), { headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="cohort-${m[1]}.csv"`, ...SECURITY_HEADERS, ...cors(env, request) } });
+  }
+
+  // Class mode (free): teachers create classes; students join with a code after agreeing to share.
+  if (path === "/v1/classes") {
+    if (method === "GET") return json(env, request, await listClasses(env, user));
+    if (method === "POST") return json(env, request, await createClass(env, request, user, await readJson(request)));
+  }
+  if ((m = path.match(/^\/v1\/classes\/join\/([a-km-np-z2-9]{10})$/))) {
+    if (method === "GET") return json(env, request, await previewJoin(env, request, user, m[1]));
+    if (method === "POST") return json(env, request, await joinClass(env, request, user, m[1], await readJson(request)));
+  }
+  if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})$/))) {
+    if (method === "PUT") return json(env, request, await updateClass(env, request, user, m[1], await readJson(request)));
+    if (method === "DELETE") return json(env, request, await deleteClass(env, request, user, m[1]));
+  }
+  if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/code$/)) && method === "POST") return json(env, request, await rotateCode(env, request, user, m[1]));
+  if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/membership$/)) && method === "DELETE") return json(env, request, await leaveClass(env, request, user, m[1]));
+  if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/students\/(mem_[0-9a-f]{24})$/)) && method === "DELETE") return json(env, request, await removeStudent(env, request, user, m[1], m[2]));
+  if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/roster(\.csv)?$/)) && method === "GET") {
+    const r = await roster(env, user, m[1]);
+    if (!m[2]) return json(env, request, r);
+    return new Response(rosterCsv(r), { headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="class-roster.csv"`, ...SECURITY_HEADERS, ...cors(env, request) } });
   }
 
   if (path === "/v1/account/export" && method === "GET") return json(env, request, await exportAccount(env, user), 200, { "Content-Disposition": 'attachment; filename="cyber-cert-study-account.json"' });
