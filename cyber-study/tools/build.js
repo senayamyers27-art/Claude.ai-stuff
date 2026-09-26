@@ -117,6 +117,7 @@ for (const c of certs) {
   if (has("lessons-es")) plan.hasLessonsEs = true;
   if (has("pbq")) plan.hasPbqs = true;
   if (has("handson")) plan.hasHandson = true;
+  if (has("questions-es")) plan.hasQuestionsEs = true;
   // "Why this option is wrong" notes (data/whys/<id>.js) ride along with each question as a 9th field.
   // More questions with difficulty levels (data/extra/<id>.js); the level rides along as a 10th field.
   const ex = loadExtra(PUB, c.id);
@@ -498,7 +499,7 @@ walk(PUB).filter(f => !/(^|\/)(sw\.js|_headers|_redirects|robots\.txt|sitemap\.x
     const authoredCert = ids.some(id => rel === `/data/${id}.js`);
     // Lessons are cached the first time someone opens them rather than all at install.
     // Lessons and the Python engine (about 13 MB) are cached the first time someone uses them.
-    const lesson = rel.startsWith("/data/lessons/") || rel.startsWith("/data/lessons-es/") || rel.startsWith("/vendor/");
+    const lesson = rel.startsWith("/data/lessons/") || rel.startsWith("/data/lessons-es/") || rel.startsWith("/data/questions-es/") || rel.startsWith("/data/extra/") || rel === "/data/ui-es.js" || rel.startsWith("/vendor/");
     if (!authoredCert && !lesson && (rel.startsWith("/assets/") || rel.startsWith("/data/") || rel === "/manifest.webmanifest")) precache.push(rel);
   });
 const VERSION = hash.digest("hex").slice(0, 12);

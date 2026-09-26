@@ -51,6 +51,12 @@
         FREE_Q = qs.map(toQ);
         Q = FREE_Q.concat(PRO ? PRO.questions : []);
         if (active && !(S.quiz && !S.quiz.done)) render();
+        // Spanish mode: swap in translated question text (same option order, so answers and progress still match).
+        if (LANG === "es") CertHub.loadQuestionsEs(id).then(m => {
+          if (!m || !C || C.id !== id) return;
+          FREE_Q.forEach(q => { const t = m[q.id]; if (!Array.isArray(t) || !Array.isArray(t[1]) || t[1].length !== 4) return; q.q = t[0]; q.o = t[1]; if (t[2]) q.e = t[2]; if (Array.isArray(t[3]) && t[3].length === 4) q.why = t[3]; q.es = true; });
+          if (active && !(S.quiz && !S.quiz.done)) render();
+        });
       }, e => { if (active && C.id === id) CertHub.ui.toast(e.message); });
     }
     SIMS = null;
@@ -1140,6 +1146,7 @@
     <p class="meta">${esc(C.blurb || "")}</p>
     ${C.status === "verified" ? `<div class="status">${esc(C.statusNote || "")}</div>` : checkBanner()}
     ${noticeHtml()}
+    <p class="note no-print"><a href="#exam-day">Exam-day guide</a>: scoring, question types, pacing and check-in${CertHub.examDay ? ` for ${esc(C.vendor || "this vendor")}` : ""}.</p>
     ${C.lastVerified ? `<p class="note">Exam details last checked ${esc(fmtLong(parseD(C.lastVerified)))}.</p>` : ""}
     <h2>Exam format</h2>
     <div class="panel">

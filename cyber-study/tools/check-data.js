@@ -97,6 +97,7 @@ for (const id of CertHub.catalog) {
   for (const id of CertHub.catalog) {
     const c = CertHub.certs[id]; if (!c) continue;
     const p = loadAs("pbq", id); if (p) { K.pbqs(c, p.l, m => fail(id, m)); counts.pbq++; }
+    { const f = path.join(root, "data/questions-es", id + ".js"); if (fs.existsSync(f)) { let m = null; CertHub.addQuestionsEs = (i, x) => { if (i === id) m = x; }; require(f); if (!m) fail(id, `questions-es/${id}.js must call CertHub.addQuestionsEs("${id}", {...})`); else { const byId = new Map(c.questions.map(q => [q[0], q])); Object.entries(m).forEach(([qid, t]) => { const q = byId.get(qid); if (!q) return fail(id, `questions-es: unknown question ${qid}`); if (!Array.isArray(t) || typeof t[0] !== "string" || !Array.isArray(t[1]) || t[1].length !== 4 || new Set(t[1]).size !== 4 || typeof t[2] !== "string") fail(id, `questions-es ${qid}: needs [question, [4 distinct options], explanation, whys]`); else if (t[3] != null && (!Array.isArray(t[3]) || t[3].length !== 4 || t[3][q[5]] !== null)) fail(id, `questions-es ${qid}: whys need 4 entries with null at the answer (${q[5]})`); }); const miss = c.questions.filter(q => !m[q[0]]).length; if (miss) fail(id, `questions-es: ${miss} questions not translated`); counts.qes = (counts.qes || 0) + 1; } } }
     const ho = loadAs("handson", id); if (ho) { K.handson(c, ho.h, m => fail(id, m)); counts.handson++; }
     const w = loadAs("whys", id); if (w && c.extraWhys) Object.assign(w.m, c.extraWhys); if (w) { K.whys(c, w.m, m => fail(id, m)); counts.whys++; }
     const e = loadAs("lessons-es", id, "es"); if (e) { if (!e.meta || e.meta.lang !== "es") fail(id, 'Spanish lessons need { lang: "es" }'); K.spanish(c, e.l, planTopics(c), m => fail(id, m)); counts.es++; }
@@ -109,7 +110,7 @@ for (const id of CertHub.catalog) {
     if (!CertHub.niceRoles) { require(path.join(root, "data/frameworks.js")); }
     K.careers(list, iv, CertHub.tracks, new Set((CertHub.niceRoles || []).map(r => r.id)), CertHub.labs, m => fail("careers", m));
   }
-  console.log(`simulations: ${counts.pbq} certifications, wrong-answer notes: ${counts.whys}, Spanish lessons: ${counts.es}, hands-on: ${counts.handson}`);
+  console.log(`simulations: ${counts.pbq} certifications, wrong-answer notes: ${counts.whys}, Spanish lessons: ${counts.es}, Spanish questions: ${counts.qes || 0}, hands-on: ${counts.handson}`);
 }
 /* ---------- diagrams (data/diagrams.js): SVG colored by the site's CSS, attached by topic text ---------- */
 {
@@ -138,7 +139,7 @@ for (const id of CertHub.catalog) {
 }
 console.log(`lessons: ${lessonTotal}${noLessons.length ? `; not written yet for ${noLessons.join(", ")}` : " (every certification)"}`);
 /* ---------- labs ---------- */
-const TRACKS = ["Foundations", "Networking", "Blue team", "GRC & architecture", "Systems administration", "Software engineering", "Cloud computing"], LEVELS = ["Beginner", "Intermediate", "Advanced"];
+const TRACKS = ["Foundations", "Networking", "Blue team", "GRC & architecture", "Systems administration", "Software engineering", "Cloud computing", "Data & AI"], LEVELS = ["Beginner", "Intermediate", "Advanced"];
 for (const l of Object.values(CertHub.labs)) {
   const f = m => fail(l.id, m);
   if (!/^lab-[a-z0-9-]+$/.test(l.id)) f("id must look like lab-some-name");
