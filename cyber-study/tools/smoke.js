@@ -133,6 +133,11 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.click("[data-drill] >> nth=0");
   check(/Correct|Answer:/.test(await page.textContent("#app")), "skill drill gives instant feedback");
   await page.click("[data-act=drillquit]");
+  await page.click("[data-act=smart]");
+  await page.waitForSelector(".qhead");
+  check(/Smart practice/.test(await page.textContent(".qhead")) && /of 15/.test(await page.textContent("#app")), "smart practice picks 15 questions");
+  await page.click("[data-act=quit]");
+  if (await page.$(".modal")) await page.click('.modal [data-v="1"]');
   await page.waitForSelector("[data-act=tcstart]");
   await page.click("[data-act=tcstart]");
   await page.click("[data-act=fcflip]");
@@ -140,6 +145,11 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   check(/2 of \d+/.test(await page.textContent(".qhead")), "key-term flashcards can be studied for free");
   await page.click("[data-act=fcdone]");
   await page.goto(`${BASE}/#security-plus.learn`);
+  await page.waitForSelector("[data-act=playweek]");
+  await page.click("[data-act=playweek] >> nth=0");
+  await page.waitForSelector(".ov-wrap");
+  check(/more in this playlist/.test(await page.textContent(".ov-top")), "a week's overview videos play as a playlist");
+  await page.keyboard.press("Escape");
   await page.waitForSelector("details.lesson");
   await page.click("details.lesson >> nth=0 >> summary");
   await page.click('details.lesson >> nth=0 >> [data-act=rate][data-v="1"]');
@@ -152,6 +162,12 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.waitForSelector("#hocmd");
   for (const c of await solveWith()) { await page.fill("#hocmd", c); await page.press("#hocmd", "Enter"); }
   check(await page.isVisible("text=All tasks complete."), "terminal task can be completed in the simulated shell");
+  await page.goto(`${BASE}/#ccna.practice`);
+  await page.waitForSelector("[data-act=hostart]");
+  await page.click("[data-act=hostart] >> nth=0");
+  await page.waitForSelector("#hocmd");
+  for (const c of await solveWith()) { await page.fill("#hocmd", c); await page.press("#hocmd", "Enter"); }
+  check(await page.isVisible("text=All tasks complete."), "Cisco IOS task can be completed in the simulated switch");
   await page.goto(`${BASE}/#sc-200.practice`);
   await page.waitForSelector("[data-act=hostart]");
   await page.click("[data-act=hostart] >> nth=0");
