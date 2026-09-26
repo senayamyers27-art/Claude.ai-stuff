@@ -343,7 +343,7 @@
       "create-bucket": C => { C.need("bucket"); const n = C.o("bucket"), lc = C.has("create-bucket-configuration") ? C.json("create-bucket-configuration").LocationConstraint : null;
         if (lc === "us-east-1") C.fail("InvalidLocationConstraint", "The specified location-constraint is not valid");
         if (C.region !== "us-east-1" && !lc) C.fail("IllegalLocationConstraintException", "The unspecified location constraint is incompatible for the region specific endpoint this request was sent to.");
-        makeBucket(C, n); return { Location: lc ? `http://${n}.s3.amazonaws.com/` : "/" + n }; },
+        makeBucket(C, n); return { Location: lc ? "http:" + "//" + n + ".s3.amazonaws.com/" : "/" + n }; },
       "delete-bucket": C => { C.need("bucket"); const b = bucket(C, C.o("bucket")); if (Object.keys(b.objects).length) C.fail("BucketNotEmpty", "The bucket you tried to delete is not empty"); delete C.S.buckets[C.o("bucket")]; },
       "list-buckets": C => ({ Buckets: Object.keys(C.S.buckets).sort().map(n => ({ Name: n, CreationDate: C.S.buckets[n].created })), Owner: { DisplayName: "cloud-admin", ID: "79a59df900b949e55d96a1e698fbacedfd6e09d98eacf8f8d5218e7cd47ef2be" } }),
       "put-bucket-versioning": C => { C.need("bucket", "versioning-configuration"); const b = bucket(C, C.o("bucket")), st = C.json("versioning-configuration").Status; if (!["Enabled", "Suspended"].includes(st)) C.fail("MalformedXML", "The XML you provided was not well-formed or did not validate against our published schema"); b.versioning = st; },

@@ -156,6 +156,8 @@
       else if (own(labs, head)) { topNav("labs"); $("#app").innerHTML = CertHub.labViews.detail(labs[head]); title = labs[head].title; view = head; }
       else if (own(POLICY_TITLES, head)) { topNav(""); const pv = CertHub.policyViews; $("#app").innerHTML = head === "privacy" ? pv.privacy() : head === "terms" ? pv.terms() : head === "install" ? pv.install() : head === "support" ? pv.support() : pv.security(); title = POLICY_TITLES[head]; view = head; }
       else if (head === "account" && CertHub.accountViews) { topNav("account"); $("#app").innerHTML = CertHub.accountViews.account(); title = "Account"; view = "account"; }
+      else if (/^join-[a-km-np-z2-9]{10}$/.test(head) && CertHub.accountViews) { topNav("account"); CertHub.accountViews.join(head.slice(5)); title = "Join a Class"; view = head; }
+      else if (/^class-[0-9a-f]{24}$/.test(head) && CertHub.accountViews) { topNav("account"); CertHub.accountViews.classRoster(head.slice(6)); title = "Class Roster"; view = head; }
       else if (/^cohort-[0-9a-f]{24}$/.test(head) && CertHub.accountViews) { topNav("account"); CertHub.accountViews.cohort(head.slice(7)); title = "Cohort Progress"; view = head; }
       else if (/^cap-[a-z0-9-]{1,60}$/.test(head) && CertHub.pro) { topNav("labs"); CertHub.pro.capstoneView(head); title = "Capstone project"; view = head; }
       else if (head === "frameworks" && CertHub.frameworksView) { topNav("frameworks"); $("#app").innerHTML = CertHub.frameworksView(); title = "Frameworks"; view = "frameworks"; }

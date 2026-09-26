@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /* Browser test for optional accounts, against the API running locally (api/dev-server.js).
    Signs in with an emailed link on two "devices", syncs progress both ways, and runs the
-   instructor flow: organization, cohort, invite link, learner joins, progress summary. */
+   instructor flow: organization, cohort, invite link, learner joins, progress summary, and
+   class mode: teacher creates a class, a student joins with consent, then leaves. */
 const { chromium } = require("playwright");
 const { serve } = require("./serve");
 
@@ -185,6 +186,53 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await p.goto(BASE + "/#security-plus.practice");
     await p.waitForSelector("text=Full-length exam");
     check(!(await p.$("[data-act=fullexam]")) && !/\+ 12 Pro/.test(await p.textContent("#app")), "signing out removes Pro content from the page");
+
+    console.log("Class mode (free)");
+    const tch = await device();
+    await signIn(tch, "teacher.one@example.com");
+    await tch.waitForSelector("#class-form", { state: "attached" });
+    await tch.click("#classpanel summary");
+    await tch.fill("#class-name", "Period 3 <b>Security+</b>");
+    await tch.fill("#class-teacher", "Ms. Rivera");
+    await tch.selectOption("#class-cert", "security-plus");
+    await tch.click("#class-form button[type=submit]");
+    await tch.waitForSelector("#classpanel [data-aact=copyjoin]");
+    const code = await tch.getAttribute("#classpanel [data-aact=copyjoin]", "data-code");
+    check(/^[a-km-np-z2-9]{10}$/.test(code || ""), "teacher created a class and got a join code");
+    check(!(await tch.$("#classpanel b")), "class name is escaped");
+    const stu = await device();
+    await stu.goto(BASE + "/");
+    await stu.evaluate(() => localStorage.setItem("certhub:v1:security-plus", JSON.stringify({ checks: {}, stats: { 1: { c: 7, t: 10 } }, history: [], read: {} })));
+    await stu.goto(`${BASE}/#join-${code}`);
+    await stu.waitForSelector('a.btn[href="#account"]');
+    check(/Sign in first/.test(await stu.textContent("#app")), "join link asks a signed-out student to sign in");
+    await stu.goto(BASE + "/#account");
+    await stu.fill("#signin-email", "student.one@example.com");
+    await stu.click("#signin-form button[type=submit]");
+    await stu.goto(await stu.getAttribute("#signin-msg a", "href"));
+    await stu.waitForSelector("#join-form");
+    const joinText = await stu.textContent("#app");
+    check(/Ms\. Rivera/.test(joinText) && /Period 3 <b>Security\+<\/b>/.test(joinText) && !/teacher\.one@/.test(joinText), "after sign-in the student is back on the join page, with the class and teacher names");
+    await stu.fill("#join-name", "Ana");
+    await stu.click("#join-form button[type=submit]");
+    check(/agree/.test(await stu.textContent("#join-msg")), "joining needs the consent box");
+    await stu.check("#join-consent");
+    await stu.click("#join-form button[type=submit]");
+    await stu.waitForSelector("#classpanel [data-aact=leaveclass]");
+    check(true, "student joined after agreeing");
+    await syncNow(stu);
+    await tch.goto(BASE + "/#account");
+    await tch.click('#classpanel a[href^="#class-"]');
+    await tch.waitForSelector(".sectable tbody tr td strong");
+    const roster = await tch.textContent("#app");
+    check(/Ana/.test(roster) && /Security\+/.test(roster) && !/student\.one@/.test(roster), "teacher sees the student's name and progress, not their email");
+    check((await tch.$$eval(".sectable tbody td", tds => tds.map(td => td.textContent.trim()))).includes("10"), "roster shows questions answered from synced progress");
+    await stu.click("#classpanel [data-aact=leaveclass]");
+    await stu.click('.modal [data-v="1"]');
+    await stu.waitForSelector("text=None. Your teacher shares");
+    await tch.reload();
+    await tch.waitForSelector("text=No students yet");
+    check(true, "after the student leaves, the roster no longer shows them");
 
     console.log("Delete account");
     await b.goto(BASE + "/#account");
