@@ -162,6 +162,12 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.waitForSelector("#hocmd");
   for (const c of await solveWith()) { await page.fill("#hocmd", c); await page.press("#hocmd", "Enter"); }
   check(await page.isVisible("text=All tasks complete."), "terminal task can be completed in the simulated shell");
+  await page.goto(`${BASE}/#ccna.practice`);
+  await page.waitForSelector("[data-act=hostart]");
+  await page.click("[data-act=hostart] >> nth=0");
+  await page.waitForSelector("#hocmd");
+  for (const c of await solveWith()) { await page.fill("#hocmd", c); await page.press("#hocmd", "Enter"); }
+  check(await page.isVisible("text=All tasks complete."), "Cisco IOS task can be completed in the simulated switch");
   await page.goto(`${BASE}/#sc-200.practice`);
   await page.waitForSelector("[data-act=hostart]");
   await page.click("[data-act=hostart] >> nth=0");
