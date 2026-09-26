@@ -15,7 +15,6 @@ on:
 
 permissions:
   contents: read
-  deployments: write
 
 concurrency:
   group: study-site-deploy-${{ github.event.workflow_run.head_branch }}
@@ -23,6 +22,9 @@ concurrency:
 
 jobs:
   deploy:
+    permissions:
+      contents: read
+      deployments: write
     # Pull requests are never deployed from here: their code must not run with the Cloudflare token.
     if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
     runs-on: ubuntu-latest
@@ -53,6 +55,7 @@ jobs:
         if: steps.secrets.outputs.ready == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          persist-credentials: false
           ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Set up Node

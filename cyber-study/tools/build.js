@@ -29,6 +29,16 @@ const apiOrigin = (() => {
   return v.toLowerCase();
 })();
 
+// Optional Cloudflare Turnstile bot check on the sign-in form (only with accounts). Empty = off, and no
+// request ever goes to Cloudflare. The matching secret is the API's TURNSTILE_SECRET_KEY.
+const TURNSTILE = "https://challenges.cloudflare.com";
+const turnstileSiteKey = (() => {
+  const k = String(cfg.turnstileSiteKey || "").trim();
+  if (!k || !apiOrigin) return "";
+  if (!/^[0-9A-Za-z_-]{10,80}$/.test(k)) { console.error(`site.config.json turnstileSiteKey doesn't look like a Turnstile site key, got "${k}"`); process.exit(1); }
+  return k;
+})();
+
 // Optional privacy-friendly page counts (GoatCounter: no cookies, no personal data). Empty = off.
 const analyticsOrigin = (() => {
   const code = String(((cfg.analytics || {}).goatcounter) || "").trim().toLowerCase();
@@ -51,7 +61,9 @@ labFiles.forEach(f => require(path.join(PUB, "data", f)));
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const changed = [];
+const generated = {}; // this run's output by path, so hashes match what the build writes (also in --check mode)
 function out(rel, content) {
+  generated[rel] = content;
   const file = path.join(ROOT, rel);
   const old = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : null;
   if (old === content) return;
@@ -59,11 +71,27 @@ function out(rel, content) {
   if (!CHECK) { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, content); }
 }
 
+/* ---------- Subresource Integrity ---------- */
+// Every script and stylesheet a page references carries a content hash in its URL (so no cache can pair an old
+// file with a new page) and an integrity hash (so the browser refuses a file that was changed after the build).
+const sri = {};
+function asset(rel) {
+  if (!sri[rel]) {
+    const g = generated["public/" + rel], buf = g != null ? Buffer.from(g) : fs.readFileSync(path.join(PUB, rel));
+    sri[rel] = { url: `${rel}?v=${crypto.createHash("sha256").update(buf).digest("hex").slice(0, 12)}`, integrity: "sha384-" + crypto.createHash("sha384").update(buf).digest("base64") };
+  }
+  return sri[rel];
+}
+const scriptTag = (prefix, rel, defer = true) => { const a = asset(rel); return `<script src="${prefix}${a.url}" integrity="${a.integrity}"${defer ? " defer" : ""}></script>`; };
+const styleTag = (prefix, rel) => { const a = asset(rel); return `<link rel="stylesheet" href="${prefix}${a.url}" integrity="${a.integrity}">`; };
+
 /* ---------- security policy (one source for <meta> and _headers) ---------- */
 const CSP = [
-  "default-src 'self'", "script-src 'self' 'wasm-unsafe-eval'", "style-src 'self' 'unsafe-inline'", "font-src 'self'",
+  "default-src 'self'", `script-src 'self' 'wasm-unsafe-eval'${turnstileSiteKey ? " " + TURNSTILE : ""}`, "style-src 'self'", "style-src-elem 'self' 'unsafe-inline'", "style-src-attr 'none'", "font-src 'self'",
   "img-src 'self' data:", `connect-src 'self'${apiOrigin ? " " + apiOrigin : ""}${analyticsOrigin ? " " + analyticsOrigin : ""}`, "manifest-src 'self'", "worker-src 'self' blob:",
-  "object-src 'none'", "base-uri 'self'", "form-action 'none'", "frame-ancestors 'none'", "upgrade-insecure-requests"
+  ...(turnstileSiteKey ? [`frame-src ${TURNSTILE}`] : []), "object-src 'none'", "base-uri 'self'", "form-action 'none'", "frame-ancestors 'none'", "upgrade-insecure-requests",
+  // Trusted Types: HTML and script URLs must pass the one policy defined in assets/theme.js.
+  "require-trusted-types-for 'script'", "trusted-types default"
 ].join("; ");
 // frame-ancestors is ignored in <meta>, so the meta copy drops it; _headers carries the full policy.
 const CSP_META = CSP.replace("; frame-ancestors 'none'", "");
@@ -104,9 +132,9 @@ function head({ title, desc, prefix, urlPath, scripts, lang = "en", ld = null, o
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="${prefix}manifest.webmanifest">
 <link rel="preload" href="${prefix}assets/fonts/public-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="${prefix}assets/style.css">
-<script src="${prefix}assets/theme.js"></script>
-${scripts.map(s => `<script src="${prefix}${s}" defer></script>`).join("\n")}
+${styleTag(prefix, "assets/style.css")}
+${scriptTag(prefix, "assets/theme.js", false)}
+${scripts.map(s => scriptTag(prefix, s)).join("\n")}
 </head>`;
 }
 
@@ -180,6 +208,7 @@ CertHub.site = ${JSON.stringify({
   // Display prices for Pro (the amounts charged are set in Stripe; keep them the same).
   pro: Object.fromEntries(["monthly", "yearly"].map(k => [k, /^[$€£]\d{1,4}(\.\d{2})?$/.test(String((cfg.pro || {})[k] || "")) ? cfg.pro[k] : ""])),
   apiUrl: apiOrigin,
+  turnstileSiteKey,
   analytics: analyticsOrigin,
   // Optional hosted newsletter sign-up form (Buttondown, Mailchimp, Substack...). The home page links to it.
   newsletter: { url: httpsOr((cfg.newsletter || {}).url), blurb: String((cfg.newsletter || {}).blurb || "").slice(0, 160) }
@@ -533,6 +562,10 @@ out("public/404.html", `${head({ title: "Page Not Found", desc: cfg.description,
 
 /* ---------- Cloudflare Pages config ---------- */
 const hsts = `max-age=63072000; includeSubDomains${cfg.hstsPreload ? "; preload" : ""}`;
+// Optional cross-origin isolation (Cloudflare Pages only; see docs/CLOUDFLARE_MOVE.md). Everything the pages
+// load is same-origin, so require-corp is safe, but Cloudflare's Turnstile frame would be blocked.
+if (cfg.crossOriginIsolation && turnstileSiteKey) { console.error("crossOriginIsolation can't be used with turnstileSiteKey: the Turnstile frame doesn't allow embedding under require-corp."); process.exit(1); }
+const coep = cfg.crossOriginIsolation ? "\n  Cross-Origin-Embedder-Policy: require-corp" : "";
 out("public/_headers", `# Generated by tools/build.js from site.config.json. Edit those, not this file.
 # https://developers.cloudflare.com/pages/configuration/headers/
 /*
@@ -543,7 +576,7 @@ out("public/_headers", `# Generated by tools/build.js from site.config.json. Edi
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
   Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Resource-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin${coep}
 
 /sw.js
   Cache-Control: no-cache
@@ -635,7 +668,8 @@ walk(PUB).filter(f => !/(^|\/)(sw\.js|_headers|_redirects|robots\.txt|sitemap\.x
     // Only the app shell and study plans install up front; question banks, lessons, simulations and hands-on data are
     // cached the first time they're opened (or all at once with "Save for offline"). Source-only files (whys, extra) never load.
     const lesson = /^\/data\/(lessons|lessons-es|questions-es|extra|whys|pbq|pbq-es|handson|handson-es)\//.test(rel) || /^\/data\/gen\/[^/]+-q\.js$/.test(rel) || rel === "/data/ui-es.js" || rel === "/data/examday.js" || rel === "/data/examday-es.js" || rel.startsWith("/vendor/");
-    if (!authoredCert && !lesson && (rel.startsWith("/assets/") || rel.startsWith("/data/") || rel === "/manifest.webmanifest")) precache.push(rel);
+    // Files pages reference by hashed URL are cached under that URL, so offline pages find them.
+    if (!authoredCert && !lesson && (rel.startsWith("/assets/") || rel.startsWith("/data/") || rel === "/manifest.webmanifest")) precache.push(sri[rel.slice(1)] ? "/" + sri[rel.slice(1)].url : rel);
   });
 const VERSION = hash.digest("hex").slice(0, 12);
 // The practice VM's files (about 40 MB) get their own cache, kept across site updates until the VM itself changes.

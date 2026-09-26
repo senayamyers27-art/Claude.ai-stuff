@@ -4,11 +4,13 @@
   "domain": "senayamyers27-art.github.io",
   "redirectWww": true,
   "hstsPreload": false,
+  "crossOriginIsolation": false,
   "securityContact": "https://github.com/senayamyers27-art/Claude.ai-stuff/security/advisories/new",
   "securityTxtExpires": "2027-09-24",
   "reviewEveryDays": 180,
   "cloudflarePagesProject": "cyber-cert-study",
   "apiOrigin": "",
+  "turnstileSiteKey": "",
   "pro": {
     "monthly": "$7",
     "yearly": "$49"

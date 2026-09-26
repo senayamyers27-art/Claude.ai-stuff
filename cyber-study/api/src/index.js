@@ -1,7 +1,8 @@
 /* StudyToCert API (Cloudflare Worker).
    See ../docs/BACKEND_DESIGN.md. The static site works without this; it only calls the API
    when someone signs in. */
-import { HttpError, readJson, notFound } from "./util.js";
+import { HttpError, readJson, notFound, clientIp } from "./util.js";
+import { rateLimit, securityLog } from "./audit.js";
 import { requestMagicLink, verifyMagicLink, requireUser, currentUser, logout, clearCookie } from "./auth.js";
 import { listDocs, putDoc, MAX_DOC_BYTES } from "./progress.js";
 import { entitlementsFor, createCheckout, createPortal, handleWebhook, billingEnabled } from "./billing.js";
@@ -34,12 +35,20 @@ function json(env, request, data, status = 200, extra = {}) {
   return new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json; charset=utf-8", ...SECURITY_HEADERS, ...cors(env, request), ...extra } });
 }
 
+// Refusals worth a security log line: forbidden, too large, wrong body type, rate limited.
+const LOGGED = new Set([403, 413, 415, 429]);
+// Writes per signed-in user per hour. Progress sync pushes at most every few seconds while someone studies.
+const USER_WRITES_PER_HOUR = 1000;
+
 export default {
   async fetch(request, env) {
     try {
       return await route(request, env);
     } catch (e) {
-      if (e instanceof HttpError) return json(env, request, { error: e.code, message: e.message }, e.status);
+      if (e instanceof HttpError) {
+        if (LOGGED.has(e.status)) await securityLog(request, e.code, { status: e.status }).catch(() => {});
+        return json(env, request, { error: e.code, message: e.message }, e.status);
+      }
       console.error("unhandled", e && e.stack ? e.stack.split("\n")[0] : e); // no request bodies or emails in logs
       return json(env, request, { error: "server_error", message: "Something went wrong. Try again." }, 500);
     }
@@ -52,6 +61,13 @@ async function route(request, env) {
   const method = request.method;
 
   if (method === "OPTIONS") return new Response(null, { status: 204, headers: { ...SECURITY_HEADERS, ...cors(env, request) } });
+
+  // Per-address request limit, when the Workers rate limiting binding is configured (wrangler.toml
+  // [[ratelimits]] API_LIMIT). It's kept in memory at the edge, so it adds no database work.
+  if (env.API_LIMIT && path !== "/v1/stripe/webhook") {
+    const { success } = await env.API_LIMIT.limit({ key: "ip:" + clientIp(request) });
+    if (!success) throw new HttpError(429, "rate_limited", "Too many requests. Wait a minute and try again.");
+  }
 
   // Stripe calls this directly, authenticated by signature, not by cookie or origin.
   if (path === "/v1/stripe/webhook" && method === "POST") return json(env, request, await handleWebhook(env, request));
@@ -84,6 +100,7 @@ async function route(request, env) {
 
   // Everything below needs a signed-in user.
   const user = await requireUser(env, request);
+  if (method !== "GET") await rateLimit(env, "write:" + user.id, Number(env.USER_WRITES_PER_HOUR) || USER_WRITES_PER_HOUR, 60 * 60 * 1000);
 
   if (path === "/v1/progress" && method === "GET") return json(env, request, await listDocs(env, user));
   let m;

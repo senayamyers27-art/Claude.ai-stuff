@@ -1,0 +1,37 @@
+name: OWASP ZAP baseline scan
+
+# Weekly passive scan of the live study site with OWASP ZAP (spider plus passive checks only:
+# nothing is attacked or submitted). Rules in cyber-study/tools/zap-rules.tsv: FAIL rules fail
+# the run, the rest are reported. The HTML report is kept as a run artifact.
+
+on:
+  schedule:
+    - cron: "11 9 * * 3" # Wednesdays
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  zap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Site address
+        id: site
+        run: echo "url=https://$(jq -r .domain cyber-study/site.config.json)/" >> "$GITHUB_OUTPUT"
+
+      - name: ZAP baseline scan
+        uses: zaproxy/action-baseline@de8ad967d3548d44ef623df22cf95c3b0baf8b25 # v0.15.0
+        with:
+          target: ${{ steps.site.outputs.url }}
+          rules_file_name: cyber-study/tools/zap-rules.tsv
+          cmd_options: "-I -m 3"   # -I: warnings don't fail (FAIL rules still do); -m: spider for 3 minutes
+          allow_issue_writing: false
+          artifact_name: zap-report
+          fail_action: true

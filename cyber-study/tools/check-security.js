@@ -2,7 +2,8 @@
 /* Static security lint for everything that gets deployed (public/ and functions/).
    Fails on: missing or weakened CSP, inline scripts or event handlers, third-party
    script/style/font hosts, plain http:// links, target=_blank without rel=noopener,
-   eval-style JavaScript, and missing security headers. */
+   eval-style JavaScript, missing security headers, and scripts or stylesheets without a correct
+   Subresource Integrity hash. */
 const fs = require("fs"), path = require("path");
 const ROOT = path.join(__dirname, "..");
 const PUB = path.join(ROOT, "public");
@@ -14,6 +15,8 @@ const apiOrigin = String(cfg.apiOrigin || "").trim().replace(/\/+$/, "").toLower
 const gc = String(((cfg.analytics || {}).goatcounter) || "").trim().toLowerCase();
 const analyticsOrigin = gc ? `https://${gc}.goatcounter.com` : "";
 const files = walk(PUB).concat(walk(path.join(ROOT, "functions")));
+const sriOf = {}; // file -> "sha384-..." of its current contents
+const sha384 = file => sriOf[file] || (sriOf[file] = "sha384-" + require("crypto").createHash("sha384").update(fs.readFileSync(file)).digest("base64"));
 
 for (const f of files.filter(f => f.endsWith(".html"))) {
   const s = fs.readFileSync(f, "utf8");
@@ -22,12 +25,27 @@ for (const f of files.filter(f => f.endsWith(".html"))) {
   else {
     if (/'unsafe-eval'|script-src[^;]*'unsafe-inline'/.test(csp)) fail(f, "CSP allows unsafe script execution");
     if (!/object-src 'none'/.test(csp)) fail(f, "CSP must set object-src 'none'");
-    // The only outside hosts allowed are the site's own accounts API and its optional page counter, only for connect-src.
-    const other = csp.split(";").map(d => d.trim()).map(d => d.startsWith("connect-src") ? d.replace(" " + apiOrigin, "").replace(" " + analyticsOrigin, "") : d).join(";");
+    // Inline style attributes stay blocked: the app uses data-style (applied by assets/theme.js) instead.
+    if (/style-src [^;]*'unsafe-inline'/.test(csp) || !/style-src-attr 'none'/.test(csp)) fail(f, "CSP must block inline style attributes (style-src-attr 'none')");
+    if (!/require-trusted-types-for 'script'/.test(csp)) fail(f, "CSP must require Trusted Types");
+    // The only outside hosts allowed are the site's own accounts API and its optional page counter (connect-src),
+    // and the optional Turnstile check.
+    // With accounts and a Turnstile site key, the sign-in bot check may load from Cloudflare (script and frame only).
+    const ts = apiOrigin && String(cfg.turnstileSiteKey || "").trim() ? " https://challenges.cloudflare.com" : "\0";
+    const other = csp.split(";").map(d => d.trim()).map(d => d.startsWith("connect-src") ? d.replace(" " + apiOrigin, "").replace(" " + analyticsOrigin, "") : /^(script|frame)-src /.test(d) ? d.replace(ts, "") : d).join(";");
     if (/https?:\/\//.test(other)) fail(f, "CSP allows a third-party host");
+  }
+  // Every script and stylesheet the page loads must carry an integrity hash that matches the file.
+  for (const m of s.matchAll(/<script\b[^>]*\bsrc="([^"]+)"[^>]*>|<link\b[^>]*rel="stylesheet"[^>]*>/gi)) {
+    const tag = m[0], ref = m[1] || (tag.match(/href="([^"]+)"/) || [])[1], integ = (tag.match(/integrity="([^"]+)"/) || [])[1];
+    if (!integ) { fail(f, `no integrity hash on ${ref}`); continue; }
+    const target = path.join(path.dirname(f), ref.replace(/[?#].*$/, ""));
+    if (!fs.existsSync(target)) fail(f, `references a missing file ${ref}`);
+    else if (integ !== sha384(target)) fail(f, `integrity hash doesn't match ${ref} (rebuild with node tools/build.js)`);
   }
   if (/<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>/i.test(s)) fail(f, "inline <script> (move it to a file)");
   if (/\son[a-z]+\s*=\s*["']/i.test(s)) fail(f, "inline event handler attribute");
+  if (/<[a-z][^>]*\sstyle\s*=/i.test(s) || /<style\b/i.test(s)) fail(f, "inline style (the CSP blocks it; use a class or data-style)");
   // Canonical and alternate-language links name public addresses of this site's pages; they load nothing.
   if (/<script[^>]+src="https?:\/\//i.test(s) || /<link(?![^>]*rel="(?:canonical|alternate)")[^>]+href="https?:\/\//i.test(s)) fail(f, "loads a script or stylesheet from another site");
   for (const m of s.matchAll(/<a\b[^>]*target="_blank"[^>]*>/gi)) if (!/rel="[^"]*noopener/.test(m[0])) fail(f, "target=_blank link without rel=noopener");
@@ -41,6 +59,7 @@ for (const f of files.filter(f => /\.(html|js|css|webmanifest|txt)$/.test(f) && 
   const VENDOR_OK = { "vendor/vm/xterm.css": ["http://bellard.org/jslinux/"], "vendor/vm/libv86.js": ["http://host"] };
   const ok = Object.entries(VENDOR_OK).find(([k]) => f.replace(/\\/g, "/").endsWith(k));
   for (const m of s.matchAll(/http:\/\/[^\s"'<>)]+/g)) if (!/^http:\/\/(www\.w3\.org|www\.sitemaps\.org|localhost|127\.0\.0\.1)/.test(m[0]) && !(ok && ok[1].includes(m[0]))) fail(f, `insecure URL ${m[0]}`);
+  if (f.endsWith(".js") && f.includes(`assets${path.sep}`) && /\sstyle="/.test(s)) fail(f, "style=\"\" attribute in app markup (the CSP blocks it; use data-style)");
   if (f.endsWith(".js") && /\beval\s*\(|new Function\s*\(|document\.write\s*\(|setTimeout\s*\(\s*["'`]/.test(s)) fail(f, "eval-style code");
 }
 // Engine and home page render with innerHTML, so every data value must pass through esc().

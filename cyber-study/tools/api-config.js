@@ -38,6 +38,12 @@ routes = [{ pattern = ${q(apiHost)}, custom_domain = true }]
 [vars]
 ${Object.entries(vars).map(([k, v]) => `${k} = ${q(v)}`).join("\n")}
 
+# Per-address request limit at the edge (API_LIMIT in src/index.js).
+[[ratelimits]]
+name = "API_LIMIT"
+namespace_id = "1001"
+simple = { limit = 120, period = 60 }
+
 [[d1_databases]]
 binding = "DB"
 database_name = "cyber-cert-study"

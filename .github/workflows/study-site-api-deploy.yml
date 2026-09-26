@@ -52,6 +52,7 @@ jobs:
       - name: Checkout the tested commit
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          persist-credentials: false
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Check setup
@@ -98,8 +99,9 @@ jobs:
           EMAIL_API_KEY: ${{ secrets.STUDY_API_EMAIL_KEY }}
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
           STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
         run: |
-          for NAME in EMAIL_API_KEY STRIPE_SECRET_KEY STRIPE_WEBHOOK_SECRET; do
+          for NAME in EMAIL_API_KEY STRIPE_SECRET_KEY STRIPE_WEBHOOK_SECRET TURNSTILE_SECRET_KEY; do
             if [ -n "${!NAME}" ]; then printf '%s' "${!NAME}" | npx wrangler secret put "$NAME" --config wrangler.deploy.toml; fi
           done
 

@@ -90,10 +90,13 @@ cd cyber-study
 npm ci              # once: install the pinned tools
 npm start           # preview at http://localhost:8000 (behaves like Cloudflare Pages)
 npm run build       # regenerate pages and config files after editing data or config
-npm run check       # data checks + generated files in sync + security lint
+npm run check       # data checks + generated files in sync + security and XSS lints + SBOM check
 npm test            # headless browser smoke test of every page, including offline mode
 npm run test:api    # accounts API tests (see "Optional accounts" below)
 npm run test:a11y   # accessibility: axe-core WCAG 2.2 AA on every view, light and dark
+node tools/sbom.js --out sbom.cdx.json   # CycloneDX SBOM of everything the site ships
+node tools/vuln-check.js                 # look up shipped components in the OSV database
+node tools/integrity-check.js            # compare the live site with the repository
 ```
 
 `npm run build` writes every generated file from `site.config.json` and `public/data/`. Never
@@ -121,6 +124,11 @@ See [DATA_FORMAT.md](DATA_FORMAT.md): write `public/data/<id>.js`, add the id to
 | **Study site maintenance** (`study-site-maintenance.yml`) | Mondays + on demand | Updates one issue, "Study site maintenance report": exam details due for re-checking, weights to confirm, notices starting or ending in 30 days, security.txt expiry, and whether the official exam pages changed. |
 | **Study site live check** (`study-site-live-check.yml`) | Daily + after each production deploy | Every page over HTTPS, http→https and www→apex redirects, HSTS/CSP/nosniff/frame headers, trusted TLS certificate with 14+ days left, TLS 1.0/1.1 refused. A failure fails the run and GitHub emails you. |
 | **Study site Cloudflare settings** (`study-site-cloudflare.yml`) | Wednesdays + on demand | Checks the zone for drift: Always Use HTTPS, Full (strict) SSL, minimum TLS 1.2, TLS 1.3, HTTP/3, no 0-RTT, DNSSEC. Run manually with **apply** to fix. |
+| **Study site integrity** (`study-site-integrity.yml`) | Every 6 hours + after each GitHub Pages publish | Finds the commit the live site was built from (by the version in `sw.js`) and compares every live file's hash with it. Any difference fails the run: see `docs/INCIDENT_RESPONSE.md`. |
+| **Study site provenance** (`study-site-provenance.yml`) | After CI passes on `main` | A SHA-256 manifest of every published file and the SBOM, with a signed build provenance attestation (`gh attestation verify site-manifest.txt --repo senayamyers27-art/Claude.ai-stuff`). |
+| **Study site vulnerability check** (`study-site-vulns.yml`) | Mondays + on demand | Looks up Pyodide, v86, xterm.js and every Ubuntu package in the VM image in OSV. A known issue in a library that runs in visitors' pages fails the run. |
+| **OWASP ZAP baseline** (`zap-baseline.yml`) | Wednesdays + on demand | Passive scan of the live site (rules in `tools/zap-rules.tsv`); the report is kept with the run. |
+| **OpenSSF Scorecard** (`scorecard.yml`) | Tuesdays, pushes to `main` | Scores supply-chain practices; results under Security → Code scanning. |
 | **Dependabot** (`.github/dependabot.yml`) | Weekly | Security and version updates for the npm tools and all GitHub Actions. |
 | **CodeQL** and **Secret Scan** (existing) | Pushes and PRs to `main` | Static analysis of the JavaScript and a scan for committed credentials, covering this folder too. |
 
@@ -148,6 +156,19 @@ Inside the site:
   Fonts requests, no analytics and no cookies.
 - **security.txt** at `/.well-known/security.txt` points to GitHub private vulnerability
   reporting. The maintenance report reminds you 45 days before it expires.
+- **Subresource Integrity.** Every script and stylesheet is loaded from a content-hashed URL
+  with an `integrity` hash; the security lint checks each hash against the file.
+- **Trusted Types and no inline styles.** The CSP requires Trusted Types (the policy in
+  `assets/theme.js` refuses script, style and frame tags, event handlers and `javascript:` URLs)
+  and blocks `style=""` attributes: app markup uses `data-style`, applied through the CSSOM.
+- **XSS lint.** `tools/check-xss.js` parses every app script and fails on a value placed in an
+  HTML template without escaping. Mark a known-safe value with `${/* html: why */ value}`.
+- **Workflows** pin every action to a commit SHA, get read-only tokens unless a job asks for
+  more, and don't keep checkout credentials.
+- **Docs:** `docs/SECURITY_ASSESSMENT.md` (OWASP ASVS 5.0 Level 1 and NIST SSDF),
+  `docs/INCIDENT_RESPONSE.md`, `docs/GITHUB_SETTINGS.md` (settings only the owner can change),
+  `docs/CLOUDFLARE_MOVE.md` (moving hosting for full headers), and DNS hardening in
+  `docs/CUSTOM_DOMAIN.md` (CAA, DNSSEC, anti-spoofing email records).
 
 ## Free hosting now: GitHub Pages
 

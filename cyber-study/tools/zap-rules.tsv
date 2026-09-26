@@ -1,0 +1,20 @@
+# ZAP baseline scan rules for .github/workflows/zap-baseline.yml (tab-separated: rule id, action, name).
+# FAIL fails the scan; WARN is reported only; IGNORE is skipped. The IGNOREs below are headers GitHub Pages
+# can't send (the site sets its CSP in a meta tag instead); switch them to FAIL after moving to Cloudflare
+# Pages, which sends public/_headers (docs/CLOUDFLARE_MOVE.md).
+10020	IGNORE	Anti-clickjacking header (GitHub Pages can't send X-Frame-Options)
+10038	IGNORE	Content Security Policy header not set (the CSP is in a meta tag on GitHub Pages)
+10063	IGNORE	Permissions Policy header not set (GitHub Pages can't send it)
+90004	IGNORE	Insufficient site isolation against Spectre (COOP and CORP need headers)
+10098	IGNORE	Cross-domain misconfiguration (GitHub Pages allows any origin to read public static files)
+10003	FAIL	Vulnerable JS library
+10010	FAIL	Cookie no HttpOnly flag
+10011	FAIL	Cookie without Secure flag
+10017	FAIL	Cross-domain JavaScript source file inclusion
+10035	FAIL	Strict-Transport-Security header not set
+10037	FAIL	Server leaks information via X-Powered-By
+10040	FAIL	Secure pages include mixed content
+10054	FAIL	Cookie without SameSite attribute
+10055	FAIL	CSP issues (wildcards, unsafe-inline, missing directives)
+10105	FAIL	Weak authentication method
+90022	FAIL	Application error disclosure

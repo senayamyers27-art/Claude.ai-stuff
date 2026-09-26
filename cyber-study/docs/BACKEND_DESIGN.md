@@ -68,9 +68,9 @@ flowchart LR
 
 - **Passkeys (WebAuthn) first**, with **email magic links** as the fallback. No passwords to
   store, leak or reset.
-- Session: a random 256-bit token in an `HttpOnly; Secure; SameSite=Lax` cookie scoped to the
-  API origin; only its SHA-256 hash is stored. 30-day sliding expiry; list and revoke sessions
-  in settings.
+- Session: a random 256-bit token in a `__Host-` prefixed `HttpOnly; Secure; SameSite=Strict`
+  cookie scoped to the API origin; only its SHA-256 hash is stored. 30-day sliding expiry, never
+  more than 90 days after sign-in; at most 10 sessions per user (the oldest ends first).
 - Magic links: single use, 15-minute expiry, bound to the requesting browser.
 - **Organizations (option 5)** can add SSO later: SAML or OIDC through a managed provider, or
   Cloudflare Access, once a customer asks for it.
@@ -203,13 +203,17 @@ its join link (`#join-<code>`). No seats, no billing and no Pro gate.
   the repository or the static site.
 - **Access control**: every query is scoped by `user_id` or checked `org_members.role`
   (tested with cross-tenant cases).
-- **Abuse**: rate limits on auth and invite endpoints; generic responses to avoid account
-  enumeration; Cloudflare WAF and bot protection on `api.`.
+- **Abuse**: rate limits on auth, invite and class-code endpoints, a per-user write limit and a
+  per-address edge limit (Workers rate limiting binding); generic responses to avoid account
+  enumeration; optional Cloudflare Turnstile on sign-in requests; tests in `api/test/abuse.test.js`.
 - **Browser**: the site's CSP gains exactly one `connect-src` entry for the API origin; cookies
-  are `HttpOnly`, `Secure`, `SameSite=Lax`; CORS allows only the site origin with credentials.
+  are `HttpOnly`, `Secure`, `SameSite=Strict`; CORS allows only the site origin with credentials;
+  request bodies must be `application/json`, so plain HTML forms on other sites can't post.
 - **Validation**: JSON bodies schema-validated and size-limited (progress docs ≤ 256 KB).
 - **Monitoring**: audit log for sign-ins, role changes, exports and deletions; Workers logs with
-  no request bodies or emails; alerts on webhook failures and error spikes.
+  no request bodies or emails; one JSON line per refused request (`"type":"security"`: bad origin,
+  rate limit, wrong body type, rejected link, failed bot check) with a hashed IP; alerts on
+  webhook failures and error spikes.
 - **CI**: the existing CodeQL, secret scanning and Dependabot cover the Worker too; add API tests
   (auth, tenant isolation, sync merge rules) to Study site CI.
 

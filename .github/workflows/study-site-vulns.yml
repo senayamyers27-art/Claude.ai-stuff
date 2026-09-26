@@ -1,0 +1,35 @@
+name: Study site vulnerability check
+
+# Weekly: looks up every shipped component in the SBOM (Pyodide, v86, xterm.js, and the practice
+# VM's Ubuntu packages and kernel) in the OSV vulnerability database (tools/vuln-check.js).
+# A known vulnerability in a library that runs in visitors' pages fails the run; VM image
+# advisories are listed in the run summary with the version to rebuild with.
+
+on:
+  schedule:
+    - cron: "41 12 * * 1" # Mondays
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  vulns:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: cyber-study
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+
+      - name: Check shipped components against OSV
+        run: node tools/vuln-check.js
