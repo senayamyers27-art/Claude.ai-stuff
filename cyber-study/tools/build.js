@@ -38,8 +38,10 @@ const analyticsOrigin = (() => {
 })();
 global.CertHub = { certs: {}, register(c) { this.certs[c.id] = c; } };
 require(path.join(PUB, "data/catalog.js"));
-const ids = CertHub.catalog.filter(id => fs.existsSync(path.join(PUB, "data", id + ".js")));
-ids.forEach(id => require(path.join(PUB, "data", id + ".js")));
+// ALLOW_PARTIAL=1 skips data files that don't load yet (useful while several people write content at once).
+const PARTIAL = process.env.ALLOW_PARTIAL === "1";
+const tryRequire = f => { try { require(f); return true; } catch (e) { if (!PARTIAL) throw e; console.warn(`skipped (does not load yet): ${path.relative(ROOT, f)}`); return false; } };
+const ids = CertHub.catalog.filter(id => fs.existsSync(path.join(PUB, "data", id + ".js")) && tryRequire(path.join(PUB, "data", id + ".js")));
 const certs = ids.map(id => CertHub.certs[id]);
 // Lab libraries: every data/labs-*.js file, in name order.
 const { labFiles, scripts: APP_SCRIPTS } = require("./app-scripts")(ids);
@@ -194,8 +196,7 @@ const reviewedOf = id => { const r = ((CertHub.lessonMeta || {})[id] || {}).revi
 const esOf = (id, t) => { const f = path.join(PUB, "data/lessons-es", id + ".js"); if (!fs.existsSync(f)) return null; if (!(CertHub.lessonDataEs || {})[id]) require(f); return ((CertHub.lessonDataEs || {})[id] || []).find(l => l.t === t) || null; };
 certs.forEach(c => {
   const f = path.join(PUB, "data/lessons", c.id + ".js");
-  if (!fs.existsSync(f)) return;
-  require(f);
+  if (!fs.existsSync(f) || !tryRequire(f)) return;
   const list = (CertHub.lessonData || {})[c.id] || [];
   const plan = (c.weeks ? c.weeks.filter(w => w.dom).map(w => [w.dom, w.topics]) : c.domains.map(d => [d.id, d.topics || []]));
   const domOf = t => (plan.find(([, ts]) => ts.includes(t)) || [])[0];
@@ -499,7 +500,9 @@ walk(PUB).filter(f => !/(^|\/)(sw\.js|_headers|_redirects|robots\.txt|sitemap\.x
     const authoredCert = ids.some(id => rel === `/data/${id}.js`);
     // Lessons are cached the first time someone opens them rather than all at install.
     // Lessons and the Python engine (about 13 MB) are cached the first time someone uses them.
-    const lesson = rel.startsWith("/data/lessons/") || rel.startsWith("/data/lessons-es/") || rel.startsWith("/data/questions-es/") || rel.startsWith("/data/extra/") || rel === "/data/ui-es.js" || rel.startsWith("/vendor/");
+    // Only the app shell and study plans install up front; question banks, lessons, simulations and hands-on data are
+    // cached the first time they're opened (or all at once with "Save for offline"). Source-only files (whys, extra) never load.
+    const lesson = /^\/data\/(lessons|lessons-es|questions-es|extra|whys|pbq|handson)\//.test(rel) || /^\/data\/gen\/[^/]+-q\.js$/.test(rel) || rel === "/data/ui-es.js" || rel === "/data/examday.js" || rel.startsWith("/vendor/");
     if (!authoredCert && !lesson && (rel.startsWith("/assets/") || rel.startsWith("/data/") || rel === "/manifest.webmanifest")) precache.push(rel);
   });
 const VERSION = hash.digest("hex").slice(0, 12);
