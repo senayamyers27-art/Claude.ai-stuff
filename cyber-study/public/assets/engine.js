@@ -17,7 +17,7 @@
   // The lesson to show for a topic: the Spanish translation when chosen and available.
   const lessonOf = t => (LANG === "es" && LES_ES && LES_ES.get(t)) || (LES && LES.get(t)); // lessons for this certification: a Map by topic text, false when there are none yet, null while loading
   let active = false;
-  const TAB_IDS = ["week", "learn", "plan", "practice", "labs", "progress", "guide", "about", "cheat"];
+  const TAB_IDS = ["week", "learn", "plan", "practice", "labs", "progress", "guide", "about", "cheat", "certificate"];
   const Pro = () => CertHub.pro || { available: false, active: false };
   const toQ = ([id, w, d, q, o, a, e, src, why, lv]) => ({ id, w, d, q, o, a, e, src, why: Array.isArray(why) && why.length === 4 ? why : null, lv: [1, 2, 3].includes(lv) ? lv : 0 });
   const LEVELS = ["", "Easy", "Medium", "Hard"];
@@ -102,8 +102,11 @@
     ["Sat", "Clear your review queue, then any checkpoint test"],
     ["Sun", "Rest, or 15 minutes of review only"]
   ];
-  const weekStart = n => U.addDays(parseD(S.p.start), (n - 1) * 7);
-  const weekNow = () => Math.min(W.length, Math.max(1, Math.floor((today() - parseD(S.p.start)) / DAY / 7) + 1));
+  // Study pace: calendar weeks per plan week (1 = the standard plan, 0.5 = twice as fast, 2 = half speed).
+  const PACES = [[0.5, "Fast: two plan weeks each week"], [0.75, "Quicker"], [1, "Standard"], [1.5, "Relaxed"], [2, "Half speed"]];
+  const pace = () => { const f = +(S.p.pace || 1); return f >= 0.5 && f <= 3 ? f : 1; };
+  const weekStart = n => U.addDays(parseD(S.p.start), Math.round((n - 1) * 7 * pace()));
+  const weekNow = () => Math.min(W.length, Math.max(1, Math.floor((today() - parseD(S.p.start)) / DAY / (7 * pace())) + 1));
   let saveT;
   const save = () => { clearTimeout(saveT); saveT = setTimeout(() => saveProgress(C.id, S.p), 300); };
 
@@ -505,7 +508,22 @@
   }
   function badgeHtml() {
     const b = badgeState();
-    return `<div class="panel startcard"><div class="grow"><strong>${b.earned ? `${esc(C.short)} study plan complete` : "Earn your completion badge"}</strong><br><span class="note">${b.earned ? "Download a badge to share on LinkedIn or add to your portfolio." : `Read every lesson (${b.read} of ${b.total}) and score 80% or better on a practice exam (best: ${b.best || 0}%).`}</span></div>${b.earned ? `<button class="btn sm" data-act="badge">Download badge</button>` : ""}</div>`;
+    return `<div class="panel startcard"><div class="grow"><strong>${b.earned ? `${esc(C.short)} study plan complete` : "Earn your completion badge"}</strong><br><span class="note">${b.earned ? "Download a badge to share on LinkedIn or add to your portfolio." : `Read every lesson (${b.read} of ${b.total}) and score 80% or better on a practice exam (best: ${b.best || 0}%).`}</span></div>${b.earned ? `<button class="btn sm" data-act="certificate">View certificate</button><button class="btn ghost sm" data-act="badge">Download badge</button>` : ""}</div>`;
+  }
+  // Certificate of completion: a printable page and a LinkedIn "Add license or certification" link.
+  function certificateView() {
+    const b = badgeState(), h = S.p.handson || {}, sims = S.p.sims || {}, name = (CertHub.store.get("certhub:name") || "").trim();
+    const hoN = HO ? HO.items.filter(x => h[x.id]).length : Object.keys(h).length, simN = Object.keys(sims).length;
+    if (!b.earned) return `<h1>Certificate of completion</h1><p class="meta">Finish the plan first: read every lesson (${b.read} of ${b.total}) and score 80% or better on a practice exam (best so far: ${b.best || 0}%).</p><button class="btn ghost" data-tab="progress">Back to progress</button>`;
+    const li = `https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name=${encodeURIComponent(`${C.short} ${C.exam} study plan (Cyber Cert Study)`)}&organizationName=${encodeURIComponent("Cyber Cert Study")}&issueYear=${today().getFullYear()}&issueMonth=${today().getMonth() + 1}`;
+    return `<div class="no-print"><p class="crumbs"><button type="button" class="linkbtn" data-tab="progress">Progress</button> / Certificate</p>
+      <div class="flex"><label class="grow">Name on the certificate <input type="text" id="certname" value="${esc(name)}" autocomplete="name"></label></div>
+      <div class="btns"><button class="btn" data-act="printcheat">Print or save as PDF</button><button class="btn ghost" data-act="badge">Download image</button><a class="btn ghost" href="${esc(li)}" target="_blank" rel="noopener">Add to LinkedIn</a></div>
+      <p class="note">This records that you completed a free study plan. It is not the vendor's certification; add the real one when you pass the exam.</p></div>
+      <div class="certificate panel"><p class="note">Cyber Cert Study · Certificate of completion</p>
+      <h1>${esc(name || "Your name")}</h1><p>completed the free study plan for</p><h2>${esc(C.name)} (${esc(C.exam)})</h2>
+      <ul class="clean"><li>${b.total} lessons read</li><li>Best practice exam: ${b.best}%</li>${hoN ? `<li>${hoN} hands-on exercises completed</li>` : ""}${simN ? `<li>${simN} exam simulations completed</li>` : ""}</ul>
+      <p class="note">${esc(fmtLong(today()))}</p></div>`;
   }
   // Cheat sheet: every lesson's exam tip and key terms, grouped by domain, ready to print.
   function cheatView() {
@@ -659,9 +677,15 @@
   }
 
   /* ---------- hands-on practice: Python in the browser, a simulated Linux terminal, KQL queries ---------- */
-  const HO_KIND = { code: ["Python exercises", "Write code and run it against tests, right in your browser."], shell: ["Terminal tasks", "A simulated Linux shell. Type real commands; the tasks tick off as you complete them."], kube: ["Kubernetes tasks", "A simulated cluster. Use kubectl the way the exam expects; the tasks tick off as you complete them."], ios: ["Cisco IOS tasks", "A simulated switch or router command line. Configure it with real IOS commands."], pwsh: ["PowerShell tasks", "A simulated Windows PowerShell session. Type real cmdlets; the tasks tick off as you complete them."], kql: ["Query tasks (KQL)", "Hunt through sample security logs with Kusto Query Language."] };
+  const HO_KIND = { code: ["Python exercises", "Write code and run it against tests, right in your browser."], shell: ["Terminal tasks", "A simulated Linux shell. Type real commands; the tasks tick off as you complete them."], kube: ["Kubernetes tasks", "A simulated cluster. Use kubectl the way the exam expects; the tasks tick off as you complete them."], ios: ["Cisco IOS tasks", "A simulated switch or router command line. Configure it with real IOS commands."], pwsh: ["PowerShell tasks", "A simulated Windows PowerShell session. Type real cmdlets; the tasks tick off as you complete them."], kql: ["Query tasks (KQL)", "Hunt through sample security logs with Kusto Query Language."],
+    aws: ["AWS CLI tasks", "A simulated AWS account. Use aws commands to build and fix resources; nothing is billed."], az: ["Azure CLI tasks", "A simulated Azure subscription. Use az commands to build and fix resources; nothing is billed."],
+    pcap: ["Packet capture analysis", "Read a packet capture the way Wireshark shows it. Filter packets, open their details and answer the questions."],
+    fw: ["Firewall policy tasks", "Build security rules in a simulated firewall, then run test traffic to see what's allowed and blocked."],
+    tf: ["Terraform plan tasks", "Edit Terraform configuration and run a simulated terraform plan until it does what the task asks."] };
   // Command-line simulators: assets/<name>.js, each exposing create(setup), run(S, line), check(S, c) and prompt(S).
-  const TERMS = { shell: "shell", kube: "kube", ios: "ios", pwsh: "pwsh" };
+  const TERMS = { shell: "shell", kube: "kube", ios: "ios", pwsh: "pwsh", aws: "awscli", az: "azcli" };
+  // Other engines: packet filter (pcap), firewall rule evaluation (fw) and a Terraform plan simulator (tf).
+  const ENGINES = { kql: "kql", pcap: "pcap", fw: "fw", tf: "tf" };
   const termOf = x => CertHub[TERMS[x.kind]];
   function handsonSection() {
     if (HO === null) return C.hasHandson ? `<h2>Hands-on practice</h2><p class="note">Loading…</p>` : "";
@@ -686,11 +710,14 @@
         st.sh = termOf(x).create(x.setup || {}); st.log = []; st.hist = -1; hoShellScore(); render(); focusSoon("#hocmd");
       });
     }
-    if (x.kind === "kql") CertHub.loadScript("assets/kql.js").then(ok => { if (S.ho === st) { if (!ok) st.err = "The query engine couldn't load. Check your connection and try again."; render(); } });
+    if (x.kind === "pcap") { st.filter = ""; st.sel = null; st.ans = (x.questions || []).map(() => ""); st.marks = null; }
+    if (x.kind === "fw") { st.rules = JSON.parse(JSON.stringify(x.rules || [])); st.results = null; }
+    if (x.kind === "tf") { st.code = x.starter || ""; st.res = null; }
+    if (ENGINES[x.kind]) CertHub.loadScript(`assets/${ENGINES[x.kind]}.js`).then(ok => { if (S.ho === st) { if (!ok) st.err = "This exercise couldn't load. Check your connection and try again."; render(); } });
     render(); window.scrollTo(0, 0);
   }
   // Keep what the person typed when the view redraws.
-  function hoKeep() { const st = S.ho, a = $("#hocode"), b = $("#hoq"); if (!st) return; if (a) st.code = a.value; if (b) st.q = b.value; }
+  function hoKeep() { const st = S.ho, a = $("#hocode") || $("#hotf"), b = $("#hoq"); if (!st) return; if (a) st.code = a.value; if (b) st.q = b.value; if (st.rules) hoFwRead(); if (st.ans) document.querySelectorAll("[data-pcapq]").forEach(el => { st.ans[+el.dataset.pcapq] = el.value; }); }
   const focusSoon = sel => setTimeout(() => { const el = $(sel); if (el) el.focus(); }, 0);
   function hoPass(st) {
     if (st.passed) return; st.passed = true;
@@ -746,6 +773,34 @@
     const cols = [...new Set(rows.flatMap(r => Object.keys(r)))], cell = v => v instanceof Date ? v.toISOString().replace(".000Z", "Z") : Array.isArray(v) ? JSON.stringify(v) : v == null ? "" : String(v);
     return `<div class="tablewrap" tabindex="0"><table class="kqlt"><thead><tr>${cols.map(c => `<th scope="col">${esc(c)}</th>`).join("")}</tr></thead><tbody>${rows.slice(0, max).map(r => `<tr>${cols.map(c => `<td>${esc(cell(r[c]))}</td>`).join("")}</tr>`).join("")}</tbody></table></div>${rows.length > max ? `<p class="note">Showing ${max} of ${rows.length} rows.</p>` : ""}`;
   }
+  // Packet capture: the packets for an item (inline or shared in HO.captures), filtered with the display filter.
+  const capOf = x => x.packets || ((HO.captures || {})[x.capture]) || [];
+  function hoPcapFilter() {
+    const st = S.ho, el = $("#pcapf"); if (el) st.filter = el.value.trim();
+    st.ferr = ""; st.sel = null; render(); focusSoon("#pcapf");
+  }
+  function hoPcapCheck() {
+    const st = S.ho; document.querySelectorAll("[data-pcapq]").forEach(el => { st.ans[+el.dataset.pcapq] = el.value; });
+    st.marks = st.x.questions.map((q, i) => q.answers.some(a => norm(a) === norm(st.ans[i])));
+    if (st.marks.every(Boolean)) hoPass(st); render(); focusSoon("#horesult");
+  }
+  function hoFwRun() {
+    const st = S.ho; hoFwRead(); if (!CertHub.fw) return;
+    st.results = st.x.tests.map(t => { const r = CertHub.fw.evaluate(st.rules, t.flow, st.x.setup || {}); return { ok: r.action === t.expect, action: r.action, rule: r.rule }; });
+    if (st.results.every(r => r.ok)) hoPass(st); render(); focusSoon("#horesult");
+  }
+  const FW_COLS = [["name", "Name"], ["from", "From zone"], ["to", "To zone"], ["src", "Source"], ["dst", "Destination"], ["app", "Application"], ["service", "Service"], ["action", "Action"]];
+  const fwList = v => Array.isArray(v) ? v.join(", ") : String(v ?? "");
+  function hoFwRead() {
+    const st = S.ho; if (!st || !st.rules) return;
+    document.querySelectorAll("[data-fwr]").forEach(el => { const r = st.rules[+el.dataset.fwr], k = el.dataset.fwk; if (!r) return; r[k] = k === "name" || k === "action" ? el.value.trim() : el.value.split(",").map(v => v.trim()).filter(Boolean); });
+  }
+  function hoTfPlan() {
+    const st = S.ho, ta = $("#hotf"); if (ta) st.code = ta.value; if (!CertHub.tf) return;
+    try { st.res = CertHub.tf.plan(st.code, st.x.prior || {}); } catch (e) { st.res = { ok: false, text: "Error: " + e.message, changes: [] }; }
+    st.checks = st.res.ok ? st.x.checks.map(c => CertHub.tf.check(st.res, c)) : st.x.checks.map(() => false);
+    if (st.checks.every(Boolean)) hoPass(st); render(); focusSoon("#horesult");
+  }
   function handsonView() {
     const st = S.ho, x = st.x;
     const head = `<div class="qhead"><strong>${esc(x.title)}</strong><button class="btn ghost sm" data-act="hoquit">Back</button></div>
@@ -774,6 +829,35 @@
       <div class="term"><pre class="code termout" id="hoterm" tabindex="0" aria-label="Terminal output">${st.log.length ? "" : `<span class="note">Type a command and press Enter. Type help to list the commands this simulator supports.</span>\n`}${st.log.map(l => `<span class="tp">${esc(l.p)}</span> ${esc(l.cmd)}${l.out ? "\n" + esc(l.out) : ""}`).join("\n")}</pre>
       <form class="termin" data-form="hosh"><label for="hocmd" class="tp">${esc(hoPrompt(st.sh))}</label><input id="hocmd" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send"></form></div>
       ${st.passed ? `<p role="status"><strong>All tasks complete.</strong></p>` : ""}` + help;
+    }
+    if (st.err && ENGINES[x.kind]) return head + `<p class="note">${esc(st.err)}</p>`;
+    if (x.kind === "pcap") {
+      if (!CertHub.pcap) return head + `<p class="note">Loading…</p>`;
+      const all = capOf(x); let shown = all, ferr = "";
+      if (st.filter) { try { shown = CertHub.pcap.filter(all, st.filter); } catch (e) { ferr = e.message; shown = []; } }
+      const pk = st.sel != null ? all.find(p => p.no === st.sel) : null;
+      return head + `<form class="flex pcapbar" data-form="pcap"><label class="grow"><span class="sr-only">Display filter</span><input id="pcapf" type="text" value="${esc(st.filter)}" placeholder="Display filter, e.g. tcp.flags.syn == 1 && !tcp.flags.ack" autocomplete="off" autocapitalize="off" spellcheck="false" class="${ferr ? "bad" : st.filter ? "good" : ""}"></label><button class="btn sm" type="button" data-act="pcapf">Apply</button>${st.filter ? `<button class="btn ghost sm" type="button" data-act="pcapclear">Clear</button>` : ""}</form>
+      <p class="note" role="status">${ferr ? `<span class="simbad">${esc(ferr)}</span>` : `Showing ${shown.length} of ${all.length} packets.`}</p>
+      <div class="tablewrap pcaplist" tabindex="0"><table class="kqlt"><thead><tr><th scope="col">No.</th><th scope="col">Time</th><th scope="col">Source</th><th scope="col">Destination</th><th scope="col">Protocol</th><th scope="col">Length</th><th scope="col">Info</th></tr></thead><tbody>${shown.map(p => `<tr class="${p.no === st.sel ? "sel" : ""}"><td><button type="button" class="linkbtn" data-act="pcapsel" data-no="${p.no}" aria-pressed="${p.no === st.sel}">${p.no}</button></td><td>${esc(Number(p.t).toFixed(6))}</td><td>${esc(p.src)}</td><td>${esc(p.dst)}</td><td>${esc(p.proto)}</td><td>${esc(p.len)}</td><td>${esc(p.info)}</td></tr>`).join("")}</tbody></table></div>
+      ${pk ? `<div class="panel pcapdetail" aria-label="Packet ${pk.no} details"><strong>Packet ${pk.no}</strong>${(pk.layers || []).map(l => `<details open><summary>${esc(l.name)}</summary><ul class="clean">${(l.fields || []).map(([k, v]) => `<li><code>${esc(k)}</code>: ${esc(v)}</li>`).join("")}</ul></details>`).join("")}</div>` : `<p class="note">Select a packet number to see its details.</p>`}
+      <h3>Questions</h3><div class="simgrid">${x.questions.map((q, i) => `<div class="simrow"><label for="pcapq-${i}">${inline(q.label)}</label><span class="grow"><input type="text" id="pcapq-${i}" data-pcapq="${i}" value="${esc(st.ans[i])}" autocomplete="off" autocapitalize="off" spellcheck="false">${st.marks ? (st.marks[i] ? `<span class="simok" aria-label="correct">✓</span>` : `<span class="simbad" aria-label="incorrect">✗</span>`) : ""}${st.sol ? `<br><span class="note">Answer: ${esc(q.answers[0])}</span>` : ""}</span></div>`).join("")}</div>
+      <div class="btns"><button class="btn" data-act="pcapcheck">Check answers</button></div>
+      <div id="horesult" tabindex="-1" role="status">${st.marks ? `<p><strong>${st.marks.filter(Boolean).length} of ${st.marks.length} correct.</strong></p>` : ""}</div>` + help;
+    }
+    if (x.kind === "fw") {
+      if (!CertHub.fw) return head + `<p class="note">Loading…</p>`;
+      const set = x.setup || {};
+      return head + `<p class="note">Zones: ${esc((set.zones || []).join(", "))}${set.addresses ? ` · Addresses: ${esc(Object.entries(set.addresses).map(([k, v]) => `${k} (${v})`).join(", "))}` : ""}${set.services ? ` · Services: ${esc(Object.entries(set.services).map(([k, v]) => `${k} (${v})`).join(", "))}` : ""}. Rules are checked top to bottom; the first match wins. List several values with commas, or use any.</p>
+      <div class="tablewrap" tabindex="0"><table class="kqlt fwt"><thead><tr><th scope="col">#</th>${FW_COLS.map(([, h]) => `<th scope="col">${h}</th>`).join("")}<th scope="col"><span class="sr-only">Move or delete</span></th></tr></thead><tbody>${st.rules.map((r, i) => `<tr><td>${i + 1}</td>${FW_COLS.map(([k, h]) => `<td>${k === "action" ? `<select data-fwr="${i}" data-fwk="action" aria-label="Rule ${i + 1} ${h}">${["allow", "deny"].map(a => `<option ${r.action === a ? "selected" : ""}>${a}</option>`).join("")}</select>` : `<input type="text" data-fwr="${i}" data-fwk="${k}" value="${esc(fwList(r[k] ?? (k === "name" ? "" : "any")))}" aria-label="Rule ${i + 1} ${h}" autocomplete="off" autocapitalize="off" spellcheck="false">`}</td>`).join("")}<td class="nowrap"><button type="button" class="btn ghost sm" data-act="fwup" data-i="${i}" ${i ? "" : "disabled"} aria-label="Move rule ${i + 1} up">↑</button><button type="button" class="btn ghost sm" data-act="fwdel" data-i="${i}" aria-label="Delete rule ${i + 1}">✕</button></td></tr>`).join("")}</tbody></table></div>
+      <div class="btns"><button class="btn ghost sm" data-act="fwadd">Add rule</button><button class="btn" data-act="fwrun">Run test traffic</button></div>
+      <div id="horesult" tabindex="-1" role="status">${st.results ? `<ul class="clean hochecks">${x.tests.map((t, i) => { const r = st.results[i]; return `<li>${r.ok ? `<span class="simok" aria-label="as expected">✓</span>` : `<span class="simbad" aria-label="not as expected">✗</span>`} ${inline(t.label)} <span class="note">→ ${esc(r.action)}${r.rule ? ` by ${esc(r.rule)}` : " (no rule matched)"}; expected ${esc(t.expect)}</span></li>`; }).join("")}</ul>${st.passed ? `<p><strong>Every test behaves as required.</strong></p>` : ""}` : ""}</div>` + help;
+    }
+    if (x.kind === "tf") {
+      if (!CertHub.tf) return head + `<p class="note">Loading…</p>`;
+      return head + `<label for="hotf" class="lbl">main.tf <span class="note">(Tab indents; press Esc, then Tab, to leave the editor)</span></label>
+      <textarea id="hotf" class="codeedit" rows="${Math.min(26, Math.max(10, st.code.split("\n").length + 3))}" spellcheck="false" autocapitalize="off" autocomplete="off">${esc(st.code)}</textarea>
+      <div class="btns"><button class="btn" data-act="tfplan">terraform plan</button></div>
+      <div id="horesult" tabindex="-1" role="status">${st.res ? `<pre class="code" tabindex="0">${esc(st.res.text)}</pre><ul class="clean hochecks">${x.checks.map((c, i) => `<li>${st.checks[i] ? `<span class="simok" aria-label="done">✓</span>` : `<span class="hotodo" aria-label="not yet">○</span>`} ${inline(c.label)}</li>`).join("")}</ul>` : `<ul class="clean hochecks">${x.checks.map(c => `<li><span class="hotodo" aria-label="not yet">○</span> ${inline(c.label)}</li>`).join("")}</ul>`}</div>` + help;
     }
     const tables = (x.tables || []).map(n => [n, (HO.tables || {})[n] || []]);
     return head + tables.map(([n, rows]) => `<details class="week"><summary><span class="grow"><strong>${esc(n)}</strong> <span class="note">${rows.length} rows · ${esc(Object.keys(rows[0] || {}).join(", "))}</span></span></summary>${kqlTable(rows, 8)}</details>`).join("") + `
@@ -950,6 +1034,7 @@
     <div class="panel">
       <div class="row"><div class="grow"><label for="start">Plan start</label><br><span class="note">Week 1 begins on this day. Pick a Monday.</span></div><input type="date" id="start" value="${esc(S.p.start)}"></div>
       <div class="row"><div class="grow"><label for="exam">Your target test date</label><br><span class="note">${esc(C.short)} ${esc(C.exam)}</span></div><input type="date" id="exam" value="${esc(S.p.examDate)}"></div>
+      <div class="row"><div class="grow"><label for="pace">Study pace</label><br><span class="note">The ${W.length}-week plan takes about ${Math.round(W.length * pace())} weeks at this pace${C.hoursPerWeek ? `, at ${esc(C.hoursPerWeek)} hours per plan week` : ""}. <button type="button" class="linkbtn" data-act="fitpace">Fit the plan to my test date</button></span></div><select id="pace">${PACES.map(([f, l]) => `<option value="${f}" ${f === pace() ? "selected" : ""}>${l}</option>`).join("")}${PACES.some(([f]) => f === pace()) ? "" : `<option value="${pace()}" selected>Custom (${pace()}×)</option>`}</select></div>
     </div>
     <h2>Your data</h2>
     <div class="panel"><p class="note" style="margin:0">Progress is saved only in this browser. Back it up to move it to another device.</p>
@@ -1002,6 +1087,7 @@
     const sched = S.p.cards || {}, learned = cards.filter(f => sched[cardKey(f)] && sched[cardKey(f)].box >= 2).length;
     const doms = C.domains.filter(d => cards.some(f => f[0] === d.id));
     return `<h2>Key-term flashcards</h2><p class="note">${cards.length} terms from your lessons · ${learned} learned. Cards you know come back after 1, 3, 7 and 14 days; cards you miss come back tomorrow.</p>
+    <p class="btns no-print"><button type="button" class="btn ghost sm" data-act="anki">Download key terms for Anki (CSV)</button><button type="button" class="btn ghost sm" data-act="anki" data-q="1">Download practice questions for Anki (CSV)</button></p>
     <div class="panel"><div class="row"><div class="grow"><h3>Study terms</h3><span class="note">Up to 20 due cards at a time</span></div><select id="tcsel" aria-label="Domain"><option value="0">All domains (${cardDue(cards, 0).length} due)</option>${doms.map(d => `<option value="${d.id}">D${d.id} ${esc(d.name)} (${cardDue(cards, d.id).length})</option>`).join("")}</select><button class="btn" data-act="tcstart">Start</button></div></div>`;
   }
 
@@ -1071,7 +1157,7 @@
   function render() {
     renderTabs();
     if (S.tab === "guide" && !Pro().available) S.tab = "week";
-    const v = { cheat: cheatView, week: weekView, learn: learnView, plan: planView, practice: practiceView, labs: labsView, progress: progressView, guide: guideView, about: aboutView }[S.tab];
+    const v = { certificate: certificateView, cheat: cheatView, week: weekView, learn: learnView, plan: planView, practice: practiceView, labs: labsView, progress: progressView, guide: guideView, about: aboutView }[S.tab];
     $("#app").innerHTML = v();
     if (pendingVideo && LES && S.tab === "learn") {
       const k = pendingVideo, tt = [...LES.keys()].find(x => lessonKey(x) === k); pendingVideo = null;
@@ -1125,6 +1211,20 @@
         if (!due.length) { CertHub.ui.toast("Nothing due in this domain. Come back tomorrow."); return; }
         S.fc = { deck: shuffle(due).slice(0, 20), i: 0, flipped: false, known: 0, seen: 0, graded: new Set() }; render(); window.scrollTo(0, 0);
       },
+      fitpace: () => {
+        const days = (parseD(S.p.examDate) - parseD(S.p.start)) / DAY - 3;
+        if (!(days > 0)) { CertHub.ui.toast("Set a test date after your plan start first."); return; }
+        const f = Math.min(3, Math.max(0.5, Math.round(days / (7 * W.length) * 4) / 4));
+        S.p.pace = f; save(); render(); CertHub.ui.toast(`Pace set to ${f}× so the plan finishes about ${Math.round(W.length * f)} weeks after your start date.`);
+      },
+      anki: () => {
+        const q = x => `"${String(x).replace(/"/g, '""')}"`;
+        const rows = termCards().map(([d, a, b]) => [a, b, `${C.id} domain-${d}`]);
+        const qs = FREE_Q.map(x => [x.q + "<br><br>" + x.o.map((o, i) => `${"ABCD"[i]}. ${o}`).join("<br>"), `${"ABCD"[x.a]}. ${x.o[x.a]}<br><br>${x.e}`, `${C.id} domain-${x.d} question`]);
+        const lines = ["#separator:Comma", "#html:true", "#tags column:3", ...rows.concat(t.dataset.q ? qs : []).map(r => r.map(q).join(","))];
+        CertHub.downloadFile(`${C.id}-${t.dataset.q ? "questions" : "key-terms"}-anki.csv`, lines.join("\n") + "\n", "text/csv");
+      },
+      certificate: () => { S.tab = "certificate"; history.replaceState(null, "", `#${C.id}.progress`); render(); window.scrollTo(0, 0); },
       tcstart: () => {
         const due = cardDue(termCards(), +$("#tcsel").value);
         if (!due.length) { CertHub.ui.toast("Nothing due here. Come back tomorrow."); return; }
@@ -1165,6 +1265,15 @@
       hoquit: () => { S.ho = null; render(); },
       horun: hoRunCode,
       hokql: hoRunKql,
+      pcapf: hoPcapFilter,
+      pcapclear: () => { S.ho.filter = ""; hoKeep(); render(); },
+      pcapsel: () => { hoKeep(); S.ho.sel = +t.dataset.no; render(); },
+      pcapcheck: hoPcapCheck,
+      fwrun: hoFwRun,
+      fwadd: () => { hoFwRead(); S.ho.rules.push({ name: `rule-${S.ho.rules.length + 1}`, from: ["any"], to: ["any"], src: ["any"], dst: ["any"], app: ["any"], service: ["any"], action: "allow" }); render(); },
+      fwdel: () => { hoFwRead(); S.ho.rules.splice(+t.dataset.i, 1); render(); },
+      fwup: () => { hoFwRead(); const i = +t.dataset.i, r = S.ho.rules; [r[i - 1], r[i]] = [r[i], r[i - 1]]; render(); },
+      tfplan: hoTfPlan,
       hohint: () => { S.ho.hint = !S.ho.hint; hoKeep(); render(); },
       hosol: () => { S.ho.sol = !S.ho.sol; hoKeep(); render(); },
       horeset: () => hoStart(S.ho.x.id),
@@ -1237,11 +1346,11 @@
     if (el.classList && el.classList.contains("codeedit")) {
       if (e.key === "Escape") { hoEsc = true; return; }
       if (e.key === "Tab" && !e.shiftKey && !hoEsc) { e.preventDefault(); el.setRangeText("    ", el.selectionStart, el.selectionEnd, "end"); }
-      else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); el.id === "hoq" ? hoRunKql() : hoRunCode(); }
+      else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); el.id === "hoq" ? hoRunKql() : el.id === "hotf" ? hoTfPlan() : hoRunCode(); }
       hoEsc = false;
     }
   });
-  document.addEventListener("submit", e => { if (active && e.target.dataset.form === "hosh") e.preventDefault(); });
+  document.addEventListener("submit", e => { if (!active) return; if (e.target.dataset.form === "hosh") e.preventDefault(); if (e.target.dataset.form === "pcap") { e.preventDefault(); hoPcapFilter(); } });
   document.addEventListener("change", e => {
     if (!active) return;
     const el = e.target;
@@ -1251,6 +1360,8 @@
     if (c) { if (el.checked) CertHub.activity.mark(); S.p.checks[c] = el.checked; el.closest("li").classList.toggle("checked", el.checked); save(); return; }
     if (el.id === "exam" && el.value) { S.p.examDate = el.value; save(); renderTabs(); }
     if (el.id === "start" && el.value) { S.p.start = el.value; save(); renderTabs(); }
+    if (el.id === "certname") { CertHub.store.set("certhub:name", el.value.trim()); render(); return; }
+    if (el.id === "pace") { S.p.pace = +el.value; save(); render(); }
     if (el.id === "imp" && el.files && el.files[0]) {
       CertHub.importAll(el.files[0], (err, n) => {
         if (err) { $("#datamsg").textContent = err.message; return; }
