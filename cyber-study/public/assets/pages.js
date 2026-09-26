@@ -158,7 +158,7 @@
     ${accounts() ? `<h2>Accounts</h2>
     <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table class="sectable"><tbody>
       ${row("No passwords", "Sign-in uses one-time email links that expire in 15 minutes. Only a SHA-256 hash of each link and session token is stored, so a database leak can't be used to sign in.")}
-      ${row("Session cookie", "<code>__Host-</code> prefixed, <code>Secure</code>, <code>HttpOnly</code>, <code>SameSite=Lax</code>, 30-day sliding expiry; signing out deletes it on the server.")}
+      ${row("Session cookie", "<code>__Host-</code> prefixed, <code>Secure</code>, <code>HttpOnly</code>, <code>SameSite=Strict</code>, 30-day sliding expiry and a 90-day limit, at most 10 devices at once; signing out deletes it on the server.")}
       ${row("Request forgery", "Every change must come from the site's own origin; the API allows cross-origin requests only from the site.")}
       ${row("Abuse limits", "Sign-in links are rate-limited per IP address and per email, and request sizes are capped.")}
       ${row("Access control", "Every query is scoped to the signed-in user. Instructors see progress numbers for their own cohorts only, never lab notes. CSV exports are protected against spreadsheet formula injection.")}

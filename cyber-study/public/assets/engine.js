@@ -181,6 +181,8 @@
       pool.sort((a, b) => (want.indexOf(a.lv) < 0 ? 9 : want.indexOf(a.lv)) - (want.indexOf(b.lv) < 0 ? 9 : want.indexOf(b.lv)));
       pool.slice(0, k).forEach(q => { used.add(q.id); out.push(q); });
     });
+    // Rounding each domain's share can leave the set a question or two short: top it up.
+    if (out.length < n) out = out.concat(shuffle(Q.filter(q => !used.has(q.id))).slice(0, n - out.length));
     return shuffle(out).slice(0, n);
   }
   // Hard mode: an exam-length test from the hardest questions, weighted like the real exam.
