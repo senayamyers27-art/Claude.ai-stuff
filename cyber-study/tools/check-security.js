@@ -36,7 +36,11 @@ for (const f of files.filter(f => f.endsWith(".html"))) {
 // data source links are checked for https:// by check-data.js instead.
 for (const f of files.filter(f => /\.(html|js|css|webmanifest|txt)$/.test(f) && !f.includes(`${path.sep}data${path.sep}`) && !f.endsWith("OFL.txt"))) {
   const s = fs.readFileSync(f, "utf8");
-  for (const m of s.matchAll(/http:\/\/[^\s"'<>)]+/g)) if (!/^http:\/\/(www\.w3\.org|www\.sitemaps\.org|localhost|127\.0\.0\.1)/.test(m[0])) fail(f, `insecure URL ${m[0]}`);
+  // Vendored third-party files keep their text as published; these exact strings load nothing
+  // (a credit link in a comment, and a placeholder in v86's optional network-relay code, which the site doesn't use).
+  const VENDOR_OK = { "vendor/vm/xterm.css": ["http://bellard.org/jslinux/"], "vendor/vm/libv86.js": ["http://host"] };
+  const ok = Object.entries(VENDOR_OK).find(([k]) => f.replace(/\\/g, "/").endsWith(k));
+  for (const m of s.matchAll(/http:\/\/[^\s"'<>)]+/g)) if (!/^http:\/\/(www\.w3\.org|www\.sitemaps\.org|localhost|127\.0\.0\.1)/.test(m[0]) && !(ok && ok[1].includes(m[0]))) fail(f, `insecure URL ${m[0]}`);
   if (f.endsWith(".js") && /\beval\s*\(|new Function\s*\(|document\.write\s*\(|setTimeout\s*\(\s*["'`]/.test(s)) fail(f, "eval-style code");
 }
 // Engine and home page render with innerHTML, so every data value must pass through esc().

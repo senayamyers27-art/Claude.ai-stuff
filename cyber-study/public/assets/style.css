@@ -405,3 +405,10 @@ td.nowrap{white-space:nowrap}
 .planner .box.on{background:var(--ink)}
 .planner .pnote{margin-left:auto;color:var(--muted)}
 @media print{.planner .pweek{background:#fff;padding:6px 10px;margin:6px 0} .planner .pwtopics{font-size:12px;margin:2px 0 4px} .planner h1{font-size:22px}}
+/* practice VM */
+.vmterm{background:#0E1319;border:1px solid var(--line);border-radius:10px;padding:8px;margin:8px 0 18px;min-height:200px;overflow:hidden}
+.vmterm .xterm{padding:2px}
+.vmtask summary{cursor:pointer}
+.vmcmd{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.vmcmd code{overflow-wrap:anywhere}
+.vmcard{border-left:5px solid var(--accent)}

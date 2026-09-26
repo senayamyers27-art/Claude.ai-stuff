@@ -62,7 +62,7 @@ function out(rel, content) {
 /* ---------- security policy (one source for <meta> and _headers) ---------- */
 const CSP = [
   "default-src 'self'", "script-src 'self' 'wasm-unsafe-eval'", "style-src 'self' 'unsafe-inline'", "font-src 'self'",
-  "img-src 'self' data:", `connect-src 'self'${apiOrigin ? " " + apiOrigin : ""}${analyticsOrigin ? " " + analyticsOrigin : ""}`, "manifest-src 'self'", "worker-src 'self'",
+  "img-src 'self' data:", `connect-src 'self'${apiOrigin ? " " + apiOrigin : ""}${analyticsOrigin ? " " + analyticsOrigin : ""}`, "manifest-src 'self'", "worker-src 'self' blob:",
   "object-src 'none'", "base-uri 'self'", "form-action 'none'", "frame-ancestors 'none'", "upgrade-insecure-requests"
 ].join("; ");
 // frame-ancestors is ignored in <meta>, so the meta copy drops it; _headers carries the full policy.

@@ -1,0 +1,7 @@
+#!/bin/busybox sh
+# Keeps a login on the web terminal (the serial console): when the student logs out, a new session starts.
+stty -F /dev/ttyS0 clocal -hupcl sane 2>/dev/null
+while true; do
+  /usr/bin/setsid -w /bin/busybox cttyhack /usr/bin/su - student
+  echo; echo "Logged out. Starting a new session..."; sleep 1
+done

@@ -54,6 +54,19 @@ English is shown. Keep translations in step when the English changes:
 The build also writes Spanish lesson and cheat-sheet pages under `/es/` with `hreflang` links
 between the two languages.
 
+## Practice VM (#vm)
+
+A real Linux machine that runs in the browser with the [v86](https://github.com/copy/v86) emulator:
+Ubuntu 24.04 (i386) tools (bash, coreutils, util-linux, sudo, useradd, procps, iproute2, vim-tiny,
+BusyBox for cron and syslog) on a small Linux 6.8 kernel built from Ubuntu's source. The learner is
+`student` / `student` with sudo; root's password is `root`. There's no network inside the VM, and it
+resets when the page is left. The files (about 17 MB, not precached) are in `public/vendor/vm/`, with
+`NOTICE.txt` (licenses and the GPL source offer) and `SOURCES.txt` (exact package versions).
+
+Rebuild on Ubuntu 24.04 as root after changing `tools/vm/` (see the comment at the top of
+`tools/vm/build-vm.sh` for the packages it needs): `bash tools/vm/build-vm.sh`. The smoke test boots it;
+set `SKIP_VM=1` to skip that.
+
 ## Social sharing kit
 
 `docs/social/` has post images and ready-to-paste posts. Regenerate them after changing the name,

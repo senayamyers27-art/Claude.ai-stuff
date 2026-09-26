@@ -1,6 +1,16 @@
 /* What's new: learner-facing release notes, newest first. Add an entry when something visible ships.
    Each entry: { date: "YYYY-MM-DD", title, items: [ ... ], es: { title, items } } (es: the Spanish version). Shown at #whats-new and on the home page. */
 CertHub.news = [
+  { date: "2026-09-26", title: "A Linux practice VM in your browser",
+    items: [
+      "Practice VM: a real Linux machine with Ubuntu 24.04 tools that runs in your browser, with nothing to install.",
+      "Log in as student with sudo and practice users, permissions, processes, cron, storage and logs.",
+      "Linux labs link straight to it."
+    ],
+    es: { title: "Una máquina virtual Linux de práctica en tu navegador", items: [
+      "Máquina virtual de práctica: una máquina Linux real con las herramientas de Ubuntu 24.04 que se ejecuta en tu navegador, sin instalar nada.",
+      "Entra como student con sudo y practica usuarios, permisos, procesos, cron, almacenamiento y registros.",
+      "Los laboratorios de Linux enlazan directamente a ella."] } },
   { date: "2026-09-26", title: "Daily review, printable planners and more Spanish",
     items: [
       "Daily review: about five minutes of questions a day, mixed from every certification you're studying.",

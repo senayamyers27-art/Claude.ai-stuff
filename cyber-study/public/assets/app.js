@@ -220,7 +220,7 @@
     const q = new URLSearchParams({ p: name, t: title || name, e: "true", rnd: Math.random().toString(36).slice(2) });
     try { fetch(`${gc}/count?${q}`, { mode: "no-cors", credentials: "omit", keepalive: true, referrerPolicy: "no-referrer" }).catch(() => {}); } catch (e) {}
   };
-  const LIGHT = new Set(["home", "whats-new", "review", "privacy", "terms", "security", "install", "support", "exam-day", "account"]);
+  const LIGHT = new Set(["home", "whats-new", "review", "vm", "privacy", "terms", "security", "install", "support", "exam-day", "account"]);
   function route() {
     let raw = "";
     try { raw = decodeURIComponent(location.hash.replace(/^#/, "")); } catch (e) { raw = ""; }
@@ -240,6 +240,7 @@
     }
     const prev = view;
     if (prev.startsWith("lab-") || prev.startsWith("cap-")) CertHub.labViews.leave();
+    if (prev === "vm" && head !== "vm" && CertHub.vm) CertHub.vm.leave();
     let title = "StudyToCert", brand = "StudyToCert";
     if (own(certs, head)) {
       CertHub.certView.open(head, tab || "week");
@@ -259,6 +260,11 @@
       else if (head === "frameworks" && CertHub.frameworksView) { topNav("frameworks"); $("#app").innerHTML = CertHub.frameworksView(); title = "Frameworks"; view = "frameworks"; }
       else if ((head === "exam-day" || /^exam-day-[a-z]{2,20}$/.test(head)) && CertHub.examDay) { topNav("careers"); CertHub.examDay.show(head); title = "Exam-Day Guides"; view = head; }
       else if ((head === "careers" || /^career-[a-z]{2,20}$/.test(head)) && CertHub.careerViews) { topNav("careers"); CertHub.careerViews.show(head); title = "Career Paths"; view = head; }
+      else if (head === "vm") {
+        topNav("labs"); title = "Practice VM"; view = "vm";
+        if (CertHub.vm) $("#app").innerHTML = CertHub.vm.view();
+        else { $("#app").innerHTML = `<p class="meta" role="status">Loading…</p>`; CertHub.loadScript("assets/vm.js").then(ok => { if (location.hash === "#vm" && CertHub.vm) $("#app").innerHTML = CertHub.vm.view(); else if (!ok) $("#app").innerHTML = `<p class="meta" role="status">This page couldn't load. Check your connection and try again.</p>`; }); }
+      }
       else if (head === "whats-new") { topNav(""); $("#app").innerHTML = newsView(); title = "What's New"; view = head; }
       else if (head === "review" && CertHub.review) { topNav("home"); $("#app").innerHTML = CertHub.review.show(); title = "Daily Review"; view = "review"; }
       else if (head === "portfolio") { topNav("portfolio"); $("#app").innerHTML = CertHub.labViews.portfolio(); title = "Lab Portfolio"; view = "portfolio"; }

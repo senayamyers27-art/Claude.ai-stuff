@@ -1,0 +1,17 @@
+#!/bin/busybox sh
+# First process of the StudyToCert practice VM: mount the basics, start logging and cron,
+# then log the student in on the serial console (the terminal on the web page).
+/bin/busybox mount -t proc proc /proc
+/bin/busybox mount -t sysfs sysfs /sys
+/bin/busybox mount -t devtmpfs devtmpfs /dev 2>/dev/null
+/bin/busybox mkdir -p /dev/pts /dev/shm /run /tmp /var/log /var/spool/cron/crontabs /var/tmp
+/bin/busybox mount -t devpts devpts /dev/pts
+/bin/busybox mount -t tmpfs -o mode=1777 tmpfs /dev/shm
+/bin/busybox mount -t tmpfs -o mode=0755 tmpfs /run
+/bin/busybox chmod 1777 /tmp /var/tmp
+hostname -F /etc/hostname
+ip link set lo up
+syslogd -O /var/log/syslog
+klogd
+crond -c /var/spool/cron/crontabs
+exec /sbin/vm-console
