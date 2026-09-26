@@ -66,19 +66,31 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     check(!!(await page.$("#app h1")), "plan, labs, progress and about tabs render");
   }
 
-  // Practice VM: boots Linux in the page (about 20 s). SKIP_VM=1 skips it.
+  // Practice VM: restores the VM snapshot in the page, runs a command, and checks a graded lab (about 30 s).
+  // SKIP_VM=1 skips it.
   if (!process.env.SKIP_VM) {
     console.log("Practice VM");
+    const vmReady = () => page.waitForFunction(() => /Ready/.test((document.querySelector("#vmstatus") || {}).textContent || ""), null, { timeout: 180000 }).then(() => true, () => false);
     await page.goto(`${BASE}/#vm`);
-    await page.waitForSelector("#vmstart");
-    await page.click("#vmstart");
-    const ready = await page.waitForFunction(() => /Ready/.test((document.querySelector("#vmstatus") || {}).textContent || ""), null, { timeout: 150000 }).then(() => true, () => false);
-    check(ready, "practice VM boots to a shell");
+    await page.waitForSelector("#vmgo");
+    check(await page.$$eval(".labcard", c => c.length) > 0, "practice VM hub lists graded labs");
+    await page.click("#vmgo");
+    const ready = await vmReady();
+    check(ready, "practice VM starts");
     if (ready) {
-      await page.keyboard.type("echo SMOKE-$((2+3)); sudo -n true 2>&1 | head -1\n");
-      const ran = await page.waitForFunction(() => /SMOKE-5/.test((document.querySelector(".xterm-rows") || {}).innerText || ""), null, { timeout: 15000 }).then(() => true, () => false);
+      await page.waitForTimeout(2000);
+      await page.click(".xterm-rows");
+      await page.keyboard.type("echo SMOKE-$((2+3)); systemctl is-system-running\n");
+      const ran = await page.waitForFunction(() => /SMOKE-5/.test((document.querySelector(".xterm-rows") || {}).innerText || ""), null, { timeout: 20000 }).then(() => true, () => false);
       check(ran, "practice VM runs commands");
     }
+    await page.goto(`${BASE}/#vm-lab-cron`);
+    await page.waitForSelector("#vmgo"); await page.click("#vmgo");
+    if (await vmReady()) {
+      await page.click("[data-vm=check]");
+      const graded = await page.waitForFunction(() => /checks pass|complete/.test((document.querySelector("#vmresults") || {}).textContent || ""), null, { timeout: 120000 }).then(() => true, () => false);
+      check(graded, "graded lab checks run inside the VM");
+    } else check(false, "graded lab VM starts");
     await page.goto(`${BASE}/#home`);
   }
 

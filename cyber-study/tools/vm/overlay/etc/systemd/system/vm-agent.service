@@ -1,0 +1,10 @@
+[Unit]
+Description=Practice VM checker (answers the web page on the second serial port)
+After=vm-setup.service
+
+[Service]
+ExecStart=/usr/sbin/vm-agent
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

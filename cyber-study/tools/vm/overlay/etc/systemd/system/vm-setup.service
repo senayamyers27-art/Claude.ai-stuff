@@ -1,0 +1,13 @@
+[Unit]
+Description=Practice VM settings (hostname and network address from the web page)
+DefaultDependencies=no
+After=systemd-sysusers.service
+Before=network.target ssh.service sysinit.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/vm-setup
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target

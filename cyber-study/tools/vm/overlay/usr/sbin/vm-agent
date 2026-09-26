@@ -1,0 +1,15 @@
+#!/bin/bash
+# Lets the web page check a learner's work: it reads "<id> <base64 command>" lines on the second serial
+# port (not the learner's terminal), runs each check as root with a time limit and replies
+# "@@<id> <exit code> <base64 output>". Used by the graded labs and the VM exam.
+exec </dev/ttyS1 >/dev/ttyS1 2>/dev/null
+stty raw -echo 2>/dev/null
+echo "@@ready"
+while IFS= read -r line; do
+  line=${line%$'\r'}
+  id=${line%% *}; b64=${line#* }
+  [ -n "$id" ] && [ "$id" != "$line" ] || continue
+  cmd=$(printf '%s' "$b64" | base64 -d 2>/dev/null)
+  out=$(timeout 120 bash -c "$cmd" 2>&1 </dev/null); rc=$?
+  printf '@@%s %s %s\n' "$id" "$rc" "$(printf '%s' "$out" | head -c 4000 | base64 -w0)"
+done
