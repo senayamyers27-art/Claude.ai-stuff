@@ -183,6 +183,8 @@ CertHub.addLessons = (id, list, meta) => {
 };
 CertHub.addDiagrams = list => { CertHub.diagramList = list; };
 require(path.join(PUB, "data/diagrams.js"));
+// Same key as lessonKey() in assets/engine.js, so a lesson page can open its overview video in the app.
+const lessonKeyOf = t => "l" + [...String(t)].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7).toString(36);
 const slugify = t => t.toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 70).replace(/-+$/, "") || "lesson";
 const inl = x => esc(x).replace(/`([^`\n]+)`/g, "<code>$1</code>");
 const par = x => /^```/.test(x) ? `<pre class="code" tabindex="0"><code>${esc(x.replace(/^```[a-z]*\n?/i, "").replace(/\n?```$/, ""))}</code></pre>` : `<p>${inl(x)}</p>`;
@@ -227,6 +229,7 @@ ${c.domains.map(d => { const its = items.filter(x => x.dom === d.id); return its
 <p class="crumbs"><a href="../../../">All certifications</a> / <a href="../../">${esc(c.short)}</a> / <a href="../">Lessons</a></p>
 <p class="note">${esc(c.name)} ${esc(c.exam)}${d ? ` · Domain ${d.id}: ${esc(d.name)}` : ""}</p>
 <h1>${esc(l.t)}</h1>
+<p class="btns"><a class="btn sm" href="../../#${c.id}.video-${lessonKeyOf(l.t)}">▶ Watch the overview video</a></p>
 <p class="note">${reviewedOf(c.id) ? `Last reviewed ${esc(reviewedOf(c.id))}` : ""}${esOf(c.id, l.t) ? `${reviewedOf(c.id) ? " · " : ""}<a href="../../../es/${c.id}/lessons/${x.slug}/" hreflang="es" lang="es">Leer en español</a>` : ""}</p>
 <article class="lbody">
 ${l.body.map((p, j) => par(p) + (j === 0 ? figs : "")).join("\n")}

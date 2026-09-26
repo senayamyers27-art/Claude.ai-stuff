@@ -61,7 +61,8 @@ function careers(list, interview, tracks, roles, labs, F) {
 function handson(c, h, F) {
   const doms = new Set(c.domains.map(d => d.id)), ids = new Set();
   if (!h || !Array.isArray(h.items) || h.items.length < 6) return F("needs 6 or more hands-on items");
-  const shell = require("../public/assets/shell.js"), kql = require("../public/assets/kql.js");
+  const kql = require("../public/assets/kql.js");
+  const TERMS = { shell: "shell", kube: "kube", ios: "ios", pwsh: "pwsh" };
   h.items.forEach((x, i) => {
     const E = m => F(`hands-on ${i + 1} (${x && x.id}): ${m}`);
     if (!/^[a-z0-9-]{2,40}$/.test(x.id || "") || ids.has(x.id)) E("id must be unique lowercase-with-dashes"); ids.add(x.id);
@@ -71,21 +72,24 @@ function handson(c, h, F) {
     if (x.kind === "code") {
       if (typeof x.starter !== "string" || !str(x.solution, 5)) E("code needs a starter and a solution");
       if (!Array.isArray(x.tests) || x.tests.length < 2 || !x.tests.every(t => str(t.name, 5) && str(t.code, 5))) E("code needs 2+ tests with name and code");
-    } else if (x.kind === "shell") {
-      if (!Array.isArray(x.checks) || x.checks.length < 2 || !x.checks.every(k => str(k.label, 5) && str(k.type))) E("shell needs 2+ checks with a label");
-      if (!Array.isArray(x.solution) || !x.solution.length) return E("shell solution must be a list of commands");
+    } else if (TERMS[x.kind]) {
+      if (!Array.isArray(x.checks) || x.checks.length < 2 || !x.checks.every(k => str(k.label, 5) && str(k.type))) E(`${x.kind} needs 2+ checks with a label`);
+      if (!Array.isArray(x.solution) || !x.solution.length) return E(`${x.kind} solution must be a list of commands`);
+      let shell;
+      try { shell = require(`../public/assets/${TERMS[x.kind]}.js`); } catch (e) { return E(`no simulator public/assets/${TERMS[x.kind]}.js: ${e.message}`); }
+      const isErr = shell.isError || (o => /command not found|No such file|could not be found|invalid|missing operand|Permission denied/i.test(o));
       try {
         const S0 = shell.create(x.setup || {});
         if (x.checks.every(k => shell.check(S0, k))) E("every check already passes before any command");
         const S1 = shell.create(x.setup || {});
-        x.solution.forEach(l => { const o = shell.run(S1, l); if (/command not found|No such file|could not be found|invalid|missing operand|Permission denied/i.test(o)) E(`solution command "${l}" printed: ${o.split("\n")[0]}`); });
+        x.solution.forEach(l => { const o = shell.run(S1, l); if (isErr(o)) E(`solution command "${l}" printed: ${o.split("\n")[0]}`); });
         x.checks.forEach(k => { if (!shell.check(S1, k)) E(`solution doesn't satisfy "${k.label}"`); });
       } catch (e) { E("terminal error: " + e.message); }
     } else if (x.kind === "kql") {
       if (!Array.isArray(x.tables) || !x.tables.length || !x.tables.every(t => h.tables && Array.isArray(h.tables[t]) && h.tables[t].length)) E("kql tables must name sample tables in h.tables");
       try { const r = kql.run(x.solution, h.tables || {}); if (!r.rows.length) E("solution returns no rows"); if (x.starter) { const s0 = kql.run(x.starter, h.tables || {}); if (kql.same(s0, r)) E("starter already gives the answer"); } }
       catch (e) { E("solution query failed: " + e.message); }
-    } else E("kind must be code, shell or kql");
+    } else E("kind must be code, kql or a simulator: " + Object.keys(TERMS).join(", "));
   });
 }
 

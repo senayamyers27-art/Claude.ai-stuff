@@ -22,11 +22,16 @@
   const toQ = ([id, w, d, q, o, a, e, src, why, lv]) => ({ id, w, d, q, o, a, e, src, why: Array.isArray(why) && why.length === 4 ? why : null, lv: [1, 2, 3].includes(lv) ? lv : 0 });
   const LEVELS = ["", "Easy", "Medium", "Hard"];
 
+  // "#<cert>.video-<lesson key>" opens the Lessons tab with that lesson's overview video ready to play.
+  let pendingVideo = null;
   function open(id, tab) {
+    const vk = /^video-(l[a-z0-9]+)$/.exec(tab || "");
+    if (vk) { tab = "learn"; pendingVideo = vk[1]; }
     if (C && C.id === id && S) {
       // Same certification: switch tabs but keep any quiz in progress.
       active = true;
       if (TAB_IDS.includes(tab) && tab !== S.tab) { S.tab = tab; if (tab === "week") S.viewWeek = null; }
+      if (pendingVideo) S.openLesson = pendingVideo;
       render(); return true;
     }
     if (!Object.prototype.hasOwnProperty.call(CertHub.certs, id)) return false;
@@ -64,6 +69,7 @@
     if (!p.start) p.start = C.start || U.iso(U.nextMonday(today()));
     if (!p.examDate) p.examDate = C.examDate || U.iso(U.addDays(parseD(p.start), W.length * 7 + 1));
     S = { tab: TAB_IDS.includes(tab) ? tab : "week", viewWeek: null, quiz: null, fc: null, p };
+    if (pendingVideo) S.openLesson = pendingVideo;
     saveProgress(C.id, p);
     render();
     loadPro();
@@ -346,8 +352,11 @@
     if (!LES || !ts.some(t => LES.has(t))) return `<h2>What you're covering</h2><div class="panel wk" style="--c:${dc(w.dom)}"><ul class="clean">${w.topics.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>`;
     const done = ts.filter(t => LES.has(t) && isRead(t)).length, all = ts.filter(t => LES.has(t)).length;
     return head + `<p class="note">Open each topic to read its lesson: an explanation, key terms, a real-world example, an exam tip and questions to check yourself. ${done} of ${all} read.</p>
+    ${playWeekBtn(w)}
     <div class="panel wk" style="--c:${dc(w.dom)}"><ul class="clean lessons">${w.topics.map(t => lessonHtml(t, 0)).join("")}</ul></div>`;
   }
+  // A playlist of a week's lesson overview videos.
+  const playWeekBtn = w => { const n = lessonTopics(w).filter(t => LES && LES.has(t)).length; return n ? `<div class="btns no-print" style="margin:6px 0"><button type="button" class="btn sm" data-act="playweek" data-w="${w.n}">▶ Watch this week's overview videos (${n})</button></div>` : ""; };
   /* ---------- lesson overview video: narrated slides built from the lesson ---------- */
   const plain = x => String(x || "").replace(/`/g, "");
   const sentences = x => plain(x).split(/(?<=[.!?])\s+(?=[A-Z0-9"(])/).filter(Boolean);
@@ -369,14 +378,15 @@
     out.lang = es ? "es-US" : "en-US";
     return out;
   }
-  function playOverview(t) {
-    const slides = overviewSlides(t), tts = "speechSynthesis" in window && typeof SpeechSynthesisUtterance === "function";
-    const back = document.activeElement;
-    let i = 0, playing = true, rate = 1, sound = tts, timer = null, gen = 0;
+  // opts.queue: more lessons to play after this one (a week's playlist). opts.autoplay false: open paused.
+  function playOverview(t, opts = {}) {
+    const queue = opts.queue || [], slides = overviewSlides(t), tts = "speechSynthesis" in window && typeof SpeechSynthesisUtterance === "function";
+    const back = opts.back || document.activeElement;
+    let i = 0, playing = opts.autoplay !== false, rate = 1, sound = tts, timer = null, gen = 0;
     const wrap = document.createElement("div");
     wrap.className = "ov-wrap";
     wrap.innerHTML = `<div class="ov" role="dialog" aria-modal="true" aria-label="Overview video: ${esc(t)}">
-      <div class="ov-top"><span class="note">Overview · ${tts ? "narrated by your device's voice" : "captions only on this device"}</span><button type="button" class="btn ghost sm" data-ov="close" aria-label="Close overview">✕</button></div>
+      <div class="ov-top"><span class="note">Overview video${queue.length ? ` · ${queue.length} more in this playlist` : ""} · ${tts ? "narrated by your device's voice" : "captions only on this device"}</span><button type="button" class="btn ghost sm" data-ov="close" aria-label="Close overview">✕</button></div>
       <div class="ov-stage" aria-live="polite"></div>
       <div class="ov-bar" aria-hidden="true"><i></i></div>
       <div class="ov-ctl"><button type="button" class="btn ghost sm" data-ov="prev" aria-label="Previous slide">⏮</button><button type="button" class="btn sm" data-ov="play"></button><button type="button" class="btn ghost sm" data-ov="next" aria-label="Next slide">⏭</button>
@@ -390,7 +400,7 @@
       $o("[data-ov=play]").textContent = playing ? "❚❚ Pause" : "▶ Play";
       if (tts) $o("[data-ov=sound]").textContent = sound ? "Sound on" : "Sound off";
     };
-    const advance = my => { if (my !== gen || !playing) return; if (i < slides.length - 1) { i++; run(); } else { playing = false; show(); } };
+    const advance = my => { if (my !== gen || !playing) return; if (i < slides.length - 1) { i++; run(); } else if (queue.length) { stop(); wrap.remove(); document.removeEventListener("keydown", onKey); playOverview(queue[0], { queue: queue.slice(1), back }); } else { playing = false; show(); } };
     const run = () => {
       stop(); show(); if (!playing) return;
       const my = gen, text = slides[i].say;
@@ -630,7 +640,10 @@
   }
 
   /* ---------- hands-on practice: Python in the browser, a simulated Linux terminal, KQL queries ---------- */
-  const HO_KIND = { code: ["Python exercises", "Write code and run it against tests, right in your browser."], shell: ["Terminal tasks", "A simulated Linux shell. Type real commands; the tasks tick off as you complete them."], kql: ["Query tasks (KQL)", "Hunt through sample security logs with Kusto Query Language."] };
+  const HO_KIND = { code: ["Python exercises", "Write code and run it against tests, right in your browser."], shell: ["Terminal tasks", "A simulated Linux shell. Type real commands; the tasks tick off as you complete them."], kube: ["Kubernetes tasks", "A simulated cluster. Use kubectl the way the exam expects; the tasks tick off as you complete them."], ios: ["Cisco IOS tasks", "A simulated switch or router command line. Configure it with real IOS commands."], pwsh: ["PowerShell tasks", "A simulated Windows PowerShell session. Type real cmdlets; the tasks tick off as you complete them."], kql: ["Query tasks (KQL)", "Hunt through sample security logs with Kusto Query Language."] };
+  // Command-line simulators: assets/<name>.js, each exposing create(setup), run(S, line), check(S, c) and prompt(S).
+  const TERMS = { shell: "shell", kube: "kube", ios: "ios", pwsh: "pwsh" };
+  const termOf = x => CertHub[TERMS[x.kind]];
   function handsonSection() {
     if (HO === null) return C.hasHandson ? `<h2>Hands-on practice</h2><p class="note">Loading…</p>` : "";
     if (!HO || !HO.items.length) return "";
@@ -647,11 +660,11 @@
     if (x.kind === "code") { st.code = x.starter || ""; st.out = ""; st.results = null; st.running = false; }
     if (x.kind === "kql") { st.q = x.starter || ""; st.res = null; st.err = ""; }
     S.ho = st;
-    if (x.kind === "shell") {
-      CertHub.loadScript("assets/shell.js").then(ok => {
+    if (TERMS[x.kind]) {
+      CertHub.loadScript(`assets/${TERMS[x.kind]}.js`).then(ok => {
         if (S.ho !== st) return;
-        if (!ok || !CertHub.shell) { st.err = "The terminal couldn't load. Check your connection and try again."; render(); return; }
-        st.sh = CertHub.shell.create(x.setup || {}); st.log = []; st.hist = -1; hoShellScore(); render(); focusSoon("#hocmd");
+        if (!ok || !termOf(x)) { st.err = "The terminal couldn't load. Check your connection and try again."; render(); return; }
+        st.sh = termOf(x).create(x.setup || {}); st.log = []; st.hist = -1; hoShellScore(); render(); focusSoon("#hocmd");
       });
     }
     if (x.kind === "kql") CertHub.loadScript("assets/kql.js").then(ok => { if (S.ho === st) { if (!ok) st.err = "The query engine couldn't load. Check your connection and try again."; render(); } });
@@ -686,17 +699,18 @@
     if (r.ok && r.results.every(t => t.ok)) hoPass(st);
     render(); focusSoon("#horesult");
   }
-  function hoShellScore() { const st = S.ho; st.checks = (st.x.checks || []).map(c => CertHub.shell.check(st.sh, c)); if (st.checks.every(Boolean)) hoPass(st); }
+  function hoShellScore() { const st = S.ho; st.checks = (st.x.checks || []).map(c => termOf(st.x).check(st.sh, c)); if (st.checks.every(Boolean)) hoPass(st); }
   function hoShellRun(line) {
     const st = S.ho; if (!st || !st.sh) return;
     line = line.trim(); st.hist = -1;
     if (line === "clear") { st.log = []; st.sh.history.push(line); }
-    else st.log.push({ p: hoPrompt(st.sh), cmd: line, out: line ? CertHub.shell.run(st.sh, line) : "" });
+    else st.log.push({ p: hoPrompt(st.sh), cmd: line, out: line ? termOf(st.x).run(st.sh, line) : "" });
     if (st.log.length > 200) st.log = st.log.slice(-200);
     hoShellScore(); render(); focusSoon("#hocmd");
     const term = $("#hoterm"); if (term) term.scrollTop = term.scrollHeight;
   }
-  const hoPrompt = sh => `${sh.user}@${sh.host}:${sh.cwd === sh.users[sh.user].home ? "~" : sh.cwd.replace(sh.users[sh.user].home + "/", "~/")}$`;
+  const hoPrompt = sh => { const T = termOf(S.ho.x); return T.prompt ? T.prompt(sh) : linuxPrompt(sh); };
+  const linuxPrompt = sh => `${sh.user}@${sh.host}:${sh.cwd === sh.users[sh.user].home ? "~" : sh.cwd.replace(sh.users[sh.user].home + "/", "~/")}$`;
   function hoRunKql() {
     const st = S.ho; if (!st || !CertHub.kql) return;
     const ta = $("#hoq"); if (ta) st.q = ta.value;
@@ -734,11 +748,11 @@
         <p><strong>${res.filter(t => t.ok).length} of ${res.length} tests pass.</strong></p>` : ""}
       </div>` + help;
     }
-    if (x.kind === "shell") {
+    if (TERMS[x.kind]) {
       if (st.err) return head + `<p class="note">${esc(st.err)}</p>`;
       if (!st.sh) return head + `<p class="note">Loading the terminal…</p>`;
       return head + `<ul class="clean hochecks" aria-label="Tasks">${x.checks.map((c, i) => `<li>${st.checks[i] ? `<span class="simok" aria-label="done">✓</span>` : `<span class="hotodo" aria-label="not done yet">○</span>`} ${inline(c.label)}</li>`).join("")}</ul>
-      <div class="term"><pre class="code termout" id="hoterm" tabindex="0" aria-label="Terminal output">${st.log.length ? "" : `<span class="note">Type a command and press Enter. Try ls, pwd or help.</span>\n`}${st.log.map(l => `<span class="tp">${esc(l.p)}</span> ${esc(l.cmd)}${l.out ? "\n" + esc(l.out) : ""}`).join("\n")}</pre>
+      <div class="term"><pre class="code termout" id="hoterm" tabindex="0" aria-label="Terminal output">${st.log.length ? "" : `<span class="note">Type a command and press Enter. Type help to list the commands this simulator supports.</span>\n`}${st.log.map(l => `<span class="tp">${esc(l.p)}</span> ${esc(l.cmd)}${l.out ? "\n" + esc(l.out) : ""}`).join("\n")}</pre>
       <form class="termin" data-form="hosh"><label for="hocmd" class="tp">${esc(hoPrompt(st.sh))}</label><input id="hocmd" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send"></form></div>
       ${st.passed ? `<p role="status"><strong>All tasks complete.</strong></p>` : ""}` + help;
     }
@@ -783,6 +797,7 @@
     const all = W.flatMap(w => lessonTopics(w).filter(t => LES.has(t)));
     const done = all.filter(isRead).length;
     return head + `<p class="meta">A short lesson for every topic in your ${W.length}-week plan, in plan order. Read a lesson, answer its check questions, then take that week's quiz. ${done} of ${all.length} read. <a href="/${C.id}/lessons/">Open as web pages to share</a></p>
+    <div class="status notice no-print"><strong>▶ Overview videos:</strong> every lesson has a short narrated video. Press "Watch this week's overview videos" to play a week in a row, or open any lesson and press "▶ Watch the overview".</div>
     <div class="panel bars"><div class="b"><div class="track"><i style="width:${all.length ? Math.round(100 * done / all.length) : 0}%"></i></div></div></div>
     <div class="btns no-print" style="margin-top:6px">
       <button type="button" class="btn ghost sm" data-tab="cheat">Cheat sheet</button>
@@ -799,7 +814,7 @@
       const n = ws.flatMap(lessonTopics).filter(t => LES.has(t));
       return `<section class="learn-dom"><h2 style="--c:${dc(d.id)}">Domain ${d.id}: ${esc(d.name)}</h2>
       <p class="note">${d.w}% of the exam · ${n.filter(isRead).length} of ${n.length} read</p>
-      ${ws.map(w => `<div class="learn-week"><h3>Week ${w.n}${ws.length > 1 || w.title !== d.name ? `: ${esc(w.title)}` : ""}</h3>
+      ${ws.map(w => `<div class="learn-week"><h3>Week ${w.n}${ws.length > 1 || w.title !== d.name ? `: ${esc(w.title)}` : ""}</h3>${playWeekBtn(w)}
       <div class="panel wk" style="--c:${dc(d.id)}"><ul class="clean lessons">${lessonTopics(w).map(t => lessonHtml(t, w.n)).join("")}</ul></div></div>`).join("")}</section>`;
     }).join("")}`;
   }
@@ -1037,6 +1052,11 @@
     if (S.tab === "guide" && !Pro().available) S.tab = "week";
     const v = { cheat: cheatView, week: weekView, learn: learnView, plan: planView, practice: practiceView, labs: labsView, progress: progressView, guide: guideView, about: aboutView }[S.tab];
     $("#app").innerHTML = v();
+    if (pendingVideo && LES && S.tab === "learn") {
+      const k = pendingVideo, tt = [...LES.keys()].find(x => lessonKey(x) === k); pendingVideo = null;
+      history.replaceState(null, "", `#${C.id}.learn`);
+      if (tt) setTimeout(() => playOverview(tt, { autoplay: false }), 0);
+    }
     if (S.openLesson && S.tab === "learn") {
       const det = document.querySelector(`#app details.lesson[data-k="${S.openLesson}"]`);
       if (det) { S.openLesson = null; det.open = true; det.scrollIntoView({ block: "start" }); det.querySelector("summary").focus({ preventScroll: true }); }
@@ -1131,6 +1151,7 @@
         const k = t.dataset.k;
         S.openLesson = k; S.tab = "learn"; history.replaceState(null, "", `#${C.id}.learn`); render();
       },
+      playweek: () => { const w = W[+t.dataset.w - 1], ts = w ? lessonTopics(w).filter(x => LES && LES.has(x)) : []; if (ts.length) playOverview(ts[0], { queue: ts.slice(1) }); },
       video: () => { const tt = LES && [...LES.keys()].find(x => lessonKey(x) === t.dataset.k); if (tt) playOverview(tt); },
       printlessons: () => { document.querySelectorAll("#app details").forEach(d => { d.open = true; }); window.print(); },
       placement: () => {
