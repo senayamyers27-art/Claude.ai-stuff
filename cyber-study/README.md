@@ -54,18 +54,29 @@ English is shown. Keep translations in step when the English changes:
 The build also writes Spanish lesson and cheat-sheet pages under `/es/` with `hreflang` links
 between the two languages.
 
-## Practice VM (#vm)
+## Practice VMs (#vm)
 
-A real Linux machine that runs in the browser with the [v86](https://github.com/copy/v86) emulator:
-Ubuntu 24.04 (i386) tools (bash, coreutils, util-linux, sudo, useradd, procps, iproute2, vim-tiny,
-BusyBox for cron and syslog) on a small Linux 6.8 kernel built from Ubuntu's source. The learner is
-`student` / `student` with sudo; root's password is `root`. There's no network inside the VM, and it
-resets when the page is left. The files (about 17 MB, not precached) are in `public/vendor/vm/`, with
-`NOTICE.txt` (licenses and the GPL source offer) and `SOURCES.txt` (exact package versions).
+Real Linux servers that run in the browser with the [v86](https://github.com/copy/v86) emulator: Ubuntu 24.04
+(i386) with systemd, OpenSSH, iptables, LVM, cron, e2fsprogs/xfsprogs and two empty 64 MB disks, on a
+Linux 6.8 kernel built from Ubuntu's source. The learner is `student` / `student` with sudo; root's password
+is `root`. The VMs have no internet but share a private network with each other.
 
-Rebuild on Ubuntu 24.04 as root after changing `tools/vm/` (see the comment at the top of
-`tools/vm/build-vm.sh` for the packages it needs): `bash tools/vm/build-vm.sh`. The smoke test boots it;
-set `SKIP_VM=1` to skip that.
+- **Pages:** `#vm` (hub, free practice with save/resume), `#vm-net` (server 10.10.0.10 and client
+  10.10.0.20), `#vm-lab-<id>` (graded labs) and `#vm-exam` (timed exam).
+- **Graded labs and the exam:** `public/data/vmlabs.js`. Each check is a bash snippet run as root inside
+  the VM by a checker service on the second serial port (`tools/vm/overlay/usr/sbin/vm-agent`).
+  `node tools/vm/test-labs.js` runs every lab against the real VM: each check must fail on a fresh VM
+  and pass after a reference solution. Run it after changing the labs or the VM.
+- **Fast start:** `tools/vm/make-state.js` boots the VM once and saves the running machine as
+  `state.bin.zst` (about 36 MB), so learners start in seconds. The page then sets each VM's hostname,
+  IP address, clock and terminal size through the checker.
+- **Files:** `public/vendor/vm/` holds the emulator, BIOS, terminal, snapshot, `config.json` (memory,
+  disks, kernel command line; must match the snapshot), `NOTICE.txt` (licenses and the GPL source offer)
+  and `SOURCES.txt` (exact package versions). The service worker keeps them in their own cache
+  (`studytocert-vm-<hash>`), so they survive site updates and the VM works offline.
+- **Rebuild** on Ubuntu 24.04 as root after changing `tools/vm/` (packages listed at the top of
+  `tools/vm/build-vm.sh`): `bash tools/vm/build-vm.sh`. The smoke test starts a VM and runs a graded
+  lab check; set `SKIP_VM=1` to skip that.
 
 ## Social sharing kit
 

@@ -1,0 +1,12 @@
+#!/bin/bash
+# Per-VM settings from the kernel command line the web page passes:
+#   vmhost=<hostname>  vmip=<address/prefix for eth0>
+for a in $(cat /proc/cmdline); do case $a in vmhost=*) H=${a#vmhost=};; vmip=*) IP=${a#vmip=};; esac; done
+H=${H:-lab}
+hostname "$H"; echo "$H" > /etc/hostname
+sed -i "s/^127\.0\.1\.1.*/127.0.1.1\t$H/" /etc/hosts
+if [ -n "$IP" ] && ip link show eth0 >/dev/null 2>&1; then
+  ip link set eth0 up
+  ip addr add "$IP" dev eth0
+fi
+exit 0
