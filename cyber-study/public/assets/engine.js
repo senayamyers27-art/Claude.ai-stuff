@@ -72,6 +72,12 @@
       if (active && !(S.quiz && !S.quiz.done) && (S.tab === "week" || S.tab === "learn")) render();
     });
     const p = loadProgress(C.id);
+    // Some lesson titles were capitalized (September 2026); keep "read" marks and ratings saved under the old title.
+    if (p.read || p.ratings) W.forEach(w => w.topics.forEach(t => {
+      if (!/^[A-Z][a-z]/.test(t)) return;
+      const ok = lessonKey(t[0].toLowerCase() + t.slice(1)), nk = lessonKey(t);
+      ["read", "ratings"].forEach(m => { const o = p[m]; if (o && o[ok] != null && o[nk] == null) { o[nk] = o[ok]; delete o[ok]; } });
+    }));
     if (!p.start) p.start = C.start || U.iso(U.nextMonday(today()));
     if (!p.examDate) p.examDate = C.examDate || U.iso(U.addDays(parseD(p.start), W.length * 7 + 1));
     S = { tab: TAB_IDS.includes(tab) ? tab : "week", viewWeek: null, quiz: null, fc: null, p };
