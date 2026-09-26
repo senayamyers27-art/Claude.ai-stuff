@@ -13,6 +13,7 @@
     "test:api": "node --test api/test/*.test.js",
     "test:accounts": "node tools/accounts-e2e.js",
     "test:a11y": "node tools/a11y.js",
+    "test:layout": "node tools/layout.js",
     "start": "node tools/serve.js 8000",
     "api:dev": "node api/dev-server.js 8787 http://localhost:8000",
     "start:accounts": "node tools/serve.js 8000 http://localhost:8787",
