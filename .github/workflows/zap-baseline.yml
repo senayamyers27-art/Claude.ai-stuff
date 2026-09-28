@@ -31,7 +31,9 @@ jobs:
         with:
           target: ${{ steps.site.outputs.url }}
           rules_file_name: cyber-study/tools/zap-rules.tsv
-          cmd_options: "-I -m 3"   # -I: warnings don't fail (FAIL rules still do); -m: spider for 3 minutes
+          # -I: warnings don't fail (FAIL rules still do); -m: spider for 3 minutes; two spider threads so
+          # GitHub Pages doesn't rate-limit the scan (its 429 error pages lack the site's headers).
+          cmd_options: '-I -m 3 -z "-config spider.thread=2 -config pscan.maxAlertsPerRule=10"'
           allow_issue_writing: false
           artifact_name: zap-report
           fail_action: true

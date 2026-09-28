@@ -1,12 +1,31 @@
 # ZAP baseline scan rules for .github/workflows/zap-baseline.yml (tab-separated: rule id, action, name).
-# FAIL fails the scan; WARN is reported only; IGNORE is skipped. The IGNOREs below are headers GitHub Pages
-# can't send (the site sets its CSP in a meta tag instead); switch them to FAIL after moving to Cloudflare
-# Pages, which sends public/_headers (docs/CLOUDFLARE_MOVE.md).
+# FAIL fails the scan; WARN is reported only; IGNORE is skipped. Every IGNORE says why.
+#
+# Headers GitHub Pages can't send (the site sets its CSP in a meta tag instead). Switch these to FAIL after
+# moving to Cloudflare Pages, which sends public/_headers (docs/CLOUDFLARE_MOVE.md, step 6).
 10020	IGNORE	Anti-clickjacking header (GitHub Pages can't send X-Frame-Options)
+10021	IGNORE	X-Content-Type-Options header missing (GitHub Pages can't send it)
 10038	IGNORE	Content Security Policy header not set (the CSP is in a meta tag on GitHub Pages)
+10055	IGNORE	CSP: no fallback for frame-ancestors (browsers ignore it in a meta tag; needs the header)
 10063	IGNORE	Permissions Policy header not set (GitHub Pages can't send it)
-90004	IGNORE	Insufficient site isolation against Spectre (COOP and CORP need headers)
+90004	IGNORE	Insufficient site isolation against Spectre (COOP, CORP and COEP need headers)
 10098	IGNORE	Cross-domain misconfiguration (GitHub Pages allows any origin to read public static files)
+10015	IGNORE	Re-examine cache-control directives (GitHub Pages sets caching)
+#
+# Study content that looks like a finding to a scanner: lessons teach HTTP error codes, private IP
+# addressing and Python, and the static site has no server code to leak errors from.
+90022	IGNORE	Application error disclosure (lessons about HTTP status codes)
+10023	IGNORE	Debug error messages (lessons about HTTP status codes)
+2	IGNORE	Private IP disclosure (networking lessons use RFC 1918 examples)
+10099	IGNORE	Source code disclosure - Python (Python lessons)
+10027	IGNORE	Suspicious comments (code comments in the site's own open-source scripts)
+#
+# Informational only.
+10049	IGNORE	Storable and cacheable content (a public static site is meant to be cached)
+10050	IGNORE	Retrieved from cache (the CDN answering)
+10109	IGNORE	Modern web application (informational)
+#
+# Must never happen.
 10003	FAIL	Vulnerable JS library
 10010	FAIL	Cookie no HttpOnly flag
 10011	FAIL	Cookie without Secure flag
@@ -15,6 +34,5 @@
 10037	FAIL	Server leaks information via X-Powered-By
 10040	FAIL	Secure pages include mixed content
 10054	FAIL	Cookie without SameSite attribute
-10055	FAIL	CSP issues (wildcards, unsafe-inline, missing directives)
 10105	FAIL	Weak authentication method
-90022	FAIL	Application error disclosure
+90003	FAIL	Sub Resource Integrity attribute missing

@@ -48,7 +48,7 @@ The "Study site Cloudflare settings" workflow checks the zone every week: Always
 
 ## 6. Tighten the security scans
 
-- **ZAP rules.** In `tools/zap-rules.tsv`, change the five `IGNORE` rules (headers GitHub Pages couldn't send) to `FAIL`. Cloudflare sends all of them, so a missing header then fails the weekly scan.
+- **ZAP rules.** In `tools/zap-rules.tsv`, change the first group of `IGNORE` rules (headers GitHub Pages can't send) to `FAIL`. Cloudflare sends all of them, so a missing header then fails the weekly scan. Leave the study-content and informational groups as they are.
 - **Integrity monitor.** Nothing to change: "Study site integrity" checks whichever domain `site.config.json` names, and skips `_headers` and `_redirects`, which Cloudflare reads instead of serving.
 
 ## 7. Optional extra hardening
