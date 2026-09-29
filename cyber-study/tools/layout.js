@@ -36,6 +36,8 @@ const VIEWS = [
   ["log-puzzles", "#log-puzzles", "#app h1"],
   ["exam-changes", "#exam-changes", "#app h1"],
   ["schools", "#schools", "#app h1"],
+  ["job-outlook", "#job-outlook", "#app h1"],
+  ["net-design", "#net-design", "#app h1"],
   ["tabletop", "#tabletop-ransomware", "#app h1"],
   ["flashcards-print", `#${cert}.cards`, "#app h1"],
   ["game", "#game-subnet", "#app h1"],
