@@ -4,7 +4,7 @@ The code for accounts, progress sync and Pro is finished and tested:
 
 - **Worker and database:** `api/` is the Cloudflare Worker, and `api/migrations/` holds the D1 database schema. Run `npm run test:api` to test the Worker.
 - **Pro content:** the paid content lives in the private `cyber-study-pro` repository.
-- **Deploy workflows:** `.github/workflows/` includes the API deploy, D1 backup and Cloudflare settings workflows.
+- **Deploy workflows:** `.github/workflows/` includes the API deploy, API backup and Cloudflare settings workflows.
 
 What remains needs your accounts, payment details and secrets, so only you can do it. Work top to bottom. Every step is reversible until the last one, where you turn on payments.
 
@@ -76,7 +76,7 @@ What remains needs your accounts, payment details and secrets, so only you can d
 - [ ] **Update the Privacy Policy and Terms pages** (`tools/build.js`, POLICY) to describe accounts, payments, the email provider and Stripe. Remove "No accounts" from the summary line.
 - [ ] **Switch to live keys.** Move Stripe to live mode, then replace `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` and the price ids with live values. Redeploy the API.
 - [ ] **Make one real purchase** and refund it.
-- [ ] **Turn on the D1 backup workflow** and confirm its first run.
+- [ ] **Set up backups.** Confirm D1 Time Travel is available for `cyber-cert-study` (Cloudflare dashboard → D1 → the database → Time Travel). For weekly encrypted copies, create an `age` key pair on your own computer (`age-keygen -o studytocert-backup.key`), keep the private key offline, add the public key (`age1…`) as the repository variable `STUDY_API_BACKUP_AGE_RECIPIENT`, and run **Actions → Study site API backup** once. (The "D1 Nightly Backup" workflow belongs to the other site in this repository, not to StudyToCert.)
 - [ ] **Watch the first week:**
   - Stripe webhook deliveries
   - Worker errors (Cloudflare dashboard → Workers → Logs)

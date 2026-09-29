@@ -40,7 +40,6 @@ flowchart LR
     W[Worker<br/>api.<domain>]
     D[(D1<br/>SQL database)]
     R[(R2<br/>Pro content, exports)]
-    KV[(KV<br/>rate limits)]
   end
   S[Stripe<br/>Checkout, Billing, Tax]
   E[Email provider<br/>sign-in links]
@@ -49,7 +48,6 @@ flowchart LR
   A --- L
   W --> D
   W --> R
-  W --> KV
   W <-- "webhooks" --> S
   W --> E
 ```
@@ -60,7 +58,8 @@ flowchart LR
   It is the only component with secrets.
 - **D1** (SQLite) stores accounts, organizations, entitlements and synced progress.
 - **R2** stores Pro-only content (extra question banks, printable packs) and data exports.
-- **KV** holds rate-limit counters.
+- **Rate limits**: per-address limits at the edge (the Workers rate limiting binding, kept in memory)
+  and per-user and per-email counters in D1. There is no KV namespace.
 - **Stripe** handles all payments. We never touch card data (lowest PCI burden: SAQ A).
 - **An email provider** sends sign-in links and receipts.
 
@@ -71,7 +70,9 @@ flowchart LR
 - Session: a random 256-bit token in a `__Host-` prefixed `HttpOnly; Secure; SameSite=Strict`
   cookie scoped to the API origin; only its SHA-256 hash is stored. 30-day sliding expiry, never
   more than 90 days after sign-in; at most 10 sessions per user (the oldest ends first).
-- Magic links: single use, 15-minute expiry, bound to the requesting browser.
+- Magic links: single use (claimed atomically), 15-minute expiry, rate-limited per address and per
+  email; only the SHA-256 hash of the token is stored, and the site removes the token from the
+  address bar as soon as it is used.
 - **Organizations (option 5)** can add SSO later: SAML or OIDC through a managed provider, or
   Cloudflare Access, once a customer asks for it.
 
@@ -214,6 +215,23 @@ its join link (`#join-<code>`). No seats, no billing and no Pro gate.
   no request bodies or emails; one JSON line per refused request (`"type":"security"`: bad origin,
   rate limit, wrong body type, rejected link, failed bot check) with a hashed IP; alerts on
   webhook failures and error spikes.
+- **Encryption in transit**: the API is served only over HTTPS on its custom domain (`workers_dev`
+  is off), with HSTS for two years; calls to Stripe, the email provider and Turnstile are HTTPS.
+- **Encryption at rest**: Cloudflare encrypts D1 and R2 storage at rest (AES-256) on its side. The
+  app adds its own protection where it matters: session, sign-in link, invite and passkey
+  challenge tokens are stored only as SHA-256 hashes, and IP addresses only as an HMAC keyed with
+  the `IP_HASH_KEY` Worker secret (created by the deploy workflow). Emails stay readable because
+  sign-in looks them up; encrypting them in the app wouldn't help, since the Worker would hold the
+  key anyway. There are no passwords.
+- **Retention**: a daily scheduled run (`scheduled()` in `src/index.js`) deletes expired sign-in
+  links, sessions and passkey challenges, rate-limit rows older than a day, processed Stripe event
+  ids after 90 days and audit log entries after a year.
+- **Backups**: D1 Time Travel can restore the database to any minute in the last 30 days
+  (Workers Paid; 7 days on Free). The "Study site API backup" workflow also exports it weekly,
+  encrypts the export with `age` for a public key you choose, and keeps only the encrypted file.
+- **Webhooks**: Stripe events are verified by signature, processed once, forgotten again if
+  processing fails (so Stripe's retry is processed), and applied in event order, so a late,
+  older event can't undo a newer one.
 - **CI**: the existing CodeQL, secret scanning and Dependabot cover the Worker too; add API tests
   (auth, tenant isolation, sync merge rules) to Study site CI.
 

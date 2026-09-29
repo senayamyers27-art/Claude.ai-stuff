@@ -216,6 +216,9 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(`${BASE}/#security-plus.progress`);
   await page.waitForSelector(".panel.ready");
   check(/\d+\/100/.test(await page.textContent(".panel.ready")), "Progress tab shows an exam readiness score");
+  await page.goto(`${BASE}/#dashboard`);
+  await page.waitForSelector("#app h1");
+  { const card = await page.$('.dashcard:has(a[href="#security-plus.week"])'); check(!!card && /\d+\/100/.test(await card.textContent()) && (await page.$$(".dashsum .panel")).length === 4, "dashboard lists a started certification with its readiness"); }
   await page.goto(`${BASE}/#security-plus.cheat`);
   await page.waitForSelector(".panel.cheat");
   check((await page.$$(".panel.cheat")).length === 5, "cheat sheet covers every domain");

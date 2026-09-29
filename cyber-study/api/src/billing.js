@@ -14,7 +14,11 @@ async function stripe(env, method, path, params) {
     body
   });
   const j = await res.json().catch(() => ({}));
-  if (!res.ok) throw new HttpError(502, "stripe_error", (j.error && j.error.message) || "The payment service returned an error.");
+  if (!res.ok) {
+    // Stripe's own message can mention account details, so it goes to the Worker's logs, not to the browser.
+    console.error("stripe", res.status, j.error && j.error.type, j.error && j.error.code);
+    throw new HttpError(502, "stripe_error", "The payment service returned an error. Try again in a few minutes.");
+  }
   return j;
 }
 // { a: { b: 1 }, c: [ { d: 2 } ] } -> { "a[b]": 1, "c[0][d]": 2 }
@@ -128,22 +132,32 @@ export async function handleWebhook(env, request) {
     throw new HttpError(400, "bad_signature", "Signature check failed.");
   }
   const event = JSON.parse(payload);
+  if (!event || typeof event.id !== "string" || typeof event.type !== "string") throw bad("bad_event", "Not a Stripe event.");
   const seen = await env.DB.prepare("INSERT INTO stripe_events (id, received_at) VALUES (?, ?) ON CONFLICT(id) DO NOTHING").bind(event.id, now()).run();
   if (!seen.meta || seen.meta.changes !== 1) return { received: true, duplicate: true };
 
   const obj = event.data && event.data.object;
-  if (event.type.startsWith("customer.subscription.")) await upsertSubscription(env, obj, event.type === "customer.subscription.deleted");
-  else if (event.type === "checkout.session.completed" && obj.subscription) {
-    const sub = typeof obj.subscription === "string" ? await stripe(env, "GET", `/subscriptions/${obj.subscription}`) : obj.subscription;
-    await upsertSubscription(env, sub, false);
-  } else if (event.type === "invoice.payment_failed" && obj.subscription) {
-    await env.DB.prepare("UPDATE subscriptions SET status = 'past_due', updated_at = ? WHERE stripe_subscription = ?").bind(now(), obj.subscription).run();
+  // Stripe's event time (seconds), so an older event that arrives late can't undo a newer one.
+  const at = (Number(event.created) || Math.floor(now() / 1000)) * 1000;
+  try {
+    if (event.type.startsWith("customer.subscription.")) await upsertSubscription(env, obj, event.type === "customer.subscription.deleted", at);
+    else if (event.type === "checkout.session.completed" && obj.subscription) {
+      const sub = typeof obj.subscription === "string" ? await stripe(env, "GET", `/subscriptions/${obj.subscription}`) : obj.subscription;
+      await upsertSubscription(env, sub, false, at);
+    } else if (event.type === "invoice.payment_failed" && obj.subscription) {
+      await env.DB.prepare("UPDATE subscriptions SET status = 'past_due', updated_at = ?, stripe_event_at = ? WHERE stripe_subscription = ? AND COALESCE(stripe_event_at, 0) <= ?")
+        .bind(now(), at, obj.subscription, at).run();
+    }
+  } catch (e) {
+    // Forget the event so Stripe's retry is processed instead of being skipped as a duplicate.
+    await env.DB.prepare("DELETE FROM stripe_events WHERE id = ?").bind(event.id).run().catch(() => {});
+    throw e;
   }
   await audit(env, null, { actor: "stripe", action: "stripe." + event.type, target: obj && obj.id });
   return { received: true };
 }
 
-async function upsertSubscription(env, sub, deleted) {
+async function upsertSubscription(env, sub, deleted, at) {
   const md = sub.metadata || {};
   const item = sub.items && sub.items.data && sub.items.data[0];
   // Newer Stripe API versions put the billing period on the subscription item.
@@ -152,10 +166,11 @@ async function upsertSubscription(env, sub, deleted) {
   const userId = md.user_id || null;
   if (userId && !(await env.DB.prepare("SELECT 1 FROM users WHERE id = ?").bind(userId).first())) return;
   await env.DB.prepare(
-    `INSERT INTO subscriptions (stripe_subscription, stripe_customer, user_id, org_id, plan, status, seats, current_period_end, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `INSERT INTO subscriptions (stripe_subscription, stripe_customer, user_id, org_id, plan, status, seats, current_period_end, updated_at, stripe_event_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(stripe_subscription) DO UPDATE SET status = excluded.status, seats = excluded.seats,
-       current_period_end = excluded.current_period_end, updated_at = excluded.updated_at`
+       current_period_end = excluded.current_period_end, updated_at = excluded.updated_at, stripe_event_at = excluded.stripe_event_at
+     WHERE COALESCE(subscriptions.stripe_event_at, 0) <= excluded.stripe_event_at`
   ).bind(sub.id, String(sub.customer), plan === "pro" ? userId : null, plan === "org" ? (md.org_id || null) : null, plan,
-    deleted ? "canceled" : sub.status, item ? (item.quantity || 1) : 1, periodEnd ? periodEnd * 1000 : null, now()).run();
+    deleted ? "canceled" : sub.status, item ? (item.quantity || 1) : 1, periodEnd ? periodEnd * 1000 : null, now(), at).run();
 }
