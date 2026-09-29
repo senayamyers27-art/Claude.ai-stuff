@@ -22,12 +22,50 @@ async function grantPro(db, emails) {
   }
 }
 
+// A development stand-in for Google, Facebook and LinkedIn sign-in (the Worker sends provider requests here when
+// OAUTH_DEV_BASE is set): a plain page asks for a name and email, then hands back a code carrying them.
+const esc = t => String(t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function fakeProvider(req, res) {
+  const u = new URL(req.url, "http://localhost");
+  const send = (status, type, body, headers = {}) => { res.writeHead(status, { "Content-Type": type, ...headers }); res.end(body); };
+  const who = code => { try { return JSON.parse(Buffer.from(code, "base64url").toString()); } catch (e) { return null; } };
+  const [, , host, ...rest] = u.pathname.split("/"), p = "/" + rest.join("/");
+  const name = { "accounts.google.com": "Google", "www.facebook.com": "Facebook", "www.linkedin.com": "LinkedIn" }[host];
+  if (name && /(auth|dialog\/oauth|authorization)$/.test(p)) {
+    const q = u.searchParams;
+    return send(200, "text/html; charset=utf-8", `<!doctype html><meta name="viewport" content="width=device-width"><title>${name} (development)</title>
+      <body style="font:16px system-ui;max-width:420px;margin:40px auto;padding:0 16px"><h1>${name} sign-in</h1><p>Development stand-in: no real ${name} account is used.</p>
+      <form method="get" action="/__oauth/approve"><input type="hidden" name="to" value="${esc(q.get("redirect_uri"))}"><input type="hidden" name="state" value="${esc(q.get("state"))}"><input type="hidden" name="p" value="${esc(host)}">
+      <p><label>Name<br><input name="name" value="Sam Rivera" id="fake-name"></label></p><p><label>Email<br><input name="email" value="sam@example.com" id="fake-email"></label></p>
+      <p><label><input type="checkbox" name="verified" value="1" checked> Email verified</label></p>
+      <button id="fake-continue">Continue</button> <a id="fake-cancel" href="${esc(q.get("redirect_uri"))}?error=access_denied&state=${esc(q.get("state"))}">Cancel</a></form></body>`);
+  }
+  if (host === "approve") {
+    const q = u.searchParams, to = q.get("to") || "";
+    if (!/^http:\/\/localhost:\d+\/v1\/auth\/oauth\/[a-z]+\/callback$/.test(to)) return send(400, "text/plain", "bad redirect");
+    const code = Buffer.from(JSON.stringify({ p: q.get("p"), name: q.get("name"), email: q.get("email"), verified: q.get("verified") === "1" })).toString("base64url");
+    return send(302, "text/plain", "", { Location: `${to}?code=${code}&state=${encodeURIComponent(q.get("state") || "")}` });
+  }
+  if (/token|access_token|accessToken$/.test(p)) {
+    let body = ""; req.on("data", c => { body += c; });
+    return req.on("end", () => { const code = new URLSearchParams(body).get("code") || ""; return who(code) ? send(200, "application/json", JSON.stringify({ access_token: code, token_type: "Bearer" })) : send(400, "application/json", '{"error":"invalid_grant"}'); });
+  }
+  const token = u.searchParams.get("access_token") || (req.headers.authorization || "").replace(/^Bearer /, "");
+  const w = who(token);
+  if (!w) return send(401, "application/json", "{}");
+  const sub = "dev-" + Buffer.from(w.p + w.email).toString("hex").slice(0, 16);
+  if (host === "graph.facebook.com") return send(200, "application/json", JSON.stringify({ id: sub, name: w.name, email: w.email }));
+  return send(200, "application/json", JSON.stringify({ sub, name: w.name, email: w.email, email_verified: w.verified }));
+}
+
 async function start({ port = 8787, siteOrigin = "http://localhost:8000", dbFile = ":memory:", env: extra = {} } = {}) {
   const worker = (await import("./src/index.js")).default;
-  const env = { DB: createD1(dbFile), CONTENT: createR2(), SITE_ORIGIN: siteOrigin, APP_ENV: "development", EMAIL_FROM: "dev@localhost", ...extra };
+  const env = { DB: createD1(dbFile), CONTENT: createR2(), SITE_ORIGIN: siteOrigin, APP_ENV: "development", EMAIL_FROM: "dev@localhost",
+    OAUTH_DEV_BASE: `http://localhost:${port}`, GOOGLE_CLIENT_ID: "dev", GOOGLE_CLIENT_SECRET: "dev", FACEBOOK_APP_ID: "dev", FACEBOOK_APP_SECRET: "dev", LINKEDIN_CLIENT_ID: "dev", LINKEDIN_CLIENT_SECRET: "dev", ...extra };
   await loadContent(env.CONTENT, process.env.PRO_CONTENT_DIR || path.join(__dirname, "test/fixtures/pro"));
   const proEmails = (process.env.PRO_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
   const server = http.createServer(async (req, res) => {
+    if (req.url.startsWith("/__oauth/")) return fakeProvider(req, res);
     if (proEmails.length) await grantPro(env.DB, proEmails);
     const chunks = [];
     for await (const c of req) chunks.push(c);

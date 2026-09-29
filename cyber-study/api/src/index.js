@@ -9,6 +9,8 @@ import { entitlementsFor, createCheckout, createPortal, handleWebhook, billingEn
 import { createOrg, createCohort, listCohorts, createInvite, acceptInvite, cohortSummary, summaryCsv } from "./orgs.js";
 import { exportAccount, deleteAccount } from "./account.js";
 import { registerOptions, registerVerify, signinOptions, signinVerify, listPasskeys, deletePasskey, listSessions, endSession, endOtherSessions } from "./passkeys.js";
+import { startOAuth, finishOAuth, unlinkIdentity, enabledProviders } from "./oauth.js";
+import { getProfile, updateProfile } from "./profile.js";
 import { listClasses, createClass, updateClass, deleteClass, rotateCode, previewJoin, joinClass, leaveClass, removeStudent, roster, rosterCsv } from "./classes.js";
 
 const SECURITY_HEADERS = {
@@ -34,6 +36,13 @@ function cors(env, request) {
 
 function json(env, request, data, status = 200, extra = {}) {
   return new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json; charset=utf-8", ...SECURITY_HEADERS, ...cors(env, request), ...extra } });
+}
+
+// A redirect for the sign-in-with-a-provider flow, which runs as top-level page navigations.
+function redirect(location, cookies = []) {
+  const h = new Headers({ Location: location, ...SECURITY_HEADERS });
+  for (const c of cookies) h.append("Set-Cookie", c);
+  return new Response(null, { status: 302, headers: h });
 }
 
 // Refusals worth a security log line: forbidden, too large, wrong body type, rate limited.
@@ -72,6 +81,7 @@ export async function purgeExpired(env, t = Date.now()) {
     ["DELETE FROM magic_links WHERE expires_at < ?", t - DAY],
     ["DELETE FROM sessions WHERE expires_at < ?", t],
     ["DELETE FROM webauthn_challenges WHERE expires_at < ?", t],
+    ["DELETE FROM oauth_states WHERE expires_at < ?", t],
     ["DELETE FROM rate_limits WHERE window_start < ?", t - DAY],
     ["DELETE FROM stripe_events WHERE received_at < ?", t - 90 * DAY],
     ["DELETE FROM audit_log WHERE at < ?", t - 365 * DAY]
@@ -90,6 +100,7 @@ async function route(request, env) {
   const path = url.pathname.replace(/\/+$/, "") || "/";
   const method = request.method;
 
+  let m0;
   if (method === "OPTIONS") return new Response(null, { status: 204, headers: { ...SECURITY_HEADERS, ...cors(env, request) } });
 
   // Per-address request limit, when the Workers rate limiting binding is configured (wrangler.toml
@@ -121,6 +132,30 @@ async function route(request, env) {
     const { user, cookie } = await signinVerify(env, request, await readJson(request));
     return json(env, request, { user: { id: user.id, email: user.email } }, 200, { "Set-Cookie": cookie });
   }
+  // Sign in with Google, Facebook or LinkedIn (./oauth.js). These are page navigations, not fetches: GET only,
+  // and a failure still redirects back to the site with an error code rather than showing JSON.
+  if ((m0 = path.match(/^\/v1\/auth\/oauth\/([a-z]{3,12})\/start$/)) && method === "GET") {
+    const linking = url.searchParams.get("link") === "1";
+    const u = linking ? await currentUser(env, request) : null;
+    if (linking && !u) return redirect(`${env.SITE_ORIGIN}/?signin_error=signed_out#login`);
+    try {
+      const r = await startOAuth(env, request, m0[1], u);
+      return redirect(r.location, [r.cookie]);
+    } catch (e) {
+      if (!(e instanceof HttpError)) throw e;
+      return redirect(`${env.SITE_ORIGIN}/?signin_error=${e.code === "rate_limited" ? "rate_limited" : "provider_off"}#${linking ? "profile" : "login"}`);
+    }
+  }
+  if ((m0 = path.match(/^\/v1\/auth\/oauth\/([a-z]{3,12})\/callback$/)) && method === "GET") {
+    try {
+      const r = await finishOAuth(env, request, m0[1]);
+      return redirect(r.location, r.cookies);
+    } catch (e) {
+      if (!(e instanceof HttpError)) throw e;
+      return redirect(`${env.SITE_ORIGIN}/?signin_error=${e.code === "rate_limited" ? "rate_limited" : "provider_error"}#login`, [`__Host-cs_oauth=; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=0`]);
+    }
+  }
+
   if (path === "/v1/auth/logout" && method === "POST") {
     const u = await currentUser(env, request);
     if (u) await logout(env, request, u);
@@ -129,8 +164,10 @@ async function route(request, env) {
 
   if (path === "/v1/me" && method === "GET") {
     const u = await currentUser(env, request);
-    if (!u) return json(env, request, { user: null, billing: billingEnabled(env) });
-    return json(env, request, { user: { id: u.id, email: u.email }, billing: billingEnabled(env), ...(await entitlementsFor(env, u.id)) });
+    const providers = enabledProviders(env);
+    if (!u) return json(env, request, { user: null, billing: billingEnabled(env), providers });
+    const p = await env.DB.prepare("SELECT display_name FROM users WHERE id = ?").bind(u.id).first();
+    return json(env, request, { user: { id: u.id, email: u.email, displayName: (p && p.display_name) || "" }, billing: billingEnabled(env), providers, ...(await entitlementsFor(env, u.id)) });
   }
 
   // Everything below needs a signed-in user.
@@ -202,6 +239,12 @@ async function route(request, env) {
   if (path === "/v1/sessions" && method === "GET") return json(env, request, await listSessions(env, user));
   if (path === "/v1/sessions/others" && method === "DELETE") return json(env, request, await endOtherSessions(env, request, user));
   if ((m = path.match(/^\/v1\/sessions\/([0-9a-f]{16})$/)) && method === "DELETE") return json(env, request, await endSession(env, request, user, m[1]));
+
+  if (path === "/v1/profile") {
+    if (method === "GET") return json(env, request, await getProfile(env, user));
+    if (method === "PUT") return json(env, request, await updateProfile(env, request, user, await readJson(request)));
+  }
+  if ((m = path.match(/^\/v1\/identities\/([a-z]{3,12})$/)) && method === "DELETE") return json(env, request, await unlinkIdentity(env, request, user, m[1]));
 
   if (path === "/v1/account/export" && method === "GET") return json(env, request, await exportAccount(env, user), 200, { "Content-Disposition": 'attachment; filename="cyber-cert-study-account.json"' });
   if (path === "/v1/account" && method === "DELETE") {
