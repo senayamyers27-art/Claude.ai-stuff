@@ -48,7 +48,7 @@ jobs:
           umask 077
           sudo apt-get update -qq && sudo apt-get install -y -qq age
           OUT="$RUNNER_TEMP/backup"; mkdir -p "$OUT"
-          (cd worker && npx --yes wrangler@4.138.0 d1 export eleven-eleven-staff --remote --output "$OUT/backup.sql")
+          (cd worker && npx --yes wrangler@4.143.1 d1 export eleven-eleven-staff --remote --output "$OUT/backup.sql")
           test -s "$OUT/backup.sql"
           age -r "$RECIPIENT" -o "$OUT/backup.sql.age" "$OUT/backup.sql"
           shred -u "$OUT/backup.sql"
