@@ -45,7 +45,9 @@ async function audit(page, label) {
     page.on("dialog", d => d.accept());
     const go = async (hash, label, wait = "#app h1") => { await page.goto(`${BASE}/${hash}`); await page.waitForSelector(wait); await page.waitForTimeout(150); await audit(page, `${label} (${scheme})`); };
 
-    await go("", "home", ".card");
+    await go("", "home", ".tile");
+    await go("#certifications", "certifications", ".card");
+    await page.click("#menubtn"); await page.waitForSelector("#sitemenu a"); await audit(page, `site menu (${scheme})`); await page.keyboard.press("Escape");
     for (const id of certIds) for (const tab of ["week", "learn", "plan", "practice", "labs", "progress", "guide", "about"]) await go(`#${id}.${tab}`, `${id}.${tab}`);
     // Lessons with every section open.
     if (fs.existsSync(path.join(__dirname, "../public/data/lessons/security-plus.js"))) {
