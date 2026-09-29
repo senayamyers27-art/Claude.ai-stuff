@@ -236,18 +236,33 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(`${BASE}/#achievements`);
   await page.waitForSelector(".ach");
   check((await page.$$(".ach.got")).length >= 1, "achievements page shows earned badges");
-  await page.goto(`${BASE}/#settings`);
+  await page.goto(`${BASE}/#settings.accessibility`);
   await page.waitForSelector('[data-pref="size:lg"]');
   await page.click('[data-pref="size:lg"]'); await page.click('[data-pref="contrast:more"]'); await page.click('[data-pref="read:on"]');
   await page.reload(); await page.waitForSelector("#app h1");
   check(await page.evaluate(() => { const r = document.documentElement; return r.dataset.size === "lg" && r.dataset.contrast === "more" && r.dataset.read === "easy"; }), "reading settings apply and survive a reload");
   await page.click('[data-pref="size:md"]'); await page.click('[data-pref="contrast:normal"]'); await page.click('[data-pref="read:off"]');
+  await page.click('[data-pref="motion:reduce"]'); await page.click('[data-pref="links:on"]'); await page.click('[data-pref="focusring:strong"]');
+  await page.reload(); await page.waitForSelector('[data-pref="motion:reduce"]');
+  check(await page.evaluate(() => { const r = document.documentElement; return r.dataset.motion === "reduce" && r.dataset.links === "on" && r.dataset.focusring === "strong" && CertHub.fx.calm(); }), "accessibility settings (reduce motion, underlined links, focus outline) apply and survive a reload");
+  await page.click('[data-pref="motion:auto"]'); await page.click('[data-pref="links:off"]'); await page.click('[data-pref="focusring:normal"]');
+  await page.click('[data-pref="time:1.5"]'); await page.click('[data-pref="keys:off"]');
+  await page.goto(`${BASE}/#security-plus.practice`);
+  await page.waitForSelector("[data-act=exam]"); await page.click("[data-act=exam]"); await page.waitForSelector(".qhead");
+  const xt = await page.evaluate(() => ({ chip: /Time and a half/.test(document.querySelector(".qhead").textContent) }));
+  await page.keyboard.press("a");
+  check(xt.chip && !(await page.$(".opt[aria-pressed=true]")), "extra time shows on timed tests, and single-key shortcuts can be turned off");
+  await page.click("[data-act=quit]").catch(() => {}); await page.click('.modal [data-v="1"]').catch(() => {});
+  await page.evaluate(() => { localStorage.removeItem("certhub:extratime"); localStorage.removeItem("certhub:keys"); });
+  await page.goto(`${BASE}/#settings`); await page.waitForSelector('[data-set="theme:dark"]');
   await page.click('[data-set="theme:dark"]');
   check(await page.evaluate(() => document.documentElement.dataset.theme === "dark" && localStorage.getItem("certhub:theme") === "dark" && document.getElementById("theme").textContent === "Dark"), "settings page switches the theme and updates the header button");
   await page.click('[data-set="theme:auto"]');
+  await page.goto(`${BASE}/#settings.study`); await page.waitForSelector("#set-name");
   await page.fill("#set-name", "Test Learner"); await page.press("#set-name", "Tab");
   check(await page.evaluate(() => localStorage.getItem("certhub:name") === "Test Learner"), "settings page saves the certificate name");
-  check(!!(await page.$('.footlinks a[href="#settings"]')) && !!(await page.$("#data .btns, h2#data + .panel [data-gact=download]")), "settings page has backups and a footer link");
+  await page.goto(`${BASE}/#settings.data`); await page.waitForSelector("[data-set='erase:all']");
+  check(!!(await page.$('.footlinks a[href="#settings"]')) && !!(await page.$("[data-gact=download]")) && (await page.$$(".settabs a")).length >= 5, "settings has tabs, backups and a footer link");
   { // Streak freeze: one missed day inside a run doesn't break the streak; two in a week do.
     const r = await page.evaluate(() => {
       const d = n => CertHub.U.iso(CertHub.U.addDays(CertHub.U.today(), -n));
