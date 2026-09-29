@@ -283,7 +283,7 @@
       <div class="panel"><div class="row dangerrow"><div class="grow"><strong>Erase everything on this device</strong><br><span class="note">Removes all progress, notes, badges and settings from this browser. ${signed ? "Your account keeps its copy, and it syncs back here the next time you sign in on this browser." : "This can't be undone, so download a backup first."}</span></div><button type="button" class="btn ghost sm danger" data-set="erase:all">Erase</button></div></div>`;
     } else if (tab === "account") {
       body = `<h2>Account</h2><div class="panel">${signed
-        ? `<div class="row"><div class="grow"><strong>${esc(me.user.displayName || me.user.email)}</strong><br><span class="note">${esc(me.user.email)}</span></div><a class="btn ghost sm" href="#profile">Profile</a></div>
+        ? `<div class="row"><div class="grow"><strong class="nocap">${esc(me.user.displayName || me.user.email)}</strong><br><span class="note">${esc(me.user.email)}</span></div><a class="btn ghost sm" href="#profile">Profile</a></div>
            <div class="row"><div class="grow"><strong>Sign-in, devices, sync and Pro</strong><br><span class="note">Passkeys, connected Google, Facebook or LinkedIn, signed-in devices, download or delete account data.</span></div><a class="btn ghost sm" href="#account">Account settings</a></div>`
         : `<div class="row"><div class="grow"><strong>Optional account</strong><br><span class="note">Sync your progress across devices. Sign in with Google, Facebook, LinkedIn or your email.</span></div><span class="btns" data-style="margin:0"><a class="btn sm" href="#login">Log in</a><a class="btn ghost sm" href="#signup">Sign up</a></span></div>`}</div>`;
     } else {
@@ -591,5 +591,13 @@
     new MutationObserver(show).observe(nav, { childList: true, subtree: true, attributes: true, attributeFilter: ["aria-selected"] });
     show();
   }
-  document.addEventListener("DOMContentLoaded", () => { CertHub.themeButton(); langButton(); tabBar(); CertHub.i18n.start().then(route, route); });
+  // Browser-tab titles in title case, whichever script sets them: the first letter of every word capitalized.
+  const titleCase = t => t.replace(/(^|[\s(“"/·:])(\p{Ll})/gu, (m, a, b) => a + b.toUpperCase());
+  function titleCaseTitles() {
+    const el = document.querySelector("title"); if (!el) return;
+    const fix = () => { const t = titleCase(document.title); if (t !== document.title) document.title = t; };
+    new MutationObserver(fix).observe(el, { childList: true, characterData: true, subtree: true }); fix();
+  }
+  CertHub.titleCase = titleCase;
+  document.addEventListener("DOMContentLoaded", () => { CertHub.themeButton(); langButton(); tabBar(); titleCaseTitles(); CertHub.i18n.start().then(route, route); });
 })();

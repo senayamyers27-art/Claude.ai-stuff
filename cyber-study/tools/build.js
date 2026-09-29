@@ -9,6 +9,8 @@
    sitemap.xml, manifest.webmanifest, .well-known/security.txt, sw.js,
    and functions/_middleware.js (HTTPS + canonical-host redirects on Cloudflare Pages). */
 const fs = require("fs");
+// Page titles in title case: the first letter of every word capitalized (as the app does for browser tabs).
+const titleCase = t => String(t).replace(/(^|[\s(“"/·:])(\p{Ll})/gu, (m, a, b) => a + b.toUpperCase());
 const path = require("path");
 const crypto = require("crypto");
 
@@ -124,7 +126,7 @@ function head({ title, desc, prefix, urlPath, scripts, lang = "en", ld = null, o
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>${esc(title)}</title>
+<title>${esc(titleCase(title))}</title>
 <meta name="description" content="${esc(desc)}">
 <meta http-equiv="Content-Security-Policy" content="${CSP_META}">
 <meta name="referrer" content="strict-origin-when-cross-origin">

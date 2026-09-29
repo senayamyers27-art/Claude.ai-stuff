@@ -253,7 +253,7 @@
     const orgs = me.orgs || [];
     return `<h1>Account</h1>
     <div class="panel">
-      <div class="row"><div class="grow"><strong>${esc(u.email)}</strong><br><span class="note">Plan: ${esc(PLAN[plan] || plan)}</span></div><button type="button" class="btn ghost sm" data-aact="signout">Sign out</button></div>
+      <div class="row"><div class="grow"><strong class="nocap">${esc(u.email)}</strong><br><span class="note">Plan: ${esc(PLAN[plan] || plan)}</span></div><button type="button" class="btn ghost sm" data-aact="signout">Sign out</button></div>
       <div class="row"><div class="grow"><strong>Sync</strong><br><span class="note" id="syncstatus"></span></div><button type="button" class="btn sm" data-aact="sync">Sync now</button></div>
     </div>
     ${plan === "org" ? `<h2>Pro</h2><div class="panel"><p data-style="margin:0">Your organization's plan includes every Pro feature.</p></div>` : me.billing ? `<h2>Pro</h2><div class="panel">${plan === "pro"

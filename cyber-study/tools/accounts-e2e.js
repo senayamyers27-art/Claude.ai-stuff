@@ -297,7 +297,7 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await s.selectOption("#pf-goal", "security-plus");
     await s.fill("#pf-hours", "6");
     await s.click("#profile-form button[type=submit]");
-    await s.waitForFunction(() => /Working toward/.test(document.querySelector(".profhead").textContent));
+    await s.waitForFunction(() => /Working toward/.test((document.querySelector(".profhead") || {}).textContent || ""));
     check(/Security\+/.test(await s.textContent(".profhead")) && /6 hours a week/.test(await s.textContent(".profhead")), "profile edits saved and shown");
     if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/profile.png`, fullPage: true });
     // Connect LinkedIn from the profile, then disconnect it.
