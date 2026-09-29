@@ -11,6 +11,7 @@ import { exportAccount, deleteAccount } from "./account.js";
 import { registerOptions, registerVerify, signinOptions, signinVerify, listPasskeys, deletePasskey, listSessions, endSession, endOtherSessions } from "./passkeys.js";
 import { startOAuth, finishOAuth, unlinkIdentity, enabledProviders } from "./oauth.js";
 import { getProfile, updateProfile } from "./profile.js";
+import { supportChat, supportEnabled } from "./support.js";
 import { listClasses, createClass, updateClass, deleteClass, rotateCode, previewJoin, joinClass, leaveClass, removeStudent, roster, rosterCsv } from "./classes.js";
 
 const SECURITY_HEADERS = {
@@ -120,7 +121,10 @@ async function route(request, env) {
     if (origin !== env.SITE_ORIGIN) throw new HttpError(403, "bad_origin", "Requests must come from the site.");
   }
 
-  if (path === "/v1/health" && method === "GET") return json(env, request, { ok: true, billing: billingEnabled(env) });
+  if (path === "/v1/health" && method === "GET") return json(env, request, { ok: true, billing: billingEnabled(env), support: supportEnabled(env) });
+
+  // AI support assistant (./support.js): open to everyone, rate limited, nothing stored.
+  if (path === "/v1/support/chat" && method === "POST") return json(env, request, await supportChat(env, request, await readJson(request, 32 * 1024)));
 
   if (path === "/v1/auth/magic-link" && method === "POST") return json(env, request, await requestMagicLink(env, request, await readJson(request)));
   if (path === "/v1/auth/magic-link/verify" && method === "POST") {
@@ -165,9 +169,9 @@ async function route(request, env) {
   if (path === "/v1/me" && method === "GET") {
     const u = await currentUser(env, request);
     const providers = enabledProviders(env);
-    if (!u) return json(env, request, { user: null, billing: billingEnabled(env), providers });
+    if (!u) return json(env, request, { user: null, billing: billingEnabled(env), providers, support: supportEnabled(env) });
     const p = await env.DB.prepare("SELECT display_name FROM users WHERE id = ?").bind(u.id).first();
-    return json(env, request, { user: { id: u.id, email: u.email, displayName: (p && p.display_name) || "" }, billing: billingEnabled(env), providers, ...(await entitlementsFor(env, u.id)) });
+    return json(env, request, { user: { id: u.id, email: u.email, displayName: (p && p.display_name) || "" }, billing: billingEnabled(env), providers, support: supportEnabled(env), ...(await entitlementsFor(env, u.id)) });
   }
 
   // Everything below needs a signed-in user.

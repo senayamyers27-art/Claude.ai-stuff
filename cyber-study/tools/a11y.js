@@ -74,7 +74,8 @@ async function audit(page, label) {
     await go("#careers", "careers", ".card"); await go("#career-cybersecurity", "career page", "details.sq");
     await go("#labs", "lab library"); await go("#lab-home-lab", "lab page"); await go("#portfolio", "portfolio");
     await go("#frameworks", "frameworks");
-    await go("#settings", "settings", ".settabs"); await go("#settings.accessibility", "accessibility settings", '[data-pref="keys:off"]'); await go("#settings.study", "study settings", "#set-name");
+    await go("#settings", "settings", ".settabs");
+    await page.click("#helpbtn"); await page.waitForSelector("#supsearch"); await page.fill("#supsearch", "labs"); await page.waitForTimeout(150); await audit(page, `help widget (${scheme})`); await page.keyboard.press("Escape"); await go("#settings.accessibility", "accessibility settings", '[data-pref="keys:off"]'); await go("#settings.study", "study settings", "#set-name");
     await page.evaluate(() => document.querySelectorAll("details").forEach(d => { d.open = true; }));
     await audit(page, `frameworks expanded (${scheme})`);
     for (const p of ["privacy", "terms", "security", "install", "support"]) await go(`#${p}`, p);

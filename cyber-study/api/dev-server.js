@@ -61,7 +61,7 @@ function fakeProvider(req, res) {
 async function start({ port = 8787, siteOrigin = "http://localhost:8000", dbFile = ":memory:", env: extra = {} } = {}) {
   const worker = (await import("./src/index.js")).default;
   const env = { DB: createD1(dbFile), CONTENT: createR2(), SITE_ORIGIN: siteOrigin, APP_ENV: "development", EMAIL_FROM: "dev@localhost",
-    OAUTH_DEV_BASE: `http://localhost:${port}`, GOOGLE_CLIENT_ID: "dev", GOOGLE_CLIENT_SECRET: "dev", FACEBOOK_APP_ID: "dev", FACEBOOK_APP_SECRET: "dev", LINKEDIN_CLIENT_ID: "dev", LINKEDIN_CLIENT_SECRET: "dev", ...extra };
+    OAUTH_DEV_BASE: `http://localhost:${port}`, GOOGLE_CLIENT_ID: "dev", GOOGLE_CLIENT_SECRET: "dev", FACEBOOK_APP_ID: "dev", FACEBOOK_APP_SECRET: "dev", LINKEDIN_CLIENT_ID: "dev", LINKEDIN_CLIENT_SECRET: "dev", SUPPORT_DEV_STUB: "1", ...extra };
   await loadContent(env.CONTENT, process.env.PRO_CONTENT_DIR || path.join(__dirname, "test/fixtures/pro"));
   const proEmails = (process.env.PRO_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
   const server = http.createServer(async (req, res) => {
