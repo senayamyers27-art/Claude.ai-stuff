@@ -2,8 +2,8 @@
    See ../docs/BACKEND_DESIGN.md. The static site works without this; it only calls the API
    when someone signs in. */
 import { HttpError, readJson, notFound, clientIp } from "./util.js";
-import { rateLimit, securityLog } from "./audit.js";
-import { requestMagicLink, verifyMagicLink, requireUser, currentUser, logout, clearCookie } from "./auth.js";
+import { rateLimit, securityLog, setHashKey } from "./audit.js";
+import { requestMagicLink, verifyMagicLink, requireUser, currentUser, logout, clearCookie, refreshedCookies } from "./auth.js";
 import { listDocs, putDoc, MAX_DOC_BYTES } from "./progress.js";
 import { entitlementsFor, createCheckout, createPortal, handleWebhook, billingEnabled } from "./billing.js";
 import { createOrg, createCohort, listCohorts, createInvite, acceptInvite, cohortSummary, summaryCsv } from "./orgs.js";
@@ -43,8 +43,12 @@ const USER_WRITES_PER_HOUR = 1000;
 
 export default {
   async fetch(request, env) {
+    setHashKey(env.IP_HASH_KEY);
     try {
-      return await route(request, env);
+      const res = await route(request, env);
+      const c = refreshedCookies.get(request);
+      if (c && !res.headers.has("Set-Cookie")) res.headers.append("Set-Cookie", c);
+      return res;
     } catch (e) {
       if (e instanceof HttpError) {
         if (LOGGED.has(e.status)) await securityLog(request, e.code, { status: e.status }).catch(() => {});
@@ -53,8 +57,33 @@ export default {
       console.error("unhandled", e && e.stack ? e.stack.split("\n")[0] : e); // no request bodies or emails in logs
       return json(env, request, { error: "server_error", message: "Something went wrong. Try again." }, 500);
     }
+  },
+  // Daily clean-up (wrangler [triggers] crons), so expired sign-in links, sessions and logs don't pile up.
+  async scheduled(controller, env, ctx) {
+    ctx.waitUntil(purgeExpired(env));
   }
 };
+
+const DAY = 24 * 60 * 60 * 1000;
+// How long each kind of expired or historical row is kept. The audit log is kept a year to investigate abuse
+// (as the privacy policy says); everything else goes soon after it stops being useful.
+export async function purgeExpired(env, t = Date.now()) {
+  const steps = [
+    ["DELETE FROM magic_links WHERE expires_at < ?", t - DAY],
+    ["DELETE FROM sessions WHERE expires_at < ?", t],
+    ["DELETE FROM webauthn_challenges WHERE expires_at < ?", t],
+    ["DELETE FROM rate_limits WHERE window_start < ?", t - DAY],
+    ["DELETE FROM stripe_events WHERE received_at < ?", t - 90 * DAY],
+    ["DELETE FROM audit_log WHERE at < ?", t - 365 * DAY]
+  ];
+  const out = {};
+  for (const [sql, before] of steps) {
+    const r = await env.DB.prepare(sql).bind(before).run();
+    out[sql.split(" ")[2]] = (r.meta && r.meta.changes) || 0;
+  }
+  console.log(JSON.stringify({ type: "purge", ...out }));
+  return out;
+}
 
 async function route(request, env) {
   const url = new URL(request.url);

@@ -50,6 +50,9 @@ Do the same for `senayamyers27-art.github.io` with just **Restrict deletions** a
 | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Study site deploy | Account → Cloudflare Pages → Edit |
 | `CLOUDFLARE_ZONE_TOKEN`, `CLOUDFLARE_ZONE_ID` | Study site Cloudflare settings | Zone Settings Edit, Zone Read (and Zone Edit for DNSSEC), this zone only |
 | `STUDY_API_*`, `STRIPE_*`, `TURNSTILE_SECRET_KEY` | Study site API deploy | See `PRO_LAUNCH.md` |
+| `STUDY_API_BACKUP_AGE_RECIPIENT` (a variable, not a secret) | Study site API backup | An `age` public key; the private key stays offline with you |
+
+**Keep the API's secrets in an environment.** Create **Settings → Environments → `study-api-production`** with **Deployment branches: `main` only** (and yourself as a required reviewer if you want to approve each deploy), and put the Cloudflare, Stripe and email secrets there instead of in the repository-wide list. Only the deploy job can then read them, and only for code already on `main`.
 
 Give every token an expiry date and replace it before then. If a token might have leaked, revoke it first, then create a new one.
 

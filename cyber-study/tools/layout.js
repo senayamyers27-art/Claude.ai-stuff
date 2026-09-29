@@ -30,6 +30,7 @@ const VIEWS = [
   ["career", "#career-cybersecurity", "#app h1"],
   ["portfolio", "#portfolio", "#app h1"],
   ["whats-new", "#whats-new", "#app h1"],
+  ["dashboard", "#dashboard", "#app h1"],
   ["security", "#security", "#app h1"],
   ["compare-index", "compare/", "main h1"],
   ["compare", "compare/security-plus-vs-cysa-plus/", "main h1"],

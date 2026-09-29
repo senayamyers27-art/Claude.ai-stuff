@@ -93,6 +93,8 @@ export function sessionCookie(value, ttlMs) {
 export const clearCookie = () => `${SESSION_COOKIE}=; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=0`;
 
 // Returns the signed-in user or null. Extends the session when it's past half its life.
+// Session cookies to re-send with the response, set by currentUser when it extends a session.
+export const refreshedCookies = new WeakMap();
 export async function currentUser(env, request) {
   const token = parseCookies(request)[SESSION_COOKIE];
   if (!token || !/^[0-9a-f]{64}$/.test(token)) return null;
@@ -106,10 +108,15 @@ export async function currentUser(env, request) {
     await env.DB.prepare("DELETE FROM sessions WHERE token_hash = ?").bind(hash).run();
     return null;
   }
+  let refresh = null;
   if (row.expires_at - t < SESSION_TTL / 2) {
-    await env.DB.prepare("UPDATE sessions SET expires_at = ? WHERE token_hash = ?").bind(Math.min(t + SESSION_TTL, row.created_at + SESSION_MAX_AGE), hash).run();
+    const exp = Math.min(t + SESSION_TTL, row.created_at + SESSION_MAX_AGE);
+    await env.DB.prepare("UPDATE sessions SET expires_at = ? WHERE token_hash = ?").bind(exp, hash).run();
+    // Send the cookie again with the new lifetime, or the browser would still drop it at the old expiry.
+    refresh = sessionCookie(token, exp - t);
+    refreshedCookies.set(request, refresh);
   }
-  return { id: row.user_id, email: row.email, sessionHash: hash };
+  return { id: row.user_id, email: row.email, sessionHash: hash, refresh };
 }
 
 export async function requireUser(env, request) {

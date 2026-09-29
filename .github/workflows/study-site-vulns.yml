@@ -3,7 +3,9 @@ name: Study site vulnerability check
 # Weekly: looks up every shipped component in the SBOM (Pyodide, v86, xterm.js, and the practice
 # VM's Ubuntu packages and kernel) in the OSV vulnerability database (tools/vuln-check.js).
 # A known vulnerability in a library that runs in visitors' pages fails the run; VM image
-# advisories are listed in the run summary with the version to rebuild with.
+# advisories are listed in the run summary with the version to rebuild with. It also audits the
+# npm build tools (wrangler, Playwright) and warns when the API's Workers compatibility date is
+# more than six months old. Dependabot opens the version-update pull requests themselves.
 
 on:
   schedule:
@@ -33,3 +35,17 @@ jobs:
 
       - name: Check shipped components against OSV
         run: node tools/vuln-check.js
+
+      - name: Audit npm build tools
+        if: always()
+        run: npm audit --audit-level=high
+
+      - name: Check the API's Workers compatibility date
+        if: always()
+        run: |
+          D=$(sed -n 's/^compatibility_date = "\(.*\)"/\1/p' api/wrangler.toml)
+          AGE=$(( ( $(date +%s) - $(date -d "$D" +%s) ) / 86400 ))
+          echo "API compatibility_date is $D ($AGE days old)."
+          if [ "$AGE" -gt 180 ]; then
+            echo "::warning::api/wrangler.toml compatibility_date ($D) is over six months old. Move it to a recent date, run npm run test:api, and deploy to pick up Workers runtime fixes."
+          fi

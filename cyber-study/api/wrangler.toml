@@ -19,13 +19,17 @@ name = "API_LIMIT"
 namespace_id = "1001"
 simple = { limit = 120, period = 60 }
 
+# Daily clean-up of expired sign-in links, sessions and old logs (scheduled() in src/index.js).
+[triggers]
+crons = ["23 4 * * *"]
+
 [[d1_databases]]
 binding = "DB"
 database_name = "cyber-cert-study"
 database_id = "00000000-0000-0000-0000-000000000000"
 migrations_dir = "migrations"
 
-# Secrets (never in this file): EMAIL_API_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, and optionally
+# Secrets (never in this file): IP_HASH_KEY (created by the deploy workflow), EMAIL_API_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, and optionally
 # TURNSTILE_SECRET_KEY (a bot check on sign-in requests; set turnstileSiteKey in site.config.json too).
 # Price ids (plain vars, set by the deploy workflow when present): STRIPE_PRICE_PRO_MONTHLY,
 # STRIPE_PRICE_PRO_YEARLY, STRIPE_PRICE_ORG_SEAT.

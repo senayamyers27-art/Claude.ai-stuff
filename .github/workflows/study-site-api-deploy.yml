@@ -92,6 +92,16 @@ jobs:
         working-directory: cyber-study/api
         run: npx wrangler deploy --config wrangler.deploy.toml
 
+      - name: Create the IP hashing key once
+        if: steps.ready.outputs.ok == 'true'
+        working-directory: cyber-study/api
+        # A random key the Worker uses to hash IP addresses in its logs (HMAC). It never leaves Cloudflare,
+        # isn't stored in GitHub, and is only created when the Worker doesn't have one yet.
+        run: |
+          if ! npx wrangler secret list --config wrangler.deploy.toml | grep -q '"IP_HASH_KEY"'; then
+            openssl rand -hex 32 | npx wrangler secret put IP_HASH_KEY --config wrangler.deploy.toml
+          fi
+
       - name: Copy secrets into the Worker
         if: steps.ready.outputs.ok == 'true'
         working-directory: cyber-study/api

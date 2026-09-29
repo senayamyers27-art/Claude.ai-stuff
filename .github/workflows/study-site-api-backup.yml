@@ -1,0 +1,91 @@
+name: Study site API backup
+
+# Weekly encrypted export of the accounts database (D1 "cyber-cert-study"). The export is encrypted
+# with age for the public key in the STUDY_API_BACKUP_AGE_RECIPIENT variable before it is stored, so
+# the run artifact is unreadable without the private key, which stays offline with you. Kept 35 days.
+# D1 Time Travel is the first way back (any minute in the last 30 days); this is a second copy
+# outside Cloudflare. To restore: download the artifact, `age -d -i studytocert-backup.key
+# backup.sql.age > backup.sql`, then `npx wrangler d1 execute cyber-cert-study --remote --file backup.sql`
+# into a new, empty database first to check it.
+#
+# Does nothing until these exist: secrets CLOUDFLARE_API_TOKEN (D1: Read is enough) and
+# CLOUDFLARE_ACCOUNT_ID, and the variable STUDY_API_BACKUP_AGE_RECIPIENT (an age1… public key).
+
+on:
+  schedule:
+    - cron: "37 5 * * 0" # Sundays
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: study-site-api-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      RECIPIENT: ${{ vars.STUDY_API_BACKUP_AGE_RECIPIENT }}
+    defaults:
+      run:
+        working-directory: cyber-study
+    steps:
+      - name: Check setup
+        id: ready
+        working-directory: .
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$RECIPIENT" ]; then
+            echo "::notice::The API backup isn't set up yet (see the comments in this workflow), so nothing was exported."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          elif ! printf '%s' "$RECIPIENT" | grep -Eq '^age1[0-9a-z]{58}$'; then
+            echo "::error::STUDY_API_BACKUP_AGE_RECIPIENT must be an age public key (age1...)."
+            exit 1
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        if: steps.ready.outputs.ok == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        if: steps.ready.outputs.ok == 'true'
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cyber-study/package-lock.json
+
+      - name: Install wrangler and age
+        if: steps.ready.outputs.ok == 'true'
+        run: |
+          npm ci
+          sudo apt-get update -qq && sudo apt-get install -y -qq age
+
+      - name: Export and encrypt
+        if: steps.ready.outputs.ok == 'true'
+        run: |
+          umask 077
+          OUT="$RUNNER_TEMP/backup"
+          mkdir -p "$OUT"
+          npx wrangler d1 export cyber-cert-study --remote --output "$OUT/backup.sql"
+          test -s "$OUT/backup.sql"
+          age -r "$RECIPIENT" -o "$OUT/backup.sql.age" "$OUT/backup.sql"
+          shred -u "$OUT/backup.sql"
+          ls -l "$OUT"
+
+      - name: Keep the encrypted export
+        if: steps.ready.outputs.ok == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: study-api-backup-${{ github.run_id }}
+          path: ${{ runner.temp }}/backup/backup.sql.age
+          retention-days: 35
+          if-no-files-found: error
