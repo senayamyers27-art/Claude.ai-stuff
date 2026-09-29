@@ -286,6 +286,20 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   check(!!(await page.$(".finalweek .fw li.now")), "the last week before the exam shows the final-week plan");
   await page.goto(`${BASE}/#security-plus.progress`); await page.waitForSelector("#exam");
   await page.fill("#exam", examWas); await page.dispatchEvent("#exam", "change");
+  await page.goto(`${BASE}/#log-puzzles`);
+  await page.waitForSelector("[data-logpick]");
+  { const n = await page.evaluate(() => CertHub.blueteam.puzzles); let ok = 0;
+    for (let i = 0; i < n; i++) { await page.click("[data-logpick='0']"); if (await page.$(".logline.right")) ok++; if (i < n - 1) await page.click("[data-bt=pnext]"); }
+    check(ok === n, `log puzzles mark the right line and explain it (${ok}/${n})`); }
+  await page.goto(`${BASE}/#tabletop`);
+  await page.waitForSelector(".card");
+  for (const id of await page.evaluate(() => CertHub.blueteam.tabletops)) {
+    await page.goto(`${BASE}/#tabletop-${id}`);
+    await page.waitForSelector("[data-ttpick]");
+    // The best choice in every scenario is written first (index 0); the page shuffles the order it shows them in.
+    for (let i = 0; i < 10 && await page.$("[data-ttpick]"); i++) await page.click("[data-ttpick='0']");
+    check(/\b(\d+) of \1 points\b/.test(await page.textContent("#btbox")) && !!(await page.$(".ring")), `tabletop ${id} reaches its end with the best path scoring 100%`);
+  }
   await page.goto(`${BASE}/#games`);
   await page.waitForSelector(".gamecard");
   check((await page.$$(".gamecard")).length === 4, "games page lists the quick games");
