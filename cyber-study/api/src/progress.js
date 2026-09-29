@@ -1,11 +1,12 @@
-/* Progress sync. Each document is one of the app's localStorage entries: 'cert:<id>' or 'labs'.
+/* Progress sync. Each document is one of the app's localStorage entries: 'cert:<id>' or 'labs', or 'work'
+   (the other saved work bundled together: streak, VM labs, puzzles, games, badges and goals; see sync.js).
    Writes use optimistic concurrency: the client sends the version it last saw; if the server has
    moved on, it answers 409 with its copy and the client merges and retries. */
 import { now, bad, HttpError } from "./util.js";
 
 export const MAX_DOC_BYTES = 256 * 1024;
-const DOC_KEY = /^(cert:[a-z0-9-]{1,40}|labs)$/;
-const MAX_DOCS = 40;
+const DOC_KEY = /^(cert:[a-z0-9-]{1,40}|labs|work)$/;
+const MAX_DOCS = 60; // one per certification (46 today) plus labs and work, with room to grow
 
 export function checkDocKey(key) {
   if (!DOC_KEY.test(key)) throw bad("invalid_doc", "Unknown progress document.");

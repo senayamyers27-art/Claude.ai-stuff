@@ -332,6 +332,39 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await s.waitForSelector(".authcard .status.warn");
     check(/cancelled/.test(await s.textContent(".authcard .status")), "cancelling at the provider explains what happened");
     if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/login-error.png`, fullPage: true });
+
+    console.log("Saving work to the profile");
+    const w1 = await device();
+    await w1.goto(BASE + "/#portfolio");
+    await w1.waitForSelector(".savecard");
+    check(/Save your work to a free profile/.test(await w1.textContent(".savecard")), "signed out: portfolio invites saving work to a profile");
+    await w1.evaluate(() => {
+      localStorage.setItem("certhub:games", JSON.stringify({ subnet: { best: 14, plays: 2, last: Date.now() } }));
+      localStorage.setItem("certhub:vmlabs", JSON.stringify({ "vm-cron-review": { when: Date.now() } }));
+      localStorage.setItem("certhub:blueteam", JSON.stringify({ "p:1": 1, "t:ransomware": 80 }));
+      localStorage.setItem("certhub:activity", JSON.stringify(["2026-09-20", "2026-09-21"]));
+    });
+    api.env.DB.raw.exec("DELETE FROM rate_limits"); // many sign-ins from one address in this test run
+    await signIn(w1, "saver@example.com");
+    await w1.goto(BASE + "/#profile");
+    await w1.waitForSelector("[data-aact=savework]");
+    await w1.click("[data-aact=savework]");
+    await w1.waitForFunction(() => /^Saved /.test((document.getElementById("savedstatus") || {}).textContent || ""));
+    const listed = await w1.waitForFunction(() => /1 VM lab passed/.test(document.getElementById("app").textContent) && /1 game played/.test(document.getElementById("app").textContent)).then(() => true, () => false);
+    check(listed, "profile lists the saved work");
+    if (process.env.SHOTS) await w1.screenshot({ path: `${process.env.SHOTS}/saved-work.png`, fullPage: true });
+    const doc = await api.env.DB.prepare("SELECT d.body FROM progress_docs d JOIN users u ON u.id = d.user_id WHERE d.doc_key = 'work' AND u.email = ?").bind("saver@example.com").first();
+    check(doc && /vm-cron-review/.test(doc.body) && /ransomware/.test(doc.body), "work saved on the server");
+    const w2 = await device();
+    await signIn(w2, "saver@example.com");
+    await w2.waitForFunction(() => !!localStorage.getItem("certhub:vmlabs"), null, { timeout: 8000 });
+    const got = await w2.evaluate(() => ({ g: JSON.parse(localStorage.getItem("certhub:games") || "{}"), a: JSON.parse(localStorage.getItem("certhub:activity") || "[]") }));
+    check(got.g.subnet && got.g.subnet.best === 14 && got.a.includes("2026-09-21"), "saved work comes back on another device");
+    await w2.goto(BASE + "/#dashboard");
+    await w2.waitForSelector("#app h1");
+    await w2.goto(BASE + "/#portfolio");
+    await w2.waitForSelector(".savedline");
+    check(/Saved to your profile/.test(await w2.textContent(".savedline")), "signed in: portfolio shows it's saved to the profile");
   } catch (e) {
     check(false, `unexpected error: ${e.message.split("\n")[0]}`);
     if (process.env.DEBUG) console.log(e.stack);

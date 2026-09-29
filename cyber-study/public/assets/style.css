@@ -756,3 +756,6 @@ html[data-motion="reduce"] .heroart .traveler{display:none}
 html[data-links="on"] main a,html[data-links="on"] #app a,html[data-links="on"] footer a{text-decoration:underline;text-underline-offset:2px}
 html[data-links="on"] #app a.btn,html[data-links="on"] #app a.stat,html[data-links="on"] #app a.card{text-decoration:none}
 html[data-focusring="strong"] :focus-visible{outline:4px solid var(--ink)!important;outline-offset:3px!important;box-shadow:0 0 0 7px var(--accent)!important;border-radius:4px}
+.savecard{border-left:5px solid var(--accent)}
+.savedline{margin:6px 0 10px;color:var(--ok)}
+.savedline a{color:inherit}

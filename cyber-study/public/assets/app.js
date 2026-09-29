@@ -77,7 +77,9 @@
     const next = list.filter(x => x.days != null && x.days >= 0).sort((a, b) => a.days - b.days)[0];
     const due = list.reduce((n, x) => n + x.due, 0);
     const flame = st.current ? CertHub.fx.icon("flame", st.current >= 7 ? "flame l3" : st.current >= 3 ? "flame l2" : "flame") : "";
-    return `<h1>Your dashboard</h1><p class="meta">${list.length} certification${list.length === 1 ? "" : "s"} in progress. Saved in this browser only.</p>
+    const saved = CertHub.sync && CertHub.sync.me && CertHub.sync.me.user;
+    return `<h1>Your dashboard</h1><p class="meta">${list.length} certification${list.length === 1 ? "" : "s"} in progress. ${saved ? "Saved to your profile." : "Saved in this browser only."}</p>
+      ${/* html: fixed markup with esc() */ CertHub.sync ? CertHub.sync.savePrompt() : ""}
       <div class="dashsum">
         <div class="panel"><span class="note">Study streak</span><strong class="dashnum">${flame}<span data-count="${esc(st.current)}">${esc(st.current)}</span> day${st.current === 1 ? "" : "s"}</strong><span class="note">${st.today ? "Studied today." : "Study today to keep it going."}</span></div>
         <div class="panel"><span class="note">Next exam</span><strong class="dashnum">${next ? `<span data-count="${esc(next.days)}">${esc(next.days)}</span> day${next.days === 1 ? "" : "s"}` : "–"}</strong><span class="note">${next ? esc(`${next.c.short} ${next.c.exam}`) : "No upcoming exam date"}</span></div>
@@ -407,12 +409,13 @@
     <p class="note"><a href="#dashboard">Your dashboard</a>: readiness, exam countdowns and reviews for every certification you're studying, on one page. <a href="#achievements">Achievements</a>: badges for streaks, scores, labs and games.</p>
     ${(() => { const st = CertHub.activity.streak(); return `<div class="panel startcard"><div class="grow"><strong>${st.current ? `${CertHub.fx.icon("flame", st.current >= 7 ? "flame l3" : st.current >= 3 ? "flame l2" : "flame")} ${esc(st.current)}-day study streak` : "Start a study streak"}</strong><br><span class="note">${st.current ? (st.today ? "You studied today. " : "Study today to keep it going. ") : "Answer a question or read a lesson each day. "}${st.best ? `Best: ${esc(st.best)} days.` : ""}</span></div><button type="button" class="btn ghost sm" data-gact="reminder">Set a daily reminder</button></div>`; })()}
     <div class="panel">
-      <p class="note" data-style="margin:0">Progress, lab notes and checkmarks are saved in this browser only. Nothing is sent anywhere. Back up to move them to another device.</p>
+      ${/* html: fixed markup with esc() */ CertHub.sync ? CertHub.sync.savePrompt() : ""}
+      <p class="note" data-style="margin:0">${CertHub.sync && CertHub.sync.me && CertHub.sync.me.user ? "Your work is saved to your profile and in this browser. You can also download a backup." : "Progress, lab notes and checkmarks are saved in this browser only. Nothing is sent anywhere unless you save them to a profile. Back up to move them to another device."}</p>
       <div class="btns"><button type="button" class="btn ghost sm no-framed" data-gact="download">Download backup</button><button type="button" class="btn ghost sm" data-gact="copybackup">Copy backup</button><label class="btn ghost sm" for="imp">Restore from file</label><input type="file" id="imp" accept="application/json" class="hide"><button type="button" class="btn ghost sm" data-gact="pasterestore">Restore from text</button></div>
     </div>
     ${newsHtml()}
     <div class="panel installcard"><div class="grow"><strong>Settings</strong><br><span class="note">Theme, accent color, text size, language, weekly goal, sounds and backups.</span></div><a class="btn ghost sm" href="#settings">Open settings</a></div>
-    <div class="panel installcard supportcard"><div class="grow"><strong>Keep it free</strong><br><span class="note">No ads and no tracking. Share it, report a mistake${CertHub.site && CertHub.site.support && CertHub.site.support.url ? " or chip in" : ""} to help.</span></div><a class="btn ghost sm" href="#support">Support this site</a></div>`;
+`;
   }
 
   /* ---------- restore from pasted text ---------- */
@@ -441,7 +444,7 @@
   // Route tokens come from the URL, so only look them up as the objects' own keys
   // (never inherited ones like "constructor" or "__proto__").
   const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
-  const POLICY_TITLES = { privacy: "Privacy Policy", terms: "Terms of Use", security: "Security", install: "Install the App", support: "Support This Site" };
+  const POLICY_TITLES = { privacy: "Privacy Policy", terms: "Terms of Use", security: "Security", install: "Install the App", support: "Support" };
   // Optional page counts (GoatCounter): no cookies, no personal data, skipped when the browser asks not to be tracked.
   let lastCounted = "";
   function countView() {

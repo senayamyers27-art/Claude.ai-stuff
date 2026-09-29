@@ -1,6 +1,23 @@
 /* Spanish interface text. Keys are the exact English strings shown by the app. */
 CertHub.addUiEs({
   exact: {
+    "Support": "Apoyo",
+    "Your saved work": "Tu trabajo guardado",
+    "Save your work to a free profile": "Guarda tu trabajo en un perfil gratis",
+    "Your progress, lab notes, write-ups and scores are only in this browser right now. Save them to a profile to keep them safe and pick up on any device.": "Tu progreso, notas de laboratorio, informes y puntuaciones solo están en este navegador por ahora. Guárdalos en un perfil para mantenerlos a salvo y continuar en cualquier dispositivo.",
+    "Create free profile": "Crear perfil gratis",
+    "Study plans": "Planes de estudio",
+    "Labs and write-ups": "Laboratorios e informes",
+    "Study history": "Historial de estudio",
+    "Save now": "Guardar ahora",
+    "Not saved yet": "Aún sin guardar",
+    "None started yet": "Ninguno iniciado aún",
+    "Your work saves automatically a few seconds after each change while you're signed in, and comes back on any device you sign in on.": "Tu trabajo se guarda automáticamente unos segundos después de cada cambio mientras tienes la sesión iniciada, y vuelve en cualquier dispositivo donde inicies sesión.",
+    "Your work is saved to your profile.": "Tu trabajo está guardado en tu perfil.",
+    "Saved to your profile.": "Guardado en tu perfil.",
+    "From the progress saved on this device and in your profile.": "Del progreso guardado en este dispositivo y en tu perfil.",
+    "Your work is saved to your profile and in this browser. You can also download a backup.": "Tu trabajo está guardado en tu perfil y en este navegador. También puedes descargar una copia de seguridad.",
+    "Progress, lab notes and checkmarks are saved in this browser only. Nothing is sent anywhere unless you save them to a profile. Back up to move them to another device.": "El progreso, las notas de laboratorio y las marcas se guardan solo en este navegador. No se envía nada a ningún sitio a menos que los guardes en un perfil. Haz una copia de seguridad para pasarlos a otro dispositivo.",
     "General": "General",
     "Accessibility": "Accesibilidad",
     "About": "Acerca de",

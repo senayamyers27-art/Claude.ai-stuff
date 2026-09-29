@@ -11,7 +11,7 @@ const ctx = {
   document: { addEventListener: noop, getElementById: () => null }
 };
 vm.runInNewContext(src, ctx);
-const { mergePlan, mergeLabs, mergeDoc, enabled } = ctx.CertHub.sync;
+const { mergePlan, mergeLabs, mergeWork, mergeDoc, enabled } = ctx.CertHub.sync;
 const plain = v => JSON.parse(JSON.stringify(v)); // objects from the sandbox have another realm's prototypes
 
 test("sync stays off without an API", () => {
@@ -79,4 +79,33 @@ test("cert progress: objective stats and flashcard schedule merge like stats and
 test("cert progress: lessons read on any device stay read", () => {
   const m = plain(mergePlan({ read: { la: true } }, { read: { lb: true, la: false } }));
   assert.deepEqual(m.read, { la: true, lb: true });
+});
+
+test("saved work: nothing done on either device is lost", () => {
+  const a = {
+    "certhub:activity": ["2026-09-01", "2026-09-03"], "certhub:qlog": { "2026-09-03": 5 },
+    "certhub:vmlabs": { "vm-a": { when: 1 } }, "certhub:vmexam": { best: 70, last: { score: 70, when: 5 } },
+    "certhub:blueteam": { "p:1": 1, "t:ransom": 60 }, "certhub:games": { subnet: { best: 12, plays: 3, last: 9 } },
+    "certhub:readyhist": { "security-plus": [["2026-09-01", 40], ["2026-09-03", 55]] }, "certhub:achievements": ["first"], "certhub:name": "Ana"
+  };
+  const b = {
+    "certhub:activity": ["2026-09-02", "2026-09-03"], "certhub:qlog": { "2026-09-03": 8, "2026-09-02": 4 },
+    "certhub:vmlabs": { "vm-b": { when: 2 } }, "certhub:vmexam": { best: 85, last: { score: 60, when: 9 } },
+    "certhub:blueteam": { "t:ransom": 90, "p:2": 1 }, "certhub:games": { subnet: { best: 15, plays: 1, last: 4 }, ports: { best: 3, plays: 1, last: 2 } },
+    "certhub:readyhist": { "security-plus": [["2026-09-02", 50]], "cysa-plus": [["2026-09-02", 30]] }, "certhub:achievements": ["streak3"], "certhub:goal": "4"
+  };
+  const m = plain(mergeWork(a, b));
+  assert.deepEqual(m["certhub:activity"], ["2026-09-01", "2026-09-02", "2026-09-03"]);
+  assert.deepEqual(m["certhub:qlog"], { "2026-09-03": 8, "2026-09-02": 4 });
+  assert.deepEqual(Object.keys(m["certhub:vmlabs"]).sort(), ["vm-a", "vm-b"]);
+  assert.deepEqual(m["certhub:vmexam"], { best: 85, last: { score: 60, when: 9 } });
+  assert.deepEqual(m["certhub:blueteam"], { "t:ransom": 90, "p:2": 1, "p:1": 1 });
+  assert.deepEqual(m["certhub:games"].subnet, { best: 15, plays: 3, last: 9 });
+  assert.ok(m["certhub:games"].ports);
+  assert.deepEqual(m["certhub:readyhist"]["security-plus"].map(p => p[0]), ["2026-09-01", "2026-09-02", "2026-09-03"]);
+  assert.ok(m["certhub:readyhist"]["cysa-plus"]);
+  assert.deepEqual(m["certhub:achievements"], ["first", "streak3"]);
+  assert.equal(m["certhub:name"], "Ana"); assert.equal(m["certhub:goal"], "4");
+  assert.deepEqual(plain(mergeWork(m, m)), m, "merging with itself changes nothing");
+  assert.deepEqual(plain(mergeDoc("work", a, b)), m);
 });
