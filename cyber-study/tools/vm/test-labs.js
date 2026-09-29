@@ -22,6 +22,8 @@ const SOLVE = {
   "web-log-review": ["echo '198.51.100.23 /download?file=../../../../etc/passwd' > /root/incident/web.txt; iptables -I INPUT -s 198.51.100.23 -j DROP; mkdir -p /etc/iptables; iptables-save > /etc/iptables/rules.v4"],
   "backdoor-account": ["echo sysadm > /root/incident/accounts.txt; userdel -f sysadm; sed -i '/unknown@203.0.113.45/d' /root/.ssh/authorized_keys"],
   "default-deny": ["iptables -A INPUT -i lo -j ACCEPT; iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT; iptables -A INPUT -p tcp --dport 22 -j ACCEPT; iptables -A INPUT -p icmp -j ACCEPT; iptables -P INPUT DROP; iptables-save > /etc/iptables/rules.v4"],
+  "name-resolution": ["sed -i 's/^10.10.0.99 .*fileserver.*/10.10.0.30  fileserver.lab fileserver/' /etc/hosts; sed -i 's/^hosts:.*/hosts:          files dns/' /etc/nsswitch.conf"],
+  "restore-backup": ["tar -xzpf /var/backups/data-weekly.tar.gz -C / srv/data/config.yml; tar -czpf /var/backups/data-new.tar.gz -C / srv/data"],
   users: ["groupadd devs; useradd -m -s /bin/bash -G devs alex; echo 'alex:Tr41n-ing!' | chpasswd; chage -M 90 alex"],
   "shared-dir": ["groupadd -f devs; mkdir -p /srv/projects; chown root:devs /srv/projects; chmod 2770 /srv/projects; touch /srv/projects/plan.txt; chmod 640 /srv/projects/plan.txt"],
   acl: ["useradd -m bob; echo 'Q3 numbers' > /srv/report.txt; chmod 600 /srv/report.txt; setfacl -m u:bob:r /srv/report.txt"],

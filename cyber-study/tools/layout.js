@@ -34,6 +34,8 @@ const VIEWS = [
   ["games", "#games", "#app h1"],
   ["achievements", "#achievements", "#app h1"],
   ["log-puzzles", "#log-puzzles", "#app h1"],
+  ["exam-changes", "#exam-changes", "#app h1"],
+  ["schools", "#schools", "#app h1"],
   ["tabletop", "#tabletop-ransomware", "#app h1"],
   ["flashcards-print", `#${cert}.cards`, "#app h1"],
   ["game", "#game-subnet", "#app h1"],

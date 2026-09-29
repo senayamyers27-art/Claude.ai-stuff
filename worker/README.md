@@ -74,9 +74,16 @@ only path that should work.
 
 Cloudflare D1 keeps 30 days of point-in-time recovery automatically — no
 setup needed (`wrangler d1 time-travel`). On top of that,
-`.github/workflows/d1-backup.yml` runs a nightly `wrangler d1 export` and
-uploads the SQL dump as a workflow artifact (kept 35 days). It's disabled
-until you add:
+`.github/workflows/d1-backup.yml` runs a nightly `wrangler d1 export`,
+encrypts the dump with [age](https://age-encryption.org) and uploads only the
+encrypted file as a workflow artifact (kept 35 days). It's disabled until you
+add:
+
+- Repo variable `D1_BACKUP_AGE_RECIPIENT`: an age public key (`age1...`).
+  Create the key pair on your own computer with `age-keygen -o d1-backup.key`,
+  keep that private key file offline (a password manager or USB stick), and
+  paste the public key it prints. To restore: download the artifact, then
+  `age -d -i d1-backup.key backup.sql.age > backup.sql`.
 
 - Repo variable `CLOUDFLARE_ACCOUNT_ID` (Settings → Secrets and variables →
   Actions → Variables)
