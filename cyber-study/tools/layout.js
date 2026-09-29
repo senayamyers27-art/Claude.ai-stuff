@@ -33,6 +33,8 @@ const VIEWS = [
   ["dashboard", "#dashboard", "#app h1"],
   ["games", "#games", "#app h1"],
   ["achievements", "#achievements", "#app h1"],
+  ["settings", "#settings", "#app h1"],
+  ["settings-a11y", "#settings.accessibility", "#app h1"],
   ["log-puzzles", "#log-puzzles", "#app h1"],
   ["exam-changes", "#exam-changes", "#app h1"],
   ["schools", "#schools", "#app h1"],

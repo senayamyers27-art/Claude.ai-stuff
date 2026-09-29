@@ -131,6 +131,7 @@ test("progress sync with version checks, conflicts and limits", async () => {
   assert.equal(list.json.docs.length, 1);
   assert.ok([400, 404].includes((await call(env, "PUT", "/v1/progress/cert:../../x", { cookie, body: { baseVersion: 0, body: {} } })).status), "path tricks are rejected");
   assert.equal((await call(env, "PUT", "/v1/progress/notes", { cookie, body: { baseVersion: 0, body: {} } })).status, 400);
+  assert.equal((await call(env, "PUT", "/v1/progress/work", { cookie, body: { baseVersion: 0, body: { "certhub:activity": ["2026-09-01"] } } })).status, 200, "saved work (streak, VM labs, games…) is its own document");
   assert.equal((await call(env, "PUT", "/v1/progress/labs", { cookie, body: { baseVersion: 0, body: [1] } })).status, 400);
   const big = await call(env, "PUT", "/v1/progress/labs", { cookie, body: { baseVersion: 0, body: { x: "a".repeat(300 * 1024) } } });
   assert.equal(big.status, 413);
