@@ -295,6 +295,19 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(`${BASE}/#career-network`);
   await page.waitForSelector(".dayline li");
   check((await page.$$(".dayline li")).length >= 5, "career pages show a day in the life");
+  await page.goto(`${BASE}/#job-outlook`);
+  await page.waitForSelector("table.plain");
+  check((await page.$$("table.plain tbody tr")).length >= 8 && /bls\.gov/.test(await page.innerHTML("#app")), "pay and job outlook page lists occupations with BLS sources");
+  await page.goto(`${BASE}/#net-design`);
+  await page.waitForSelector("[data-nslot]");
+  { const puzzles = await page.evaluate(() => CertHub.netdesign.puzzles); let solved = 0;
+    for (let i = 0; i < puzzles.length; i++) {
+      for (const [id, ans] of puzzles[i].answers) await page.selectOption(`[data-nslot="${id}"]`, ans);
+      await page.click("[data-nd=check]");
+      if (await page.textContent(".expl strong") === "All correct.") solved++;
+      if (i < puzzles.length - 1) await page.click("[data-nd=next]");
+    }
+    check(solved === puzzles.length, `network design puzzles accept the right devices (${solved}/${puzzles.length})`); }
   await page.goto(`${BASE}/#log-puzzles`);
   await page.waitForSelector("[data-logpick]");
   { const n = await page.evaluate(() => CertHub.blueteam.puzzles); let ok = 0;
