@@ -63,13 +63,23 @@ export async function verifyMagicLink(env, request, body) {
   if (!upd.meta || upd.meta.changes !== 1) { await securityLog(request, "signin_link_rejected"); throw new HttpError(400, "invalid_link", "That sign-in link has expired or was already used. Request a new one."); }
   const { email } = await env.DB.prepare("SELECT email FROM magic_links WHERE token_hash = ?").bind(hash).first();
 
-  let user = await env.DB.prepare("SELECT id, email FROM users WHERE email = ?").bind(email).first();
+  let user = await env.DB.prepare("SELECT id, email, email_verified FROM users WHERE email = ?").bind(email).first();
+  if (user && !user.email_verified) await claimEmail(env, request, user.id);
   if (!user) {
     user = { id: newId("usr"), email };
     await env.DB.prepare("INSERT INTO users (id, email, created_at) VALUES (?, ?, ?)").bind(user.id, email, t).run();
     await audit(env, request, { actor: user.id, action: "user.created" });
   }
   return { user, cookie: await createSession(env, request, user, "email") };
+}
+
+// The account was created from a provider that didn't confirm its address, so whoever made it may not own it.
+// Called when the owner proves the address (an emailed link, or a provider that verified it): removes the linked
+// sign-ins, passkeys and sessions that came before, then marks the address verified.
+export async function claimEmail(env, request, userId) {
+  for (const sql of ["DELETE FROM identities WHERE user_id = ?", "DELETE FROM passkeys WHERE user_id = ?", "DELETE FROM sessions WHERE user_id = ?", "UPDATE users SET email_verified = 1 WHERE id = ?"])
+    await env.DB.prepare(sql).bind(userId).run();
+  await audit(env, request, { actor: userId, action: "email.verified" });
 }
 
 // __Host- prefix: Secure, Path=/ and no Domain, so no subdomain can set or read it. SameSite=Strict: the API

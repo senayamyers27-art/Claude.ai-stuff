@@ -30,6 +30,7 @@ database_id = "00000000-0000-0000-0000-000000000000"
 migrations_dir = "migrations"
 
 # Secrets (never in this file): IP_HASH_KEY (created by the deploy workflow), EMAIL_API_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, and optionally
-# TURNSTILE_SECRET_KEY (a bot check on sign-in requests; set turnstileSiteKey in site.config.json too).
+# TURNSTILE_SECRET_KEY (a bot check on sign-in requests; set turnstileSiteKey in site.config.json too), and for
+# social sign-in GOOGLE_CLIENT_ID/_SECRET, FACEBOOK_APP_ID/_SECRET, LINKEDIN_CLIENT_ID/_SECRET (docs/SOCIAL_SIGNIN.md).
 # Price ids (plain vars, set by the deploy workflow when present): STRIPE_PRICE_PRO_MONTHLY,
 # STRIPE_PRICE_PRO_YEARLY, STRIPE_PRICE_ORG_SEAT.

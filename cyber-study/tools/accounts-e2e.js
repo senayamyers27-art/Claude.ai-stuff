@@ -274,6 +274,64 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     const left = await api.env.DB.prepare("SELECT COUNT(*) AS n FROM users WHERE email = ?").bind("learner.one@example.com").first();
     check(left.n === 0, "account removed from the server");
     check(!!(await local(b, "certhub:v1:labs")), "progress on the device is kept");
+
+    console.log("Sign in with Google, Facebook or LinkedIn (development stand-ins)");
+    const s = await device();
+    await s.goto(BASE + "/#signup");
+    await s.waitForSelector(".socialbtn");
+    const btns = await s.$$eval(".socialbtn", els => els.map(e => e.textContent.trim()));
+    check(btns.join("|") === "Continue with Google|Continue with Facebook|Continue with LinkedIn", "sign-up page offers Google, Facebook and LinkedIn");
+    check(await s.$("#signin-form") && /Create your free account/.test(await s.textContent("h1")), "sign-up page also offers an email link");
+    check(/Log in/.test(await s.textContent("#acctchip")), "header shows Log in when signed out");
+    if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/signup.png`, fullPage: true });
+    await s.click('.socialbtn[data-provider="google"]');
+    await s.waitForSelector("#fake-continue");
+    await s.fill("#fake-name", "Sam Rivera"); await s.fill("#fake-email", "sam.social@example.com");
+    await s.click("#fake-continue");
+    await s.waitForSelector("#profile-form");
+    check(/#profile$/.test(s.url()) && !/welcome=/.test(s.url()), "back on the profile, with the address bar cleaned");
+    check(/Welcome to StudyToCert/.test(await s.textContent("#app")), "new account gets a welcome message");
+    check((await s.textContent(".profhead h1")).trim() === "Sam Rivera", "profile uses the name from Google");
+    check((await s.textContent("#acctchip")).trim() === "SR", "header shows the person's initials");
+    await s.fill("#pf-bio", "Help desk tech moving into security.");
+    await s.selectOption("#pf-goal", "security-plus");
+    await s.fill("#pf-hours", "6");
+    await s.click("#profile-form button[type=submit]");
+    await s.waitForFunction(() => /Working toward/.test(document.querySelector(".profhead").textContent));
+    check(/Security\+/.test(await s.textContent(".profhead")) && /6 hours a week/.test(await s.textContent(".profhead")), "profile edits saved and shown");
+    if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/profile.png`, fullPage: true });
+    // Connect LinkedIn from the profile, then disconnect it.
+    await s.click('a[href$="/v1/auth/oauth/linkedin/start?link=1"]');
+    await s.waitForSelector("#fake-continue");
+    await s.fill("#fake-email", "sam.work@example.com");
+    await s.click("#fake-continue");
+    await s.waitForSelector('[data-aact="unlink"][data-provider="linkedin"]');
+    check(/LinkedIn is connected/.test(await s.textContent("#app")), "LinkedIn connected from the profile");
+    await s.click('[data-aact="unlink"][data-provider="linkedin"]');
+    await s.click('.modal [data-v="1"]');
+    await s.waitForSelector('a[href$="/v1/auth/oauth/linkedin/start?link=1"]');
+    check(true, "LinkedIn disconnected");
+    // Sign out, then back in with Google: same account.
+    await s.click("[data-aact=signout]");
+    await s.waitForSelector(".socialbtn");
+    await s.click('.socialbtn[data-provider="google"]');
+    await s.fill("#fake-name", "Sam Rivera"); await s.fill("#fake-email", "sam.social@example.com");
+    await s.click("#fake-continue");
+    await s.waitForSelector("#profile-form");
+    check(/Help desk tech/.test(await s.textContent(".bio")), "signing in again with Google opens the same account");
+    // Facebook with an address that already has an account asks for the email link first.
+    await s.click("[data-aact=signout]");
+    await s.waitForSelector('.socialbtn[data-provider="facebook"]');
+    await s.click('.socialbtn[data-provider="facebook"]');
+    await s.fill("#fake-email", "sam.social@example.com");
+    await s.click("#fake-continue");
+    await s.waitForSelector(".authcard .status.warn");
+    check(/already exists/.test(await s.textContent(".authcard .status")), "Facebook doesn't take over an existing account by email");
+    await s.click('.socialbtn[data-provider="linkedin"]');
+    await s.click("#fake-cancel");
+    await s.waitForSelector(".authcard .status.warn");
+    check(/cancelled/.test(await s.textContent(".authcard .status")), "cancelling at the provider explains what happened");
+    if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/login-error.png`, fullPage: true });
   } catch (e) {
     check(false, `unexpected error: ${e.message.split("\n")[0]}`);
     if (process.env.DEBUG) console.log(e.stack);

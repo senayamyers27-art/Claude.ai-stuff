@@ -5,7 +5,7 @@ import { billingEnabled } from "./billing.js";
 
 export async function exportAccount(env, user) {
   const q = (sql, ...a) => env.DB.prepare(sql).bind(...a);
-  const u = await q("SELECT id, email, created_at FROM users WHERE id = ?", user.id).first();
+  const u = await q("SELECT id, email, created_at, display_name, bio, goal_cert, weekly_hours FROM users WHERE id = ?", user.id).first();
   const docs = (await q("SELECT doc_key, body, version, updated_at FROM progress_docs WHERE user_id = ?", user.id).all()).results || [];
   const orgs = (await q("SELECT o.id, o.name, m.role, m.joined_at FROM org_members m JOIN orgs o ON o.id = m.org_id WHERE m.user_id = ?", user.id).all()).results || [];
   const cohorts = (await q("SELECT c.id, c.name, c.cert_id FROM cohort_members m JOIN cohorts c ON c.id = m.cohort_id WHERE m.user_id = ?", user.id).all()).results || [];
@@ -13,12 +13,13 @@ export async function exportAccount(env, user) {
   const classesJoined = (await q("SELECT c.id, c.name, c.teacher_name, m.display_name, m.show_email, m.consented_at, m.joined_at FROM class_members m JOIN classes c ON c.id = m.class_id WHERE m.user_id = ?", user.id).all()).results || [];
   const subs = (await q("SELECT plan, status, seats, current_period_end, updated_at FROM subscriptions WHERE user_id = ?", user.id).all()).results || [];
   const sessions = (await q("SELECT created_at, expires_at, user_agent FROM sessions WHERE user_id = ?", user.id).all()).results || [];
+  const identities = (await q("SELECT provider, email, created_at, last_used_at FROM identities WHERE user_id = ?", user.id).all()).results || [];
   const passkeys = (await q("SELECT name, created_at, last_used_at FROM passkeys WHERE user_id = ?", user.id).all()).results || [];
   return {
     exportedAt: new Date().toISOString(),
     user: u,
     progress: docs.map(d => ({ key: d.doc_key, version: d.version, updatedAt: d.updated_at, body: JSON.parse(d.body) })),
-    organizations: orgs, cohorts, classesTaught, classesJoined, subscriptions: subs, sessions, passkeys
+    organizations: orgs, cohorts, classesTaught, classesJoined, subscriptions: subs, sessions, passkeys, linkedSignIns: identities
   };
 }
 
