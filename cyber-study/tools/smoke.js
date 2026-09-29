@@ -261,6 +261,13 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(`${BASE}/#settings.study`); await page.waitForSelector("#set-name");
   await page.fill("#set-name", "Test Learner"); await page.press("#set-name", "Tab");
   check(await page.evaluate(() => localStorage.getItem("certhub:name") === "Test Learner"), "settings page saves the certificate name");
+  // Help widget: opens from the button, searches the built-in answers, closes with Escape (no API here, so no chat).
+  await page.click("#helpbtn"); await page.waitForSelector("#supsearch");
+  await page.fill("#supsearch", "backup another device");
+  await page.waitForSelector("#supresults details[open]");
+  check(/phone and computer|Where is my progress saved/.test(await page.textContent("#supresults")) && !(await page.$("#supform")), "Help widget searches the built-in answers (no chat without the API)");
+  await page.keyboard.press("Escape");
+  check(await page.evaluate(() => document.getElementById("supportpanel").hidden && document.activeElement === document.getElementById("helpbtn")), "Help closes with Escape and returns focus to the button");
   await page.goto(`${BASE}/#settings.data`); await page.waitForSelector("[data-set='erase:all']");
   check(!!(await page.$('.footlinks a[href="#settings"]')) && !!(await page.$("[data-gact=download]")) && (await page.$$(".settabs a")).length >= 5, "settings has tabs, backups and a footer link");
   { // Streak freeze: one missed day inside a run doesn't break the streak; two in a week do.

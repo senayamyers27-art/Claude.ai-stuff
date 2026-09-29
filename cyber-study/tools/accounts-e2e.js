@@ -333,6 +333,20 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     check(/cancelled/.test(await s.textContent(".authcard .status")), "cancelling at the provider explains what happened");
     if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/login-error.png`, fullPage: true });
 
+    console.log("Help widget with the AI assistant (development stub)");
+    const h = await device();
+    await h.goto(BASE + "/#home"); await h.waitForSelector("#helpbtn");
+    await h.waitForFunction(() => CertHub.sync && CertHub.sync.me && CertHub.sync.me.support === true);
+    await h.click("#helpbtn"); await h.waitForSelector("#supq");
+    await h.fill("#supq", "How do I change the theme?");
+    await h.click("#supform button[type=submit]");
+    await h.waitForSelector(".supmsg.bot a[href='#settings']");
+    check(/Development stub/.test(await h.textContent("#suplog")), "assistant answers in the Help widget, with a link to a site page");
+    await h.click(".supmsg.bot a[href='#settings']");
+    await h.waitForSelector(".settabs");
+    check(true, "assistant links open the site's own pages");
+    api.env.DB.raw.exec("DELETE FROM rate_limits");
+
     console.log("Saving work to the profile");
     const w1 = await device();
     await w1.goto(BASE + "/#portfolio");
