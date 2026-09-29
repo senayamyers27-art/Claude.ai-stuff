@@ -236,12 +236,18 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(`${BASE}/#achievements`);
   await page.waitForSelector(".ach");
   check((await page.$$(".ach.got")).length >= 1, "achievements page shows earned badges");
-  await page.goto(`${BASE}/#home`);
+  await page.goto(`${BASE}/#settings`);
   await page.waitForSelector('[data-pref="size:lg"]');
   await page.click('[data-pref="size:lg"]'); await page.click('[data-pref="contrast:more"]'); await page.click('[data-pref="read:on"]');
   await page.reload(); await page.waitForSelector("#app h1");
   check(await page.evaluate(() => { const r = document.documentElement; return r.dataset.size === "lg" && r.dataset.contrast === "more" && r.dataset.read === "easy"; }), "reading settings apply and survive a reload");
   await page.click('[data-pref="size:md"]'); await page.click('[data-pref="contrast:normal"]'); await page.click('[data-pref="read:off"]');
+  await page.click('[data-set="theme:dark"]');
+  check(await page.evaluate(() => document.documentElement.dataset.theme === "dark" && localStorage.getItem("certhub:theme") === "dark" && document.getElementById("theme").textContent === "Dark"), "settings page switches the theme and updates the header button");
+  await page.click('[data-set="theme:auto"]');
+  await page.fill("#set-name", "Test Learner"); await page.press("#set-name", "Tab");
+  check(await page.evaluate(() => localStorage.getItem("certhub:name") === "Test Learner"), "settings page saves the certificate name");
+  check(!!(await page.$('.footlinks a[href="#settings"]')) && !!(await page.$("#data .btns, h2#data + .panel [data-gact=download]")), "settings page has backups and a footer link");
   { // Streak freeze: one missed day inside a run doesn't break the streak; two in a week do.
     const r = await page.evaluate(() => {
       const d = n => CertHub.U.iso(CertHub.U.addDays(CertHub.U.today(), -n));

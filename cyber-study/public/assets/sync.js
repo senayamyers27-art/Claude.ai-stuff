@@ -726,6 +726,7 @@
       <h2>Account</h2>
       <div class="panel">
         <div class="row"><div class="grow"><strong>Account settings</strong><br><span class="note">Sync, Pro, classes, signed-in devices, download or delete your data.</span></div><a class="btn ghost sm" href="#account">Open</a></div>
+        <div class="row"><div class="grow"><strong>Site settings</strong><br><span class="note">Theme, text size, language, weekly goal and backups on this device.</span></div><a class="btn ghost sm" href="#settings">Open</a></div>
         <div class="row"><div class="grow"><strong>Sign out</strong><br><span class="note">Your progress stays on this device.</span></div><button type="button" class="btn ghost sm" data-aact="signout">Sign out</button></div>
       </div>`;
   }

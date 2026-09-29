@@ -193,6 +193,97 @@
     return `<div class="panel installcard newscard"><div class="grow"><strong>Get study tips by email</strong><br><span class="note">${esc(n.blurb || "New labs, exam changes and a study tip now and then. Unsubscribe any time.")}</span></div><a class="btn sm" href="${esc(n.url)}" target="_blank" rel="noopener">Sign up</a></div>`;
   }
 
+  /* ---------- settings (#settings): every preference in one place, all saved in this browser ---------- */
+  const THEME_LABEL = { auto: "Auto", light: "Light", dark: "Dark" };
+  const curTheme = () => { const t = CertHub.store.get("certhub:theme"); return THEME_LABEL[t] ? t : "auto"; };
+  function storageSummary() {
+    const keys = CertHub.store.keys().filter(k => k.startsWith("certhub:"));
+    const bytes = keys.reduce((a, k) => a + k.length + (CertHub.store.get(k) || "").length, 0) * 2;
+    return { keys: keys.length, kb: Math.max(1, Math.round(bytes / 1024)) };
+  }
+  function settingsView() {
+    const chips = (group, label, cur, opts) => `<div class="trackpick" role="group" aria-label="${esc(label)}">${opts.map(([v, l]) => `<button type="button" class="chipbtn" data-set="${esc(group)}:${esc(v)}" aria-pressed="${cur === v}">${esc(l)}</button>`).join("")}</div>`;
+    const lang = CertHub.i18n.lang(), st = storageSummary(), name = CertHub.store.get("certhub:name") || "";
+    const acct = CertHub.sync && CertHub.sync.enabled, me = acct && CertHub.sync.me, signed = !!(me && me.user);
+    const nav = [["appearance", "Appearance"], ["language", "Language"], ["study", "Study"], ["shortcuts", "Keyboard"], ["data", "Your data"], ...(acct ? [["account-s", "Account"]] : []), ["about", "App and about"]];
+    return `<h1>Settings</h1>
+    <p class="meta">Everything here is saved in this browser${signed ? " (your study progress also syncs to your account)" : ""}. Changes apply right away.</p>
+    <nav class="setnav" aria-label="Settings sections">${nav.map(([id, l]) => `<a href="#settings" data-jump="${esc(id)}">${esc(l)}</a>`).join("")}</nav>
+
+    <h2 id="appearance">Appearance</h2>
+    <div class="panel">
+      <p class="pickq">Theme</p>
+      ${chips("theme", "Theme", curTheme(), [["auto", "Match my device"], ["light", "Light"], ["dark", "Dark"]])}
+      <p class="pickq">Accent color</p>
+      <div class="swatches" role="group" aria-label="Accent color">${CertHub.ACCENTS.map(([k, l, c]) => `<button type="button" class="chipbtn swatch" data-accent="${esc(k)}" aria-pressed="${CertHub.accent() === k}" data-style="--sw:${esc(c)}"><i aria-hidden="true"></i>${esc(l)}</button>`).join("")}</div>
+    </div>
+    <h3 id="reading">Reading and sound</h3>
+    ${readingHtml()}
+
+    <h2 id="language">Language</h2>
+    <div class="panel">
+      ${chips("lang", "Language", lang, [["en", "English"], ["es", "Español"]])}
+      <p class="note" data-style="margin:8px 0 0">Spanish covers the interface and, where translated, lessons, questions and labs. The page reloads to switch.</p>
+    </div>
+
+    <h2 id="study">Study</h2>
+    ${CertHub.habits ? CertHub.habits.goalHtml() : ""}
+    <div class="panel">
+      <div class="row"><div class="grow"><strong>Daily reminder</strong><br><span class="note">Adds a repeating event to your calendar app. Nothing is sent to us.</span></div><button type="button" class="btn ghost sm" data-gact="reminder">Add to calendar</button></div>
+      <div class="row"><div class="grow"><label for="set-name"><strong>Name on certificates of completion</strong></label><br><span class="note">Shown on the certificates you can print when you finish a plan.</span>
+        <input type="text" id="set-name" class="textin" maxlength="60" autocomplete="name" value="${esc(name)}" placeholder="Your name"></div></div>
+    </div>
+
+    <h2 id="shortcuts">Keyboard shortcuts</h2>
+    <div class="panel"><dl class="terms keys">
+      <dt><kbd>A</kbd>–<kbd>D</kbd> or <kbd>1</kbd>–<kbd>4</kbd></dt><dd>Choose an answer</dd>
+      <dt><kbd>Enter</kbd> or <kbd>N</kbd></dt><dd>Next question</dd>
+      <dt><kbd>B</kbd></dt><dd>Previous question (tests)</dd>
+      <dt><kbd>F</kbd></dt><dd>Flag a question for review (tests)</dd>
+      <dt><kbd>G</kbd></dt><dd>Open the question grid (tests)</dd>
+    </dl></div>
+
+    <h2 id="data">Your data</h2>
+    <div class="panel">
+      <p class="note" data-style="margin:0">This browser holds ${/* num */ st.keys} saved item${st.keys === 1 ? "" : "s"} (about ${/* num */ st.kb} KB): progress, lab notes, badges and settings. Back up to move them to another device or browser.</p>
+      <div class="btns"><button type="button" class="btn ghost sm no-framed" data-gact="download">Download backup</button><button type="button" class="btn ghost sm" data-gact="copybackup">Copy backup</button><label class="btn ghost sm" for="imp">Restore from file</label><input type="file" id="imp" accept="application/json" class="hide"><button type="button" class="btn ghost sm" data-gact="pasterestore">Restore from text</button></div>
+      <div class="row dangerrow"><div class="grow"><strong>Erase everything on this device</strong><br><span class="note">Removes all progress, notes, badges and settings from this browser. ${signed ? "Your account keeps its copy, and it syncs back here the next time you sign in on this browser." : "This can't be undone, so download a backup first."}</span></div><button type="button" class="btn ghost sm danger" data-set="erase:all">Erase</button></div>
+    </div>
+
+    ${acct ? `<h2 id="account-s">Account</h2>
+    <div class="panel">${signed
+      ? `<div class="row"><div class="grow"><strong>${esc(me.user.displayName || me.user.email)}</strong><br><span class="note">${esc(me.user.email)}</span></div><a class="btn ghost sm" href="#profile">Profile</a></div>
+         <div class="row"><div class="grow"><strong>Sign-in, devices, sync and Pro</strong><br><span class="note">Passkeys, connected Google, Facebook or LinkedIn, signed-in devices, download or delete account data.</span></div><a class="btn ghost sm" href="#account">Account settings</a></div>`
+      : `<div class="row"><div class="grow"><strong>Optional account</strong><br><span class="note">Sync your progress across devices. Sign in with Google, Facebook, LinkedIn or your email.</span></div><a class="btn sm" href="#login">Log in</a> <a class="btn ghost sm" href="#signup">Sign up</a></div>`}</div>` : ""}
+
+    <h2 id="about">App and about</h2>
+    <div class="panel">
+      <div class="row"><div class="grow"><strong>Install the app</strong><br><span class="note">Add StudyToCert to your home screen and study offline.</span></div><a class="btn ghost sm" href="#install">Install</a></div>
+      <div class="row"><div class="grow"><strong>What's new</strong><br><span class="note">Recent additions and fixes.</span></div><a class="btn ghost sm" href="#whats-new">See what's new</a></div>
+      <div class="row"><div class="grow"><strong>Privacy, terms and security</strong><br><span class="note">What's stored, where, and how it's protected.</span></div><span class="btns" data-style="margin:0"><a class="btn ghost sm" href="#privacy">Privacy</a><a class="btn ghost sm" href="#terms">Terms</a><a class="btn ghost sm" href="#security">Security</a></span></div>
+      <div class="row"><div class="grow"><strong>Report a problem</strong><br><span class="note">Found a mistake in a lesson or question, or something broken?</span></div><a class="btn ghost sm" href="${esc(CertHub.reportUrl("Problem report", "Page:\nWhat happened:\nWhat you expected:"))}" target="_blank" rel="noopener">Report</a></div>
+    </div>`;
+  }
+  document.addEventListener("click", async e => {
+    const b = e.target.closest("button[data-set]"); if (!b) return;
+    const [k, v] = b.dataset.set.split(":");
+    if (k === "theme" && THEME_LABEL[v]) {
+      CertHub.store.set("certhub:theme", v); CertHub.applyTheme(v);
+      const t = document.getElementById("theme"); if (t) { t.textContent = THEME_LABEL[v]; t.setAttribute("aria-label", `Color theme: ${THEME_LABEL[v]}. Change theme`); }
+      document.querySelectorAll('[data-set^="theme:"]').forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    }
+    if (k === "lang" && (v === "en" || v === "es") && v !== CertHub.i18n.lang()) CertHub.i18n.set(v);
+    if (k === "erase") {
+      if (!(await ui.confirm("Erase all progress, notes, badges and settings saved in this browser? This can't be undone.", { ok: "Erase everything", cancel: "Cancel", danger: true }))) return;
+      CertHub.store.keys().forEach(x => CertHub.store.remove(x));
+      location.hash = "home"; location.reload();
+    }
+  });
+  document.addEventListener("change", e => {
+    if (e.target.id !== "set-name") return;
+    CertHub.store.set("certhub:name", e.target.value.trim()); ui.toast("Name saved.");
+  });
+
   /* ---------- for teachers, schools and bootcamps ---------- */
   function schoolsView() {
     const n = CertHub.catalog.filter(id => certs[id]).length, fb = CertHub.reportUrl("Using StudyToCert in a class", "School or program:\nCertifications you teach:\nWhat would help:");
@@ -289,11 +380,7 @@
       <div class="btns"><button type="button" class="btn ghost sm no-framed" data-gact="download">Download backup</button><button type="button" class="btn ghost sm" data-gact="copybackup">Copy backup</button><label class="btn ghost sm" for="imp">Restore from file</label><input type="file" id="imp" accept="application/json" class="hide"><button type="button" class="btn ghost sm" data-gact="pasterestore">Restore from text</button></div>
     </div>
     ${newsHtml()}
-    <h2>Appearance</h2>
-    <div class="panel"><p class="note" data-style="margin:0">Accent color for buttons and highlights. Use the button at the top right to switch between light, dark and your device's setting.</p>
-      <div class="swatches" role="group" aria-label="Accent color">${CertHub.ACCENTS.map(([k, l, c]) => `<button type="button" class="chipbtn swatch" data-accent="${esc(k)}" aria-pressed="${CertHub.accent() === k}" data-style="--sw:${esc(c)}"><i aria-hidden="true"></i>${esc(l)}</button>`).join("")}</div></div>
-    <h3 id="reading">Reading and sound</h3>
-    ${readingHtml()}
+    <div class="panel installcard"><div class="grow"><strong>Settings</strong><br><span class="note">Theme, accent color, text size, language, weekly goal, sounds and backups.</span></div><a class="btn ghost sm" href="#settings">Open settings</a></div>
     <div class="panel installcard supportcard"><div class="grow"><strong>Keep it free</strong><br><span class="note">No ads and no tracking. Share it, report a mistake${CertHub.site && CertHub.site.support && CertHub.site.support.url ? " or chip in" : ""} to help.</span></div><a class="btn ghost sm" href="#support">Support this site</a></div>`;
   }
 
@@ -341,7 +428,7 @@
     const q = new URLSearchParams({ p: name, t: title || name, e: "true", rnd: Math.random().toString(36).slice(2) });
     try { fetch(`${gc}/count?${q}`, { mode: "no-cors", credentials: "omit", keepalive: true, referrerPolicy: "no-referrer" }).catch(() => {}); } catch (e) {}
   };
-  const LIGHT = new Set(["home", "dashboard", "achievements", "exam-changes", "schools", "whats-new", "review", "privacy", "terms", "security", "install", "support", "exam-day", "account", "login", "signup", "profile"]);
+  const LIGHT = new Set(["home", "dashboard", "achievements", "exam-changes", "schools", "whats-new", "review", "privacy", "terms", "security", "install", "support", "exam-day", "account", "login", "signup", "profile", "settings"]);
   function route() {
     let raw = "";
     try { raw = decodeURIComponent(location.hash.replace(/^#/, "")); } catch (e) { raw = ""; }
@@ -408,6 +495,7 @@
         if (CertHub.blueteam) title = CertHub.blueteam.show(head);
         else { title = "Blue-team practice"; $("#app").innerHTML = `${CertHub.fx.skeleton()}`; CertHub.loadScript("assets/blueteam.js").then(ok => { if (location.hash === "#" + head && CertHub.blueteam) document.title = `${CertHub.blueteam.show(head)} · StudyToCert`; else if (!ok) $("#app").innerHTML = `<p class="meta" role="status">This page couldn't load. Check your connection and try again.</p>`; }); }
       }
+      else if (head === "settings") { topNav(""); $("#app").innerHTML = settingsView(); title = "Settings"; view = head; }
       else if (head === "whats-new") { topNav(""); $("#app").innerHTML = newsView(); title = "What's New"; view = head; }
       else if (head === "review" && CertHub.review) { topNav("home"); $("#app").innerHTML = CertHub.review.show(); title = "Daily Review"; view = "review"; }
       else if (head === "portfolio") { topNav("portfolio"); $("#app").innerHTML = CertHub.labViews.portfolio(); title = "Lab Portfolio"; view = "portfolio"; }
@@ -439,7 +527,7 @@
     if (a === "install") CertHub.install.run().then(ok => { if (!ok) location.hash = "install"; else CertHub.rerender(); });
   });
   document.addEventListener("change", e => {
-    if (e.target.id !== "imp" || view !== "home" || !e.target.files[0]) return;
+    if (e.target.id !== "imp" || (view !== "home" && view !== "settings") || !e.target.files[0]) return;
     CertHub.importAll(e.target.files[0], (err, n) => {
       if (err) return ui.toast(err.message);
       ui.toast(`Restored ${n} saved item${n === 1 ? "" : "s"}.`); setTimeout(() => location.reload(), 800);

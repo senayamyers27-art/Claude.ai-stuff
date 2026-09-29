@@ -74,6 +74,7 @@ async function audit(page, label) {
     await go("#careers", "careers", ".card"); await go("#career-cybersecurity", "career page", "details.sq");
     await go("#labs", "lab library"); await go("#lab-home-lab", "lab page"); await go("#portfolio", "portfolio");
     await go("#frameworks", "frameworks");
+    await go("#settings", "settings", "#set-name");
     await page.evaluate(() => document.querySelectorAll("details").forEach(d => { d.open = true; }));
     await audit(page, `frameworks expanded (${scheme})`);
     for (const p of ["privacy", "terms", "security", "install", "support"]) await go(`#${p}`, p);

@@ -170,6 +170,7 @@
   const store = {
     get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
     set(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } },
+    remove(k) { try { localStorage.removeItem(k); } catch (e) {} },
     keys() { try { return Object.keys(localStorage).filter(k => k.startsWith("certhub:")); } catch (e) { return []; } }
   };
   function freshProgress() { return { checks: {}, stats: {}, review: {}, read: {}, history: [], start: null, examDate: null }; }

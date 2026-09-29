@@ -1,6 +1,9 @@
 /* What's new: learner-facing release notes, newest first. Add an entry when something visible ships.
    Each entry: { date: "YYYY-MM-DD", title, items: [ ... ], es: { title, items } } (es: the Spanish version). Shown at #whats-new and on the home page. */
 CertHub.news = [
+  { date: "2026-09-29", title: "A settings page",
+    items: ["Settings (link at the bottom of every page): theme, accent color, text size, easy-read spacing, contrast, sounds, language, weekly goal, a daily reminder, the name on your certificates, keyboard shortcuts, backups, and erasing everything on this device."],
+    es: { title: "Una página de configuración", items: ["Configuración (enlace al pie de cada página): tema, color de acento, tamaño de texto, espaciado de lectura fácil, contraste, sonidos, idioma, meta semanal, un recordatorio diario, el nombre en tus certificados, atajos de teclado, copias de seguridad y borrar todo en este dispositivo."] } },
   { date: "2026-09-29", title: "Better on phones, and deeper Security+ and Network+ lessons",
     items: [
       "Phones: a compact header so the certification name fits, tab bars that show when there are more tabs and keep your tab in view, and buttons and controls that stack neatly.",
