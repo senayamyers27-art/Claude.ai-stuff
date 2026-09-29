@@ -6,8 +6,10 @@
       so any file changed on the server, by a compromised host or a hijacked deploy, is caught.
    Fails when the live version matches no recent commit, or any file differs or is missing.
    A live site that is behind main is reported but doesn't fail (publishing runs after CI).
-   Usage: node tools/integrity-check.js [--base https://example.com] [--ref origin/main] [--skip-large]
+   Usage: node tools/integrity-check.js [--base https://example.com] [--ref origin/main] [--skip-large] [--sample N]
      --skip-large  don't download files over 5 MB (the VM image and Python engine), for a quick run.
+     --sample N    check every script, style, data and top-level file (what the app runs on) plus N randomly
+                   chosen other pages, to go easy on the host between full checks.
    Needs git history: in GitHub Actions use actions/checkout with fetch-depth: 0. */
 const { execFileSync } = require("child_process");
 const crypto = require("crypto"), fs = require("fs"), path = require("path");
@@ -17,6 +19,7 @@ const arg = (name, def) => { const i = process.argv.indexOf(name); return i > 0 
 const BASE = (arg("--base", cfg.domain ? `https://${cfg.domain}` : "") || "").replace(/\/+$/, "");
 const REF = arg("--ref", "HEAD");
 const SKIP_LARGE = process.argv.includes("--skip-large");
+const SAMPLE = process.argv.includes("--sample") ? Math.max(0, +arg("--sample", 0)) : null;
 const LARGE = 5 * 1024 * 1024;
 // Files the publish step adds, and host configuration that Cloudflare Pages reads instead of serving.
 const NOT_PUBLISHED = new Set([".nojekyll", "README.md", "_headers", "_redirects"]);
@@ -28,14 +31,21 @@ const PREFIX = path.relative(TOP, path.join(ROOT, "public")).split(path.sep).joi
 const versionOf = sw => (/const VERSION = "([0-9a-f]+)"/.exec(sw) || [])[1];
 const blobHash = buf => crypto.createHash("sha1").update(`blob ${buf.length}\0`).update(buf).digest("hex");
 
+// Retries rate limits (429) and server errors with backoff, honoring Retry-After, so a busy host isn't
+// mistaken for a changed file.
 async function get(url) {
   for (let tries = 0; ; tries++) {
-    try {
-      const r = await fetch(url, { redirect: "follow", cache: "no-store" });
-      return { status: r.status, body: r.ok ? Buffer.from(await r.arrayBuffer()) : null };
-    } catch (e) { if (tries >= 2) return { status: 0, error: e.message }; await new Promise(r => setTimeout(r, 1000 * (tries + 1))); }
+    let r;
+    try { r = await fetch(url, { redirect: "follow", cache: "no-store" }); }
+    catch (e) { if (tries >= 4) return { status: 0, error: e.message }; await sleep(1000 * 2 ** tries); continue; }
+    if ((r.status === 429 || r.status >= 500) && tries < 5) {
+      const wait = Math.min(60, +(r.headers.get("retry-after") || 0) || 2 ** (tries + 1));
+      await r.arrayBuffer().catch(() => {}); await sleep(wait * 1000); continue;
+    }
+    return { status: r.status, body: r.ok ? Buffer.from(await r.arrayBuffer()) : null };
   }
 }
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 (async () => {
   console.log(`Integrity check of ${BASE}`);
@@ -61,22 +71,35 @@ async function get(url) {
     const [meta, file] = l.split("\t"), [, , sha, size] = meta.split(/\s+/);
     return { rel: file.slice(PREFIX.length), sha, size: +size };
   }).filter(f => !NOT_PUBLISHED.has(f.rel));
-  const todo = tree.filter(f => !(SKIP_LARGE && f.size > LARGE));
-  let bad = 0, done = 0;
-  const fail = m => { bad++; console.log(`  ✗ ${m}`); };
+  let todo = tree.filter(f => !(SKIP_LARGE && f.size > LARGE));
+  if (SAMPLE != null) {
+    const core = f => !f.rel.includes("/") || /^(assets|data|vendor)\//.test(f.rel) || /^[^/]+\/index\.html$/.test(f.rel);
+    const rest = todo.filter(f => !core(f));
+    for (let i = rest.length - 1; i > 0; i--) { const j = crypto.randomInt(i + 1); [rest[i], rest[j]] = [rest[j], rest[i]]; }
+    todo = todo.filter(core).concat(rest.slice(0, SAMPLE));
+  }
+  // A file whose content differs, or that's missing (404), fails the check. One the host wouldn't serve even
+  // after retries (rate limits, outages) couldn't be checked: reported, and failing only if it's many files.
+  const differs = [], unreachable = [];
+  let done = 0;
   const queue = todo.slice();
-  await Promise.all(Array.from({ length: 16 }, async () => {
+  await Promise.all(Array.from({ length: 4 }, async () => {
     for (let f; (f = queue.shift());) {
       const url = `${BASE}/${f.rel.split("/").map(encodeURIComponent).join("/")}`;
       const r = await get(url);
-      if (!r.body) fail(`${f.rel}: ${r.error || "HTTP " + r.status}`);
-      else if (blobHash(r.body) !== f.sha) fail(`${f.rel}: live content differs from commit ${match.sha.slice(0, 7)}`);
+      if (r.body) { if (blobHash(r.body) !== f.sha) differs.push(`${f.rel}: live content differs from commit ${match.sha.slice(0, 7)}`); }
+      else if (r.status === 404) differs.push(`${f.rel}: missing on the live site (404)`);
+      else unreachable.push(`${f.rel}: ${r.error || "HTTP " + r.status}`);
       done++;
     }
   }));
-  const skipped = tree.length - todo.length;
-  console.log(bad
-    ? `${bad} of ${done} files don't match the repository. Treat this as a possible compromise: see docs/INCIDENT_RESPONSE.md.`
-    : `  ✓ all ${done} files match commit ${match.sha.slice(0, 7)}${skipped ? ` (${skipped} large files skipped)` : ""}`);
-  process.exit(bad ? 1 : 0);
+  differs.forEach(m => console.log(`  ✗ ${m}`));
+  unreachable.slice(0, 10).forEach(m => console.log(`  ! couldn't check ${m}`));
+  if (unreachable.length > 10) console.log(`  ! …and ${unreachable.length - 10} more the host wouldn't serve`);
+  const tooManyUnreachable = unreachable.length > Math.max(5, done * 0.02);
+  const skipped = tree.length - todo.length, scope = SAMPLE != null ? ` (core files and a sample of ${SAMPLE} pages)` : skipped ? ` (${skipped} large files skipped)` : "";
+  if (differs.length) console.log(`${differs.length} of ${done} files don't match the repository. Treat this as a possible compromise: see docs/INCIDENT_RESPONSE.md.`);
+  else if (tooManyUnreachable) console.log(`The host wouldn't serve ${unreachable.length} of ${done} files, so the site couldn't be checked. Run it again later.`);
+  else console.log(`  ✓ ${done - unreachable.length} files match commit ${match.sha.slice(0, 7)}${scope}${unreachable.length ? `; ${unreachable.length} couldn't be downloaded` : ""}`);
+  process.exit(differs.length || tooManyUnreachable ? 1 : 0);
 })();

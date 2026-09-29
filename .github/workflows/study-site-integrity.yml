@@ -1,13 +1,17 @@
 name: Study site integrity
 
 # Proves the live site is byte-for-byte a build from this repository: reads the build version
-# from the live /sw.js, finds that commit on main, and compares every published file's hash with
-# it (tools/integrity-check.js). A mismatch fails the run and GitHub emails the repository owner;
-# see cyber-study/docs/INCIDENT_RESPONSE.md.
+# from the live /sw.js, finds that commit on main, and compares published files' hashes with it
+# (tools/integrity-check.js). Every 6 hours and after each publish it checks everything the app runs
+# on (scripts, styles, data, top-level pages) plus a random sample of other pages; once a day it
+# checks every file. A mismatch fails the run and GitHub emails the repository owner; see
+# cyber-study/docs/INCIDENT_RESPONSE.md. Files the host won't serve (rate limits) are retried, and
+# only fail the run when there are many of them.
 
 on:
   schedule:
-    - cron: "17 */6 * * *" # every 6 hours
+    - cron: "17 */6 * * *" # every 6 hours: core files and a sample of pages
+    - cron: "47 3 * * *"   # daily: every file
   workflow_run:
     workflows: ["Study site to GitHub Pages"]
     types: [completed]
@@ -24,7 +28,7 @@ jobs:
   integrity:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 40
     defaults:
       run:
         working-directory: cyber-study
@@ -45,4 +49,8 @@ jobs:
         run: |
           # Right after a publish the host's cache can still serve the old build for a few minutes.
           if [ "${{ github.event_name }}" = "workflow_run" ]; then sleep 120; fi
-          node tools/integrity-check.js --ref HEAD
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "${{ github.event.schedule }}" = "47 3 * * *" ]; then
+            node tools/integrity-check.js --ref HEAD
+          else
+            node tools/integrity-check.js --ref HEAD --sample 150
+          fi

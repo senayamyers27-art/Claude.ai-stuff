@@ -45,6 +45,8 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await page.goto(`${BASE}/${id}/`);
     await page.waitForSelector("h1");
     check((await page.textContent("h1")).startsWith("Week "), "week view renders");
+    // Markup that was escaped twice shows up as literal tags in the text.
+    check(!/<\/?(li|button|a|span|strong|code)\b/i.test(await page.textContent("#app")), "no raw HTML tags shown as text on the week view");
     const sw = await page.evaluate(() => document.documentElement.scrollWidth);
     check(sw <= 390, `no sideways scroll (${sw}px)`);
     await page.click("[data-act=weekly]");
