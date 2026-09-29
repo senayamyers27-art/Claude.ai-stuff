@@ -29,13 +29,35 @@ jobs:
         with:
           node-version: 20
 
-      - name: Export D1 database
-        working-directory: worker
-        run: npx wrangler d1 export eleven-eleven-staff --remote --output=backup.sql
+      # The dump is encrypted with age before it's stored, so the artifact is unreadable without the private
+      # key (which stays offline with you). Without the D1_BACKUP_AGE_RECIPIENT variable nothing is exported:
+      # a plain SQL dump of staff data shouldn't sit in workflow artifacts. D1 Time Travel still covers 30 days.
+      - name: Check the encryption key
+        id: key
+        env:
+          RECIPIENT: ${{ vars.D1_BACKUP_AGE_RECIPIENT }}
+        run: |
+          if printf '%s' "$RECIPIENT" | grep -Eq '^age1[0-9a-z]{58}$'; then echo "ok=true" >> "$GITHUB_OUTPUT"
+          else echo "::warning::Set the repository variable D1_BACKUP_AGE_RECIPIENT to an age public key (see worker/README.md, Backups). Skipping the export so no unencrypted dump is stored."; echo "ok=false" >> "$GITHUB_OUTPUT"; fi
 
-      - name: Upload backup artifact
+      - name: Export and encrypt the D1 database
+        if: steps.key.outputs.ok == 'true'
+        env:
+          RECIPIENT: ${{ vars.D1_BACKUP_AGE_RECIPIENT }}
+        run: |
+          umask 077
+          sudo apt-get update -qq && sudo apt-get install -y -qq age
+          OUT="$RUNNER_TEMP/backup"; mkdir -p "$OUT"
+          (cd worker && npx --yes wrangler@4.138.0 d1 export eleven-eleven-staff --remote --output "$OUT/backup.sql")
+          test -s "$OUT/backup.sql"
+          age -r "$RECIPIENT" -o "$OUT/backup.sql.age" "$OUT/backup.sql"
+          shred -u "$OUT/backup.sql"
+
+      - name: Upload the encrypted backup
+        if: steps.key.outputs.ok == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: d1-backup-${{ github.run_id }}
-          path: worker/backup.sql
+          path: ${{ runner.temp }}/backup/backup.sql.age
           retention-days: 35
+          if-no-files-found: error

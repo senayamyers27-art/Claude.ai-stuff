@@ -286,6 +286,15 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   check(!!(await page.$(".finalweek .fw li.now")), "the last week before the exam shows the final-week plan");
   await page.goto(`${BASE}/#security-plus.progress`); await page.waitForSelector("#exam");
   await page.fill("#exam", examWas); await page.dispatchEvent("#exam", "change");
+  await page.goto(`${BASE}/#exam-changes`);
+  await page.waitForSelector("table.plain");
+  check((await page.$$("table.plain tbody tr")).length >= 40, "exam changes page lists every certification");
+  await page.goto(`${BASE}/#schools`);
+  await page.waitForSelector("#app h1");
+  check(/teachers/i.test(await page.textContent("#app h1")), "page for teachers and schools renders");
+  await page.goto(`${BASE}/#career-network`);
+  await page.waitForSelector(".dayline li");
+  check((await page.$$(".dayline li")).length >= 5, "career pages show a day in the life");
   await page.goto(`${BASE}/#log-puzzles`);
   await page.waitForSelector("[data-logpick]");
   { const n = await page.evaluate(() => CertHub.blueteam.puzzles); let ok = 0;
@@ -302,7 +311,7 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   }
   await page.goto(`${BASE}/#games`);
   await page.waitForSelector(".gamecard");
-  check((await page.$$(".gamecard")).length === 4, "games page lists the quick games");
+  check((await page.$$(".gamecard")).length === 5, "games page lists the quick games");
   { // Subnetting answers are computed; check 400 of them against an independent calculation.
     const bad = await page.evaluate(() => {
       const toN = s => s.split(".").reduce((a, o) => a * 256 + +o, 0), out = [];
@@ -313,7 +322,7 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
         else if ((m = /(network|broadcast) address of ([\d.]+)\/(\d+)/.exec(q.q))) { const size = 2 ** (32 - m[3]), a = toN(m[2]), net = a - a % size, v = m[1] === "network" ? net : net + size - 1; want = [24, 16, 8, 0].map(s => Math.floor(v / 2 ** s) % 256).join("."); }
         if (q.a !== want || q.o.length !== 4 || new Set(q.o).size !== 4 || !q.o.includes(q.a)) out.push(q.q + " -> " + q.a + " (want " + want + ")");
       }
-      for (const f of ["portQ", "acronymQ", "osiQ"]) for (let i = 0; i < 100; i++) { const q = CertHub.games._q[f](); if (q.o.length !== 4 || new Set(q.o).size !== 4 || !q.o.includes(q.a)) out.push(f + ": " + q.q); }
+      for (const f of ["portQ", "acronymQ", "osiQ", "commandQ"]) for (let i = 0; i < 100; i++) { const q = CertHub.games._q[f](); if (q.o.length !== 4 || new Set(q.o).size !== 4 || !q.o.includes(q.a)) out.push(f + ": " + q.q); }
       return out;
     });
     check(!bad.length, "game questions have one right answer among four different options" + (bad.length ? `: ${bad.slice(0, 3).join("; ")}` : ""));
