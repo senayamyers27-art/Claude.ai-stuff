@@ -32,9 +32,21 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   const page = await ctx.newPage();
   page.setDefaultTimeout(8000);
 
-  console.log("Home page");
+  console.log("Home page and menu");
   await page.goto(BASE + "/");
+  await page.waitForSelector(".tiles .tile");
+  check(!(await page.$("#trackcards")) && (await page.$$(".tiles .tile")).length >= 6, "home page is a short landing page with tiles to each section");
+  await page.click("#menubtn"); await page.waitForSelector("#sitemenu a");
+  check((await page.$$("#sitemenu .menugroup")).length >= 4 && await page.evaluate(() => document.activeElement && !!document.activeElement.closest("#sitemenu")), "Menu opens with every section, grouped, and takes focus");
+  await page.keyboard.press("Escape");
+  check(await page.evaluate(() => document.getElementById("sitemenu").hidden && document.activeElement === document.getElementById("menubtn")), "Menu closes with Escape and returns focus");
+  await page.click("#menubtn"); await page.click('#sitemenu a[href="#portfolio"]');
+  await page.waitForSelector(".figs3");
+  check(await page.evaluate(() => location.hash === "#portfolio" && document.getElementById("sitemenu").hidden), "a menu link opens its page and closes the menu");
+  console.log("Certifications page");
+  await page.goto(BASE + "/#certifications");
   await page.waitForSelector(".card");
+  check(!!(await page.$("#pick")) && await page.evaluate(() => document.querySelector('nav.tabs a[aria-selected="true"]').getAttribute("href") === "#certifications"), "Certifications page has the picker and is the selected tab");
   const cards = await page.$$eval(".card", c => c.length);
   // "All tracks" shows each track's certifications; a cert in two tracks appears in both.
   const expected = CertHub.tracks.reduce((n, t) => n + t.certs.filter(id => ids.includes(id)).length, 0);
@@ -261,12 +273,12 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(`${BASE}/#settings.study`); await page.waitForSelector("#set-name");
   await page.fill("#set-name", "Test Learner"); await page.press("#set-name", "Tab");
   check(await page.evaluate(() => localStorage.getItem("certhub:name") === "Test Learner"), "settings page saves the certificate name");
-  // Help box on the home page and the full Help page (every answer), alongside the floating Help panel.
-  await page.goto(`${BASE}/#home`); await page.waitForSelector("#homehelp .supsearch");
-  await page.fill("#hsupsearch", "Spanish");
-  await page.waitForSelector("#hsupresults details[open]");
-  check(/Spanish|español/i.test(await page.textContent("#hsupresults")), "home page has a help box that searches the answers");
+  // The Help page (every answer, searchable), alongside the floating Help panel.
   await page.goto(`${BASE}/#help`); await page.waitForSelector("#helppage .supqa");
+  await page.fill("#psupsearch", "Spanish");
+  await page.waitForSelector("#psupresults details[open]");
+  check(/Spanish|español/i.test(await page.textContent("#psupresults")), "Help page searches the answers");
+  await page.fill("#psupsearch", "");
   check((await page.$$("#helppage .supqa")).length === await page.evaluate(() => CertHub.help.length) && !!(await page.$('.footlinks a[href="#help"]')), "Help page lists every answer and is linked from the footer");
   await page.goto(`${BASE}/#settings`); await page.waitForSelector(".settabs");
   // Help widget: opens from the button, searches the built-in answers, closes with Escape (no API here, so no chat).

@@ -18,7 +18,8 @@ const cert = ["security-plus", "network-plus"].find(has) || CertHub.catalog.find
 
 // [label, path, selector to wait for]
 const VIEWS = [
-  ["home", "", ".card"],
+  ["home", "", ".tile"],
+  ["certifications", "#certifications", ".card"],
   ...["week", "learn", "plan", "practice", "labs", "progress", "guide", "about"].map(t => [`${cert}-${t}`, `#${cert}.${t}`, "#app h1"]),
   ["labs", "#labs", "#app h1"],
   ["lab", "#lab-home-lab", "#app h1"],

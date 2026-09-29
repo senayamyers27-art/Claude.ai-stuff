@@ -50,7 +50,7 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     console.log("Signed out");
     const a = await device();
     await a.goto(BASE + "/");
-    await a.waitForSelector(".card");
+    await a.waitForSelector(".tile");
     check(await a.$('nav.tabs a[href="#account"]'), "Account tab shown when an API is configured");
     await a.goto(BASE + "/#account");
     check(await a.$("#signin-form"), "account page offers sign-in");
@@ -342,9 +342,8 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await h.click("#supform button[type=submit]");
     await h.waitForSelector(".supmsg.bot a[href='#settings']");
     check(/Development stub/.test(await h.textContent("#suplog")), "assistant answers in the Help widget, with a link to a site page");
-    await h.goto(BASE + "/#home"); await h.waitForSelector("#homehelp .supform");
-    check(/Development stub/.test(await h.textContent("#hsuplog")), "home page chat box shows the same conversation");
     await h.goto(BASE + "/#help"); await h.waitForSelector("#helppage .supform");
+    check(/Development stub/.test(await h.textContent("#psuplog")), "Help page chat box shows the same conversation");
     await h.fill("#psupq", "Is it free?"); await h.click("#psupform button[type=submit]");
     await h.waitForFunction(() => document.querySelectorAll("#psuplog .supmsg.bot").length >= 2);
     check(true, "Help page chat box asks the assistant");
