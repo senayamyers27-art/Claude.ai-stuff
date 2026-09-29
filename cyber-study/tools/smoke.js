@@ -60,6 +60,15 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await page.click("[data-tab=practice]");
     await page.click("[data-act=exam]");
     check(!!(await page.$("#timer")), "practice exam starts with a timer");
+    await page.keyboard.press("b"); await page.keyboard.press("a");
+    check((await page.getAttribute(".opt >> nth=0", "aria-pressed")) === "true", "keyboard shortcut A picks the first option");
+    await page.click("[data-act=flag]");
+    await page.click("[data-strike='1']");
+    check(!!(await page.$(".opt.struck")) && (await page.getAttribute("[data-act=flag]", "aria-pressed")) === "true", "exam questions can be flagged and options crossed out");
+    await page.click("[data-act=reviewall]");
+    check(!!(await page.$(".qgrid .qcell.flag.done")), "the review screen shows answered and flagged questions");
+    await page.click("[data-goto='0']");
+    check(!!(await page.$(".opt.struck")), "going back keeps crossed-out options");
     await page.click("[data-act=finish]");
     await page.click('.modal [data-v="1"]');
     check(!!(await page.$(".big")), "practice exam can be submitted and scored");
@@ -147,6 +156,10 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.click("[data-act=placement]");
   await page.waitForSelector(".opt");
   for (let i = 0; i < 40 && await page.$(".opt"); i++) { await page.click(".opt >> nth=0"); await page.click("[data-act=next]"); }
+  // Timed tests end on the review screen: submit from there.
+  check(!!(await page.$(".qgrid")), "a timed test ends on a review screen before submitting");
+  await page.click("[data-act=finish]");
+  await page.click('.modal [data-v="1"]');
   await page.waitForSelector(".big");
   check((await page.textContent("#app")).includes("Where to start"), "placement test recommends where to start");
   check((await page.$$("a.report")).length > 0, "questions have a Report a mistake link");
@@ -216,9 +229,43 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(`${BASE}/#security-plus.progress`);
   await page.waitForSelector(".panel.ready");
   check(/\d+\/100/.test(await page.textContent(".panel.ready")), "Progress tab shows an exam readiness score");
+  check(!!(await page.$(".kmap .kmcells i.miss, .kmap .kmcells i.known")), "Progress tab shows the knowledge map with answered questions");
   await page.goto(`${BASE}/#dashboard`);
   await page.waitForSelector("#app h1");
-  { const card = await page.$('.dashcard:has(a[href="#security-plus.week"])'); check(!!card && /\d+\/100/.test(await card.textContent()) && (await page.$$(".dashsum .panel")).length === 4, "dashboard lists a started certification with its readiness"); }
+  { const card = await page.$('.dashcard:has(a[href="#security-plus.week"])'); check(!!card && /\d+\/100/.test(await card.textContent()) && (await page.$$(".dashsum .panel")).length === 5, "dashboard lists a started certification with its readiness"); }
+  await page.goto(`${BASE}/#achievements`);
+  await page.waitForSelector(".ach");
+  check((await page.$$(".ach.got")).length >= 1, "achievements page shows earned badges");
+  await page.goto(`${BASE}/#home`);
+  await page.waitForSelector('[data-pref="size:lg"]');
+  await page.click('[data-pref="size:lg"]'); await page.click('[data-pref="contrast:more"]'); await page.click('[data-pref="read:on"]');
+  await page.reload(); await page.waitForSelector("#app h1");
+  check(await page.evaluate(() => { const r = document.documentElement; return r.dataset.size === "lg" && r.dataset.contrast === "more" && r.dataset.read === "easy"; }), "reading settings apply and survive a reload");
+  await page.click('[data-pref="size:md"]'); await page.click('[data-pref="contrast:normal"]'); await page.click('[data-pref="read:off"]');
+  await page.goto(`${BASE}/#games`);
+  await page.waitForSelector(".gamecard");
+  check((await page.$$(".gamecard")).length === 4, "games page lists the quick games");
+  { // Subnetting answers are computed; check 400 of them against an independent calculation.
+    const bad = await page.evaluate(() => {
+      const toN = s => s.split(".").reduce((a, o) => a * 256 + +o, 0), out = [];
+      for (let i = 0; i < 400; i++) {
+        const q = CertHub.games._q.subnetQ(); let m, want;
+        if ((m = /usable host addresses are in a \/(\d+)/.exec(q.q))) want = String(2 ** (32 - m[1]) - 2);
+        else if ((m = /subnet mask is \/(\d+)/.exec(q.q))) { const n = 2 ** 32 - 2 ** (32 - m[1]); want = [24, 16, 8, 0].map(s => Math.floor(n / 2 ** s) % 256).join("."); }
+        else if ((m = /(network|broadcast) address of ([\d.]+)\/(\d+)/.exec(q.q))) { const size = 2 ** (32 - m[3]), a = toN(m[2]), net = a - a % size, v = m[1] === "network" ? net : net + size - 1; want = [24, 16, 8, 0].map(s => Math.floor(v / 2 ** s) % 256).join("."); }
+        if (q.a !== want || q.o.length !== 4 || new Set(q.o).size !== 4 || !q.o.includes(q.a)) out.push(q.q + " -> " + q.a + " (want " + want + ")");
+      }
+      for (const f of ["portQ", "acronymQ", "osiQ"]) for (let i = 0; i < 100; i++) { const q = CertHub.games._q[f](); if (q.o.length !== 4 || new Set(q.o).size !== 4 || !q.o.includes(q.a)) out.push(f + ": " + q.q); }
+      return out;
+    });
+    check(!bad.length, "game questions have one right answer among four different options" + (bad.length ? `: ${bad.slice(0, 3).join("; ")}` : ""));
+  }
+  await page.goto(`${BASE}/#game-ports`);
+  await page.click("[data-game=start]");
+  await page.waitForSelector("[data-gopt]");
+  await page.keyboard.press("1");
+  await page.waitForFunction(() => /Correct|Answer:/.test(document.querySelector("#gfeed").textContent));
+  check(true, "a game round starts and takes keyboard answers");
   await page.goto(`${BASE}/#security-plus.cheat`);
   await page.waitForSelector(".panel.cheat");
   check((await page.$$(".panel.cheat")).length === 5, "cheat sheet covers every domain");
