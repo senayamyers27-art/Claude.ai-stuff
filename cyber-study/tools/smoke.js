@@ -261,6 +261,14 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(`${BASE}/#settings.study`); await page.waitForSelector("#set-name");
   await page.fill("#set-name", "Test Learner"); await page.press("#set-name", "Tab");
   check(await page.evaluate(() => localStorage.getItem("certhub:name") === "Test Learner"), "settings page saves the certificate name");
+  // Help box on the home page and the full Help page (every answer), alongside the floating Help panel.
+  await page.goto(`${BASE}/#home`); await page.waitForSelector("#homehelp .supsearch");
+  await page.fill("#hsupsearch", "Spanish");
+  await page.waitForSelector("#hsupresults details[open]");
+  check(/Spanish|español/i.test(await page.textContent("#hsupresults")), "home page has a help box that searches the answers");
+  await page.goto(`${BASE}/#help`); await page.waitForSelector("#helppage .supqa");
+  check((await page.$$("#helppage .supqa")).length === await page.evaluate(() => CertHub.help.length) && !!(await page.$('.footlinks a[href="#help"]')), "Help page lists every answer and is linked from the footer");
+  await page.goto(`${BASE}/#settings`); await page.waitForSelector(".settabs");
   // Help widget: opens from the button, searches the built-in answers, closes with Escape (no API here, so no chat).
   await page.click("#helpbtn"); await page.waitForSelector("#supsearch");
   await page.fill("#supsearch", "backup another device");
