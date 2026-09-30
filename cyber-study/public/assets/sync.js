@@ -1004,7 +1004,7 @@
       if (cur === "pro" || cur === "premium") return `<button type="button" class="btn" data-aact="portal">Switch plans</button><p class="note">Change plans in Manage billing. The difference is prorated.</p>`;
       return `<button type="button" class="btn" data-aact="upgrade" data-plan="${esc(kind)}" data-interval="month">${X.monthly ? `${esc(X.monthly)} a month` : "Monthly"}</button><button type="button" class="btn ghost" data-aact="upgrade" data-plan="${esc(kind)}" data-interval="year">${X.yearly ? `${esc(X.yearly)} a year` : "Yearly"}</button>`;
     };
-    const tick = v => typeof v === "string" ? `<span class="pval">${esc(v)}</span>` : v ? `<span class="ptick" aria-label="Included">✓</span>` : `<span class="pno" aria-label="Not included">–</span>`;
+    const tick = v => typeof v === "string" ? `<span class="pval">${esc(v)}</span>` : v ? `<span class="ptick" aria-hidden="true">✓</span><span class="sr-only">Included</span>` : `<span class="pno" aria-hidden="true">–</span><span class="sr-only">Not included</span>`;
     return `<h1>Plans</h1>
     <p class="meta">Every study plan, lesson, quiz and lab guide is free. Pro removes the Free plan's limits and adds more practice and exam simulation. Premium Pro adds an AI tutor, study coach and mock interviews on top.</p>
     ${live ? "" : `<div class="status">Paid plans are opening soon. The Free plan works today, with no sign-up.</div>`}
@@ -1023,7 +1023,7 @@
         <div class="btns">${/* html: fixed markup with esc() */ cta("premium")}</div></div>
     </div>
     <h2>Compare plans</h2>
-    <div class="panel ptablewrap"><table class="ptable">
+    <div class="panel ptablewrap" tabindex="0" role="region" aria-label="Plan comparison"><table class="ptable">
       <thead><tr><th scope="col">Feature</th><th scope="col">Free</th><th scope="col">Pro</th><th scope="col">Premium Pro</th></tr></thead>
       <tbody>${PLAN_ROWS.map(([group, rows]) => `<tr class="pgroup"><th scope="colgroup" colspan="4">${esc(group)}</th></tr>${rows.map(([name, a, b, c]) => `<tr><th scope="row">${esc(name)}</th><td>${tick(a)}</td><td>${tick(b)}</td><td>${tick(c)}</td></tr>`).join("")}`).join("")}</tbody>
     </table></div>
