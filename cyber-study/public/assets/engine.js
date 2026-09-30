@@ -482,6 +482,20 @@
     startQuiz({ title, qs, mode: "test", minutes: examMinutes(qs.length) });
   }
   const examBtn = (act, cls) => examsLeft() ? `<button class="${esc(cls)}" data-act="${esc(act)}">Start</button>` : CertHub.plans.lock();
+  // Pro: 3 full-length exams a month per certification; Premium Pro (and organization seats) are unlimited.
+  const FULL_PER_MONTH = 3, month = () => new Date().toISOString().slice(0, 7);
+  const fullUsed = () => (S.p.fullMonth && S.p.fullMonth.m === month() ? S.p.fullMonth.n : 0);
+  const fullLimited = () => CertHub.plans && CertHub.plans.current === "pro";
+  // Premium Pro: AI weak-spot practice from this certification's weakest domains and recently missed questions.
+  function drillBtn() {
+    if (!CertHub.premium) return "";
+    return CertHub.premium.button("drill", "AI weak-spot practice", () => {
+      const weak = C.domains.map(d => { const st = (S.p.stats || {})[d.id] || { c: 0, t: 0 }; return { name: d.name, answered: st.t, accuracy: st.t ? Math.round(100 * st.c / st.t) : null, score: st.t ? st.c / st.t : 0.5 }; }).sort((a, b) => a.score - b.score).slice(0, 3);
+      const missed = Object.keys(S.p.review || {}).map(id => Q.find(q => q.id === id)).filter(Boolean).slice(0, 5).map(q => q.q);
+      return { subtitle: `${C.short} ${C.exam} · new questions on your weakest topics`, context: { certId: C.id, certName: `${C.name} (${C.exam})`, weak: weak.map(({ name, answered, accuracy }) => ({ name, answered, accuracy })), missed } };
+    });
+  }
+
   // Free plan: the first exam simulation in each domain.
   const simFree = p => PLANS().paid || !SIMS || SIMS.find(x => x.d === p.d) === p;
 
@@ -1139,6 +1153,7 @@
       <div class="row"><div class="grow"><h3>Placement test</h3><span class="note">${S.p.placement ? `Last taken ${esc(fmt(new Date(S.p.placement.at)))}. Retake it to see where you stand now.` : "A few questions from every domain to find what you already know and where to start"}</span></div><button class="btn ${S.p.placement ? "ghost" : ""}" data-act="placement">${S.p.placement ? "Retake" : "Start"}</button></div>
       <div class="row"><div class="grow"><h3>Weekly quiz</h3><span class="note">10 questions with instant feedback</span></div><select id="wsel" aria-label="Week">${W.map(w => `<option value="${esc(w.n)}" ${w.n === weekNow() ? "selected" : ""}>Week ${esc(w.n)}</option>`).join("")}</select><button class="btn" data-act="weekly-sel">Start</button></div>
       <div class="row"><div class="grow"><h3>Smart practice</h3><span class="note">15 questions picked for you: more from your weaker domains, harder where you're already strong</span></div><button class="btn" data-act="smart">Start</button></div>
+      ${/* html: built with esc() in sync.js */ drillBtn() ? `<div class="row"><div class="grow"><h3>AI weak-spot practice</h3><span class="note">New questions written for your weakest topics, one at a time, with explanations. Premium Pro.</span></div>${drillBtn()}</div>` : ""}
       <div class="row"><div class="grow"><h3>Review queue</h3><span class="note">Questions you missed, spaced 1, 3, 7 and 14 days apart</span></div><button class="btn" data-act="review" ${due ? "" : "disabled"}>${due ? `Review ${due}` : "Nothing due"}</button></div>
       <div class="row"><div class="grow"><h3>Domain drill</h3><span class="note">15 random questions</span></div><select id="dsel" aria-label="Domain">${C.domains.map(d => `<option value="${esc(d.id)}">D${esc(d.id)} (${cnt(d.id)})</option>`).join("")}</select>${Q.some(q => q.lv) ? `<select id="lvsel" aria-label="Difficulty"><option value="0">Any level</option>${[1, 2, 3].map(n => `<option value="${esc(n)}">${esc(LEVELS[n])}</option>`).join("")}</select>` : ""}<button class="btn" data-act="drill">Start</button></div>
       <details class="builder"><summary><h3>Build your own quiz</h3></summary>
@@ -1167,7 +1182,8 @@
     if (!Pro().available) return "";
     const N = C.examSim.questions, M = C.examSim.minutes;
     const ready = Pro().active && PRO;
-    return `<div class="row"><div class="grow"><h3>Full-length exam <span class="chip pro">Pro</span></h3><span class="note">${esc(N)} questions in ${esc(M)} minutes, weighted like the real exam, with a pass estimate at the end.${Pro().active && !PRO ? " Loading the Pro question bank…" : ""}</span></div>${ready ? `<button class="btn" data-act="fullexam">Start</button>` : Pro().active ? "" : `<a class="btn ghost" href="#account">Unlock</a>`}</div>`;
+    const left = fullLimited() ? FULL_PER_MONTH - fullUsed() : null;
+    return `<div class="row"><div class="grow"><h3>Full-length exam <span class="chip pro">Pro</span></h3><span class="note">${esc(N)} questions in ${esc(M)} minutes, weighted like the real exam, with a pass estimate at the end.${Pro().active && !PRO ? " Loading the Pro question bank…" : ""}${left == null ? "" : ` Pro: ${esc(Math.max(0, left))} of ${FULL_PER_MONTH} left this month; <a href="#plans">Premium Pro</a> is unlimited.`}</span></div>${ready ? `<button class="btn" data-act="fullexam">Start</button>` : Pro().active ? "" : `<a class="btn ghost" href="#account">Unlock</a>`}</div>`;
   }
   // A rough pass estimate from a full-length score. Real exams use scaled scores, so this is a guide.
   const passBand = pct => pct >= 85 ? ["Likely pass", "var(--ok)"] : pct >= 75 ? ["Borderline", "var(--warn)"] : ["Not yet", "var(--bad)"];
@@ -1480,7 +1496,14 @@
       exam: () => startExam("Practice exam", examQs()),
       smart: () => { const qs = smartQs(); if (!qs.length) return; startQuiz({ title: "Smart practice", qs, mode: "learn" }); },
       hardexam: () => startExam("Hard mode exam", hardQs()),
-      fullexam: () => { if (!PRO) return; startQuiz({ title: "Full-length exam", qs: fullExamQs(), mode: "test", minutes: C.examSim.minutes, kind: "full" }); },
+      fullexam: () => {
+        if (!PRO) return;
+        if (fullLimited()) {
+          if (fullUsed() >= FULL_PER_MONTH) { CertHub.plans.upsell(`Pro includes ${FULL_PER_MONTH} full-length exams a month for each certification, and you've taken this month's ${FULL_PER_MONTH} for ${C.short}. They reset on the 1st. Premium Pro includes unlimited full-length exams.`); return; }
+          S.p.fullMonth = { m: month(), n: fullUsed() + 1 }; save();
+        }
+        startQuiz({ title: "Full-length exam", qs: fullExamQs(), mode: "test", minutes: C.examSim.minutes, kind: "full" });
+      },
       fcstart: () => {
         const dom = +$("#fcsel").value, sched = S.p.cards || {}, now = today().getTime() + 1000;
         const due = PRO.flashcards.filter(f => (!dom || f[0] === dom) && (!sched[cardKey(f)] || sched[cardKey(f)].due <= now));

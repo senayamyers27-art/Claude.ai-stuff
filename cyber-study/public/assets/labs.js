@@ -95,6 +95,11 @@
     <h2>Your notes and findings</h2>
     <p class="note">Write what you saw, commands that behaved differently, screenshots you took. Saved in this browser as you type, and used in your write-up.</p>
     <textarea id="labnotes" rows="7" placeholder="e.g. Lynis hardening index went from 58 to 74 after disabling password SSH and enabling ufw.">${esc(s.notes || "")}</textarea>
+    ${/* html: built with esc() in sync.js */ CertHub.premium ? `<div class="btns">${CertHub.premium.button("writeup", "AI feedback on my write-up", () => {
+      const notes = (($("#labnotes") || {}).value || "").trim();
+      if (notes.length < 20) { CertHub.ui.toast("Write a few notes about what you did first."); return null; }
+      return { subtitle: lab.title, context: { title: lab.title, goal: lab.goal || lab.summary || "", deliverable: lab.deliverable || "", bullet: lab.resume || "", notes } };
+    })}</div>` : ""}
     <h2>For your portfolio</h2>
     <div class="panel"><strong>Deliverable</strong><p>${esc(lab.deliverable)}</p>
       <strong>Resume bullet</strong><p class="resume">${esc(lab.resume)}</p>
@@ -195,11 +200,16 @@ ${lab.deliverable}
   function resumeBuilder() {
     const roles = nice().roles;
     return `<h2>Resume builder</h2>
-    <p class="note">Builds a resume section from your finished labs and the certifications you're studying. Nothing leaves your browser.</p>
+    <p class="note">Builds a resume section from your finished labs and the certifications you're studying. Nothing leaves your browser${CertHub.premium && CertHub.premium.active ? " unless you ask for the AI resume review" : ""}.</p>
     <div class="panel resumeb">
       <label for="rb-name">Your name (optional)</label><input type="text" id="rb-name" autocomplete="name">
       <label for="rb-role">Target role</label><select id="rb-role">${roles.map(r => `<option value="${esc(r.id)}">${esc(r.name)}</option>`).join("")}</select>
-      <div class="btns"><button type="button" class="btn" data-lact="resumecopy">Copy resume section</button><button type="button" class="btn ghost no-framed" data-lact="resumedl">Download (.md)</button></div>
+      ${CertHub.premium && CertHub.premium.active ? `<label for="rb-own">Your current resume or LinkedIn summary (optional, for the AI review)</label><textarea id="rb-own" rows="6" maxlength="8000" placeholder="Paste it here, or leave empty to review the section built from your labs."></textarea>` : ""}
+      <div class="btns"><button type="button" class="btn" data-lact="resumecopy">Copy resume section</button><button type="button" class="btn ghost no-framed" data-lact="resumedl">Download (.md)</button>${/* html: built with esc() in sync.js */ CertHub.premium ? CertHub.premium.button("resume", "AI resume review", () => {
+        const roleId = (document.getElementById("rb-role") || {}).value, role = nice().roles.find(r => r.id === roleId);
+        const own = ((document.getElementById("rb-own") || {}).value || "").trim();
+        return { subtitle: `For ${role ? role.name : "your target role"}`, context: { role: role ? role.name : "IT professional", resume: own || resumeMarkdown() } };
+      }) : ""}</div>
     </div>`;
   }
   function resumeMarkdown() {

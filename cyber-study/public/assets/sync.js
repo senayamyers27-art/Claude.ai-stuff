@@ -294,7 +294,7 @@
     if (plan === "org") return `<h2>Pro</h2><div class="panel"><p data-style="margin:0">Your organization's plan includes every Pro feature.</p></div>`;
     if (!me.billing) return "";
     const plans = `<a class="btn ghost" href="#plans">Compare plans</a>`;
-    if (plan === "premium") return `<h2>Premium Pro</h2><div class="panel"><p data-style="margin:0">You have Premium Pro: everything in Pro, plus the AI tutor, study coach and mock interviews. Thanks for supporting the site.</p><div class="btns"><button type="button" class="btn ghost" data-aact="portal">Manage billing</button>${plans}</div></div>`;
+    if (plan === "premium") return `<h2>Premium Pro</h2><div class="panel"><p data-style="margin:0">You have Premium Pro: everything in Pro, plus unlimited full-length exams, the AI tutor, weak-spot practice, study coach, resume and lab reviews, and mock interviews. Thanks for supporting the site.</p><div class="btns"><button type="button" class="btn ghost" data-aact="portal">Manage billing</button>${plans}</div></div>`;
     if (plan === "pro") return `<h2>Pro</h2><div class="panel"><p data-style="margin:0">You have Pro. Thanks for supporting the site. Manage, change or cancel your plan any time.</p>${me.premium ? `<p class="note">Premium Pro adds the AI tutor, study coach and mock interviews. Switch plans from Manage billing.</p>` : ""}<div class="btns"><button type="button" class="btn ghost" data-aact="portal">Manage billing</button>${plans}</div></div>`;
     return `<h2>Upgrade</h2><div class="panel">${proPitch()}${me.premium ? `<p data-style="margin:8px 0 0"><strong>Premium Pro</strong> adds an AI tutor for every question you miss, a personal AI study coach and AI mock job interviews.</p>` : ""}<div class="btns"><a class="btn" href="#plans">See plans and prices</a></div><p class="note" data-style="margin:0">Cancel any time from Manage billing. 7-day refund on your first payment. Payments are handled by Stripe.</p></div>`;
   }
@@ -967,7 +967,8 @@
       ["Exam simulations (performance-based questions)", "First in each domain", "All", "All"],
       ["Spaced review, readiness score and exam countdown", 1, 1, 1],
       ["About 300 extra practice questions per certification", 0, 1, 1],
-      ["Full-length timed exams with a pass estimate", 0, 1, 1],
+      ["Full-length timed exams with a pass estimate", 0, "3 a month", "Unlimited"],
+      ["AI weak-spot practice: new questions on the topics you miss most", 0, 0, 1],
       ["Score report by exam objective, with trends", 0, 1, 1],
       ["Printable study guides", 0, 1, 1]]],
     ["Practice", [
@@ -976,7 +977,8 @@
       ["Graded VM labs", "5", "All", "All"],
       ["Timed VM exam", 0, 1, 1],
       ["Games, log puzzles, incident tabletops and network design", 1, 1, 1],
-      ["Capstone projects with grading rubrics for your portfolio", 0, 1, 1]]],
+      ["Capstone projects with grading rubrics for your portfolio", 0, 1, 1],
+      ["AI feedback on your lab notes and write-ups", 0, 0, 1]]],
     ["AI help", [
       ["Help assistant questions a day", "5", "30", "100"],
       ["AI Tutor: a personal explanation of any question you miss, with follow-up questions", 0, 0, 1],
@@ -985,6 +987,7 @@
     ["Account", [
       ["Free profile, saved work and sync across devices", 1, 1, 1],
       ["Career Paths, resume builder and portfolio", 1, 1, 1],
+      ["AI resume and LinkedIn review for your target role", 0, 0, 1],
       ["No ads, ever", 1, 1, 1]]]
   ];
   function plansView() {
@@ -1012,11 +1015,11 @@
         <div class="btns">${cur === "free" && signedIn() ? `<p class="pcur">Your current plan</p>` : `<a class="btn ghost" href="#certifications">Start studying</a>`}</div></div>
       <div class="panel plancard"><h2>Pro</h2>${price(PRICE, "Pro")}
         <p>For exam prep at full length: more questions, real-length timed exams and a detailed score report.</p>
-        <ul class="clean"><li>Everything in Free, without its limits</li><li>Unlimited practice exams</li><li>Every exam simulation, graded VM lab and the VM exam</li><li>About 300 extra questions per certification</li><li>Full-length timed exams and a score report</li><li>30 help assistant questions a day</li></ul>
+        <ul class="clean"><li>Everything in Free, without its limits</li><li>Unlimited practice exams</li><li>Every exam simulation, graded VM lab and the VM exam</li><li>About 300 extra questions per certification</li><li>3 full-length timed exams a month and a score report</li><li>30 help assistant questions a day</li></ul>
         <div class="btns">${/* html: fixed markup with esc() */ cta("pro")}</div></div>
       <div class="panel plancard best"><span class="chip premchip">Most help</span><h2>Premium Pro</h2>${price(PREMIUM, "Premium Pro")}
         <p>For personal coaching: an AI tutor that explains your mistakes, a study coach and interview practice.</p>
-        <ul class="clean"><li>Everything in Pro</li><li>AI Tutor for every missed question</li><li>AI Study Coach with a weekly plan</li><li>AI mock job interviews</li><li>100 help assistant questions a day</li></ul>
+        <ul class="clean"><li>Everything in Pro</li><li>Unlimited full-length exams</li><li>AI Tutor for every missed question</li><li>AI weak-spot practice questions</li><li>AI Study Coach with a weekly plan</li><li>AI resume review and mock job interviews</li><li>AI feedback on lab write-ups</li><li>100 help assistant questions a day</li></ul>
         <div class="btns">${/* html: fixed markup with esc() */ cta("premium")}</div></div>
     </div>
     <h2>Compare plans</h2>
