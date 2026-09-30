@@ -79,6 +79,8 @@ What remains needs your accounts, payment details and secrets, so only you can d
 - [ ] **Test Premium Pro.** Buy it with the test card and confirm the AI tutor opens from a missed question's review, the AI study coach from a dashboard card, and the AI interviewer from a career page. Switch to Pro in the Customer Portal and confirm the AI buttons change to "Premium Pro" links.
 - [ ] **Test cancelling.** Cancel in the Customer Portal and confirm Pro turns off at the end of the period.
 - [ ] **Test exporting and deleting.** Export your data, then delete the account from the Account page.
+- [ ] **Open your dashboard.** Add the variable `STUDY_API_ADMIN_EMAILS` with your email (several, comma-separated, are fine), redeploy the API, sign in and open **Account → Site dashboard** (`#admin`). It shows totals only: sign-ups, active learners, paid plans and a monthly revenue estimate, the most studied certifications, classes and referrals.
+- [ ] **Try a referral.** On the Account page, copy your invite link from **Invite friends**. A friend who opens it and buys a first personal plan gets 30 days free; when their plan turns paid, you get a month of Pro as Stripe account credit (up to 12 a year).
 - [ ] **Run the accounts check.** Run `npm run test:accounts` locally, which runs the end-to-end accounts test.
 
 ## 6. Go live

@@ -61,9 +61,19 @@ export async function listClasses(env, user) {
     `SELECT c.id, c.name, c.cert_id, c.teacher_name, m.display_name, m.show_email, m.joined_at
      FROM class_members m JOIN classes c ON c.id = m.class_id WHERE m.user_id = ? ORDER BY m.joined_at DESC`
   ).bind(user.id).all()).results || [];
+  // A student's own assignments, with how far along they are (from their own synced progress).
+  let myDocs = null;
+  const joinedOut = [];
+  for (const j of joined) {
+    const list = await assignmentsFor(env, j.id);
+    if (list.length && !myDocs) myDocs = (await env.DB.prepare("SELECT doc_key, body, updated_at FROM progress_docs WHERE user_id = ?").bind(user.id).all()).results || [];
+    const mine = list.length ? studentSummary(myDocs, j.cert_id) : null;
+    joinedOut.push({ id: j.id, name: j.name, certId: j.cert_id, teacherName: j.teacher_name, displayName: j.display_name, showEmail: !!j.show_email, joinedAt: j.joined_at,
+      assignments: list.map(a => ({ ...a, ...assignmentProgress(a, mine) })) });
+  }
   return {
     teaching: teaching.map(classOut),
-    joined: joined.map(j => ({ id: j.id, name: j.name, certId: j.cert_id, teacherName: j.teacher_name, displayName: j.display_name, showEmail: !!j.show_email, joinedAt: j.joined_at })),
+    joined: joinedOut,
     limit: MAX_CLASSES_PER_TEACHER
   };
 }
@@ -230,6 +240,52 @@ export function studentSummary(docs, classCertId, at = now()) {
   return { certs, labsDone, lastActive };
 }
 
+/* ---------- assignments ---------- */
+// A target on one certification: lessons read, best practice exam %, exam readiness %, or questions answered.
+export const ASSIGNMENT_KINDS = { lessons: [1, 500], exam: [1, 100], readiness: [1, 100], questions: [1, 5000] };
+export const ASSIGNMENT_ID_RE = /^asg_[0-9a-f]{24}$/;
+const MAX_ASSIGNMENTS_PER_CLASS = 50;
+const assignmentOut = a => ({ id: a.id, title: a.title, certId: a.cert_id, kind: a.kind, target: a.target, dueDate: a.due_date || null, createdAt: a.created_at });
+async function assignmentsFor(env, classId) {
+  return ((await env.DB.prepare("SELECT * FROM class_assignments WHERE class_id = ? ORDER BY COALESCE(due_date, '9999'), created_at").bind(classId).all()).results || []).map(assignmentOut);
+}
+// How far a student is on one assignment: { value, done } from their summary (studentSummary's certs).
+export function assignmentProgress(a, summary) {
+  const s = summary && summary.certs.find(c => c.certId === a.certId);
+  const value = !s ? 0 : a.kind === "lessons" ? s.lessonsRead : a.kind === "exam" ? (s.bestExam || 0) : a.kind === "readiness" ? (s.readiness || 0) : s.answered;
+  return { value, done: value >= a.target };
+}
+
+export async function createAssignment(env, request, user, classId, body) {
+  const c = await ownClass(env, user, classId);
+  await rateLimit(env, "class:assign:" + user.id, 100, 24 * 60 * 60 * 1000);
+  const title = cleanText(body.title, 100, "invalid_title", "Assignment title");
+  const certId = cleanCert(body.certId || c.cert_id);
+  if (!certId) throw bad("invalid_cert", "Choose a certification.");
+  const range = ASSIGNMENT_KINDS[body.kind];
+  if (!range) throw bad("invalid_kind", "Choose what the assignment asks for.");
+  const target = parseInt(body.target, 10);
+  if (!(target >= range[0] && target <= range[1])) throw bad("invalid_target", `The target must be ${range[0]}–${range[1]}.`);
+  const due = body.dueDate == null || body.dueDate === "" ? null : String(body.dueDate);
+  if (due && !/^\d{4}-\d{2}-\d{2}$/.test(due)) throw bad("invalid_due", "Use a date like 2026-10-31.");
+  const n = (await env.DB.prepare("SELECT COUNT(*) AS n FROM class_assignments WHERE class_id = ?").bind(c.id).first()).n;
+  if (n >= MAX_ASSIGNMENTS_PER_CLASS) throw new HttpError(409, "too_many_assignments", `A class can have up to ${MAX_ASSIGNMENTS_PER_CLASS} assignments. Delete an old one first.`);
+  const a = { id: newId("asg"), class_id: c.id, title, cert_id: certId, kind: body.kind, target, due_date: due, created_at: now() };
+  await env.DB.prepare("INSERT INTO class_assignments (id, class_id, title, cert_id, kind, target, due_date, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+    .bind(a.id, a.class_id, a.title, a.cert_id, a.kind, a.target, a.due_date, a.created_at).run();
+  await audit(env, request, { actor: user.id, action: "class.assignment_created", target: c.id });
+  return assignmentOut(a);
+}
+
+export async function deleteAssignment(env, request, user, classId, assignmentId) {
+  const c = await ownClass(env, user, classId);
+  if (!ASSIGNMENT_ID_RE.test(assignmentId)) throw notFound("Assignment not found.");
+  const r = await env.DB.prepare("DELETE FROM class_assignments WHERE id = ? AND class_id = ?").bind(assignmentId, c.id).run();
+  if (!r.meta || !r.meta.changes) throw notFound("Assignment not found.");
+  await audit(env, request, { actor: user.id, action: "class.assignment_deleted", target: c.id });
+  return { ok: true };
+}
+
 export async function roster(env, user, classId) {
   const c = await ownClass(env, user, classId);
   const members = (await env.DB.prepare(
@@ -237,17 +293,20 @@ export async function roster(env, user, classId) {
      FROM class_members m JOIN users u ON u.id = m.user_id WHERE m.class_id = ? ORDER BY m.display_name COLLATE NOCASE, m.joined_at`
   ).bind(c.id).all()).results || [];
   const at = now(), students = [];
+  const assignments = await assignmentsFor(env, c.id);
   for (const m of members) {
     const docs = (await env.DB.prepare("SELECT doc_key, body, updated_at FROM progress_docs WHERE user_id = ?").bind(m.user_id).all()).results || [];
+    const summary = studentSummary(docs, c.cert_id, at);
     students.push({
       memberId: m.id,
       displayName: m.display_name,
       email: m.show_email ? m.email : null,
       joinedAt: m.joined_at,
-      ...studentSummary(docs, c.cert_id, at)
+      ...summary,
+      assignments: assignments.map(a => ({ id: a.id, ...assignmentProgress(a, summary) }))
     });
   }
-  return { class: classOut({ ...c, students: members.length }), students };
+  return { class: classOut({ ...c, students: members.length }), assignments: assignments.map(a => ({ ...a, done: students.filter(s => s.assignments.find(x => x.id === a.id).done).length })), students };
 }
 
 export function rosterCsv(r) {

@@ -32,6 +32,9 @@ const vars = {
 for (const k of ["STRIPE_PRICE_PRO_MONTHLY", "STRIPE_PRICE_PRO_YEARLY", "STRIPE_PRICE_PREMIUM_MONTHLY", "STRIPE_PRICE_PREMIUM_YEARLY", "STRIPE_PRICE_ORG_SEAT"])
   if (/^price_[A-Za-z0-9]+$/.test(process.env[k] || "")) vars[k] = process.env[k];
 if (/^bpc_[A-Za-z0-9]+$/.test(process.env.STRIPE_PORTAL_CONFIG || "")) vars.STRIPE_PORTAL_CONFIG = process.env.STRIPE_PORTAL_CONFIG;
+// The site owner's dashboard (#admin): comma-separated email addresses from the STUDY_API_ADMIN_EMAILS variable.
+const admins = (process.env.STUDY_API_ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(s => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/.test(s));
+if (admins.length) vars.ADMIN_EMAILS = admins.join(",");
 
 // One compatibility date for local and deployed Workers: the one in api/wrangler.toml.
 const compat = (fs.readFileSync(path.join(ROOT, "api/wrangler.toml"), "utf8").match(/^compatibility_date\s*=\s*"(\d{4}-\d{2}-\d{2})"/m) || [])[1];

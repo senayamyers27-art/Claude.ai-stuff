@@ -15,11 +15,14 @@ export async function exportAccount(env, user) {
   const sessions = (await q("SELECT created_at, expires_at, user_agent FROM sessions WHERE user_id = ?", user.id).all()).results || [];
   const identities = (await q("SELECT provider, email, created_at, last_used_at FROM identities WHERE user_id = ?", user.id).all()).results || [];
   const passkeys = (await q("SELECT name, created_at, last_used_at FROM passkeys WHERE user_id = ?", user.id).all()).results || [];
+  const referral = await q("SELECT code, created_at FROM referral_codes WHERE user_id = ?", user.id).first();
+  const referralRewards = (await q("SELECT amount, status, created_at, credited_at FROM referral_rewards WHERE referrer_id = ?", user.id).all()).results || [];
   return {
     exportedAt: new Date().toISOString(),
     user: u,
     progress: docs.map(d => ({ key: d.doc_key, version: d.version, updatedAt: d.updated_at, body: JSON.parse(d.body) })),
-    organizations: orgs, cohorts, classesTaught, classesJoined, subscriptions: subs, sessions, passkeys, linkedSignIns: identities
+    organizations: orgs, cohorts, classesTaught, classesJoined, subscriptions: subs, sessions, passkeys, linkedSignIns: identities,
+    referral: referral || null, referralRewards
   };
 }
 
@@ -39,7 +42,8 @@ export async function deleteAccount(env, request, user, body) {
     if (!res.ok && res.status !== 404) throw new HttpError(502, "stripe_error", "Couldn't close the billing account. Try again, or cancel in Manage billing first.");
   }
   for (const o of owned) await env.DB.prepare("DELETE FROM orgs WHERE id = ?").bind(o.id).run();
-  await env.DB.prepare("DELETE FROM users WHERE id = ?").bind(user.id).run(); // cascades to sessions, progress, memberships
+  await env.DB.prepare("DELETE FROM referral_rewards WHERE referee_id = ?").bind(user.id).run(); // the rewards they earned go with the user (cascade)
+  await env.DB.prepare("DELETE FROM users WHERE id = ?").bind(user.id).run(); // cascades to sessions, progress, memberships, referral code
   await env.DB.prepare("DELETE FROM magic_links WHERE email = ?").bind(user.email).run();
   await audit(env, request, { actor: "system", action: "user.deleted" });
   return { deleted: true };
