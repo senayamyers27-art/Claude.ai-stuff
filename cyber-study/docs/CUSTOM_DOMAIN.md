@@ -42,7 +42,7 @@ Then, in the **`senayamyers27-art.github.io` repository → Settings → Pages**
 1. **Check the custom domain.** It should show `www.studytocert.com` with a green "DNS check successful".
 2. **Turn on HTTPS.** Tick **Enforce HTTPS** once it is available. GitHub can take up to an hour to issue the certificate.
 
-Old `senayamyers27-art.github.io` links keep working because GitHub redirects them to the new domain. Progress that learners saved in their browser is tied to the old address, though. The site's backup and restore buttons (on the home page) move it across, so it is worth mentioning when you announce the new domain.
+Old `senayamyers27-art.github.io` links keep working because GitHub redirects them to the new domain. Progress that learners saved in their browser is tied to the old address, though. The backup and restore buttons (Settings → Your data) move it across, so it is worth mentioning when you announce the new domain.
 
 ## 4. Harden the domain's DNS (after the switch)
 

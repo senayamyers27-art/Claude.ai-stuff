@@ -129,6 +129,12 @@ For the "which certification should I take?" questions: I wrote side-by-side com
 
 Best as a reply to a question someone actually asked, and say that you made the site.
 
+### Deeper lessons (r/CompTIA, r/CISSP, study groups)
+
+I made a free study site, ${cfg.siteName}, and just rewrote the Security+, Network+, A+, CySA+ and CISSP lessons to go deeper: each topic now has a worked example, the common mistakes, the clue words exam questions use, and four self-check questions. There are also weekly quizzes, practice exams weighted like the real ones and hands-on labs. No sign-up or ads. Feedback on anything that's wrong or unclear is very welcome. ${URL}
+
+Post it where self-promotion is allowed (many subreddits have a weekly thread), and keep the "I made" so people know it's yours.
+
 ### A first week of posts
 
 | Day | Where | Post | Image |
