@@ -994,13 +994,17 @@
       </div>`;
   }
 
+  // The login and sign-up pages offer Google and LinkedIn (Facebook stays available under "Sign-in methods" on the
+  // profile page for anyone who already uses it).
+  const AUTH_PROVIDERS = ["google", "linkedin"];
   function socialButtons(signup) {
     if (NATIVE) return ""; // Google and others don't allow sign-in from inside an app's web view
-    const list = providers();
+    const list = providers().filter(p => AUTH_PROVIDERS.includes(p));
     if (!list.length) return "";
     return `<div class="social">${list.map(p => `<a class="btn socialbtn" href="${esc(startUrl(p))}" data-provider="${esc(p)}">${/* safe: fixed SVG */ LOGO[p]}<span>${signup ? "Sign up" : "Log in"} with ${esc(PNAME[p])}</span></a>`).join("")}</div>
       <div class="orline" role="separator"><span>or use your email</span></div>`;
   }
+
   // #login and #signup are separate pages: signing up explains what an account gives you and asks for agreement to
   // the Terms; logging in is a short form with passkeys. Both send the same emailed link (the account is created the
   // first time it's used), and the server answers the same either way so nobody can tell which emails have accounts.
@@ -1020,20 +1024,26 @@
           <p class="note" id="signin-msg" role="status"></p>
         </form>`;
   function loginPage(note) {
-    return `<div class="authcard authlogin">
-      <h1>Log in</h1>
-      <p class="meta">Welcome back. Pick up where you left off on any device.</p>
-      ${/* html: status markup built with esc() in loginView */ note}
-      <div class="panel">
+    return `<div class="authlogin">
+      <div class="panel logincard">
+        <div class="loginbadge" aria-hidden="true">${/* safe: fixed SVG */ CertHub.fx.icon("user", "", 26)}</div>
+        <h1>Log in</h1>
+        <p class="meta">Welcome back. Pick up where you left off.</p>
+        ${/* html: status markup built with esc() in loginView */ note}
         ${socialButtons(false)}
         ${emailForm(NATIVE ? "Email me a sign-in code" : "Email me a login link", "login")}
         ${PASSKEYS ? `<div class="orline" role="separator"><span>or</span></div><div class="btns" data-style="margin-top:0"><button type="button" class="btn ghost" data-aact="passkey-signin">Log in with a passkey</button></div><p class="note" id="passkey-msg" role="status" data-style="margin:0"></p>` : ""}
+        <p class="note authhint">No password to remember: we email you a ${NATIVE ? "code" : "link"} each time.</p>
       </div>
-      <p class="note authhint">No password to remember: we email you a ${NATIVE ? "code" : "link"} each time.</p>
       <p class="authswitch">New to StudyToCert? <a class="btn ghost sm" href="#signup">Create a free account</a></p>
     </div>`;
   }
   function signupPage(note) {
+    const steps = [
+      ["Choose how", NATIVE ? "Enter your email address." : "Google, LinkedIn or your email address."],
+      ["Confirm your email", NATIVE ? "Type the code we send you." : "Open the link we send you."],
+      ["Start studying", "Pick a certification and get your week-by-week plan."]
+    ];
     const perks = [
       ["Your progress on every device", "Plans, quiz scores, streaks and review cards sync between your phone and computer."],
       ["A portfolio of your labs", "Finished labs become write-ups and resume bullets you can share."],
@@ -1041,20 +1051,25 @@
       ["Free, with no ads", "Every study plan, lesson, lab and practice exam stays free. Pro is optional."]
     ];
     return `<div class="authsignup">
-      <div class="authperks">
+      <div class="signuphero">
+        <p class="eyebrow">Free account</p>
         <h1>Create your free account</h1>
         <p class="meta">Everything on the site works without an account. An account keeps your work safe and with you.</p>
-        <ul class="clean perklist">${perks.map(([t, d]) => `<li><strong>${esc(t)}</strong><span class="note">${esc(d)}</span></li>`).join("")}</ul>
+        <ol class="clean signupsteps">${steps.map(([t, d], i) => `<li><span class="stepnum" aria-hidden="true">${/* num */ i + 1}</span><div><strong>${esc(t)}</strong><span class="note">${esc(d)}</span></div></li>`).join("")}</ol>
       </div>
-      <div class="authcard">
-        ${/* html: status markup built with esc() in loginView */ note}
-        <div class="panel">
-          <h2 data-style="margin-top:0">Sign up</h2>
+      <div class="signupbody">
+        <div class="panel signupcard">
+          <h2>Sign up</h2>
+          ${/* html: status markup built with esc() in loginView */ note}
           ${socialButtons(true)}
           ${emailForm(NATIVE ? "Email me a code to sign up" : "Create my account", "signup")}
-          <p class="note" data-style="margin:0">By creating an account you agree to the <a href="#terms">Terms</a> and <a href="#privacy">Privacy Policy</a>. Accounts are for ages 13 and up.${NATIVE ? "" : " From Google, Facebook or LinkedIn we only get your name and email address, and we never post anything."}</p>
+          <p class="note" data-style="margin:0">By creating an account you agree to the <a href="#terms">Terms</a> and <a href="#privacy">Privacy Policy</a>. Accounts are for ages 13 and up.${NATIVE ? "" : " From Google or LinkedIn we only get your name and email address, and we never post anything."}</p>
+          <p class="authswitch">Already have an account? <a class="btn ghost sm" href="#login">Log in</a></p>
         </div>
-        <p class="authswitch">Already have an account? <a class="btn ghost sm" href="#login">Log in</a></p>
+        <div class="authperks">
+          <h2>What you get</h2>
+          <ul class="clean perklist">${perks.map(([t, d]) => `<li><strong>${esc(t)}</strong><span class="note">${esc(d)}</span></li>`).join("")}</ul>
+        </div>
       </div>
     </div>`;
   }

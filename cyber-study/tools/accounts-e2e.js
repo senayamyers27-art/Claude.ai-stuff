@@ -297,12 +297,12 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     check(left.n === 0, "account removed from the server");
     check(!!(await local(b, "certhub:v1:labs")), "progress on the device is kept");
 
-    console.log("Sign in with Google, Facebook or LinkedIn (development stand-ins)");
+    console.log("Sign in with Google or LinkedIn (development stand-ins)");
     const s = await device();
     await s.goto(BASE + "/#signup");
     await s.waitForSelector(".socialbtn");
     const btns = await s.$$eval(".socialbtn", els => els.map(e => e.textContent.trim()));
-    check(btns.join("|") === "Sign up with Google|Sign up with Facebook|Sign up with LinkedIn", "sign-up page offers Google, Facebook and LinkedIn");
+    check(btns.join("|") === "Sign up with Google|Sign up with LinkedIn", "sign-up page offers Google and LinkedIn");
     check(await s.$("#signin-form[data-intent=signup]") && /Create your free account/.test(await s.textContent("h1")) && (await s.$$(".perklist li")).length === 4, "sign-up page explains what an account gives you and offers an email link");
     check(/agree to the Terms/.test(await s.textContent(".authsignup")) && !(await s.$("[data-aact=passkey-signin]")), "sign-up page asks for agreement to the Terms, with no passkey button");
     await s.goto(BASE + "/#login");
@@ -349,18 +349,19 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await s.click("#fake-continue");
     await s.waitForSelector("#profile-form");
     check(/Help desk tech/.test(await s.textContent(".bio")), "signing in again with Google opens the same account");
-    // Facebook with an address that already has an account asks for the email link first.
+    // LinkedIn with an address it hasn't verified, which already has an account here, asks for the email link first.
     await s.click("[data-aact=signout]");
-    await s.waitForSelector('.socialbtn[data-provider="facebook"]');
-    await s.click('.socialbtn[data-provider="facebook"]');
-    await s.fill("#fake-email", "sam.social@example.com");
+    await s.waitForSelector('.socialbtn[data-provider="linkedin"]');
+    check(!(await s.$('.socialbtn[data-provider="facebook"]')), "the login page offers Google and LinkedIn only");
+    await s.click('.socialbtn[data-provider="linkedin"]');
+    await s.fill("#fake-email", "sam.social@example.com"); await s.uncheck('input[name="verified"]');
     await s.click("#fake-continue");
-    await s.waitForSelector(".authcard .status.warn");
-    check(/already exists/.test(await s.textContent(".authcard .status")), "Facebook doesn't take over an existing account by email");
+    await s.waitForSelector("#app .status.warn");
+    check(/already exists/.test(await s.textContent("#app .status.warn")), "LinkedIn doesn't take over an existing account by email");
     await s.click('.socialbtn[data-provider="linkedin"]');
     await s.click("#fake-cancel");
-    await s.waitForSelector(".authcard .status.warn");
-    check(/cancelled/.test(await s.textContent(".authcard .status")), "cancelling at the provider explains what happened");
+    await s.waitForSelector("#app .status.warn");
+    check(/cancelled/.test(await s.textContent("#app .status.warn")), "cancelling at the provider explains what happened");
     if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/login-error.png`, fullPage: true });
 
     console.log("Help widget with the AI assistant (development stub)");
