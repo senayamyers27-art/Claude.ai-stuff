@@ -2,6 +2,7 @@
    (no SDK). Entitlements are always computed on the server from the subscriptions table. */
 import { now, bad, forbidden, HttpError, safeEqual, isHttps } from "./util.js";
 import { audit } from "./audit.js";
+import { sendEmail } from "./email.js";
 
 
 export const billingEnabled = env => !!(env.STRIPE_SECRET_KEY && env.STRIPE_PRICE_PRO_MONTHLY);
@@ -189,6 +190,7 @@ export async function handleWebhook(env, request) {
     else if (event.type === "checkout.session.completed" && obj.subscription) {
       const sub = typeof obj.subscription === "string" ? await stripe(env, "GET", `/subscriptions/${obj.subscription}`) : obj.subscription;
       await upsertSubscription(env, sub, false, at);
+      await welcomeEmail(env, sub);
     } else if (event.type === "invoice.payment_failed" && invoiceSubscription(obj)) {
       await env.DB.prepare("UPDATE subscriptions SET status = 'past_due', updated_at = ?, stripe_event_at = ? WHERE stripe_subscription = ? AND COALESCE(stripe_event_at, 0) <= ?")
         .bind(now(), at, invoiceSubscription(obj), at).run();
@@ -200,6 +202,27 @@ export async function handleWebhook(env, request) {
   }
   await audit(env, null, { actor: "stripe", action: "stripe." + event.type, target: obj && obj.id });
   return { received: true };
+}
+
+// A short welcome after a first purchase (checkout.session.completed arrives once per purchase; duplicates are
+// dropped above). Best effort: a failed email never fails the webhook, so Stripe doesn't retry the whole event.
+const WELCOME = {
+  pro: { name: "Pro", lines: ["Unlimited practice exams, every exam simulation and graded VM lab, and the timed VM exam", "About 300 extra practice questions per certification, with explanations", "3 full-length timed exams a month per certification, with a pass estimate and a score report", "Printable study guides and capstone projects for your portfolio"] },
+  premium: { name: "Premium Pro", lines: ["Everything in Pro, with unlimited full-length exams", "The AI tutor: \"Explain with the AI tutor\" under any question you miss", "AI weak-spot practice on each certification's Practice tab", "The AI study coach on your dashboard, AI resume and lab write-up reviews, and AI mock interviews on the career pages"] }
+};
+async function welcomeEmail(env, sub) {
+  try {
+    const md = (sub && sub.metadata) || {}, item = sub && sub.items && sub.items.data && sub.items.data[0];
+    const plan = planForPrice(env, item && item.price && item.price.id) || md.plan;
+    if (!WELCOME[plan] || !md.user_id || !env.EMAIL_API_KEY) return;
+    const user = await env.DB.prepare("SELECT email FROM users WHERE id = ?").bind(md.user_id).first();
+    if (!user) return;
+    const w = WELCOME[plan], site = env.SITE_ORIGIN;
+    const text = [`Welcome to StudyToCert ${w.name}, and thank you for supporting the site.`, "", "What you have now:", ...w.lines.map(l => `- ${l}`), "",
+      `Start here: ${site}/#dashboard`, `Manage or cancel your plan any time from your Account page: ${site}/#account`,
+      "Your first payment can be refunded within 7 days: reply to this email.", "", "Good luck with your exam,", "StudyToCert"].join("\n");
+    await sendEmail(env, { to: user.email, subject: `Welcome to StudyToCert ${w.name}`, text });
+  } catch (e) { console.error("welcome email failed", e && e.code); }
 }
 
 async function upsertSubscription(env, sub, deleted, at) {

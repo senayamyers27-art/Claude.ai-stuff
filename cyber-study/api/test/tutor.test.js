@@ -20,6 +20,7 @@ test.before(async () => {
       const body = u.endsWith("/customers") ? { id: "cus_t" } : { id: "cs_t", url: "https://checkout.stripe.com/c/pay/cs_t" };
       return new Response(JSON.stringify(body), { status: 200, headers: { "content-type": "application/json" } });
     }
+    if (u.startsWith("https://api.resend.com/")) { sent.push({ url: u, email: JSON.parse(init.body) }); return new Response(JSON.stringify({ id: "em_1" }), { status: 200 }); }
     if (!u.startsWith("https://api.anthropic.com/")) return realFetch(url, init);
     const body = JSON.parse(typeof init.body === "string" ? init.body : await new Response(init.body).text());
     sent.push({ url: u, body });
@@ -212,4 +213,23 @@ test("tutor: resume review, lab write-up feedback and weak-spot practice (Premiu
   assert.match(req.system[0].text, /Practice Coach/);
   assert.match(req.messages[0].content, /Network troubleshooting: 48% correct over 25 questions/);
   assert.match(req.messages[0].content, /Give me my first practice question\.$/);
+});
+
+test("a completed checkout sends one welcome email for the plan bought", async () => {
+  const env = makeEnv({ ...PRICES, STRIPE_WEBHOOK_SECRET: "whsec_t", EMAIL_FROM: "StudyToCert <hi@study.example>" });
+  const u = await signIn(env, "welcome@example.com");
+  env.EMAIL_API_KEY = "re_test"; // after signing in: the test sign-in uses the development link, which needs no key
+  const t = Math.floor(Date.now() / 1000);
+  const sub = { id: "sub_w", customer: "cus_w", status: "active", metadata: { user_id: u.user.id, plan: "premium" }, items: { data: [{ quantity: 1, price: { id: "price_prem_m" }, current_period_end: t + 86400 }] } };
+  const raw = JSON.stringify({ id: "evt_w1", created: t, type: "checkout.session.completed", data: { object: { id: "cs_1", subscription: sub } } });
+  const before = sent.filter(x => x.email).length;
+  assert.equal((await call(env, "POST", "/v1/stripe/webhook", { raw, origin: null, headers: { "stripe-signature": stripeSig("whsec_t", raw) } })).status, 200);
+  const mails = sent.filter(x => x.email).slice(before);
+  assert.equal(mails.length, 1);
+  assert.deepEqual(mails[0].email.to, ["welcome@example.com"]);
+  assert.equal(mails[0].email.subject, "Welcome to StudyToCert Premium Pro");
+  assert.match(mails[0].email.text, /AI tutor/);
+  assert.equal((await call(env, "GET", "/v1/me", { cookie: u.cookie })).json.plan, "premium");
+  await call(env, "POST", "/v1/stripe/webhook", { raw, origin: null, headers: { "stripe-signature": stripeSig("whsec_t", raw) } });
+  assert.equal(sent.filter(x => x.email).length - before, 1, "a repeated event doesn't send a second email");
 });
