@@ -302,8 +302,16 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await s.goto(BASE + "/#signup");
     await s.waitForSelector(".socialbtn");
     const btns = await s.$$eval(".socialbtn", els => els.map(e => e.textContent.trim()));
-    check(btns.join("|") === "Continue with Google|Continue with Facebook|Continue with LinkedIn", "sign-up page offers Google, Facebook and LinkedIn");
-    check(await s.$("#signin-form") && /Create your free account/.test(await s.textContent("h1")), "sign-up page also offers an email link");
+    check(btns.join("|") === "Sign up with Google|Sign up with Facebook|Sign up with LinkedIn", "sign-up page offers Google, Facebook and LinkedIn");
+    check(await s.$("#signin-form[data-intent=signup]") && /Create your free account/.test(await s.textContent("h1")) && (await s.$$(".perklist li")).length === 4, "sign-up page explains what an account gives you and offers an email link");
+    check(/agree to the Terms/.test(await s.textContent(".authsignup")) && !(await s.$("[data-aact=passkey-signin]")), "sign-up page asks for agreement to the Terms, with no passkey button");
+    await s.goto(BASE + "/#login");
+    await s.waitForSelector("#signin-form[data-intent=login]");
+    if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/login.png`, fullPage: true });
+    check((await s.textContent("h1")).trim() === "Log in" && !(await s.$(".perklist")) && /Log in with Google/.test(await s.textContent(".social")), "the login page is separate: a short form with Log in buttons");
+    check(!!(await s.$('.authswitch a[href="#signup"]')), "the login page links to sign-up");
+    await s.click('.authswitch a[href="#signup"]');
+    await s.waitForSelector(".authsignup .socialbtn");
     check(/Log in/.test(await s.textContent("#acctchip")), "header shows Log in when signed out");
     if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/signup.png`, fullPage: true });
     await s.click('.socialbtn[data-provider="google"]');

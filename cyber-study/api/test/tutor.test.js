@@ -252,3 +252,17 @@ test("checkout: a plan Stripe still has (even past due) blocks a second one, and
     assert.equal(new URL(list.url).searchParams.get("status"), "all");
   } finally { stripeLists = {}; }
 });
+
+test("the sign-up page's email is worded for signing up; the reply is the same either way", async () => {
+  const env = makeEnv({ EMAIL_FROM: "StudyToCert <hi@study.example>", EMAIL_API_KEY: "re_test" });
+  const ask = async (email, intent) => {
+    const before = sent.filter(x => x.email).length;
+    const r = await call(env, "POST", "/v1/auth/magic-link", { body: { email, intent } });
+    return { r, mail: sent.filter(x => x.email).slice(before)[0].email };
+  };
+  const up = await ask("new.person@example.com", "signup"), inn = await ask("new.person@example.com", "login");
+  assert.equal(up.mail.subject, "Finish creating your StudyToCert account");
+  assert.match(up.mail.text, /finish creating your StudyToCert account/);
+  assert.equal(inn.mail.subject, "Your StudyToCert sign-in link");
+  assert.deepEqual(up.r.json, inn.r.json, "no hint whether the address has an account");
+});

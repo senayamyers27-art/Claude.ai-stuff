@@ -68,16 +68,20 @@ export async function requestMagicLink(env, request, body) {
     .bind(await sha256Hex(token), email, t, t + LINK_TTL, code ? await codeHash(email, code) : null).run();
   const link = `${env.SITE_ORIGIN}/?signin=${token}#account`;
   const shown = code ? `${code.slice(0, 4)}-${code.slice(4)}` : "";
+  // "signup" only changes the wording: the link works the same either way (an account is made on first use), and the
+  // reply below doesn't change, so it says nothing about whether the address already has an account.
+  const signup = body.intent === "signup";
+  const what = signup ? "finish creating your StudyToCert account" : "sign in to StudyToCert";
   const sent = await sendEmail(env, code ? {
     to: email,
-    subject: `Your StudyToCert sign-in code: ${shown}`,
-    text: `Your StudyToCert sign-in code is:\n\n${shown}\n\nType it in the app. It works once and expires in 15 minutes.\n\nOn a computer instead? Open this link to sign in on the website:\n${link}\n\nIf you didn't ask for this, ignore this email.`,
-    html: `<p>Your StudyToCert sign-in code is:</p><p style="font-size:24px;font-weight:700;letter-spacing:2px">${shown}</p><p>Type it in the app. It works once and expires in 15 minutes.</p><p>On a computer instead? <a href="${link}">Sign in on the website</a>.</p><p>If you didn't ask for this, ignore this email.</p>`
+    subject: `Your StudyToCert ${signup ? "sign-up" : "sign-in"} code: ${shown}`,
+    text: `Your code to ${what} is:\n\n${shown}\n\nType it in the app. It works once and expires in 15 minutes.\n\nOn a computer instead? Open this link:\n${link}\n\nIf you didn't ask for this, ignore this email.`,
+    html: `<p>Your code to ${what} is:</p><p style="font-size:24px;font-weight:700;letter-spacing:2px">${shown}</p><p>Type it in the app. It works once and expires in 15 minutes.</p><p>On a computer instead? <a href="${link}">Continue on the website</a>.</p><p>If you didn't ask for this, ignore this email.</p>`
   } : {
     to: email,
-    subject: "Your StudyToCert sign-in link",
-    text: `Sign in to StudyToCert:\n\n${link}\n\nThis link works once and expires in 15 minutes. If you didn't ask for it, ignore this email.`,
-    html: `<p>Sign in to StudyToCert:</p><p><a href="${link}">Sign in</a></p><p>This link works once and expires in 15 minutes. If you didn't ask for it, ignore this email.</p>`
+    subject: signup ? "Finish creating your StudyToCert account" : "Your StudyToCert sign-in link",
+    text: `Open this link to ${what}:\n\n${link}\n\nThis link works once and expires in 15 minutes. If you didn't ask for it, ignore this email.`,
+    html: `<p>Open this link to ${what}:</p><p><a href="${link}">${signup ? "Create my account" : "Sign in"}</a></p><p>This link works once and expires in 15 minutes. If you didn't ask for it, ignore this email.</p>`
   });
   // Same response whether or not the address has an account, so emails can't be enumerated.
   const res = { ok: true, message: code ? "Check your email for a sign-in code." : "Check your email for a sign-in link." };
