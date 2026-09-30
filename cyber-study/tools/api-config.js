@@ -16,14 +16,16 @@ if (!/^https:\/\/[a-z0-9.-]+$/.test(api)) die("Set \"apiOrigin\" in site.config.
 const apiHost = api.slice(8), base = domain.replace(/^www\./, "");
 // The session cookie only works when the API is on the same site as the pages.
 if (apiHost !== base && !apiHost.endsWith("." + base)) die(`apiOrigin ${api} must be a subdomain of ${base} (for example https://api.${base}).`);
-const d1 = process.env.STUDY_API_D1_ID || "";
-if (!/^[0-9a-f-]{36}$/.test(d1)) die("STUDY_API_D1_ID must be the D1 database id (a UUID).");
+// Pasted values often carry spaces, quotes, a line break or capitals; take the UUID out of whatever was pasted.
+const d1 = ((process.env.STUDY_API_D1_ID || "").match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i) || [""])[0].toLowerCase();
+if (!d1) die("STUDY_API_D1_ID must be the D1 database id: a UUID like 8837b692-ac42-41e5-a1f3-22f7e405f1bb (Cloudflare → D1 → your database).");
 
 const q = s => JSON.stringify(String(s));
 const vars = {
   APP_ENV: "production",
   SITE_ORIGIN: `https://${domain}`,
-  EMAIL_FROM: process.env.STUDY_API_EMAIL_FROM || `${cfg.siteName} <signin@${base}>`,
+  // "Name<address>" and stray spaces are tidied into "Name <address>".
+  EMAIL_FROM: (process.env.STUDY_API_EMAIL_FROM || "").trim().replace(/\s*<\s*/, " <").replace(/\s*>\s*$/, ">") || `${cfg.siteName} <signin@${base}>`,
   STRIPE_TAX: process.env.STRIPE_TAX === "on" ? "on" : "off"
 };
 for (const k of ["STRIPE_PRICE_PRO_MONTHLY", "STRIPE_PRICE_PRO_YEARLY", "STRIPE_PRICE_PREMIUM_MONTHLY", "STRIPE_PRICE_PREMIUM_YEARLY", "STRIPE_PRICE_ORG_SEAT"])
@@ -60,7 +62,7 @@ database_name = "cyber-cert-study"
 database_id = ${q(d1)}
 migrations_dir = "migrations"
 `;
-const r2 = process.env.STUDY_API_R2_BUCKET || "";
+const r2 = (process.env.STUDY_API_R2_BUCKET || "").trim().replace(/^["']|["']$/g, "");
 if (r2) {
   if (!/^[a-z0-9-]{3,63}$/.test(r2)) die("STUDY_API_R2_BUCKET is not a valid bucket name.");
   toml += `\n[[r2_buckets]]\nbinding = "CONTENT"\nbucket_name = ${q(r2)}\n`;
