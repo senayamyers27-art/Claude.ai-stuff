@@ -20,9 +20,13 @@ export const isAppOrigin = (env, origin) => !!origin && (APP_ORIGINS.includes(or
 export const isAppRequest = (env, request) => isAppOrigin(env, request.headers.get("origin"));
 // Codes are 8 characters from an alphabet without look-alikes (no 0/O, 1/I/L): about 40 bits, shown as ABCD-EFGH.
 const CODE_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
+// Rejection sampling: only bytes below the largest multiple of the alphabet's size are used, so every character
+// is equally likely (a plain byte % 31 would favor the first few).
 function newCode() {
-  const b = crypto.getRandomValues(new Uint8Array(8));
-  return [...b].map(x => CODE_ALPHABET[x % CODE_ALPHABET.length]).join("");
+  const n = CODE_ALPHABET.length, max = 256 - (256 % n);
+  let out = "";
+  while (out.length < 8) for (const x of crypto.getRandomValues(new Uint8Array(16))) if (x < max && out.length < 8) out += CODE_ALPHABET[x % n];
+  return out;
 }
 const normCode = raw => String(raw || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 const codeHash = (email, code) => sha256Hex(`app-code:${email}:${code}`);
