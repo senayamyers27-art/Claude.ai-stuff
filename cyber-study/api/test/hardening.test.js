@@ -116,3 +116,16 @@ test("the daily clean-up removes expired rows and keeps current ones", async () 
   assert.ok(n("SELECT COUNT(*) n FROM audit_log WHERE action = 'new'") >= 1);
   assert.equal(n("SELECT COUNT(*) n FROM rate_limits WHERE bucket = 'old'"), 0);
 });
+
+test("rate limits hold under parallel requests, and IPv6 addresses count by their /64", async () => {
+  const { rateLimit } = await import("../src/audit.js");
+  const { ipv6Prefix64, clientIp } = await import("../src/util.js");
+  const env = { DB: createD1() };
+  const results = await Promise.allSettled(Array.from({ length: 30 }, () => rateLimit(env, "par:test", 10, 60000)));
+  assert.equal(results.filter(r => r.status === "fulfilled").length, 10);
+  assert.equal(ipv6Prefix64("2001:db8:1:2:aaaa::1"), "2001:db8:1:2::/64");
+  assert.equal(ipv6Prefix64("2001:db8:1:2:ffff:ffff:ffff:ffff"), "2001:db8:1:2::/64");
+  assert.equal(ipv6Prefix64("2001:db8::1"), "2001:db8:0:0::/64");
+  assert.equal(ipv6Prefix64("::ffff:192.0.2.1"), "192.0.2.1");
+  assert.equal(clientIp(new Request("https://x", { headers: { "cf-connecting-ip": "203.0.113.9" } })), "203.0.113.9");
+});

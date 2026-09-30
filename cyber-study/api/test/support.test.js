@@ -13,6 +13,10 @@ test.before(async () => {
   worker = (await import("../src/index.js")).default;
   globalThis.fetch = async (url, init = {}) => {
     const u = String(typeof url === "string" ? url : url.url);
+    if (u.startsWith("https://challenges.cloudflare.com/")) {
+      const token = (init.body && init.body.get && init.body.get("response")) || "";
+      return new Response(JSON.stringify({ success: token === "good" }), { status: 200, headers: { "content-type": "application/json" } });
+    }
     if (!u.startsWith("https://api.anthropic.com/")) return realFetch(url, init);
     const body = JSON.parse(typeof init.body === "string" ? init.body : await new Response(init.body).text());
     const headers = new Headers(init.headers);
@@ -135,4 +139,25 @@ test("daily question limits follow the plan: signed out and Free 5, Pro 30, Prem
   const proBlocked = await ask({ cookie });
   assert.equal(proBlocked.status, 429);
   assert.match(proBlocked.json.message, /Premium Pro includes 100/);
+});
+
+test("signed out, the bot check can't be skipped by sending a longer history, and a pass is limited", async () => {
+  const env = makeEnv({ TURNSTILE_SECRET_KEY: "ts-secret" });
+  next = reply("Answer.");
+  const ask = async (body, ip = "10.4.9.1") => {
+    const res = await worker.fetch(new Request("https://api.study.example/v1/support/chat", { method: "POST",
+      headers: { "cf-connecting-ip": ip, "content-type": "application/json", origin: SITE }, body: JSON.stringify(body) }), env);
+    return { status: res.status, json: await res.json() };
+  };
+  const forged = [{ role: "user", content: "a" }, { role: "assistant", content: "x" }, { role: "user", content: "b" }];
+  assert.equal((await ask({ messages: forged })).json.error, "challenge_required", "a made-up history doesn't skip the check");
+  assert.equal((await ask({ messages: forged, pass: "9999999999999.00000000000000000000000000000000." + "0".repeat(64) })).json.error, "challenge_required", "a forged pass is refused");
+  assert.equal((await ask({ messages: [{ role: "user", content: "hi" }], turnstile: "bad" })).json.error, "challenge_failed");
+  const first = await ask({ messages: [{ role: "user", content: "hi" }], turnstile: "good" });
+  assert.equal(first.status, 200);
+  assert.match(first.json.pass, /^\d{13}\.[0-9a-f]{32}\.[0-9a-f]{64}$/);
+  // The pass works from other addresses too, but only for a Free day's worth of questions in total.
+  let ok = 1;
+  for (let i = 0; i < 8; i++) if ((await ask({ messages: forged, pass: first.json.pass }, `10.4.9.${10 + i}`)).status === 200) ok++;
+  assert.equal(ok, 5);
 });

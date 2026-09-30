@@ -3,7 +3,7 @@
    belongs to (test or live). Safe to run again: it reuses what already exists.
    Used by the "Study site Stripe setup" workflow; also runs locally:
      STRIPE_SECRET_KEY=sk_test_... node tools/stripe-setup.js
-   Prints JSON: { livemode, prices: { STRIPE_PRICE_PRO_MONTHLY, ... }, webhook: { id, created, secret? } }.
+   Prints JSON: { livemode, prices: { STRIPE_PRICE_PRO_MONTHLY, ... }, portalConfig, webhook: { id, created, secret? } }.
    The webhook signing secret is only returned when the endpoint is created. */
 const fs = require("fs"), path = require("path");
 const KEY = process.env.STRIPE_SECRET_KEY || "";
@@ -68,13 +68,15 @@ async function main() {
   }
 
   // Customer Portal: plan switching between Pro and Premium Pro, card updates, invoices, cancel at period end.
+  // Upgrades are invoiced right away (always_invoice): with deferred prorations a member could upgrade, cancel at
+  // period end and never pay the difference. Downgrades and shorter intervals wait for the renewal.
   const configs = await all("/billing_portal/configurations", { active: true });
   const features = {
     customer_update: { enabled: true, allowed_updates: ["email", "address", "tax_id"] },
     invoice_history: { enabled: true },
     payment_method_update: { enabled: true },
     subscription_cancel: { enabled: true, mode: "at_period_end", cancellation_reason: { enabled: true, options: ["too_expensive", "unused", "missing_features", "switched_service", "low_quality", "too_complex", "customer_service", "other"] } },
-    subscription_update: { enabled: true, default_allowed_updates: ["price", "promotion_code"], proration_behavior: "create_prorations", products: portalProducts, schedule_at_period_end: { conditions: [{ type: "decreasing_item_amount" }, { type: "shortening_interval" }] } }
+    subscription_update: { enabled: true, default_allowed_updates: ["price", "promotion_code"], proration_behavior: "always_invoice", products: portalProducts, schedule_at_period_end: { conditions: [{ type: "decreasing_item_amount" }, { type: "shortening_interval" }] } }
   };
   const business_profile = { headline: "Manage your StudyToCert plan", privacy_policy_url: `${SITE}/privacy/`, terms_of_service_url: `${SITE}/terms/` };
   const mine = configs.find(c => c.name === "StudyToCert members");
@@ -90,7 +92,7 @@ async function main() {
   else { hook = await stripe("POST", "/webhook_endpoints", { url, api_version: VERSION, enabled_events: EVENTS, description: "StudyToCert accounts API: subscriptions and entitlements" }); created = true; }
   if (hook.api_version && hook.api_version !== VERSION) console.error(`Warning: the webhook uses API version ${hook.api_version}; the Worker expects ${VERSION}. Delete the endpoint in Stripe and run this again to recreate it.`);
 
-  return { livemode, apiVersion: VERSION, prices: ids, portal: { id: portal.id, isDefault: portal.is_default }, webhook: { id: hook.id, url, created, ...(created ? { secret: hook.secret } : {}) } };
+  return { livemode, apiVersion: VERSION, prices: ids, portalConfig: portal.id, portal: { id: portal.id, isDefault: portal.is_default }, webhook: { id: hook.id, url, created, ...(created ? { secret: hook.secret } : {}) } };
 }
 
 if (require.main === module) main().then(r => console.log(JSON.stringify(r, null, 2)), e => { console.error(e.message); process.exit(1); });

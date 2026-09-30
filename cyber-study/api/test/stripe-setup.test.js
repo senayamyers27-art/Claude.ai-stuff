@@ -44,6 +44,7 @@ test("creates everything once, then reuses it", async () => {
     assert.deepEqual(Object.keys(first.prices).sort(), ["STRIPE_PRICE_PREMIUM_MONTHLY", "STRIPE_PRICE_PREMIUM_YEARLY", "STRIPE_PRICE_PRO_MONTHLY", "STRIPE_PRICE_PRO_YEARLY"]);
     assert.equal(s.db.products.length, 2);
     assert.deepEqual(s.db.prices.map(x => x.unit_amount).sort((a, b) => a - b), [700, 1500, 4900, 9900], "prices come from site.config.json");
+    assert.match(first.portalConfig, /^bpc_/);
     assert.equal(first.webhook.created, true);
     assert.equal(first.webhook.secret, "whsec_fake");
     assert.match(first.webhook.url, /\/v1\/stripe\/webhook$/);
@@ -52,7 +53,7 @@ test("creates everything once, then reuses it", async () => {
     assert.equal(hook.params.get("api_version"), first.apiVersion);
     assert.equal(hook.params.getAll("enabled_events[0]").length + hook.params.getAll("enabled_events[4]").length, 2);
     const portal = s.calls.find(c => c.method === "POST" && c.path === "/v1/billing_portal/configurations");
-    assert.equal(portal.params.get("features[subscription_update][proration_behavior]"), "create_prorations");
+    assert.equal(portal.params.get("features[subscription_update][proration_behavior]"), "always_invoice");
     assert.equal(portal.params.get("features[subscription_cancel][mode]"), "at_period_end");
 
     const second = await main();

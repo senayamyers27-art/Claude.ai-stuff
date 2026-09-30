@@ -4,7 +4,7 @@ name: Study site Stripe setup
 # Creates (or reuses) the Pro and Premium Pro products and their prices, the Customer Portal configuration and the
 # webhook endpoint in the Stripe account that STRIPE_SECRET_KEY belongs to (cyber-study/tools/stripe-setup.js), then:
 #   - with the optional SETUP_GITHUB_TOKEN secret (fine-grained, this repository, "Secrets" and "Variables":
-#     Read and write), saves the four STRIPE_PRICE_* variables and, when the webhook is new, STRIPE_WEBHOOK_SECRET;
+#     Read and write), saves the four STRIPE_PRICE_* variables, STRIPE_PORTAL_CONFIG and, when the webhook is new, STRIPE_WEBHOOK_SECRET;
 #   - without it, lists the price ids in the run summary. The webhook signing secret is never printed: reveal it on
 #     the endpoint's page in the Stripe Dashboard.
 
@@ -55,7 +55,9 @@ jobs:
             for k in $(jq -r '.prices | keys[]' "$RUNNER_TEMP/stripe.json"); do
               gh variable set "$k" --repo "$GITHUB_REPOSITORY" --body "$(jq -r --arg k "$k" '.prices[$k]' "$RUNNER_TEMP/stripe.json")" || ok=no
             done
-            if [ -n "$secret" ]; then gh secret set STRIPE_WEBHOOK_SECRET --repo "$GITHUB_REPOSITORY" --body "$secret" || ok=no; fi
+            gh variable set STRIPE_PORTAL_CONFIG --repo "$GITHUB_REPOSITORY" --body "$(jq -r '.portalConfig' "$RUNNER_TEMP/stripe.json")" || ok=no
+            # Piped in, so the secret never appears in a process's command line.
+            if [ -n "$secret" ]; then printf '%s' "$secret" | gh secret set STRIPE_WEBHOOK_SECRET --repo "$GITHUB_REPOSITORY" || ok=no; fi
             [ "$ok" = yes ] && saved=yes
           fi
           {
@@ -69,9 +71,9 @@ jobs:
             echo "- Webhook: \`$(jq -r '.webhook.url' "$RUNNER_TEMP/stripe.json")\` ($(jq -r 'if .webhook.created then "created" else "already existed" end' "$RUNNER_TEMP/stripe.json"))"
             echo ""
             if [ "$saved" = yes ]; then
-              echo "Saved the price variables$( [ -n "$secret" ] && echo " and STRIPE_WEBHOOK_SECRET" ) to this repository."
+              echo "Saved the price variables, STRIPE_PORTAL_CONFIG$( [ -n "$secret" ] && echo " and STRIPE_WEBHOOK_SECRET" ) to this repository."
             else
-              echo "Add the price ids above as repository **variables**. For **STRIPE_WEBHOOK_SECRET**, open the webhook in the Stripe Dashboard (Developers → Webhooks) and reveal its signing secret."
+              echo "Add the price ids above as repository **variables**, and **STRIPE_PORTAL_CONFIG** = \`$(jq -r '.portalConfig' "$RUNNER_TEMP/stripe.json")\`. For **STRIPE_WEBHOOK_SECRET**, open the webhook in the Stripe Dashboard (Developers → Webhooks) and reveal its signing secret."
             fi
             echo ""
             echo "Then run **Study site API deploy** so the Worker picks up the new values."

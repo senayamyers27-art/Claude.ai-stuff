@@ -27,8 +27,9 @@ function planForPrice(env, priceId) {
 export const STRIPE_API_VERSION = "2025-06-30.basil";
 
 async function stripe(env, method, path, params, { idempotencyKey } = {}) {
-  const body = params ? new URLSearchParams(flatten(params)).toString() : undefined;
-  const res = await fetch(`https://api.stripe.com/v1${path}`, {
+  const query = params && method === "GET" ? "?" + new URLSearchParams(flatten(params)).toString() : "";
+  const body = params && method !== "GET" ? new URLSearchParams(flatten(params)).toString() : undefined;
+  const res = await fetch(`https://api.stripe.com/v1${path}${query}`, {
     method,
     headers: {
       Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
@@ -97,6 +98,19 @@ async function customerFor(env, user) {
   return saved ? saved.stripe_customer : c.id;
 }
 
+// Before a new personal checkout: ask Stripe (not just our table, which can lag the webhook) whether the customer
+// already has a personal subscription that is live or could still recover (past_due, unpaid, incomplete), and expire
+// any earlier checkout that is still open, so two tabs or a retry after a failed card can't start a second plan.
+const LIVE_STATUSES = ["active", "trialing", "past_due", "unpaid", "incomplete"];
+async function guardPersonalCheckout(env, customer) {
+  const subs = await stripe(env, "GET", "/subscriptions", { customer, status: "all", limit: 20 });
+  if ((subs.data || []).some(s => LIVE_STATUSES.includes(s.status) && !(s.metadata && s.metadata.plan === "org")))
+    throw new HttpError(400, "already_subscribed", "You already have a plan (or a payment for one is being retried). Manage it from Manage billing on your Account page.");
+  const open = await stripe(env, "GET", "/checkout/sessions", { customer, status: "open", limit: 20 });
+  for (const s of open.data || [])
+    if (!(s.metadata && s.metadata.plan === "org")) await stripe(env, "POST", `/checkout/sessions/${encodeURIComponent(s.id)}/expire`);
+}
+
 export async function createCheckout(env, request, user, body) {
   if (!billingEnabled(env)) throw new HttpError(503, "billing_disabled", "Payments aren't set up yet.");
   const kind = body.plan === "org" ? "org" : body.plan === "premium" ? "premium" : "pro";
@@ -118,9 +132,11 @@ export async function createCheckout(env, request, user, body) {
     price = env.STRIPE_PRICE_ORG_SEAT;
     metadata.org_id = String(body.orgId);
   }
+  const customer = await customerFor(env, user);
+  if (kind !== "org") await guardPersonalCheckout(env, customer);
   const session = await stripe(env, "POST", "/checkout/sessions", {
     mode: "subscription",
-    customer: await customerFor(env, user),
+    customer,
     client_reference_id: user.id,
     line_items: [{ price, quantity }],
     // Flexible billing mode (Stripe's recommended default): accurate prorations when members switch plans.
@@ -142,7 +158,10 @@ export async function createPortal(env, request, user) {
   if (!billingEnabled(env)) throw new HttpError(503, "billing_disabled", "Payments aren't set up yet.");
   const row = await env.DB.prepare("SELECT stripe_customer FROM stripe_customers WHERE user_id = ?").bind(user.id).first();
   if (!row) throw bad("no_billing", "There's no billing account yet.");
-  const s = await stripe(env, "POST", "/billing_portal/sessions", { customer: row.stripe_customer, return_url: `${env.SITE_ORIGIN}/#account` });
+  // The "StudyToCert members" configuration (plan switching, upgrades invoiced right away); without it Stripe uses
+  // the account's default portal settings.
+  const configuration = /^bpc_[A-Za-z0-9]+$/.test(env.STRIPE_PORTAL_CONFIG || "") ? env.STRIPE_PORTAL_CONFIG : undefined;
+  const s = await stripe(env, "POST", "/billing_portal/sessions", { customer: row.stripe_customer, return_url: `${env.SITE_ORIGIN}/#account`, configuration });
   return { url: s.url };
 }
 
@@ -172,6 +191,7 @@ function invoiceSubscription(inv) {
 }
 
 export async function handleWebhook(env, request) {
+  if (Number(request.headers.get("content-length")) > 512 * 1024) throw new HttpError(413, "too_large", "Payload too large.");
   const payload = await request.text();
   if (payload.length > 512 * 1024) throw new HttpError(413, "too_large", "Payload too large.");
   if (!(await verifyStripeSignature(env.STRIPE_WEBHOOK_SECRET, payload, request.headers.get("stripe-signature")))) {
