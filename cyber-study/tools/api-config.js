@@ -17,7 +17,8 @@ const apiHost = api.slice(8), base = domain.replace(/^www\./, "");
 // The session cookie only works when the API is on the same site as the pages.
 if (apiHost !== base && !apiHost.endsWith("." + base)) die(`apiOrigin ${api} must be a subdomain of ${base} (for example https://api.${base}).`);
 // Pasted values often carry spaces, quotes, a line break or capitals; take the UUID out of whatever was pasted.
-const d1 = ((process.env.STUDY_API_D1_ID || "").match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i) || [""])[0].toLowerCase();
+// STUDY_API_D1_ID_FOUND: the id the deploy workflow looked up by name when STUDY_API_D1_ID didn't hold one.
+const d1 = ((process.env.STUDY_API_D1_ID_FOUND || process.env.STUDY_API_D1_ID || "").match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i) || [""])[0].toLowerCase();
 if (!d1) die("STUDY_API_D1_ID must be the D1 database id: a UUID like 8837b692-ac42-41e5-a1f3-22f7e405f1bb (Cloudflare → D1 → your database).");
 
 const q = s => JSON.stringify(String(s));
