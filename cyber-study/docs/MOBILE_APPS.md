@@ -71,8 +71,10 @@ The apps are the study site bundled into a native shell ([Capacitor](https://cap
 
 Both stores need a way to see signed-in features.
 
-1. Choose an address you control (for example `review@studytocert.com`) and an 8-character code (letters and
-   numbers).
+1. Choose an address you control (for example `review@studytocert.com`) and make a random 8-character code on
+   your Mac: `LC_ALL=C tr -dc '23456789ABCDEFGHJKMNPQRSTUVWXYZ' </dev/urandom | head -c 8; echo`
+   Run it again if the result has no digit. The server switches the review account off if the code is weak (no
+   digit or no letter, fewer than 6 different characters, or words like REVIEW, STUDY, 1234).
 2. Add them as GitHub secrets `APP_REVIEW_EMAIL` and `APP_REVIEW_CODE`, then run **Study site API deploy**.
 3. Sign in once in the app with that address and code, so the account exists.
 4. To let reviewers see Premium Pro, give the account a complimentary plan. In the Cloudflare dashboard → D1 →
@@ -96,4 +98,7 @@ Both stores need a way to see signed-in features.
   on a Mac).
 - The API accepts the apps' origins (`capacitor://localhost` on iOS, `https://localhost` on Android). App
   sign-in skips the Turnstile check (it can't run in an app) and has tighter limits instead: 3 codes per email and
-  5 per address an hour, 5 guesses per code.
+  5 per address an hour.
+- Sign-in codes are 8 random characters from 31 (no look-alikes such as 0/O or 1/I): about 853 billion possible
+  codes. A code lasts 15 minutes and stops working after 5 wrong tries; each email address gets at most 10 tries an
+  hour and 30 a day. Even guessing at that limit for a year gives about a 1 in 78 million chance.

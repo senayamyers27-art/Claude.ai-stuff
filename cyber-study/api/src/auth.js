@@ -18,11 +18,14 @@ export const APP_ORIGINS = ["capacitor://localhost", "https://localhost"];
 // DEV_APP_ORIGIN (development only) lets the app test (tools/app-e2e.js) stand in for an app from a local address.
 export const isAppOrigin = (env, origin) => !!origin && (APP_ORIGINS.includes(origin) || (env.APP_ENV === "development" && !!env.DEV_APP_ORIGIN && origin === env.DEV_APP_ORIGIN));
 export const isAppRequest = (env, request) => isAppOrigin(env, request.headers.get("origin"));
-// Codes are 8 characters from an alphabet without look-alikes (no 0/O, 1/I/L): about 40 bits, shown as ABCD-EFGH.
+// Codes are 8 characters from an alphabet without look-alikes (no 0/O, 1/I/L): 31^8, about 850 billion possible
+// codes (40 bits), shown as ABCD-EFGH. Guessing is capped far below that: a code lasts 15 minutes and dies after
+// 5 wrong tries, and each address gets at most 10 tries an hour and 30 a day, whatever the number of codes or
+// devices. At 30 tries a day for a year, the chance of guessing a code is about 1 in 78 million.
 const CODE_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
 // Rejection sampling: only bytes below the largest multiple of the alphabet's size are used, so every character
 // is equally likely (a plain byte % 31 would favor the first few).
-function newCode() {
+export function newCode() {
   const n = CODE_ALPHABET.length, max = 256 - (256 % n);
   let out = "";
   while (out.length < 8) for (const x of crypto.getRandomValues(new Uint8Array(16))) if (x < max && out.length < 8) out += CODE_ALPHABET[x % n];
@@ -104,11 +107,15 @@ export async function verifyCode(env, request, body) {
   if (!/^[A-Z0-9]{8}$/.test(code)) throw bad("invalid_code", "Enter the 8-character code from the email.");
   await rateLimit(env, "code:ip:" + clientIp(request), 30, 60 * 60 * 1000);
   await rateLimit(env, "code:email:" + email, 10, 60 * 60 * 1000);
+  await rateLimit(env, "code:email:d:" + email, 30, 24 * 60 * 60 * 1000);
   const t = now();
   // App Store and Google Play reviewers sign in to one review account with a fixed code (the APP_REVIEW_EMAIL and
   // APP_REVIEW_CODE secrets, given to the stores in the review notes). Unset, there is no such account.
+  // The review code is chosen by a person, so it must look random: 8 characters with letters and digits and at
+  // least 6 different characters (e.g. not REVIEW01 or AAAA1111); otherwise the review account stays off.
   const review = normCode(env.APP_REVIEW_CODE);
-  if (env.APP_REVIEW_EMAIL && /^[A-Z0-9]{8}$/.test(review) && email === normalizeEmail(env.APP_REVIEW_EMAIL)) {
+  const strong = /^[A-Z0-9]{8}$/.test(review) && /[A-Z]/.test(review) && /[0-9]/.test(review) && new Set(review).size >= 6 && !/REVIEW|STUDY|CERT|APPLE|GOOGLE|PASS|1234|ABCD/.test(review);
+  if (env.APP_REVIEW_EMAIL && strong && email === normalizeEmail(env.APP_REVIEW_EMAIL)) {
     if (!safeEqual(code, review)) throw await (async () => { await securityLog(request, "signin_code_rejected"); return new HttpError(400, "invalid_code", "That code is wrong or has expired. Check the newest email, or request a new code."); })();
     const user = await userForEmail(env, request, email, t);
     await audit(env, request, { actor: user.id, action: "session.review" });

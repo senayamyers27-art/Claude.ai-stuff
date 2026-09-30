@@ -63,11 +63,45 @@ test("codes are only for the apps; the website keeps Turnstile and links", async
 });
 
 test("the store review account signs in with its fixed code", async () => {
-  const env = makeEnv({ APP_REVIEW_EMAIL: "review@studytocert.com", APP_REVIEW_CODE: "REVW-2026" });
-  assert.equal((await call(env, "POST", "/v1/auth/code/verify", { body: { email: "review@studytocert.com", code: "REVW-2025" } })).status, 400);
-  const ok = await call(env, "POST", "/v1/auth/code/verify", { body: { email: "Review@StudyToCert.com", code: "revw-2026" } });
+  const env = makeEnv({ APP_REVIEW_EMAIL: "review@studytocert.com", APP_REVIEW_CODE: "K7QM-2X9D" });
+  assert.equal((await call(env, "POST", "/v1/auth/code/verify", { body: { email: "review@studytocert.com", code: "K7QM-2X9E" } })).status, 400);
+  const ok = await call(env, "POST", "/v1/auth/code/verify", { body: { email: "Review@StudyToCert.com", code: "k7qm-2x9d" } });
   assert.equal(ok.status, 200);
   assert.equal((await call(env, "GET", "/v1/me", { headers: { authorization: `Bearer ${ok.json.token}` } })).json.user.email, "review@studytocert.com");
   const off = makeEnv();
-  assert.equal((await call(off, "POST", "/v1/auth/code/verify", { body: { email: "review@studytocert.com", code: "REVW-2026" } })).status, 400, "no review account unless it's configured");
+  assert.equal((await call(off, "POST", "/v1/auth/code/verify", { body: { email: "review@studytocert.com", code: "K7QM-2X9D" } })).status, 400, "no review account unless it's configured");
+});
+
+test("a weak review code switches the review account off", async () => {
+  for (const weak of ["REVIEW01", "AAAA1111", "ABCD2345", "KQMXPRTZ"]) {
+    const env = makeEnv({ APP_REVIEW_EMAIL: "review@studytocert.com", APP_REVIEW_CODE: weak });
+    assert.equal((await call(env, "POST", "/v1/auth/code/verify", { body: { email: "review@studytocert.com", code: weak } })).status, 400, weak);
+  }
+});
+
+test("sign-in codes are random: 8 characters, every character equally likely", async () => {
+  const { newCode } = await import("../src/auth.js");
+  const counts = {}, N = 20000;
+  const seen = new Set();
+  for (let i = 0; i < N; i++) {
+    const c = newCode();
+    assert.match(c, /^[2-9A-HJ-NP-Z]{8}$/);
+    seen.add(c);
+    for (const ch of c) counts[ch] = (counts[ch] || 0) + 1;
+  }
+  assert.equal(seen.size, N, "no repeats in 20,000 codes");
+  assert.equal(Object.keys(counts).length, 31, "all 31 characters are used");
+  const expected = N * 8 / 31, worst = Math.max(...Object.values(counts).map(v => Math.abs(v - expected) / expected));
+  assert.ok(worst < 0.06, `each character within 6% of its expected share (worst ${(worst * 100).toFixed(1)}%)`);
+});
+
+test("guessing is capped per address: 10 tries an hour, across codes and addresses of the caller", async () => {
+  const env = makeEnv();
+  await call(env, "POST", "/v1/auth/magic-link", { body: { email: "cap@example.com", app: true } });
+  let limited = 0;
+  for (let i = 0; i < 12; i++) {
+    const r = await call(env, "POST", "/v1/auth/code/verify", { body: { email: "cap@example.com", code: "ZZZZ-ZZZ" + (i % 9 + 1) } });
+    if (r.status === 429) limited++;
+  }
+  assert.equal(limited, 2, "the 11th and 12th tries in an hour are refused");
 });
