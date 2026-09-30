@@ -23,7 +23,7 @@ function planForPrice(env, priceId) {
 // Every request names the API version this code is written for, so a new Stripe default can't change response
 // shapes under it. Create the webhook endpoint with the same version (docs/PRO_LAUNCH.md) so events match too.
 // Override with the STRIPE_API_VERSION variable only after checking the code against that version's changes.
-export const STRIPE_API_VERSION = "2025-03-31.basil";
+export const STRIPE_API_VERSION = "2025-06-30.basil";
 
 async function stripe(env, method, path, params, { idempotencyKey } = {}) {
   const body = params ? new URLSearchParams(flatten(params)).toString() : undefined;
@@ -122,7 +122,8 @@ export async function createCheckout(env, request, user, body) {
     customer: await customerFor(env, user),
     client_reference_id: user.id,
     line_items: [{ price, quantity }],
-    subscription_data: { metadata },
+    // Flexible billing mode (Stripe's recommended default): accurate prorations when members switch plans.
+    subscription_data: { metadata, billing_mode: { type: "flexible" } },
     metadata,
     allow_promotion_codes: "true",
     automatic_tax: env.STRIPE_TAX === "on" ? { enabled: "true" } : undefined,
@@ -162,7 +163,7 @@ export async function verifyStripeSignature(secret, payload, header, toleranceSe
   return sigs.some(s => safeEqual(s, expected));
 }
 
-// An invoice's subscription id: under parent.subscription_details since API version 2025-03-31 (basil); older
+// An invoice's subscription id: under parent.subscription_details since API version 2025-03-31.basil; older
 // versions put it at the top level.
 function invoiceSubscription(inv) {
   const s = (inv && inv.parent && inv.parent.subscription_details && inv.parent.subscription_details.subscription) || (inv && inv.subscription);

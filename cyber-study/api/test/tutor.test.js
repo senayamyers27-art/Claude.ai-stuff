@@ -142,9 +142,10 @@ test("checkout: Premium Pro uses its own prices; the webhook records the plan fr
   const session = sent.filter(s => s.params && s.url.endsWith("/checkout/sessions")).pop().params;
   assert.equal(session.get("line_items[0][price]"), "price_prem_y");
   assert.equal(session.get("metadata[plan]"), "premium");
+  assert.equal(session.get("subscription_data[billing_mode][type]"), "flexible", "new subscriptions use flexible billing mode");
   assert.equal(session.get("success_url"), "https://study.example/?checkout={CHECKOUT_SESSION_ID}#account", "the site learns it's back from Checkout");
   const calls = sent.filter(s => s.params);
-  assert.ok(calls.every(c => c.headers.get("stripe-version") === "2025-03-31.basil"), "every Stripe request pins the API version");
+  assert.ok(calls.every(c => c.headers.get("stripe-version") === "2025-06-30.basil"), "every Stripe request pins the API version");
   assert.equal(calls.find(c => c.url.endsWith("/customers")).headers.get("idempotency-key"), `customer-${u.user.id}`, "customer creation is idempotent per user");
   assert.equal(calls.filter(c => c.url.endsWith("/customers")).length, 1, "the second checkout reuses the saved customer");
   const pro = await call(env, "POST", "/v1/billing/checkout", { cookie: u.cookie, body: { plan: "pro" } });
