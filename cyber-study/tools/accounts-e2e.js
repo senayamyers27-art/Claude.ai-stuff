@@ -375,6 +375,9 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     const pr = await device();
     await signIn(pr, "pro.learner@example.com");
     check(!(await pr.evaluate(() => CertHub.premium.active)), "Pro members don't have the AI tutor");
+    await pr.goto(BASE + "/?checkout=cs_test_a1b2c3d4e5f6g7h8#account");
+    await pr.waitForFunction(() => /Welcome to Pro/.test((document.getElementById("toast") || {}).textContent || ""));
+    check(!pr.url().includes("checkout="), "back from Checkout: welcome message, and the session id is removed from the address bar");
     api.env.DB.raw.exec("DELETE FROM rate_limits");
 
     console.log("Saving work to the profile");
