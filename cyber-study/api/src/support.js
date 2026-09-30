@@ -43,7 +43,7 @@ REFERENCE
 ${KB}`;
 
 // Keep only well-formed turns: alternating user/assistant text, starting and ending with the user.
-function cleanMessages(input) {
+export function cleanMessages(input) {
   if (!Array.isArray(input) || !input.length) throw bad("no_message", "Type a question first.");
   const msgs = input.slice(-MAX_TURNS).map(m => ({
     role: m && m.role === "assistant" ? "assistant" : "user",
@@ -81,14 +81,21 @@ export async function supportChat(env, request, body) {
     return { reply: `Development stub: you asked "${messages[messages.length - 1].content.slice(0, 80)}". See [Settings](#settings).` };
   }
 
+  return { reply: await askClaude(env, SYSTEM, messages, { maxTokens: 1500, tag: "support",
+    refusal: "I can't help with that one. I can explain how attacks work and how to defend against them, help you study for an exam, or help you use the site.",
+    empty: "Sorry, I don't have an answer for that. Try rephrasing, or search the help answers above." }) };
+}
+
+// One Claude call with a frozen, cached system prompt. Shared by the help assistant and the Premium Pro tutor (./tutor.js).
+export async function askClaude(env, system, messages, { maxTokens, tag, refusal, empty }) {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 45 * 1000 });
   let response;
   try {
     response = await client.beta.messages.create({
       model: MODEL,
-      max_tokens: 1500,                  // short support answers; also caps cost per reply
+      max_tokens: maxTokens,             // short answers; also caps cost per reply
       output_config: { effort: "low" },  // chat-style answers
-      system: [{ type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }],
+      system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }],
       messages,
       // If a safety classifier declines (security questions can trip the cyber classifier), retry server-side on
       // Anthropic's recommended model for that category instead of returning nothing.
@@ -96,16 +103,14 @@ export async function supportChat(env, request, body) {
       fallbacks: "default"
     });
   } catch (e) {
-    if (e instanceof Anthropic.RateLimitError) throw new HttpError(429, "support_busy", "The assistant is busy. Try again in a minute.");
-    if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError) { console.error("support: API key rejected"); throw new HttpError(503, "support_off", "The assistant isn't available right now."); }
-    if (e instanceof Anthropic.BadRequestError) { console.error("support: bad request", e.status); throw new HttpError(502, "support_error", "The assistant couldn't answer that. Try rephrasing."); }
-    if (e instanceof Anthropic.APIError) { console.error("support: API error", e.status); throw new HttpError(502, "support_error", "The assistant couldn't answer just now. Try again."); }
+    if (e instanceof Anthropic.RateLimitError) throw new HttpError(429, tag + "_busy", "The assistant is busy. Try again in a minute.");
+    if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError) { console.error(tag + ": API key rejected"); throw new HttpError(503, tag + "_off", "The assistant isn't available right now."); }
+    if (e instanceof Anthropic.BadRequestError) { console.error(tag + ": bad request", e.status); throw new HttpError(502, tag + "_error", "The assistant couldn't answer that. Try rephrasing."); }
+    if (e instanceof Anthropic.APIError) { console.error(tag + ": API error", e.status); throw new HttpError(502, tag + "_error", "The assistant couldn't answer just now. Try again."); }
     throw e;
   }
-  if (response.stop_reason === "refusal") {
-    return { reply: "I can't help with that one. I can explain how attacks work and how to defend against them, help you study for an exam, or help you use the site." };
-  }
+  if (response.stop_reason === "refusal") return refusal;
   const reply = response.content.filter(b => b.type === "text").map(b => b.text).join("\n").trim();
-  if (!reply) return { reply: "Sorry, I don't have an answer for that. Try rephrasing, or search the help answers above." };
-  return { reply: response.stop_reason === "max_tokens" ? reply + "…" : reply };
+  if (!reply) return empty;
+  return response.stop_reason === "max_tokens" ? reply + "…" : reply;
 }

@@ -36,6 +36,8 @@ const VIEWS = [
   ["achievements", "#achievements", "#app h1"],
   ["settings", "#settings", "#app h1"],
   ["help", "#help", "#helppage .supqa"],
+  ["plans", "#plans", ".ptable"],
+  ["signup", "#signup", ".authcard"],
   ["settings-a11y", "#settings.accessibility", "#app h1"],
   ["log-puzzles", "#log-puzzles", "#app h1"],
   ["exam-changes", "#exam-changes", "#app h1"],

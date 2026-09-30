@@ -49,15 +49,20 @@ What remains needs your accounts, payment details and secrets, so only you can d
 ## 4. Stripe (payments)
 
 1. [ ] **Create the account.** Set up a Stripe account and finish business verification. Work in **test mode** first.
-2. [ ] **Create products.** Make a product "StudyToCert Pro" with a monthly price and a yearly price. `site.config.json` shows $7 and $49; change both places if you choose other prices. Optionally add a per-seat price for group licenses.
+2. [ ] **Create products.** Make two products, each with a monthly and a yearly price:
+   - **StudyToCert Pro:** `site.config.json` shows $7 a month and $49 a year (`pro`).
+   - **StudyToCert Premium Pro:** `site.config.json` shows $15 a month and $99 a year (`premium`). It includes everything in Pro plus the AI tutor, study coach and mock interviews, which use the Anthropic API (see `SUPPORT_BOT.md`), so price it above your expected AI cost per member.
+   - Change the prices in both Stripe and `site.config.json` if you choose others. Optionally add a per-seat price for group licenses.
 3. [ ] **Add the price ids as variables:**
    - `STRIPE_PRICE_PRO_MONTHLY`
    - `STRIPE_PRICE_PRO_YEARLY`
+   - `STRIPE_PRICE_PREMIUM_MONTHLY` (Premium Pro shows "Coming soon" until this is set)
+   - `STRIPE_PRICE_PREMIUM_YEARLY`
    - `STRIPE_PRICE_ORG_SEAT` (optional)
 4. [ ] **Add the secret key.** Add `STRIPE_SECRET_KEY` as a secret. Use a restricted key if you can.
 5. [ ] **Create the webhook.** Point it at `https://api.<your-domain>/v1/stripe/webhook` for the checkout and subscription events listed in `docs/BACKEND_DESIGN.md` (Payments). Add its signing secret as `STRIPE_WEBHOOK_SECRET`.
 6. [ ] **Set up Stripe Tax** if you need it, and set the variable `STRIPE_TAX` to `on`.
-7. [ ] **Set up the Customer Portal** in Stripe settings, so members can cancel or change plans themselves.
+7. [ ] **Set up the Customer Portal** in Stripe settings, so members can cancel or change plans themselves. Under **Subscriptions → Customers can switch plans**, add both products (Pro and Premium Pro, monthly and yearly) and choose to prorate. Members switch between Pro and Premium Pro there; the site never sells a second plan to someone who already has one, and the webhook records the new plan from the price.
 
 ## 5. Deploy and test (still in Stripe test mode)
 
@@ -67,6 +72,7 @@ What remains needs your accounts, payment details and secrets, so only you can d
 - [ ] **Test buying Pro.** Use Stripe's test card, then confirm that:
   - Pro questions, flashcards, the study guide and full-length exams unlock.
   - Progress syncs to a second browser.
+- [ ] **Test Premium Pro.** Buy it with the test card and confirm the AI tutor opens from a missed question's review, the AI study coach from a dashboard card, and the AI interviewer from a career page. Switch to Pro in the Customer Portal and confirm the AI buttons change to "Premium Pro" links.
 - [ ] **Test cancelling.** Cancel in the Customer Portal and confirm Pro turns off at the end of the period.
 - [ ] **Test exporting and deleting.** Export your data, then delete the account from the Account page.
 - [ ] **Run the accounts check.** Run `npm run test:accounts` locally, which runs the end-to-end accounts test.

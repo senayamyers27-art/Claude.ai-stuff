@@ -417,6 +417,24 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     if (await page.$(".chip.pro, .pro-teaser, [data-tab=guide], a[href='#account']")) proSeen = true;
   }
   check(!proSeen, "no Pro prompts, Pro tab or Account link when accounts aren't configured");
+  await page.goto(`${BASE}/#home`); await page.waitForSelector("#acctchip a");
+  check(await page.$('#acctchip a[href="#login"]') && await page.$('#acctchip a[href="#signup"]'), "header has Log in and Sign up buttons");
+  await page.click('#acctchip a[href="#signup"]'); await page.waitForSelector("#profile-form");
+  await page.fill("#pf-name", "Alex Rivera"); await page.selectOption("#pf-goal", ids[0]); await page.fill("#pf-hours", "6");
+  await page.click("#profile-form button[type=submit]");
+  await page.waitForSelector(".profhead h1");
+  check((await page.textContent(".profhead h1")) === "Alex Rivera" && /6 hours a week/.test(await page.textContent(".profhead")), "Sign up creates a profile on this device");
+  check((await page.textContent("#acctchip")).trim() === "AR", "header shows the profile's initials");
+  await page.goto(`${BASE}/#login`); await page.waitForSelector(".profhead h1");
+  check(true, "Log in opens the profile on this device");
+  await page.goto(`${BASE}/#plans`); await page.waitForSelector(".plancards");
+  check((await page.$$(".plancard")).length === 3 && /Coming soon/.test(await page.textContent(".plancards")), "plans page compares Free, Pro and Premium Pro; paid plans say Coming soon");
+  check(!(await page.$(".tutbtn")), "no AI tutor buttons when paid plans aren't on sale");
+  await page.goto(`${BASE}/#profile`); await page.waitForSelector("[data-aact=removeprofile]");
+  await page.click("[data-aact=removeprofile]");
+  await page.waitForSelector(".modal [data-v='1']"); await page.click(".modal [data-v='1']");
+  await page.waitForFunction(() => location.hash === "#home");
+  check(await page.$('#acctchip a[href="#signup"]'), "removing the profile brings back Sign up");
 
   console.log("Saved progress");
   await page.goto(`${BASE}/${ids[0]}/`);

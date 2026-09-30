@@ -2,7 +2,8 @@
 /* Writes api/wrangler.deploy.toml for the accounts API from site.config.json and environment
    variables, so no account-specific ids live in the repository.
    Needs: STUDY_API_D1_ID. Optional: STUDY_API_R2_BUCKET, STUDY_API_EMAIL_FROM,
-   STRIPE_PRICE_PRO_MONTHLY, STRIPE_PRICE_PRO_YEARLY, STRIPE_PRICE_ORG_SEAT, STRIPE_TAX. */
+   STRIPE_PRICE_PRO_MONTHLY, STRIPE_PRICE_PRO_YEARLY, STRIPE_PRICE_PREMIUM_MONTHLY, STRIPE_PRICE_PREMIUM_YEARLY,
+   STRIPE_PRICE_ORG_SEAT, STRIPE_TAX. */
 const fs = require("fs"), path = require("path");
 const ROOT = path.join(__dirname, "..");
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "site.config.json"), "utf8"));
@@ -25,7 +26,7 @@ const vars = {
   EMAIL_FROM: process.env.STUDY_API_EMAIL_FROM || `${cfg.siteName} <signin@${base}>`,
   STRIPE_TAX: process.env.STRIPE_TAX === "on" ? "on" : "off"
 };
-for (const k of ["STRIPE_PRICE_PRO_MONTHLY", "STRIPE_PRICE_PRO_YEARLY", "STRIPE_PRICE_ORG_SEAT"])
+for (const k of ["STRIPE_PRICE_PRO_MONTHLY", "STRIPE_PRICE_PRO_YEARLY", "STRIPE_PRICE_PREMIUM_MONTHLY", "STRIPE_PRICE_PREMIUM_YEARLY", "STRIPE_PRICE_ORG_SEAT"])
   if (/^price_[A-Za-z0-9]+$/.test(process.env[k] || "")) vars[k] = process.env[k];
 
 // One compatibility date for local and deployed Workers: the one in api/wrangler.toml.

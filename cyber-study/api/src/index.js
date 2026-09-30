@@ -5,7 +5,8 @@ import { HttpError, readJson, notFound, clientIp } from "./util.js";
 import { rateLimit, securityLog, setHashKey } from "./audit.js";
 import { requestMagicLink, verifyMagicLink, requireUser, currentUser, logout, clearCookie, refreshedCookies } from "./auth.js";
 import { listDocs, putDoc, MAX_DOC_BYTES } from "./progress.js";
-import { entitlementsFor, createCheckout, createPortal, handleWebhook, billingEnabled } from "./billing.js";
+import { entitlementsFor, createCheckout, createPortal, handleWebhook, billingEnabled, premiumEnabled } from "./billing.js";
+import { tutorChat } from "./tutor.js";
 import { createOrg, createCohort, listCohorts, createInvite, acceptInvite, cohortSummary, summaryCsv } from "./orgs.js";
 import { exportAccount, deleteAccount } from "./account.js";
 import { registerOptions, registerVerify, signinOptions, signinVerify, listPasskeys, deletePasskey, listSessions, endSession, endOtherSessions } from "./passkeys.js";
@@ -121,7 +122,7 @@ async function route(request, env) {
     if (origin !== env.SITE_ORIGIN) throw new HttpError(403, "bad_origin", "Requests must come from the site.");
   }
 
-  if (path === "/v1/health" && method === "GET") return json(env, request, { ok: true, billing: billingEnabled(env), support: supportEnabled(env) });
+  if (path === "/v1/health" && method === "GET") return json(env, request, { ok: true, billing: billingEnabled(env), premium: premiumEnabled(env), support: supportEnabled(env) });
 
   // AI support assistant (./support.js): open to everyone, rate limited, nothing stored.
   if (path === "/v1/support/chat" && method === "POST") return json(env, request, await supportChat(env, request, await readJson(request, 32 * 1024)));
@@ -169,9 +170,9 @@ async function route(request, env) {
   if (path === "/v1/me" && method === "GET") {
     const u = await currentUser(env, request);
     const providers = enabledProviders(env);
-    if (!u) return json(env, request, { user: null, billing: billingEnabled(env), providers, support: supportEnabled(env) });
+    if (!u) return json(env, request, { user: null, billing: billingEnabled(env), premium: premiumEnabled(env), providers, support: supportEnabled(env) });
     const p = await env.DB.prepare("SELECT display_name FROM users WHERE id = ?").bind(u.id).first();
-    return json(env, request, { user: { id: u.id, email: u.email, displayName: (p && p.display_name) || "" }, billing: billingEnabled(env), providers, support: supportEnabled(env), ...(await entitlementsFor(env, u.id)) });
+    return json(env, request, { user: { id: u.id, email: u.email, displayName: (p && p.display_name) || "" }, billing: billingEnabled(env), premium: premiumEnabled(env), providers, support: supportEnabled(env), ...(await entitlementsFor(env, u.id)) });
   }
 
   // Everything below needs a signed-in user.
@@ -194,6 +195,9 @@ async function route(request, env) {
     if (!obj) throw notFound("No Pro content for this yet.");
     return new Response(obj.body, { headers: { "Content-Type": "application/json; charset=utf-8", ...SECURITY_HEADERS, ...cors(env, request) } });
   }
+
+  // Premium Pro AI tutor, study coach and mock interviews (./tutor.js).
+  if (path === "/v1/tutor/chat" && method === "POST") return json(env, request, await tutorChat(env, request, user, await entitlementsFor(env, user.id), await readJson(request, 48 * 1024)));
 
   if (path === "/v1/billing/checkout" && method === "POST") return json(env, request, await createCheckout(env, request, user, await readJson(request)));
   if (path === "/v1/billing/portal" && method === "POST") return json(env, request, await createPortal(env, request, user));

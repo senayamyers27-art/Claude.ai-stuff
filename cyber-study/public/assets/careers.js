@@ -44,6 +44,14 @@
       <ol class="dayline" data-content>${t.day.map(([h, x]) => `<li><span class="dlh">${esc(h)}</span><span>${esc(x)}</span></li>`).join("")}</ol>`;
   }
   document.addEventListener("click", e => { if (e.target.closest("[data-print]")) window.print(); });
+  // Premium Pro: a mock interview for the role with the AI interviewer (CertHub.premium in sync.js).
+  function interviewBtn(c, r) {
+    const b = CertHub.premium ? CertHub.premium.button("interview", "Practice with the AI interviewer", () => ({
+      subtitle: `${roleName(r)} · one question at a time, with feedback`,
+      context: { role: roleName(r), level: "entry", certs: c.path.map(p => CertHub.certs[p.cert] && CertHub.certs[p.cert].short).filter(Boolean).slice(0, 4) }
+    })) : "";
+    return b ? `<div class="btns">${b}</div>` : "";
+  }
   function track(c) {
     const t = CertHub.tracks.find(x => x.id === c.track);
     const iv = CertHub.careers.interview || {};
@@ -65,7 +73,7 @@
     <div class="labgrid">${c.labs.map(id => CertHub.labs[id]).filter(Boolean).map(l => CertHub.labCard(l)).join("")}</div>
     <h2>Interview practice</h2>
     <p class="note">Answer out loud first, then open the model answer.</p>
-    ${c.roles.map(r => `<h3>${esc(roleName(r))}</h3><div class="panel">${(iv[r] || []).map(([q, a]) => `<details class="sq"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("")}</div>`).join("")}`;
+    ${c.roles.map(r => `<h3>${esc(roleName(r))}</h3><div class="panel">${(iv[r] || []).map(([q, a]) => `<details class="sq"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("")}${/* html: built with esc() in sync.js */ interviewBtn(c, r)}</div>`).join("")}`;
   }
   CertHub.careerViews = {
     async show(head) {

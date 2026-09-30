@@ -226,6 +226,7 @@ CertHub.site = ${JSON.stringify({
   feedbackUrl: httpsOr(cfg.feedbackUrl),
   // Display prices for Pro (the amounts charged are set in Stripe; keep them the same).
   pro: Object.fromEntries(["monthly", "yearly"].map(k => [k, /^[$€£]\d{1,4}(\.\d{2})?$/.test(String((cfg.pro || {})[k] || "")) ? cfg.pro[k] : ""])),
+  premium: Object.fromEntries(["monthly", "yearly"].map(k => [k, /^[$€£]\d{1,4}(\.\d{2})?$/.test(String((cfg.premium || {})[k] || "")) ? cfg.premium[k] : ""])),
   apiUrl: apiOrigin,
   compare: comparisons.map(x => [x.a, x.b]),
   turnstileSiteKey,

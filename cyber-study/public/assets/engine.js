@@ -471,6 +471,11 @@
   }
   const lessonLink = q => { const t = lessonFor(q); return t ? `<button type="button" class="linkbtn" data-ui data-act="golesson" data-k="${lessonKey(t)}">Review the lesson: ${esc(t.length > 70 ? t.slice(0, 68) + "…" : t)}</button>` : ""; };
   const reportLink = (title, body) => { const u = CertHub.reportUrl(title, body); return u ? `<a class="report" data-ui href="${esc(u)}" target="_blank" rel="noopener">Report a mistake</a>` : ""; };
+  // Premium Pro: "Explain with the AI tutor" for a question (CertHub.premium in sync.js; empty when not offered).
+  const tutorBtn = (q, picked) => { const b = CertHub.premium ? CertHub.premium.button("explain", "Explain with the AI tutor", () => ({
+    subtitle: `${C.short} ${C.exam} · ${domName(q.d)}`,
+    context: { certId: C.id, certName: `${C.name} (${C.exam})`, domain: domName(q.d), question: q.q, options: q.o, answer: q.a, chosen: picked == null ? null : picked, explanation: q.e }
+  }), "linkbtn") : ""; return b ? "<br>" + b : ""; };
   const qReport = q => reportLink(`${C.short}: question ${q.id}`, `Certification: ${C.name} (${C.exam})\nQuestion ${q.id}: ${q.q}\nMarked answer: ${q.o[q.a]}`);
   const diagramHtml = t => CertHub.diagramsFor(C.id, t).map(d => `<figure class="diagram">${esc(d.svg.replace(/^<svg /, `<svg role="img" aria-label="${esc(d.alt)}" focusable="false" `))}<figcaption>${esc(d.title)}</figcaption></figure>`).join("");
   const lessonTopics = w => w.dom ? w.topics.filter(t => !/^Checkpoint test/i.test(t)) : [];
@@ -1161,7 +1166,7 @@
       <div class="bars" data-style="margin-top:12px">${C.domains.map(d => { const qs = z.qs.map((q, i) => [q, i]).filter(([q]) => q.d === d.id); const c = qs.filter(([q, i]) => z.ans[i] === q.a).length; const p = qs.length ? Math.round(100 * c / qs.length) : 0; return `<div class="b" data-style="--c:${dc(d.id)}"><div class="flex"><span>D${esc(d.id)} ${esc(d.name)}</span><strong>${c}/${qs.length}</strong></div><div class="track"><i data-style="width:${p}%"></i></div></div>`; }).join("")}</div>` : ""}</div>
       ${z.kind === "placement" ? placementHtml() : ""}
       ${z.fix ? fixHtml(S.p.fix === z.fix ? S.p.fix : z.fix, "result") : ""}
-      <h2>Review</h2>${z.qs.map((q, i) => { const ok = z.ans[i] === q.a; return `<div class="panel" data-style="--c:${ok ? "var(--ok)" : "var(--bad)"}"><p data-style="margin:0 0 6px"><strong>${ok ? "Correct" : "Missed"}</strong> · <span class="note">${esc(domName(q.d))}</span></p><p class="qtext" data-style="margin:0 0 8px">${esc(q.q)}</p>${ok ? "" : `<p class="note" data-style="margin:0">Your answer: ${esc(z.ans[i] == null ? "none" : q.o[z.ans[i]])}</p>`}<p data-style="margin:4px 0 0"><strong>${esc(q.o[q.a])}</strong></p><div class="expl">${esc(q.e)}${whyHtml(q, z.ans[i])}${q.src ? `<br><small class="note">Source: ${esc(q.src)}</small>` : ""}${ok ? "" : `<br>${lessonLink(q)}`}<br>${qReport(q)}</div></div>`; }).join("")}`;
+      <h2>Review</h2>${z.qs.map((q, i) => { const ok = z.ans[i] === q.a; return `<div class="panel" data-style="--c:${ok ? "var(--ok)" : "var(--bad)"}"><p data-style="margin:0 0 6px"><strong>${ok ? "Correct" : "Missed"}</strong> · <span class="note">${esc(domName(q.d))}</span></p><p class="qtext" data-style="margin:0 0 8px">${esc(q.q)}</p>${ok ? "" : `<p class="note" data-style="margin:0">Your answer: ${esc(z.ans[i] == null ? "none" : q.o[z.ans[i]])}</p>`}<p data-style="margin:4px 0 0"><strong>${esc(q.o[q.a])}</strong></p><div class="expl">${esc(q.e)}${whyHtml(q, z.ans[i])}${q.src ? `<br><small class="note">Source: ${esc(q.src)}</small>` : ""}${ok ? "" : `<br>${lessonLink(q)}${/* html: built with esc() in sync.js */ tutorBtn(q, z.ans[i])}`}<br>${qReport(q)}</div></div>`; }).join("")}`;
     }
     if (z.mode === "test" && z.reviewing) return reviewScreen(z);
     const q = z.qs[z.i], test = z.mode === "test", struck = (test && z.struck[z.i]) || {};
@@ -1177,7 +1182,7 @@
     ${test ? `<details class="qnav"><summary>All questions</summary>${qGrid(z)}</details>` : ""}
     <p class="q">${esc(q.q)}</p>${opts}
     ${z.revealed ? (z.guess[z.i] && z.picked === q.a ? `<p class="note" data-ui>Right, but you marked it as a guess, so it comes back for review tomorrow.</p>` : "") : `<p class="guessrow"><button type="button" class="chipbtn" data-act="guess" aria-pressed="${!!z.guess[z.i]}">🤔 I'm guessing</button> <span class="note">Right answers you guessed come back for review.</span></p>`}
-    ${z.revealed ? `<div class="expl" role="status" data-style="--c:${z.picked === q.a ? "var(--ok)" : "var(--bad)"}"><strong data-ui>${z.picked === q.a ? "Correct." : "Not quite."}</strong> ${esc(q.e)}${whyHtml(q, z.picked)}${q.src ? `<br><small class="note" data-ui>Source: ${esc(q.src)}</small>` : ""}${z.picked !== q.a ? `<br>${lessonLink(q)}` : ""}<br>${qReport(q)}</div>` : ""}
+    ${z.revealed ? `<div class="expl" role="status" data-style="--c:${z.picked === q.a ? "var(--ok)" : "var(--bad)"}"><strong data-ui>${z.picked === q.a ? "Correct." : "Not quite."}</strong> ${esc(q.e)}${whyHtml(q, z.picked)}${q.src ? `<br><small class="note" data-ui>Source: ${esc(q.src)}</small>` : ""}${z.picked !== q.a ? `<br>${lessonLink(q)}${/* html: built with esc() in sync.js */ tutorBtn(q, z.picked)}` : ""}<br>${qReport(q)}</div>` : ""}
     <div class="btns">${z.mode === "test" && z.i > 0 ? `<button class="btn ghost" data-act="prev">Back</button>` : ""}
     ${(z.mode === "learn" && z.revealed) || z.mode === "test" ? `<button class="btn" data-act="next">${z.i + 1 === z.qs.length ? (z.mode === "test" && z.end ? "Review answers" : "Finish") : "Next"}</button>` : ""}
     ${test ? `<button class="btn ghost" data-act="flag" aria-pressed="${!!z.flags[z.i]}">${z.flags[z.i] ? "⚑ Flagged" : "⚐ Flag for review"}</button><button class="btn ghost" data-act="reviewall">Review all</button><button class="btn ghost" data-act="finish">Submit test</button>` : ""}</div>
