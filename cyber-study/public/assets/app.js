@@ -343,7 +343,7 @@
         ${item("Printable materials", "Cheat sheets, key-term flashcards to cut out and a study planner, all ready to print or save as PDF.", "#security-plus.cheat", "See a cheat sheet")}
         ${item("Hands-on labs without installs", "Real Linux servers run in the browser for Linux+, Security+, CySA+ and Network+ practice, with graded labs checked inside the machine.", "#vm", "Open the practice VMs")}
         ${item("Blue-team exercises for class discussion", "Log puzzles and incident response tabletops work well projected on a screen: the class decides each step, then reads why.", "#tabletop", "Try a tabletop")}
-        ${item("Quick games for warm-ups", "Sixty-second rounds on subnetting, ports, acronyms, OSI layers and commands.", "#games", "Play a game")}
+        ${item("Games for warm-ups", "Sixty-second rounds on subnetting, ports, acronyms, OSI layers and commands.", "#games", "Play a game")}
         ${item("Works offline and on phones", "Students can install it like an app and keep studying without a connection.", "#install", "How to install")}
       </div>
       <h2>Good to know</h2>
@@ -400,9 +400,9 @@
   const SECTIONS = () => {
     const n = CertHub.catalog.filter(id => certs[id]).length, acct = CertHub.sync && CertHub.sync.enabled, me = acct && CertHub.sync.me;
     return [
-      ["Study", [["certifications", "Certifications", `Free week-by-week plans for ${n} certifications`, "cybersecurity"], ["dashboard", "Dashboard", "Readiness, exam countdowns and what's due", "chart"], ["review", "Daily review", "Five minutes of spaced review across your plans", "flame"], ["exam-day", "Exam-day guides", "Scoring, question types and test day", "check"], ["exam-changes", "Exam Changes", "New exam versions and retirements", "news"]]],
-      ["Practice", [["labs", "Labs", `${labOrder.length} hands-on labs with step-by-step guides`, "lab"], ["vm", "Practice VM", "A Linux machine in your browser, with graded labs", "terminal"], ["games", "Quick games", "Sixty-second rounds: subnets, ports, acronyms", "game"], ["log-puzzles", "Blue-team practice", "Log puzzles and incident tabletops", "shield"], ["net-design", "Network design", "Put the right device in each part of a network", "network"]]],
-      ["Career", [["careers", "Career paths", "Which certification first, jobs and interview practice", "career"], ["job-outlook", "Pay and job outlook", "Median pay and projected growth", "chart"], ["portfolio", "Portfolio", "Your finished labs as write-ups and resume bullets", "portfolio"], ["frameworks", "Frameworks", "NIST, ISO, CIS and more, mapped to certifications", "book"], ["achievements", "Achievements", "Badges for streaks, scores and labs", "badge"]]],
+      ["Study", [["certifications", "Certifications", `Free week-by-week plans for ${n} certifications`, "cybersecurity"], ["dashboard", "Dashboard", "Readiness, exam countdowns and what's due", "chart"], ["review", "Daily Review", "Five minutes of spaced review across your plans", "flame"], ["exam-day", "Exam-Day Guides", "Scoring, question types and test day", "check"], ["exam-changes", "Exam Changes", "New exam versions and retirements", "news"]]],
+      ["Practice", [["labs", "Labs", `${labOrder.length} hands-on labs with step-by-step guides`, "lab"], ["vm", "Practice VM", "A Linux machine in your browser, with graded labs", "terminal"], ["games", "Games", "Sixty-second rounds: subnets, ports, acronyms", "game"], ["log-puzzles", "Blue Team", "Log puzzles and incident tabletops", "shield"], ["net-design", "Network Design", "Put the right device in each part of a network", "network"]]],
+      ["Career", [["careers", "Career Paths", "Which certification first, jobs and interview practice", "career"], ["job-outlook", "Pay and job outlook", "Median pay and projected growth", "chart"], ["portfolio", "Portfolio", "Your finished labs as write-ups and resume bullets", "portfolio"], ["frameworks", "Frameworks", "NIST, ISO, CIS and more, mapped to certifications", "book"], ["achievements", "Achievements", "Badges for streaks, scores and labs", "badge"]]],
       ["You", [(acct ? me && me.user : CertHub.store.get("certhub:profile")) ? ["profile", "Your profile", "Your saved work and sign-in methods", "user"] : ["login", "Log in or sign up", "Save your work to a free profile", "user"], ["plans", "Plans", "Free, Pro and Premium Pro compared", "spark"], ["settings", "Settings", "Theme, text size, accessibility, backups", "settings"], ["help", "Help", "Answers to common questions", "help"]]],
       ["About", [["whats-new", "What's new", "", ""], ["schools", "Teachers", "", ""], ["install", "Install App", "", ""], ["support", "Support", "", ""], ["privacy", "Privacy Policy", "", ""], ["terms", "Terms of Use", "", ""], ["security", "Security", "", ""]]]
     ];
@@ -438,10 +438,10 @@
     const nCerts = CertHub.catalog.filter(id => certs[id]).length;
     return `<h1>Certifications</h1>
     <p class="meta">Free week-by-week study plans for ${nCerts} IT, cloud and cybersecurity certifications. Not sure where to start? Answer a few questions below.</p>
-    <div class="btns"><button type="button" class="btn ghost sm" data-jump="pick">Help me choose</button><button type="button" class="btn ghost sm" data-jump="tracks-h">Browse by career track</button><a class="btn ghost sm" href="#careers">Career paths</a></div>
+    <div class="btns"><button type="button" class="btn ghost sm" data-jump="pick">Help me choose</button><button type="button" class="btn ghost sm" data-jump="tracks-h">Browse by career track</button><a class="btn ghost sm" href="#careers">Career Paths</a></div>
     ${pickerHtml()}
     <h2 id="tracks-h">Certifications by career track</h2>
-    <p class="note"><a href="#careers">Career paths</a>: which certification to take first, the jobs each track leads to, and interview practice. <a href="#exam-day">Exam-day guides</a>: scoring, question types and what to expect on test day. <a href="#exam-changes">Exam Changes</a>: new versions and retirements.</p>
+    <p class="note"><a href="#careers">Career Paths</a>: which certification to take first, the jobs each track leads to, and interview practice. <a href="#exam-day">Exam-Day Guides</a>: scoring, question types and what to expect on test day. <a href="#exam-changes">Exam Changes</a>: new versions and retirements.</p>
     ${trackPicker()}
     <div id="trackcards">${trackCards()}</div>`;
   }
@@ -557,7 +557,7 @@
       else if (head === "log-puzzles" || head === "tabletop" || /^tabletop-[a-z-]{2,30}$/.test(head)) {
         topNav("labs"); view = head;
         if (CertHub.blueteam) title = CertHub.blueteam.show(head);
-        else { title = "Blue-team practice"; $("#app").innerHTML = `${CertHub.fx.skeleton()}`; CertHub.loadScript("assets/blueteam.js").then(ok => { if (location.hash === "#" + head && CertHub.blueteam) document.title = `${CertHub.blueteam.show(head)} · StudyToCert`; else if (!ok) $("#app").innerHTML = `<p class="meta" role="status">This page couldn't load. Check your connection and try again.</p>`; }); }
+        else { title = "Blue Team"; $("#app").innerHTML = `${CertHub.fx.skeleton()}`; CertHub.loadScript("assets/blueteam.js").then(ok => { if (location.hash === "#" + head && CertHub.blueteam) document.title = `${CertHub.blueteam.show(head)} · StudyToCert`; else if (!ok) $("#app").innerHTML = `<p class="meta" role="status">This page couldn't load. Check your connection and try again.</p>`; }); }
       }
       else if (head === "settings") { topNav(""); $("#app").innerHTML = settingsView(tab); title = tab === "accessibility" ? "Accessibility Settings" : "Settings"; view = head; }
       else if (head === "whats-new") { topNav(""); $("#app").innerHTML = newsView(); title = "What's New"; view = head; }

@@ -964,7 +964,7 @@
       ["AI mock job interviews with feedback on every answer", 0, 0, 1]]],
     ["Account", [
       ["Free profile, saved work and sync across devices", 1, 1, 1],
-      ["Career paths, resume builder and portfolio", 1, 1, 1],
+      ["Career Paths, resume builder and portfolio", 1, 1, 1],
       ["No ads, ever", 1, 1, 1]]]
   ];
   function plansView() {
