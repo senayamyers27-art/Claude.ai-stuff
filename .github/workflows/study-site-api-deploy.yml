@@ -85,6 +85,19 @@ jobs:
 
       # The database id isn't secret. If STUDY_API_D1_ID is missing or doesn't hold one (a pasted name or account id,
       # say), look the "cyber-cert-study" database up by name with the Cloudflare token.
+      - name: Check the Cloudflare token
+        if: steps.ready.outputs.ok == 'true'
+        run: |
+          ACCOUNT=$(printf '%s' "$CLOUDFLARE_ACCOUNT_ID" | tr -d '[:space:]"'"'")
+          echo "::add-mask::$ACCOUNT"
+          case "$CLOUDFLARE_API_TOKEN" in *[[:space:]]*) echo "::warning::CLOUDFLARE_API_TOKEN has a space or line break in it. Paste the token again with nothing before or after it.";; esac
+          # Account tokens verify under the account, user tokens under /user; either answering "active" is fine.
+          a=$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT/tokens/verify" | jq -r '.result.status // empty' 2>/dev/null || true)
+          u=$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/user/tokens/verify" | jq -r '.result.status // empty' 2>/dev/null || true)
+          if [ "$a" = "active" ] || [ "$u" = "active" ]; then echo "The Cloudflare token is valid."; exit 0; fi
+          echo "::error::Cloudflare doesn't accept CLOUDFLARE_API_TOKEN (status: ${a:-${u:-invalid}}). Make a new one: Cloudflare → My Profile → API Tokens → Create Token → \"Edit Cloudflare Workers\" template, add Account → D1 → Edit, create it, and copy the long token shown once (not the Global API Key or the token's name/ID). Paste it into GitHub → Settings → Secrets and variables → Actions → CLOUDFLARE_API_TOKEN → Update, then run Study site API deploy again."
+          exit 1
+
       - name: Find the D1 database
         if: steps.ready.outputs.ok == 'true'
         env:
@@ -163,9 +176,10 @@ jobs:
         if: steps.ready.outputs.ok == 'true'
         run: |
           API=$(node -p 'require("./site.config.json").apiOrigin')
-          for i in 1 2 3 4 5 6; do
+          # A custom domain attached for the first time needs a few minutes for its certificate, so wait up to 6.
+          for i in $(seq 1 36); do
             if curl -fsS "$API/v1/health"; then echo; exit 0; fi
             sleep 10
           done
-          echo "::error::$API/v1/health didn't respond after deploy."
+          echo "::error::$API/v1/health didn't respond after deploy. In Cloudflare → Workers & Pages → cyber-cert-study-api → Settings → Domains & Routes, check that ${API#https://} is listed and active; if Cloudflare DNS has an older record for that name, delete it and run this workflow again."
           exit 1
