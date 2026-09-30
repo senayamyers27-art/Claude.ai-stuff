@@ -82,25 +82,21 @@ const bridge = platform => {
     await page.waitForFunction(() => !window.CertHubNative.token());
     check(true, "signing out forgets the token");
 
+    // Pages can re-render once their data loads, so click by selector (re-found on each try), not by a saved handle.
     await page.goto(BASE + "/#security-plus.progress"); await page.waitForSelector("[data-act=reminder]");
-    const rem = await page.$("[data-act=reminder]");
-    if (rem) {
-      await rem.click(); await page.waitForSelector("#nrm-time");
-      await page.fill("#nrm-time", "07:30"); await page.click("[data-nrm=ok]");
-      await page.waitForFunction(() => window.__calls.some(c => c.method === "schedule"));
-      const s = (await calls()).find(c => c.method === "schedule").args[0].notifications[0];
-      check(s.schedule.on.hour === 7 && s.schedule.on.minute === 30, "the daily reminder is a phone notification at the chosen time");
-    } else check(false, "the study page has a reminder button");
+    await page.click("[data-act=reminder]"); await page.waitForSelector("#nrm-time");
+    await page.fill("#nrm-time", "07:30"); await page.click("[data-nrm=ok]");
+    await page.waitForFunction(() => window.__calls.some(c => c.method === "schedule"));
+    const s = (await calls()).find(c => c.method === "schedule").args[0].notifications[0];
+    check(s.schedule.on.hour === 7 && s.schedule.on.minute === 30, "the daily reminder is a phone notification at the chosen time");
 
-    await page.goto(BASE + "/#careers"); await page.waitForSelector("#app h1");
-    const cmp = await page.$('a[href^="/compare/"]');
-    if (cmp) {
-      const href = await cmp.getAttribute("href");
-      await cmp.click();
-      await page.waitForFunction(() => window.__calls.some(c => c.plugin === "Browser"));
-      const url = (await calls()).filter(c => c.plugin === "Browser").pop().args[0].url;
-      check(url === "https://www.studytocert.com" + href && await page.evaluate(() => location.pathname === "/"), "website-only pages open in the browser, not in the app");
-    } else check(false, "the careers page links to a comparison");
+    await page.goto(BASE + "/#careers"); await page.waitForSelector('a[href^="/compare/"]');
+    const cmp = page.locator('a[href^="/compare/"]').first();
+    const href = await cmp.getAttribute("href");
+    await cmp.click();
+    await page.waitForFunction(() => window.__calls.some(c => c.plugin === "Browser"));
+    const url = (await calls()).filter(c => c.plugin === "Browser").pop().args[0].url;
+    check(url === "https://www.studytocert.com" + href && await page.evaluate(() => location.pathname === "/"), "website-only pages open in the browser, not in the app");
     await ctx.close();
   }
 
