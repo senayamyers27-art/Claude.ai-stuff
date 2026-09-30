@@ -226,6 +226,7 @@ CertHub.site = ${JSON.stringify({
   feedbackUrl: httpsOr(cfg.feedbackUrl),
   // Display prices for Pro (the amounts charged are set in Stripe; keep them the same).
   pro: Object.fromEntries(["monthly", "yearly"].map(k => [k, /^[$€£]\d{1,4}(\.\d{2})?$/.test(String((cfg.pro || {})[k] || "")) ? cfg.pro[k] : ""])),
+  premium: Object.fromEntries(["monthly", "yearly"].map(k => [k, /^[$€£]\d{1,4}(\.\d{2})?$/.test(String((cfg.premium || {})[k] || "")) ? cfg.premium[k] : ""])),
   apiUrl: apiOrigin,
   compare: comparisons.map(x => [x.a, x.b]),
   turnstileSiteKey,
@@ -487,11 +488,11 @@ ${c.domains.map(d => { const ls = byDom(d); if (!ls.length) return ""; const see
     const roleName = id => ((CertHub.niceRoles || []).find(r => r.id === id) || { name: id }).name;
     const labTitle = id => ((CertHub.labList || []).find(l => l.id === id) || {}).title;
     const top = pre => `<header class="top"><div class="bar"><a class="brand" href="${pre}">${BRAND_HTML}</a></div></header>`;
-    out("public/careers/index.html", `${head({ title: `Career Paths · ${cfg.siteName}`, desc: "Career paths in cybersecurity, networking, software, security administration and systems administration: which certification first, jobs, skills and interview practice.", prefix: "../", urlPath: "/careers/", scripts: [], og: "careers", ld: crumbs([["Home", "/"], ["Careers", "/careers/"]]) })}
+    out("public/careers/index.html", `${head({ title: `Career Paths · ${cfg.siteName}`, desc: "Career Paths in cybersecurity, networking, software, security administration and systems administration: which certification first, jobs, skills and interview practice.", prefix: "../", urlPath: "/careers/", scripts: [], og: "careers", ld: crumbs([["Home", "/"], ["Careers", "/careers/"]]) })}
 <body>
 ${top("../")}
 <main class="wrap lesson-page">
-<h1>Career paths</h1>
+<h1>Career Paths</h1>
 <p class="meta">Which certification to take first, the jobs each track leads to, the skills employers ask for, and interview practice.</p>
 <div class="panel"><ul class="clean">${careers.map(c => `<li><a href="${c.track}/">${esc(c.title)}</a></li>`).join("")}</ul></div>
 </main>
@@ -504,7 +505,7 @@ ${top("../")}
 <body>
 ${top("../../")}
 <main class="wrap lesson-page">
-<p class="crumbs"><a href="../">Career paths</a></p>
+<p class="crumbs"><a href="../">Career Paths</a></p>
 <h1>${esc(c.title)}</h1>
 <div class="prose">${String(c.intro).split(/\n\n+/).map(p => `<p>${esc(p)}</p>`).join("")}</div>
 <h2>Certification path</h2>
@@ -536,11 +537,11 @@ ${c.roles.map(r => `<h3>${esc(roleName(r))}</h3><div class="panel">${(interview[
     const top = pre => `<header class="top"><div class="bar"><a class="brand" href="${pre}">${BRAND_HTML}</a></div></header>`;
     const secs = list => list.map(s => `<h2>${esc(s.h)}</h2><div class="panel"><ul class="clean">${s.points.map(x => `<li>${esc(x).replace(/`([^`\n]+)`/g, "<code>$1</code>")}</li>`).join("")}</ul></div>`).join("\n");
     const certLinks = (ids, pre) => ids.filter(id => certs.some(c => c.id === id)).map(id => { const c = certs.find(x => x.id === id); return `<a href="${pre}${id}/">${esc(c.short)} ${esc(c.exam)}</a>`; }).join(", ");
-    out("public/exam-day/index.html", `${head({ title: `Exam-Day Guides · ${cfg.siteName}`, desc: "What to expect on certification exam day, vendor by vendor: scoring, question types, pacing, check-in, online proctoring and retakes.", prefix: "../", urlPath: "/exam-day/", scripts: [], ld: crumbs([["Home", "/"], ["Exam-day guides", "/exam-day/"]]) })}
+    out("public/exam-day/index.html", `${head({ title: `Exam-Day Guides · ${cfg.siteName}`, desc: "What to expect on certification exam day, vendor by vendor: scoring, question types, pacing, check-in, online proctoring and retakes.", prefix: "../", urlPath: "/exam-day/", scripts: [], ld: crumbs([["Home", "/"], ["Exam-Day Guides", "/exam-day/"]]) })}
 <body>
 ${top("../")}
 <main class="wrap lesson-page">
-<h1>Exam-day guides</h1>
+<h1>Exam-Day Guides</h1>
 <p class="meta">What to expect on the day, vendor by vendor. Always confirm policies on the vendor's official page before you book.</p>
 <div class="panel"><ul class="clean">${D.vendors.map(v => `<li><a href="${v.id}/">${esc(v.name)}</a></li>`).join("")}</ul></div>
 ${secs(D.general)}
@@ -550,11 +551,11 @@ ${secs(D.general)}
 `);
     extraPages.push(["/exam-day/"]);
     D.vendors.forEach(v => {
-      out(`public/exam-day/${v.id}/index.html`, `${head({ title: `${v.name} Exam Day · ${cfg.siteName}`, desc: String(v.intro).slice(0, 155), prefix: "../../", urlPath: `/exam-day/${v.id}/`, scripts: [], ld: crumbs([["Home", "/"], ["Exam-day guides", "/exam-day/"], [v.name, `/exam-day/${v.id}/`]]) })}
+      out(`public/exam-day/${v.id}/index.html`, `${head({ title: `${v.name} Exam Day · ${cfg.siteName}`, desc: String(v.intro).slice(0, 155), prefix: "../../", urlPath: `/exam-day/${v.id}/`, scripts: [], ld: crumbs([["Home", "/"], ["Exam-Day Guides", "/exam-day/"], [v.name, `/exam-day/${v.id}/`]]) })}
 <body>
 ${top("../../")}
 <main class="wrap lesson-page">
-<p class="crumbs"><a href="../../">All certifications</a> / <a href="../">Exam-day guides</a> / ${esc(v.name)}</p>
+<p class="crumbs"><a href="../../">All certifications</a> / <a href="../">Exam-Day Guides</a> / ${esc(v.name)}</p>
 <h1>${esc(v.name)} exam day</h1>
 <p class="meta">${esc(v.intro)}</p>
 <p class="note">Covers: ${certLinks(v.certs, "../../")}</p>

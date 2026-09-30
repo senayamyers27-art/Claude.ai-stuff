@@ -33,4 +33,5 @@ migrations_dir = "migrations"
 # TURNSTILE_SECRET_KEY (a bot check on sign-in requests; set turnstileSiteKey in site.config.json too), and for
 # social sign-in GOOGLE_CLIENT_ID/_SECRET, FACEBOOK_APP_ID/_SECRET, LINKEDIN_CLIENT_ID/_SECRET (docs/SOCIAL_SIGNIN.md).
 # Price ids (plain vars, set by the deploy workflow when present): STRIPE_PRICE_PRO_MONTHLY,
-# STRIPE_PRICE_PRO_YEARLY, STRIPE_PRICE_ORG_SEAT.
+# STRIPE_PRICE_PRO_YEARLY, STRIPE_PRICE_PREMIUM_MONTHLY, STRIPE_PRICE_PREMIUM_YEARLY, STRIPE_PRICE_ORG_SEAT.
+# AI tutor limits (optional): TUTOR_PER_HOUR (40), TUTOR_PER_DAY (150), TUTOR_DAILY_LIMIT (5000).

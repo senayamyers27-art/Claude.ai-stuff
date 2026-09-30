@@ -5,6 +5,20 @@ import { audit } from "./audit.js";
 
 
 export const billingEnabled = env => !!(env.STRIPE_SECRET_KEY && env.STRIPE_PRICE_PRO_MONTHLY);
+// Premium Pro can be bought once its monthly price is set too.
+export const premiumEnabled = env => billingEnabled(env) && !!env.STRIPE_PRICE_PREMIUM_MONTHLY;
+
+// Personal plans, lowest to highest. Premium Pro includes everything in Pro.
+const RANK = { pro: 1, premium: 2 };
+// Which personal plan a Stripe price belongs to. The price wins over metadata, so a plan changed in the
+// customer portal (Pro to Premium Pro or back) is recorded correctly.
+function planForPrice(env, priceId) {
+  if (!priceId) return null;
+  if (priceId === env.STRIPE_PRICE_PREMIUM_MONTHLY || priceId === env.STRIPE_PRICE_PREMIUM_YEARLY) return "premium";
+  if (priceId === env.STRIPE_PRICE_PRO_MONTHLY || priceId === env.STRIPE_PRICE_PRO_YEARLY) return "pro";
+  if (priceId === env.STRIPE_PRICE_ORG_SEAT) return "org";
+  return null;
+}
 
 async function stripe(env, method, path, params) {
   const body = params ? new URLSearchParams(flatten(params)).toString() : undefined;
@@ -34,19 +48,22 @@ function flatten(obj, prefix = "", out = {}) {
 /* ---------- entitlements ---------- */
 export async function entitlementsFor(env, userId) {
   const t = now();
-  const pro = await env.DB.prepare(
-    `SELECT 1 FROM subscriptions WHERE user_id = ? AND plan = 'pro' AND status IN ('active','trialing') AND (current_period_end IS NULL OR current_period_end > ?) LIMIT 1`
-  ).bind(userId, t).first();
+  const rows = (await env.DB.prepare(
+    `SELECT plan FROM subscriptions WHERE user_id = ? AND plan IN ('pro','premium') AND status IN ('active','trialing') AND (current_period_end IS NULL OR current_period_end > ?)`
+  ).bind(userId, t).all()).results || [];
+  const personal = rows.reduce((best, r) => (RANK[r.plan] || 0) > (RANK[best] || 0) ? r.plan : best, null);
   const orgs = (await env.DB.prepare(
     `SELECT o.id, o.name, m.role FROM org_members m JOIN orgs o ON o.id = m.org_id WHERE m.user_id = ? ORDER BY o.name`
   ).bind(userId).all()).results || [];
   const orgActive = [];
   for (const o of orgs) if (await orgHasAccess(env, o.id)) orgActive.push(o.id);
   const features = new Set();
-  // Sync is free for every signed-in account; Pro content needs Pro or an active organization.
+  // Sync is free for every signed-in account; Pro content needs Pro, Premium Pro or an active organization;
+  // the AI tutor, study coach and mock interviews (./tutor.js) need Premium Pro.
   features.add("sync");
-  if (pro || orgActive.length) features.add("pro_content");
-  return { plan: pro ? "pro" : orgActive.length ? "org" : "free", features: [...features], orgs: orgs.map(o => ({ ...o, active: orgActive.includes(o.id) })) };
+  if (personal || orgActive.length) features.add("pro_content");
+  if (personal === "premium") features.add("ai_tutor");
+  return { plan: personal || (orgActive.length ? "org" : "free"), features: [...features], orgs: orgs.map(o => ({ ...o, active: orgActive.includes(o.id) })) };
 }
 
 export async function orgSeatLimit(env, orgId) {
@@ -69,9 +86,16 @@ async function customerFor(env, user) {
 
 export async function createCheckout(env, request, user, body) {
   if (!billingEnabled(env)) throw new HttpError(503, "billing_disabled", "Payments aren't set up yet.");
-  const kind = body.plan === "org" ? "org" : "pro";
+  const kind = body.plan === "org" ? "org" : body.plan === "premium" ? "premium" : "pro";
   let price, quantity = 1, metadata = { user_id: user.id, plan: kind };
-  if (kind === "pro") {
+  // One personal plan at a time: switching between Pro and Premium Pro happens in the customer portal (prorated),
+  // so a second checkout never double-charges.
+  if (kind !== "org" && ["pro", "premium"].includes((await entitlementsFor(env, user.id)).plan))
+    throw new HttpError(400, "already_subscribed", "You already have a plan. Switch plans from Manage billing on your Account page.");
+  if (kind === "premium") {
+    if (!premiumEnabled(env)) throw new HttpError(503, "billing_disabled", "Premium Pro isn't available yet.");
+    price = body.interval === "year" && env.STRIPE_PRICE_PREMIUM_YEARLY ? env.STRIPE_PRICE_PREMIUM_YEARLY : env.STRIPE_PRICE_PREMIUM_MONTHLY;
+  } else if (kind === "pro") {
     price = body.interval === "year" && env.STRIPE_PRICE_PRO_YEARLY ? env.STRIPE_PRICE_PRO_YEARLY : env.STRIPE_PRICE_PRO_MONTHLY;
   } else {
     if (!env.STRIPE_PRICE_ORG_SEAT) throw new HttpError(503, "billing_disabled", "Group plans aren't available yet.");
@@ -92,7 +116,7 @@ export async function createCheckout(env, request, user, body) {
     automatic_tax: env.STRIPE_TAX === "on" ? { enabled: "true" } : undefined,
     customer_update: env.STRIPE_TAX === "on" ? { address: "auto" } : undefined,
     success_url: `${env.SITE_ORIGIN}/#account`,
-    cancel_url: `${env.SITE_ORIGIN}/#account`
+    cancel_url: `${env.SITE_ORIGIN}/#plans`
   });
   await audit(env, request, { actor: user.id, org: metadata.org_id || null, action: "billing.checkout", target: kind });
   if (!isHttps(session.url)) throw new HttpError(502, "stripe_error", "The payment service returned an unexpected link.");
@@ -162,15 +186,16 @@ async function upsertSubscription(env, sub, deleted, at) {
   const item = sub.items && sub.items.data && sub.items.data[0];
   // Newer Stripe API versions put the billing period on the subscription item.
   const periodEnd = sub.current_period_end || (item && item.current_period_end) || null;
-  const plan = md.plan === "org" ? "org" : "pro";
+  const byPrice = planForPrice(env, item && item.price && item.price.id);
+  const plan = byPrice || (md.plan === "org" ? "org" : md.plan === "premium" ? "premium" : "pro");
   const userId = md.user_id || null;
   if (userId && !(await env.DB.prepare("SELECT 1 FROM users WHERE id = ?").bind(userId).first())) return;
   await env.DB.prepare(
     `INSERT INTO subscriptions (stripe_subscription, stripe_customer, user_id, org_id, plan, status, seats, current_period_end, updated_at, stripe_event_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-     ON CONFLICT(stripe_subscription) DO UPDATE SET status = excluded.status, seats = excluded.seats,
+     ON CONFLICT(stripe_subscription) DO UPDATE SET plan = excluded.plan, status = excluded.status, seats = excluded.seats,
        current_period_end = excluded.current_period_end, updated_at = excluded.updated_at, stripe_event_at = excluded.stripe_event_at
      WHERE COALESCE(subscriptions.stripe_event_at, 0) <= excluded.stripe_event_at`
-  ).bind(sub.id, String(sub.customer), plan === "pro" ? userId : null, plan === "org" ? (md.org_id || null) : null, plan,
+  ).bind(sub.id, String(sub.customer), plan !== "org" ? userId : null, plan === "org" ? (md.org_id || null) : null, plan,
     deleted ? "canceled" : sub.status, item ? (item.quantity || 1) : 1, periodEnd ? periodEnd * 1000 : null, now(), at).run();
 }

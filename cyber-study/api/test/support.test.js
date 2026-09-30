@@ -109,3 +109,30 @@ test("refusals, empty answers and API errors are handled", async () => {
   next = { status: 400, body: { type: "error", error: { type: "invalid_request_error", message: "nope" } } };
   assert.equal((await chat(env, [{ role: "user", content: "hi" }])).status, 502);
 });
+
+test("daily question limits follow the plan: signed out and Free 5, Pro 30, Premium Pro 100", async () => {
+  next = { body: { id: "m", type: "message", role: "assistant", model: "claude-opus-5-5", stop_reason: "end_turn", stop_details: null, content: [{ type: "text", text: "ok" }], usage: { input_tokens: 1, output_tokens: 1 } } };
+  const env = makeEnv({ SUPPORT_FREE_PER_DAY: "2", SUPPORT_PRO_PER_DAY: "3", SUPPORT_PER_DAY: "1000", SUPPORT_PER_HOUR: "1000" });
+  const ask = async (headers = {}) => {
+    const h = new Headers({ "cf-connecting-ip": "10.77.0.1", "content-type": "application/json", origin: SITE, ...headers });
+    const res = await worker.fetch(new Request("https://api.study.example/v1/support/chat", { method: "POST", headers: h, body: JSON.stringify({ messages: [{ role: "user", content: "hi" }] }) }), env);
+    return { status: res.status, json: await res.json() };
+  };
+  assert.equal((await ask()).status, 200);
+  assert.equal((await ask()).status, 200);
+  const blocked = await ask();
+  assert.equal(blocked.status, 429);
+  assert.match(blocked.json.message, /2 free assistant questions.*Pro includes 30/);
+
+  // A Pro account gets its own, higher allowance.
+  env.APP_ENV = "development";
+  const link = await worker.fetch(new Request("https://api.study.example/v1/auth/magic-link", { method: "POST", headers: { origin: SITE, "content-type": "application/json", "cf-connecting-ip": "10.77.0.2" }, body: JSON.stringify({ email: "p@example.com" }) }), env);
+  const token = new URL((await link.json()).devLink).searchParams.get("signin");
+  const v = await worker.fetch(new Request("https://api.study.example/v1/auth/magic-link/verify", { method: "POST", headers: { origin: SITE, "content-type": "application/json", "cf-connecting-ip": "10.77.0.2" }, body: JSON.stringify({ token }) }), env);
+  const { user } = await v.json(), cookie = v.headers.get("set-cookie").split(";")[0];
+  await env.DB.prepare("INSERT INTO subscriptions (stripe_subscription, stripe_customer, user_id, plan, status, seats, updated_at) VALUES ('sub_p','cus_p',?,'pro','active',1,0)").bind(user.id).run();
+  for (let i = 0; i < 3; i++) assert.equal((await ask({ cookie })).status, 200, "Pro gets 3 here even from an address that used up the Free allowance");
+  const proBlocked = await ask({ cookie });
+  assert.equal(proBlocked.status, 429);
+  assert.match(proBlocked.json.message, /Premium Pro includes 100/);
+});

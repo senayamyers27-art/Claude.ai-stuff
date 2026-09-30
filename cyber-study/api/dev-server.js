@@ -14,11 +14,11 @@ async function loadContent(r2, dir) {
   for (const f of fs.readdirSync(dir).filter(f => /^[a-z0-9-]+\.json$/.test(f))) await r2.put(`pro/${f}`, fs.readFileSync(path.join(dir, f), "utf8"));
 }
 // A development stand-in for Stripe: gives these emails an active Pro subscription once they exist.
-async function grantPro(db, emails) {
+async function grantPro(db, emails, plan = "pro") {
   for (const email of emails) {
     const u = await db.prepare("SELECT id FROM users WHERE email = ?").bind(email).first();
     if (u) await db.prepare(`INSERT INTO subscriptions (stripe_subscription, stripe_customer, user_id, plan, status, seats, current_period_end, updated_at)
-      VALUES (?, 'cus_dev', ?, 'pro', 'active', 1, NULL, ?) ON CONFLICT(stripe_subscription) DO NOTHING`).bind("sub_dev_" + u.id, u.id, Date.now()).run();
+      VALUES (?, 'cus_dev', ?, ?, 'active', 1, NULL, ?) ON CONFLICT(stripe_subscription) DO NOTHING`).bind("sub_dev_" + u.id, u.id, plan, Date.now()).run();
   }
 }
 
@@ -64,9 +64,11 @@ async function start({ port = 8787, siteOrigin = "http://localhost:8000", dbFile
     OAUTH_DEV_BASE: `http://localhost:${port}`, GOOGLE_CLIENT_ID: "dev", GOOGLE_CLIENT_SECRET: "dev", FACEBOOK_APP_ID: "dev", FACEBOOK_APP_SECRET: "dev", LINKEDIN_CLIENT_ID: "dev", LINKEDIN_CLIENT_SECRET: "dev", SUPPORT_DEV_STUB: "1", ...extra };
   await loadContent(env.CONTENT, process.env.PRO_CONTENT_DIR || path.join(__dirname, "test/fixtures/pro"));
   const proEmails = (process.env.PRO_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+  const premiumEmails = (process.env.PREMIUM_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
   const server = http.createServer(async (req, res) => {
     if (req.url.startsWith("/__oauth/")) return fakeProvider(req, res);
     if (proEmails.length) await grantPro(env.DB, proEmails);
+    if (premiumEmails.length) await grantPro(env.DB, premiumEmails, "premium");
     const chunks = [];
     for await (const c of req) chunks.push(c);
     const body = Buffer.concat(chunks);

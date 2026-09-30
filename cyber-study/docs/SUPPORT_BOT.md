@@ -55,6 +55,16 @@ Conversations are limited to the last 12 messages and 1,500 characters per messa
 - Assistant replies are rendered as plain text with a small Markdown subset (bold, code, lists) and links only to the
   site's own pages (`#route`); anything else is shown as text.
 
+## Premium Pro: AI tutor, study coach and mock interviews
+
+Premium Pro members (see `PRO_LAUNCH.md`) get three more uses of the same API key, from `POST /v1/tutor/chat` (`api/src/tutor.js`):
+
+- **AI Tutor:** "Explain with the AI tutor" under a missed question sends that question, its options, the right answer, the member's answer and the site's explanation.
+- **AI Study Coach:** on each dashboard card; sends that certification's numbers only (week, exam date, readiness, accuracy by domain, hours a week).
+- **AI mock interviews:** on career pages, for each role; sends the role name.
+
+Nothing is stored. Each member can send `TUTOR_PER_HOUR` (40) and `TUTOR_PER_DAY` (150) messages, and the whole site `TUTOR_DAILY_LIMIT` (5000) a day. A tutor message costs about the same as a help question, so a very active member costs a few dollars a month at most.
+
 ## Files
 
 - `public/assets/support.js`: the widget (search, chat, safe rendering). Loaded on the first click of **Help**.

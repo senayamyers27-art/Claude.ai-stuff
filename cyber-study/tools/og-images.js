@@ -32,7 +32,7 @@ const ACC = ["#5B8CFF", "#3DC19E", "#E8B444", "#EE6F62", "#B18CF0", "#38BDF8"];
   const browser = await chromium.launch(exe ? { executablePath: exe } : {});
   const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
   const jobs = [["site", card({ kicker: "Free certification study plans", title: "Study for IT and security certifications", sub: `${ids.length} certifications: week-by-week plans, lessons, labs, quizzes and practice exams.`, chips: ["Free", "No sign-up", "Works offline"], accent: ACC[0] })],
-    ["careers", card({ kicker: "Career paths", title: "Which certification first?", sub: "Jobs, skills, certification order and interview practice for each IT career track.", chips: ["Cybersecurity", "Networking", "Cloud", "Systems"], accent: ACC[1] })]];
+    ["careers", card({ kicker: "Career Paths", title: "Which certification first?", sub: "Jobs, skills, certification order and interview practice for each IT career track.", chips: ["Cybersecurity", "Networking", "Cloud", "Systems"], accent: ACC[1] })]];
   ids.forEach((id, i) => { const c = CertHub.certs[id], t = trackOf(id); jobs.push([id, card({ kicker: `${t ? t.name + " · " : ""}Free study plan`, title: `${c.short} ${c.exam}`.length > 34 ? c.short : `${c.short} ${c.exam}`, sub: `${c.short} ${c.exam}`.length > 34 ? `${c.name} (${c.exam})` : c.name, chips: ["Lessons", "Labs", "Quizzes", "Practice exam"], accent: ACC[(CertHub.tracks || []).indexOf(t) % ACC.length] || ACC[i % ACC.length] })]); });
   for (const [name, html] of jobs) { await page.setContent(html); await page.screenshot({ path: path.join(out, name + ".png"), type: "png" }); }
   await browser.close();

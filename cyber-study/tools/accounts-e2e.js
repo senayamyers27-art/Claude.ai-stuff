@@ -13,6 +13,7 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
 
 (async () => {
   process.env.PRO_EMAILS = "pro.learner@example.com"; // dev server grants this account Pro
+  process.env.PREMIUM_EMAILS = "premium.learner@example.com"; // and this one Premium Pro
   delete process.env.PRO_CONTENT_DIR; // use the small sample content in api/test/fixtures/pro
   const { start } = require("../api/dev-server.js");
   const api = await start({ port: API_PORT, siteOrigin: BASE });
@@ -350,6 +351,30 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await h.click("#psuplog .supmsg.bot a[href='#settings']");
     await h.waitForSelector(".settabs");
     check(true, "assistant links open the site's own pages");
+    api.env.DB.raw.exec("DELETE FROM rate_limits");
+
+    console.log("Plans and Premium Pro (AI tutor, development stub)");
+    const pm = await device();
+    await pm.goto(BASE + "/#plans"); await pm.waitForSelector(".plancards");
+    check((await pm.$$(".plancard")).length === 3 && (await pm.$$(".ptable tbody tr")).length > 10, "plans page shows three plans and the comparison table");
+    check(/header/.test(await pm.evaluate(() => { const r = document.querySelector("header.top #acctchip"); return r && r.querySelector('a[href="#signup"]') && r.querySelector('a[href="#login"]') ? "header" : ""; })), "signed out: header shows Log in and Sign up");
+    await signIn(pm, "premium.learner@example.com");
+    await pm.goto(BASE + "/#plans"); await pm.waitForSelector(".plancard.best .pcur");
+    check(true, "plans page marks Premium Pro as the current plan");
+    check(await pm.evaluate(() => CertHub.premium.active), "Premium Pro members have the AI tutor");
+    await pm.evaluate(() => { document.getElementById("app").insertAdjacentHTML("beforeend", CertHub.premium.button("interview", "Practice with the AI interviewer", () => ({ subtitle: "SOC analyst", context: { role: "SOC analyst", level: "entry", certs: ["Security+"] } }))); });
+    await pm.click("[data-tutor=interview]");
+    await pm.waitForSelector(".tutor .tutmsg.ai");
+    check(/Development stub \(interview\)/.test(await pm.textContent(".tutlog")), "the AI interviewer answers in the tutor window");
+    await pm.fill("#tut-in", "DNS turns names into addresses.");
+    await pm.press("#tut-in", "Enter");
+    await pm.waitForFunction(() => document.querySelectorAll(".tutor .tutmsg.ai").length >= 2);
+    check(true, "follow-up messages get answers");
+    await pm.keyboard.press("Escape");
+    check(!(await pm.$(".tutor")), "Escape closes the tutor window");
+    const pr = await device();
+    await signIn(pr, "pro.learner@example.com");
+    check(!(await pr.evaluate(() => CertHub.premium.active)), "Pro members don't have the AI tutor");
     api.env.DB.raw.exec("DELETE FROM rate_limits");
 
     console.log("Saving work to the profile");
