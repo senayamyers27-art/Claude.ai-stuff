@@ -3,7 +3,7 @@
    when someone signs in. */
 import { HttpError, readJson, notFound, clientIp } from "./util.js";
 import { rateLimit, securityLog, setHashKey } from "./audit.js";
-import { requestMagicLink, verifyMagicLink, requireUser, currentUser, logout, clearCookie, refreshedCookies } from "./auth.js";
+import { requestMagicLink, verifyMagicLink, verifyCode, requireUser, currentUser, logout, clearCookie, refreshedCookies, isAppOrigin } from "./auth.js";
 import { listDocs, putDoc, MAX_DOC_BYTES } from "./progress.js";
 import { entitlementsFor, createCheckout, createPortal, handleWebhook, billingEnabled, premiumEnabled } from "./billing.js";
 import { tutorChat } from "./tutor.js";
@@ -23,14 +23,17 @@ const SECURITY_HEADERS = {
   "Strict-Transport-Security": "max-age=63072000; includeSubDomains"
 };
 
+// The site, and the iOS and Android apps (which send their session as a bearer token, not a cookie).
+const allowedOrigin = (env, origin) => !!origin && (origin === env.SITE_ORIGIN || isAppOrigin(env, origin));
 function cors(env, request) {
   const origin = request.headers.get("origin");
-  if (!origin || origin !== env.SITE_ORIGIN) return {};
+  if (!allowedOrigin(env, origin)) return {};
   return {
     "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Credentials": "true",
+    // Cookies only for the site; the apps authenticate with a bearer token.
+    ...(origin === env.SITE_ORIGIN ? { "Access-Control-Allow-Credentials": "true" } : {}),
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Max-Age": "600",
     Vary: "Origin"
   };
@@ -119,7 +122,7 @@ async function route(request, env) {
   // with a cookie must come from the site itself (defense against cross-site request forgery).
   if (method !== "GET") {
     const origin = request.headers.get("origin");
-    if (origin !== env.SITE_ORIGIN) throw new HttpError(403, "bad_origin", "Requests must come from the site.");
+    if (!allowedOrigin(env, origin)) throw new HttpError(403, "bad_origin", "Requests must come from the site.");
   }
 
   if (path === "/v1/health" && method === "GET") return json(env, request, { ok: true, billing: billingEnabled(env), premium: premiumEnabled(env), support: supportEnabled(env) });
@@ -135,6 +138,10 @@ async function route(request, env) {
   if (path === "/v1/auth/magic-link/verify" && method === "POST") {
     const { user, cookie } = await verifyMagicLink(env, request, await readJson(request));
     return json(env, request, { user: { id: user.id, email: user.email } }, 200, { "Set-Cookie": cookie });
+  }
+  if (path === "/v1/auth/code/verify" && method === "POST") {
+    const { user, token } = await verifyCode(env, request, await readJson(request));
+    return json(env, request, { user: { id: user.id, email: user.email }, token });
   }
   if (path === "/v1/auth/passkey/options" && method === "POST") return json(env, request, await signinOptions(env, request));
   if (path === "/v1/auth/passkey/verify" && method === "POST") {

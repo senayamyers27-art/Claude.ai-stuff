@@ -1,0 +1,31 @@
+{
+  "appId": "com.studytocert.app",
+  "appName": "StudyToCert",
+  "webDir": "www",
+  "backgroundColor": "#0E1319",
+  "server": {
+    "androidScheme": "https",
+    "hostname": "localhost"
+  },
+  "ios": {
+    "contentInset": "never",
+    "limitsNavigationsToAppBoundDomains": false,
+    "scheme": "capacitor"
+  },
+  "android": {
+    "allowMixedContent": false,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false,
+      "launchShowDuration": 3000,
+      "backgroundColor": "#0E1319",
+      "showSpinner": false
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon",
+      "iconColor": "#2D5BD0"
+    }
+  }
+}

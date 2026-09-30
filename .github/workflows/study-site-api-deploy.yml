@@ -123,8 +123,11 @@ jobs:
           LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
           # AI support assistant (docs/SUPPORT_BOT.md). The Help widget's chat appears once this is set.
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # The App Store and Google Play review account (docs/MOBILE_APPS.md): an email and a fixed 8-character code.
+          APP_REVIEW_EMAIL: ${{ secrets.APP_REVIEW_EMAIL }}
+          APP_REVIEW_CODE: ${{ secrets.APP_REVIEW_CODE }}
         run: |
-          for NAME in EMAIL_API_KEY STRIPE_SECRET_KEY STRIPE_WEBHOOK_SECRET TURNSTILE_SECRET_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET FACEBOOK_APP_ID FACEBOOK_APP_SECRET LINKEDIN_CLIENT_ID LINKEDIN_CLIENT_SECRET ANTHROPIC_API_KEY; do
+          for NAME in EMAIL_API_KEY STRIPE_SECRET_KEY STRIPE_WEBHOOK_SECRET TURNSTILE_SECRET_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET FACEBOOK_APP_ID FACEBOOK_APP_SECRET LINKEDIN_CLIENT_ID LINKEDIN_CLIENT_SECRET ANTHROPIC_API_KEY APP_REVIEW_EMAIL APP_REVIEW_CODE; do
             if [ -n "${!NAME}" ]; then printf '%s' "${!NAME}" | npx wrangler secret put "$NAME" --config wrangler.deploy.toml; fi
           done
 

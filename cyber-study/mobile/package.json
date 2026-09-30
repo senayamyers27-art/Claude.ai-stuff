@@ -1,0 +1,29 @@
+{
+  "name": "studytocert-mobile",
+  "private": true,
+  "version": "1.0.0",
+  "description": "StudyToCert for iOS and Android: the study site bundled in a Capacitor app (see ../docs/MOBILE_APPS.md).",
+  "scripts": {
+    "www": "node build-www.js",
+    "sync": "node build-www.js && cap sync",
+    "android": "node build-www.js && cap sync android && cap open android",
+    "ios": "node build-www.js && cap sync ios && cap open ios",
+    "assets": "npm i --no-save sharp@0.34 && node make-icons.js && npx --yes @capacitor/assets@3.0.5 generate --iconBackgroundColor '#16202C' --iconBackgroundColorDark '#16202C' --splashBackgroundColor '#0E1319' --splashBackgroundColorDark '#0E1319'"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.2",
+    "@capacitor/app": "8.1.1",
+    "@capacitor/browser": "8.0.4",
+    "@capacitor/core": "8.5.2",
+    "@capacitor/filesystem": "^8.1.3",
+    "@capacitor/ios": "8.5.2",
+    "@capacitor/local-notifications": "8.3.1",
+    "@capacitor/preferences": "8.0.1",
+    "@capacitor/share": "8.0.2",
+    "@capacitor/splash-screen": "8.0.2",
+    "@capacitor/status-bar": "8.0.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.2"
+  }
+}

@@ -11,9 +11,10 @@ const globalHeaders = {};
 (fs.readFileSync(path.join(PUB, "_headers"), "utf8").split(/\n(?=\/)/).find(b => b.startsWith("/*\n")) || "").split("\n").slice(1)
   .forEach(l => { const m = l.match(/^\s+([\w-]+):\s*(.+)$/); if (m && m[1] !== "Strict-Transport-Security") globalHeaders[m[1]] = m[2].replace("; upgrade-insecure-requests", ""); });
 
-function serve(port, { apiOrigin = "" } = {}) {
+// root: another folder to serve instead of public/ (the app's copy, mobile/www, for tools/app-e2e.js).
+function serve(port, { apiOrigin = "", root = PUB } = {}) {
   // With an API origin, the pages allow connecting to it and data/site.js points at it.
-  const SITE_JS = path.join(PUB, "data/site.js");
+  const SITE_JS = path.join(root, "data/site.js");
   const siteJs = () => fs.readFileSync(SITE_JS, "utf8").replace(/"apiUrl": "[^"]*"/, `"apiUrl": ${JSON.stringify(apiOrigin)}`);
   // The rewritten data/site.js needs a matching integrity hash in the pages that load it.
   const withSri = html => html.replace(/(src="[^"]*data\/site\.js\?v=[^"]*" integrity=")[^"]*/g, (m, a) => a + "sha384-" + crypto.createHash("sha384").update(siteJs()).digest("base64"));
@@ -23,8 +24,8 @@ function serve(port, { apiOrigin = "" } = {}) {
     const url = new URL(req.url, "http://localhost");
     const r = redirects.find(([from]) => from === url.pathname);
     if (r) { res.writeHead(+r[2] || 301, { Location: r[1] }); return res.end(); }
-    let file = path.join(PUB, decodeURIComponent(url.pathname));
-    if (!file.startsWith(PUB)) { res.writeHead(403); return res.end(); }
+    let file = path.join(root, decodeURIComponent(url.pathname));
+    if (!file.startsWith(root)) { res.writeHead(403); return res.end(); }
     if (fs.existsSync(file) && fs.statSync(file).isDirectory()) {
       if (!url.pathname.endsWith("/")) { res.writeHead(308, { Location: url.pathname + "/" }); return res.end(); }
       file = path.join(file, "index.html");
