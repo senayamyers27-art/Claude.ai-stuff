@@ -16,7 +16,7 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   process.env.PREMIUM_EMAILS = "premium.learner@example.com"; // and this one Premium Pro
   delete process.env.PRO_CONTENT_DIR; // use the small sample content in api/test/fixtures/pro
   const { start } = require("../api/dev-server.js");
-  const api = await start({ port: API_PORT, siteOrigin: BASE });
+  const api = await start({ port: API_PORT, siteOrigin: BASE, env: { ADMIN_EMAILS: "owner.admin@example.com" } });
   const site = await serve(SITE_PORT, { apiOrigin: API });
   const exe = process.env.CHROMIUM_PATH;
   const browser = await chromium.launch(exe ? { executablePath: exe } : {});
@@ -228,12 +228,33 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     const roster = await tch.textContent("#app");
     check(/Ana/.test(roster) && /Security\+/.test(roster) && !/student\.one@/.test(roster), "teacher sees the student's name and progress, not their email");
     check((await tch.$$eval(".sectable tbody td", tds => tds.map(td => td.textContent.trim()))).includes("10"), "roster shows questions answered from synced progress");
+    // Assignments: the teacher sets a target; the roster and the student's Account page show progress.
+    await tch.click("#assign-form >> xpath=.. >> summary");
+    await tch.fill("#assign-title", "Warm-up questions");
+    await tch.selectOption("#assign-kind", "questions");
+    await tch.fill("#assign-target", "5");
+    await tch.click("#assign-form button[type=submit]");
+    await tch.waitForSelector("text=1 of 1 student done");
+    check(true, "teacher adds an assignment and sees who has done it");
+    await stu.goto(BASE + "/#account"); await stu.reload();
+    await stu.waitForSelector("#classpanel .assignlist li.done");
+    check(/Warm-up questions/.test(await stu.textContent("#classpanel .assignlist")), "student sees the assignment marked done");
     await stu.click("#classpanel [data-aact=leaveclass]");
     await stu.click('.modal [data-v="1"]');
     await stu.waitForSelector("text=None. Your teacher shares");
     await tch.reload();
     await tch.waitForSelector("text=No students yet");
     check(true, "after the student leaves, the roster no longer shows them");
+
+    console.log("Site dashboard");
+    const own = await device();
+    await signIn(own, "owner.admin@example.com");
+    await own.waitForSelector('a[href="#admin"]');
+    await own.click('a[href="#admin"]');
+    await own.waitForSelector(".stats .stat");
+    const dash = await own.textContent("#app");
+    check(/accounts/.test(dash) && /Most studied/.test(dash) && !/@example\.com/.test(dash), "the owner's dashboard shows totals, no emails");
+    check(!(await tch.$('a[href="#admin"]')), "other members don't get the dashboard link");
 
     console.log("Passkeys and signed-in devices");
     const pk = await device(), other = await device();

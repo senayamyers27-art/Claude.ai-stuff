@@ -102,13 +102,81 @@ async function customerFor(env, user) {
 // already has a personal subscription that is live or could still recover (past_due, unpaid, incomplete), and expire
 // any earlier checkout that is still open, so two tabs or a retry after a failed card can't start a second plan.
 const LIVE_STATUSES = ["active", "trialing", "past_due", "unpaid", "incomplete"];
+// Returns whether the customer ever had a personal plan (any status), which rules out a referral trial.
 async function guardPersonalCheckout(env, customer) {
   const subs = await stripe(env, "GET", "/subscriptions", { customer, status: "all", limit: 20 });
-  if ((subs.data || []).some(s => LIVE_STATUSES.includes(s.status) && !(s.metadata && s.metadata.plan === "org")))
+  const personal = (subs.data || []).filter(s => !(s.metadata && s.metadata.plan === "org"));
+  if (personal.some(s => LIVE_STATUSES.includes(s.status)))
     throw new HttpError(400, "already_subscribed", "You already have a plan (or a payment for one is being retried). Manage it from Manage billing on your Account page.");
   const open = await stripe(env, "GET", "/checkout/sessions", { customer, status: "open", limit: 20 });
   for (const s of open.data || [])
     if (!(s.metadata && s.metadata.plan === "org")) await stripe(env, "POST", `/checkout/sessions/${encodeURIComponent(s.id)}/expire`);
+  return { hadPlan: personal.length > 0 };
+}
+
+/* ---------- referrals: "give a month, get a month" ---------- */
+// A friend who signs up with your link gets their first month free (a 30-day trial on their first plan); when that
+// friend's first paid period starts, you get a credit worth a month of Pro on your Stripe balance, used on your next
+// invoice. At most 12 credits a year per person. A credit earned before you have a billing account is kept as
+// "pending" and applied when you start a plan.
+const REF_ALPHABET = "abcdefghijkmnpqrstuvwxyz23456789"; // 32 letters: byte % 32 is unbiased
+export const REF_RE = /^[a-km-np-z2-9]{8}$/;
+export const REFERRAL_TRIAL_DAYS = 30;
+const MAX_REFERRAL_CREDITS_PER_YEAR = 12;
+const newRefCode = () => [...crypto.getRandomValues(new Uint8Array(8))].map(b => REF_ALPHABET[b % 32]).join("");
+
+export async function referralInfo(env, user) {
+  let row = await env.DB.prepare("SELECT code FROM referral_codes WHERE user_id = ?").bind(user.id).first();
+  for (let i = 0; !row && i < 5; i++) {
+    await env.DB.prepare("INSERT INTO referral_codes (code, user_id, created_at) VALUES (?, ?, ?) ON CONFLICT DO NOTHING").bind(newRefCode(), user.id, now()).run();
+    row = await env.DB.prepare("SELECT code FROM referral_codes WHERE user_id = ?").bind(user.id).first();
+  }
+  if (!row) throw new HttpError(503, "try_again", "Couldn't make your invite link. Try again.");
+  const friends = (await env.DB.prepare("SELECT COUNT(*) AS n FROM subscriptions WHERE referrer_id = ?").bind(user.id).first()).n;
+  const rewards = (await env.DB.prepare("SELECT status, COUNT(*) AS n, SUM(amount) AS cents FROM referral_rewards WHERE referrer_id = ? GROUP BY status").bind(user.id).all()).results || [];
+  const by = s => rewards.find(r => r.status === s) || { n: 0, cents: 0 };
+  return { code: row.code, link: `${env.SITE_ORIGIN}/?ref=${row.code}#plans`, trialDays: REFERRAL_TRIAL_DAYS, friends,
+    credited: by("credited").n, creditCents: by("credited").cents || 0, pending: by("pending").n, enabled: billingEnabled(env) };
+}
+
+async function referrerFor(env, user, code) {
+  if (!REF_RE.test(String(code || ""))) return null;
+  const row = await env.DB.prepare("SELECT user_id FROM referral_codes WHERE code = ?").bind(code).first();
+  return row && row.user_id !== user.id ? row.user_id : null;
+}
+
+// A month of Pro, from the Pro monthly price in Stripe (so a price change carries over).
+async function monthCredit(env) {
+  try { const p = await stripe(env, "GET", `/prices/${encodeURIComponent(env.STRIPE_PRICE_PRO_MONTHLY)}`); if (p.unit_amount > 0) return p.unit_amount; } catch (e) {}
+  return 700;
+}
+
+// Puts a pending reward on the referrer's Stripe balance. The idempotency key makes a retry after a failure safe.
+async function creditReward(env, reward, customer) {
+  await stripe(env, "POST", `/customers/${encodeURIComponent(customer)}/balance_transactions`, {
+    amount: -Math.abs(reward.amount), currency: "usd", description: "StudyToCert referral credit: a friend you invited started a plan",
+    metadata: { referee: reward.referee_id }
+  }, { idempotencyKey: `referral-credit-${reward.referee_id}` });
+  await env.DB.prepare("UPDATE referral_rewards SET status = 'credited', credited_at = ? WHERE referee_id = ?").bind(now(), reward.referee_id).run();
+}
+
+async function applyPendingCredits(env, userId, customer) {
+  const pending = (await env.DB.prepare("SELECT * FROM referral_rewards WHERE referrer_id = ? AND status = 'pending'").bind(userId).all()).results || [];
+  for (const r of pending) await creditReward(env, r, customer);
+}
+
+// A referred friend's plan went active after its trial (their first payment went through).
+async function rewardReferrer(env, referrerId, refereeId, subscriptionId) {
+  if (!(await env.DB.prepare("SELECT 1 FROM users WHERE id = ?").bind(referrerId).first())) return;
+  const t = now();
+  const recent = (await env.DB.prepare("SELECT COUNT(*) AS n FROM referral_rewards WHERE referrer_id = ? AND status = 'credited' AND created_at >= ?")
+    .bind(referrerId, t - 365 * 24 * 60 * 60 * 1000).first()).n;
+  await env.DB.prepare("INSERT INTO referral_rewards (referee_id, referrer_id, stripe_subscription, amount, status, created_at) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(referee_id) DO NOTHING")
+    .bind(refereeId, referrerId, subscriptionId, await monthCredit(env), recent >= MAX_REFERRAL_CREDITS_PER_YEAR ? "capped" : "pending", t).run();
+  const reward = await env.DB.prepare("SELECT * FROM referral_rewards WHERE referee_id = ?").bind(refereeId).first();
+  if (!reward || reward.status !== "pending" || reward.referrer_id !== referrerId) return;
+  const cust = await env.DB.prepare("SELECT stripe_customer FROM stripe_customers WHERE user_id = ?").bind(referrerId).first();
+  if (cust) await creditReward(env, reward, cust.stripe_customer);
 }
 
 export async function createCheckout(env, request, user, body) {
@@ -133,14 +201,22 @@ export async function createCheckout(env, request, user, body) {
     metadata.org_id = String(body.orgId);
   }
   const customer = await customerFor(env, user);
-  if (kind !== "org") await guardPersonalCheckout(env, customer);
+  let trial;
+  if (kind !== "org") {
+    const { hadPlan } = await guardPersonalCheckout(env, customer);
+    // Invited by a friend and never had a plan: the first month is free.
+    const referrer = !hadPlan && body.ref ? await referrerFor(env, user, body.ref) : null;
+    if (referrer) { metadata.referrer_id = referrer; trial = REFERRAL_TRIAL_DAYS; }
+    // Referral credits this person earned before they had a billing account.
+    await applyPendingCredits(env, user.id, customer);
+  }
   const session = await stripe(env, "POST", "/checkout/sessions", {
     mode: "subscription",
     customer,
     client_reference_id: user.id,
     line_items: [{ price, quantity }],
     // Flexible billing mode (Stripe's recommended default): accurate prorations when members switch plans.
-    subscription_data: { metadata, billing_mode: { type: "flexible" } },
+    subscription_data: { metadata, billing_mode: { type: "flexible" }, trial_period_days: trial },
     metadata,
     allow_promotion_codes: "true",
     automatic_tax: env.STRIPE_TAX === "on" ? { enabled: "true" } : undefined,
@@ -151,7 +227,7 @@ export async function createCheckout(env, request, user, body) {
   });
   await audit(env, request, { actor: user.id, org: metadata.org_id || null, action: "billing.checkout", target: kind });
   if (!isHttps(session.url)) throw new HttpError(502, "stripe_error", "The payment service returned an unexpected link.");
-  return { url: session.url };
+  return { url: session.url, trialDays: trial || 0 };
 }
 
 export async function createPortal(env, request, user) {
@@ -254,12 +330,18 @@ async function upsertSubscription(env, sub, deleted, at) {
   const plan = byPrice || (md.plan === "org" ? "org" : md.plan === "premium" ? "premium" : "pro");
   const userId = md.user_id || null;
   if (userId && !(await env.DB.prepare("SELECT 1 FROM users WHERE id = ?").bind(userId).first())) return;
+  const interval = item && item.price && item.price.recurring && item.price.recurring.interval;
+  const referrer = plan !== "org" && /^usr_[0-9a-f]{24}$/.test(md.referrer_id || "") && md.referrer_id !== userId ? md.referrer_id : null;
   await env.DB.prepare(
-    `INSERT INTO subscriptions (stripe_subscription, stripe_customer, user_id, org_id, plan, status, seats, current_period_end, updated_at, stripe_event_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `INSERT INTO subscriptions (stripe_subscription, stripe_customer, user_id, org_id, plan, status, seats, current_period_end, updated_at, stripe_event_at, billing_interval, referrer_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(stripe_subscription) DO UPDATE SET plan = excluded.plan, status = excluded.status, seats = excluded.seats,
-       current_period_end = excluded.current_period_end, updated_at = excluded.updated_at, stripe_event_at = excluded.stripe_event_at
+       current_period_end = excluded.current_period_end, updated_at = excluded.updated_at, stripe_event_at = excluded.stripe_event_at,
+       billing_interval = excluded.billing_interval
      WHERE COALESCE(subscriptions.stripe_event_at, 0) <= excluded.stripe_event_at`
   ).bind(sub.id, String(sub.customer), plan !== "org" ? userId : null, plan === "org" ? (md.org_id || null) : null, plan,
-    deleted ? "canceled" : sub.status, item ? (item.quantity || 1) : 1, periodEnd ? periodEnd * 1000 : null, now(), at).run();
+    deleted ? "canceled" : sub.status, item ? (item.quantity || 1) : 1, periodEnd ? periodEnd * 1000 : null, now(), at,
+    interval === "year" ? "year" : interval === "month" ? "month" : null, referrer).run();
+  // The referred friend's trial ended and their first payment went through.
+  if (referrer && userId && !deleted && sub.status === "active") await rewardReferrer(env, referrer, userId, sub.id);
 }

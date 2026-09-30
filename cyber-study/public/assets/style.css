@@ -871,3 +871,10 @@ html.menu-open{overflow:hidden}
 /* ---------- iOS and Android apps (assets/native.js adds .native-app) ---------- */
 /* The app is already installed and updates through the store. */
 html.native-app a[href="#install"],html.native-app .row:has(> a[href="#install"]),html.native-app #sitemenu li:has(> a[href="#install"]){display:none}
+
+/* Class assignments on the Account page */
+.assignlist{margin:4px 0 10px;padding-left:12px;border-left:3px solid var(--line)}
+.assignlist li{margin:6px 0}
+.assignlist li.done{border-left-color:var(--ok)}
+.bars li{display:grid;grid-template-columns:48px 1fr 32px;gap:8px;align-items:center;margin:4px 0}
+.bars li .track{margin-top:0;--c:var(--accent)}

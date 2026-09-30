@@ -49,6 +49,7 @@ jobs:
       STRIPE_PRICE_PREMIUM_YEARLY: ${{ vars.STRIPE_PRICE_PREMIUM_YEARLY }}
       STRIPE_TAX: ${{ vars.STRIPE_TAX }}
       STRIPE_PORTAL_CONFIG: ${{ vars.STRIPE_PORTAL_CONFIG }}
+      STUDY_API_ADMIN_EMAILS: ${{ vars.STUDY_API_ADMIN_EMAILS }}
     defaults:
       run:
         working-directory: cyber-study
@@ -86,16 +87,24 @@ jobs:
       # say), look the "cyber-cert-study" database up by name with the Cloudflare token.
       - name: Find the D1 database
         if: steps.ready.outputs.ok == 'true'
+        env:
+          # The "cyber-cert-study" database (Cloudflare → D1). Used when neither the secret nor a lookup gives an id.
+          KNOWN_D1_ID: 8837b692-ac42-41e5-a1f3-22f7e405f1bb
         run: |
           UUID='[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'
           ACCOUNT=$(printf '%s' "$CLOUDFLARE_ACCOUNT_ID" | tr -d '[:space:]"'"'")
           echo "::add-mask::$ACCOUNT"
           if printf '%s' "$STUDY_API_D1_ID" | grep -Eq "$UUID"; then echo "Using STUDY_API_D1_ID."; exit 0; fi
-          id=$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT/d1/database?name=cyber-cert-study" \
-            | jq -r '[.result[]? | select(.name == "cyber-cert-study") | .uuid][0] // empty')
+          res=$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT/d1/database?name=cyber-cert-study" || true)
+          id=$(printf '%s' "$res" | jq -r '[.result[]? | select(.name == "cyber-cert-study") | .uuid][0] // empty' 2>/dev/null || true)
           if [ -z "$id" ]; then
-            echo "::error::STUDY_API_D1_ID doesn't hold a database id, and the database \"cyber-cert-study\" couldn't be found. Check CLOUDFLARE_ACCOUNT_ID and that the token has D1: Edit, or set STUDY_API_D1_ID to the id shown in Cloudflare → D1."
-            exit 1
+            # Show Cloudflare's reason (error codes and messages, no secrets) so a wrong account id or a token
+            # without D1 access is easy to spot, then carry on with the database's known id (an id isn't secret).
+            echo "::warning::Couldn't look up the database by name. Cloudflare said: $(printf '%s' "$res" | jq -c '[.errors[]? | {code, message}]' 2>/dev/null || echo 'no JSON reply')"
+            echo "::warning::If the next step fails too, check CLOUDFLARE_ACCOUNT_ID (Cloudflare → Workers & Pages → Account ID) and that the token has Account → D1 → Edit."
+            id="$KNOWN_D1_ID"
+            echo "STUDY_API_D1_ID_FOUND=$id" >> "$GITHUB_ENV"
+            exit 0
           fi
           echo "STUDY_API_D1_ID doesn't hold a database id; found \"cyber-cert-study\" by name."
           # A different name: the workflow's own env: block would win over a STUDY_API_D1_ID written here.

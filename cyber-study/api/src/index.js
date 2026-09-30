@@ -5,7 +5,8 @@ import { HttpError, readJson, notFound, clientIp } from "./util.js";
 import { rateLimit, securityLog, setHashKey } from "./audit.js";
 import { requestMagicLink, verifyMagicLink, verifyCode, requireUser, currentUser, logout, clearCookie, refreshedCookies, isAppOrigin } from "./auth.js";
 import { listDocs, putDoc, MAX_DOC_BYTES } from "./progress.js";
-import { entitlementsFor, createCheckout, createPortal, handleWebhook, billingEnabled, premiumEnabled } from "./billing.js";
+import { entitlementsFor, createCheckout, createPortal, handleWebhook, billingEnabled, premiumEnabled, referralInfo } from "./billing.js";
+import { adminStats, isAdmin } from "./admin.js";
 import { tutorChat } from "./tutor.js";
 import { createOrg, createCohort, listCohorts, createInvite, acceptInvite, cohortSummary, summaryCsv } from "./orgs.js";
 import { exportAccount, deleteAccount } from "./account.js";
@@ -13,7 +14,7 @@ import { registerOptions, registerVerify, signinOptions, signinVerify, listPassk
 import { startOAuth, finishOAuth, unlinkIdentity, enabledProviders } from "./oauth.js";
 import { getProfile, updateProfile } from "./profile.js";
 import { supportChat, supportEnabled } from "./support.js";
-import { listClasses, createClass, updateClass, deleteClass, rotateCode, previewJoin, joinClass, leaveClass, removeStudent, roster, rosterCsv } from "./classes.js";
+import { createAssignment, deleteAssignment, listClasses, createClass, updateClass, deleteClass, rotateCode, previewJoin, joinClass, leaveClass, removeStudent, roster, rosterCsv } from "./classes.js";
 
 const SECURITY_HEADERS = {
   "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
@@ -183,7 +184,7 @@ async function route(request, env) {
     const providers = enabledProviders(env);
     if (!u) return json(env, request, { user: null, billing: billingEnabled(env), premium: premiumEnabled(env), providers, support: supportEnabled(env) });
     const p = await env.DB.prepare("SELECT display_name FROM users WHERE id = ?").bind(u.id).first();
-    return json(env, request, { user: { id: u.id, email: u.email, displayName: (p && p.display_name) || "" }, billing: billingEnabled(env), premium: premiumEnabled(env), providers, support: supportEnabled(env), ...(await entitlementsFor(env, u.id)) });
+    return json(env, request, { user: { id: u.id, email: u.email, displayName: (p && p.display_name) || "" }, billing: billingEnabled(env), premium: premiumEnabled(env), providers, support: supportEnabled(env), ...(isAdmin(env, u) ? { admin: true } : {}), ...(await entitlementsFor(env, u.id)) });
   }
 
   // Everything below needs a signed-in user.
@@ -212,6 +213,8 @@ async function route(request, env) {
 
   if (path === "/v1/billing/checkout" && method === "POST") return json(env, request, await createCheckout(env, request, user, await readJson(request)));
   if (path === "/v1/billing/portal" && method === "POST") return json(env, request, await createPortal(env, request, user));
+  if (path === "/v1/referral" && method === "GET") return json(env, request, await referralInfo(env, user));
+  if (path === "/v1/admin/stats" && method === "GET") return json(env, request, await adminStats(env, user));
 
   if (path === "/v1/orgs" && method === "POST") return json(env, request, await createOrg(env, request, user, await readJson(request)));
   if ((m = path.match(/^\/v1\/orgs\/(org_[0-9a-f]{24})\/cohorts$/))) {
@@ -239,6 +242,8 @@ async function route(request, env) {
     if (method === "PUT") return json(env, request, await updateClass(env, request, user, m[1], await readJson(request)));
     if (method === "DELETE") return json(env, request, await deleteClass(env, request, user, m[1]));
   }
+  if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/assignments$/)) && method === "POST") return json(env, request, await createAssignment(env, request, user, m[1], await readJson(request)));
+  if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/assignments\/(asg_[0-9a-f]{24})$/)) && method === "DELETE") return json(env, request, await deleteAssignment(env, request, user, m[1], m[2]));
   if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/code$/)) && method === "POST") return json(env, request, await rotateCode(env, request, user, m[1]));
   if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/membership$/)) && method === "DELETE") return json(env, request, await leaveClass(env, request, user, m[1]));
   if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/students\/(mem_[0-9a-f]{24})$/)) && method === "DELETE") return json(env, request, await removeStudent(env, request, user, m[1], m[2]));

@@ -490,7 +490,7 @@
     const q = new URLSearchParams({ p: name, t: title || name, e: "true", rnd: Math.random().toString(36).slice(2) });
     try { fetch(`${gc}/count?${q}`, { mode: "no-cors", credentials: "omit", keepalive: true, referrerPolicy: "no-referrer" }).catch(() => {}); } catch (e) {}
   };
-  const LIGHT = new Set(["home", "dashboard", "achievements", "exam-changes", "schools", "whats-new", "review", "privacy", "terms", "security", "install", "support", "exam-day", "account", "login", "signup", "profile", "plans", "settings", "help", "certifications"]);
+  const LIGHT = new Set(["home", "dashboard", "achievements", "exam-changes", "schools", "whats-new", "review", "privacy", "terms", "security", "install", "support", "exam-day", "account", "admin", "login", "signup", "profile", "plans", "settings", "help", "certifications"]);
   function route() {
     let raw = "";
     try { raw = decodeURIComponent(location.hash.replace(/^#/, "")); } catch (e) { raw = ""; }
@@ -526,6 +526,7 @@
       else if ((head === "login" || head === "signup") && CertHub.accountViews) { topNav("account"); $("#app").innerHTML = CertHub.accountViews.login(head); title = head === "signup" ? "Sign Up" : "Log In"; view = head; }
       else if (head === "profile" && CertHub.accountViews) { topNav("account"); CertHub.accountViews.profile(); title = "Your Profile"; view = head; }
       else if (head === "plans" && CertHub.accountViews) { topNav(""); $("#app").innerHTML = CertHub.accountViews.plans(); title = "Plans"; view = head; }
+      else if (head === "admin" && CertHub.accountViews) { topNav("account"); CertHub.accountViews.admin(); title = "Site Dashboard"; view = head; }
       else if (head === "account" && CertHub.accountViews) { topNav("account"); $("#app").innerHTML = CertHub.accountViews.account(); title = "Account"; view = "account"; }
       else if (/^join-[a-km-np-z2-9]{10}$/.test(head) && CertHub.accountViews) { topNav("account"); CertHub.accountViews.join(head.slice(5)); title = "Join a Class"; view = head; }
       else if (/^class-[0-9a-f]{24}$/.test(head) && CertHub.accountViews) { topNav("account"); CertHub.accountViews.classRoster(head.slice(6)); title = "Class Roster"; view = head; }

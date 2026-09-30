@@ -326,6 +326,8 @@
       <div class="row"><div class="grow"><strong>Sync</strong><br><span class="note" id="syncstatus"></span></div><button type="button" class="btn sm" data-aact="sync">Sync now</button></div>
     </div>
     ${/* html: built with esc() */ planPanel(plan)}
+    ${me.admin ? `<div class="panel"><div class="row"><div class="grow"><strong>Site dashboard</strong><br><span class="note">Sign-ups, plans, popular certifications and referrals. Only you can see it.</span></div><a class="btn sm" href="#admin">Open</a></div></div>` : ""}
+    ${me.billing && !NATIVE ? `<h2>Invite friends</h2><div id="refpanel">${CertHub.fx.skeleton()}</div>` : ""}
     <h2>Organizations</h2>
     <div class="panel">${orgs.length ? orgs.map(o => `<div class="row"><div class="grow"><strong>${esc(o.name)}</strong><br><span class="note">${esc(o.role)}${o.active ? "" : " · no active seats"}</span></div>${o.role !== "learner" ? `<button type="button" class="btn ghost sm" data-aact="manage" data-org="${esc(o.id)}">Manage</button>` : ""}</div>`).join("") : `<p class="note" data-style="margin:0">You're not in an organization. If your school or employer gave you an invite link, open it and you'll join automatically.</p>`}
       <details class="sq"><summary>Create an organization (for instructors)</summary>
@@ -457,7 +459,7 @@
       const { data } = await api("GET", "/v1/classes");
       el.innerHTML = `<div class="panel">
         <p data-style="margin:0"><strong>Classes you're in</strong></p>
-        ${data.joined.length ? data.joined.map(j => `<div class="row"><div class="grow"><strong>${esc(j.name)}</strong><br><span class="note">Teacher: ${esc(j.teacherName)}${j.certId ? ` · ${esc(certLabel(j.certId))}` : ""} · you appear as ${esc(j.displayName)}${j.showEmail ? " (with your email)" : ""}</span></div><button type="button" class="btn ghost sm" data-aact="leaveclass" data-class="${esc(j.id)}" data-name="${esc(j.name)}">Leave</button></div>`).join("") : `<p class="note" data-style="margin:0">None. Your teacher shares a join link or code; your progress is shared only after you agree.</p>`}
+        ${data.joined.length ? data.joined.map(j => `<div class="row"><div class="grow"><strong>${esc(j.name)}</strong><br><span class="note">Teacher: ${esc(j.teacherName)}${j.certId ? ` · ${esc(certLabel(j.certId))}` : ""} · you appear as ${esc(j.displayName)}${j.showEmail ? " (with your email)" : ""}</span></div><button type="button" class="btn ghost sm" data-aact="leaveclass" data-class="${esc(j.id)}" data-name="${esc(j.name)}">Leave</button></div>${(j.assignments || []).length ? `<ul class="clean assignlist">${j.assignments.map(a => `<li class="${a.done ? "done" : ""}"><strong>${esc(a.title)}</strong> <span class="chip ${a.done ? "done" : ""}">${a.done ? "Done" : `${+a.value} / ${+a.target}`}</span><br><span class="note">${assignLine(a)}</span></li>`).join("")}</ul>` : ""}`).join("") : `<p class="note" data-style="margin:0">None. Your teacher shares a join link or code; your progress is shared only after you agree.</p>`}
         <form id="classcode-form" class="row" novalidate>
           <div class="grow"><label for="classcode-in">Class code</label><input type="text" id="classcode-in" class="textin" maxlength="16" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="e.g. k7m2qx9fab"></div>
           <button type="submit" class="btn sm">Join a class</button>
@@ -538,12 +540,86 @@
           </form>
         </details>
       </div>
+      <h2>Assignments</h2>
+      <div class="panel">
+        ${(data.assignments || []).length ? data.assignments.map(a => `<div class="row"><div class="grow"><strong>${esc(a.title)}</strong><br><span class="note">${assignLine(a)} · ${+a.done} of ${plural(n, "student")} done</span></div><button type="button" class="btn ghost sm" data-aact="delassign" data-class="${esc(c.id)}" data-assign="${esc(a.id)}" data-name="${esc(a.title)}">Delete</button></div>`).join("") : `<p class="note" data-style="margin-top:0">No assignments yet. Set a target, like a practice exam score by a date; students see it on their Account page with their progress.</p>`}
+        <details class="sq"><summary>Add an assignment</summary>
+          <form id="assign-form" data-class="${esc(c.id)}">
+            <label for="assign-title">Title</label><input type="text" id="assign-title" class="textin" maxlength="100" required placeholder="e.g. Week 4 practice exam">
+            <label for="assign-kind">Students should</label><select id="assign-kind" class="textin"><option value="exam">Score at least … % on a practice exam</option><option value="lessons">Read at least … lessons</option><option value="readiness">Reach … /100 exam readiness</option><option value="questions">Answer at least … practice questions</option></select>
+            <label for="assign-target">Target</label><input type="number" id="assign-target" class="textin" min="1" max="5000" required value="80">
+            <label for="assign-cert">Certification</label><select id="assign-cert" class="textin">${certOptions(c.certId || "", "Choose a certification")}</select>
+            <label for="assign-due">Due date (optional)</label><input type="date" id="assign-due" class="textin">
+            <div class="btns"><button type="submit" class="btn sm">Add assignment</button></div>
+            <p class="note" id="assign-msg" role="status"></p>
+          </form>
+        </details>
+      </div>
+      <h2>Students</h2>
       <div class="btns"><button type="button" class="btn ghost sm" data-aact="classcsv" data-class="${esc(c.id)}">Download CSV</button></div>
       <div class="scroll" tabindex="0" role="region" aria-label="Class roster (scrolls sideways on small screens)"><table class="sectable"><thead><tr><th scope="col">Student</th><th scope="col">Certification</th><th scope="col">Readiness</th><th scope="col">Lessons read</th><th scope="col">Best practice exam</th><th scope="col">Questions answered</th><th scope="col">Hands-on done</th><th scope="col">Labs done</th><th scope="col">Last active</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead><tbody>
       ${rows || `<tr><td colspan="10">No students yet. Share the join link; students appear here after they agree to share.</td></tr>`}
       </tbody></table></div>`;
     } catch (e) { $("#app").innerHTML = `${crumbs}<h1>Class roster</h1><div class="status warn">${esc(e.message)}</div>`; }
   }
+
+  /* ---------- referrals: give a month, get a month ---------- */
+  const REF_KEY = "certhub:ref";
+  // The invite code this browser arrived with (?ref=…), kept 60 days.
+  const storedRef = () => { try { const r = JSON.parse(store.get(REF_KEY) || "null"); return r && /^[a-km-np-z2-9]{8}$/.test(r.code) && Date.now() - r.at < 60 * 864e5 ? r.code : ""; } catch (e) { return ""; } };
+  async function refPanel() {
+    const el = document.getElementById("refpanel"); if (!el) return;
+    try {
+      const { data: r } = await api("GET", "/v1/referral");
+      const money = c => "$" + (c / 100).toFixed(c % 100 ? 2 : 0);
+      el.innerHTML = `<div class="panel">
+        <p data-style="margin-top:0"><strong>Give a month, get a month.</strong> Friends who start a plan with your link get their first month free. When their first paid month begins, you get a month of Pro as credit on your next bill (up to 12 a year).</p>
+        <label for="ref-link">Your invite link</label>
+        <div class="row"><input type="text" id="ref-link" class="textin grow" readonly value="${esc(r.link)}"><button type="button" class="btn sm" data-aact="copyref">Copy</button>${navigator.share ? `<button type="button" class="btn ghost sm" data-aact="shareref">Share</button>` : ""}</div>
+        <p class="note" data-style="margin:0">${plural(r.friends, "friend")} joined with your link · ${plural(r.credited, "month")} of credit earned${r.creditCents ? ` (${esc(money(r.creditCents))})` : ""}${r.pending ? ` · ${plural(r.pending, "credit")} waiting: it's added when you start a plan` : ""}.</p>
+      </div>`;
+    } catch (e) { el.innerHTML = `<div class="status warn">${esc(e.message)}</div>`; }
+  }
+
+  /* ---------- the owner's dashboard (#admin, for ADMIN_EMAILS only) ---------- */
+  async function adminView() {
+    const crumbs = `<p class="crumbs"><a href="#account">Account</a> / Site dashboard</p>`;
+    $("#app").innerHTML = `${crumbs}<h1>Site dashboard</h1>${CertHub.fx.skeleton()}`;
+    try {
+      const { data: d } = await api("GET", "/v1/admin/stats");
+      if (location.hash !== "#admin") return;
+      const num = s => { const m = String(s || "").match(/[\d.]+/); return m ? +m[0] : 0; };
+      const monthly = { pro: [num(PRICE.monthly), num(PRICE.yearly) / 12], premium: [num(PREMIUM.monthly), num(PREMIUM.yearly) / 12] };
+      let mrr = 0, paying = 0, trials = 0, pastDue = 0;
+      for (const p of d.plans) {
+        if (p.status === "trialing") { trials += p.count; continue; }
+        if (p.status === "past_due") pastDue += p.count;
+        if (p.status !== "active" || !monthly[p.plan]) continue;
+        paying += p.count;
+        mrr += p.count * monthly[p.plan][p.interval === "year" ? 1 : 0];
+      }
+      const tile = (n, label) => `<div class="stat"><strong>${esc(n)}</strong><span>${esc(label)}</span></div>`;
+      const max = Math.max(1, ...d.signups.map(s => s.n));
+      $("#app").innerHTML = `${crumbs}
+      <h1>Site dashboard</h1>
+      <p class="meta">Totals only: no names, emails or answers. Updated ${esc(new Date(d.generatedAt).toLocaleString())}.</p>
+      <h2>People</h2>
+      <div class="stats">${tile(d.users.total, "accounts")}${tile(d.users.new7, "new this week")}${tile(d.users.new30, "new in 30 days")}${tile(d.users.active7, "studied this week")}</div>
+      <h2>Sign-ups, last 14 days</h2>
+      <div class="panel"><ul class="clean bars">${d.signups.map(s => `<li><span class="note">${esc(s.day.slice(5))}</span> <span class="track"><i data-style="width:${/* num */ Math.round(100 * s.n / max)}%"></i></span> <strong>${+s.n}</strong></li>`).join("")}</ul></div>
+      <h2>Plans</h2>
+      <div class="stats">${tile("$" + Math.round(mrr), "monthly revenue (estimate)")}${tile(paying, "paying members")}${tile(trials, "in a free trial")}${tile(pastDue, "payment failing")}</div>
+      <p class="note">From list prices; yearly plans count as a twelfth a month. Stripe has the exact figures. ${plural(d.canceled30, "plan")} canceled in the last 30 days.</p>
+      <h2>Most studied (30 days)</h2>
+      <div class="panel">${d.certs.length ? `<ol>${d.certs.map(c => `<li>${esc(certLabel(c.certId))} <span class="note">· ${plural(c.learners, "learner")}</span></li>`).join("")}</ol>` : `<p class="note" data-style="margin:0">No synced study yet.</p>`}</div>
+      <h2>Classes and referrals</h2>
+      <div class="stats">${tile(d.classes.classes, "classes")}${tile(d.classes.students, "students in classes")}${tile(d.referrals.referred, "plans from referrals")}${tile(d.referrals.rewarded, "referral credits given")}</div>`;
+    } catch (e) { $("#app").innerHTML = `${crumbs}<h1>Site dashboard</h1><div class="status warn">${esc(e.status === 403 ? "This page is for the site's owner. Add your email to the STUDY_API_ADMIN_EMAILS repository variable and redeploy the API." : e.message)}</div>`; }
+  }
+
+  // What an assignment asks for, in words.
+  const ASSIGN = { lessons: n => `Read ${n} lessons`, exam: n => `Score ${n}% or more on a practice exam`, readiness: n => `Reach ${n}/100 exam readiness`, questions: n => `Answer ${n} practice questions` };
+  const assignLine = a => `${esc(ASSIGN[a.kind] ? ASSIGN[a.kind](a.target) : a.kind)} in ${esc(certLabel(a.certId))}${a.dueDate ? ` · due ${esc(a.dueDate)}` : ""}`;
 
   function download(name, text, type) {
     const a = document.createElement("a");
@@ -570,6 +646,15 @@
         msg.textContent = "Saving…";
         await api("PUT", "/v1/profile", { displayName: $("#pf-name").value, bio: $("#pf-bio").value, goalCert: $("#pf-goal").value, weeklyHours: $("#pf-hours").value });
         await refreshMe(); ui.toast("Profile saved."); profileView();
+      } catch (err) { msg.textContent = err.message; }
+      return;
+    }
+    if (f.id === "assign-form") {
+      e.preventDefault();
+      const msg = $("#assign-msg");
+      try {
+        await api("POST", `/v1/classes/${f.dataset.class}/assignments`, { title: $("#assign-title").value, kind: $("#assign-kind").value, target: +$("#assign-target").value, certId: $("#assign-cert").value, dueDate: $("#assign-due").value || null });
+        ui.toast("Assignment added."); classView(f.dataset.class.slice(4));
       } catch (err) { msg.textContent = err.message; }
       return;
     }
@@ -636,6 +721,12 @@
     const a = b.dataset.aact;
     try {
       if (a === "code-restart") { CertHub.rerender(); return; }
+      if (a === "copyref") { ui.copy($("#ref-link").value, "invite link"); return; }
+      if (a === "shareref") { navigator.share({ title: "StudyToCert", text: "Free study plans for IT, cloud and cybersecurity certifications. Your first month of Pro is free with my link.", url: $("#ref-link").value }).catch(() => {}); return; }
+      if (a === "delassign") {
+        if (!(await ui.confirm(`Delete the assignment "${b.dataset.name}"?`, { ok: "Delete", cancel: "Keep it", danger: true }))) return;
+        await api("DELETE", `/v1/classes/${b.dataset.class}/assignments/${b.dataset.assign}`); ui.toast("Assignment deleted."); classView(b.dataset.class.slice(4)); return;
+      }
       if (a === "signout") { await api("POST", "/v1/auth/logout", {}); if (NATIVE) NATIVE.setToken(""); setMe((await api("GET", "/v1/me").catch(() => ({ data: null }))).data); ui.toast("Signed out. Your progress stays on this device."); if (location.hash === "#profile") location.hash = "login"; else CertHub.rerender(); }
       if (a === "sync") await syncAll();
       if (a === "removeprofile") {
@@ -668,7 +759,7 @@
       if (a === "webplans") { if (NATIVE && BUY === "web") NATIVE.openWeb(b.dataset.path === "/#account" ? "/#account" : "/#plans"); return; }
       if ((a === "upgrade" || a === "portal") && NATIVE) { if (BUY === "web") NATIVE.openWeb(a === "portal" ? "/#account" : "/#plans"); return; }
       if (a === "upgrade" || a === "portal") {
-        const { data } = await api("POST", a === "upgrade" ? "/v1/billing/checkout" : "/v1/billing/portal", a === "upgrade" ? { plan: b.dataset.plan === "premium" ? "premium" : "pro", interval: b.dataset.interval } : {});
+        const { data } = await api("POST", a === "upgrade" ? "/v1/billing/checkout" : "/v1/billing/portal", a === "upgrade" ? { plan: b.dataset.plan === "premium" ? "premium" : "pro", interval: b.dataset.interval, ref: storedRef() || undefined } : {});
         if (/^https:\/\//.test(data.url)) location.href = data.url;
       }
       if (a === "manage") orgPanel(b.dataset.org);
@@ -731,6 +822,12 @@
   async function handleLanding() {
     const q = new URLSearchParams(location.search);
     const signin = q.get("signin"), invite = q.get("invite");
+    // Arrived with a friend's invite link (?ref=…): remember it for the checkout.
+    if (q.has("ref")) {
+      const code = q.get("ref") || "";
+      if (/^[a-km-np-z2-9]{8}$/.test(code)) store.set(REF_KEY, JSON.stringify({ code, at: Date.now() }));
+      history.replaceState(null, "", location.pathname + location.hash);
+    }
     // Back from Google, Facebook or LinkedIn (the API adds one of these).
     const err = q.get("signin_error"), linked = q.get("linked"), welcome = q.get("welcome"), via = q.get("signed_in");
     // Back from Stripe Checkout (?checkout=cs_…): the plan is recorded by the webhook, which can take a few seconds.
@@ -1067,6 +1164,7 @@
     const tick = v => typeof v === "string" ? `<span class="pval">${esc(v)}</span>` : v ? `<span class="ptick" aria-hidden="true">✓</span><span class="sr-only">Included</span>` : `<span class="pno" aria-hidden="true">–</span><span class="sr-only">Not included</span>`;
     return `<h1>Plans</h1>
     <p class="meta">Every study plan, lesson, quiz and lab guide is free. Pro removes the Free plan's limits and adds more practice and exam simulation. Premium Pro adds an AI tutor, study coach and mock interviews on top.</p>
+    ${!NATIVE && live && storedRef() && cur === "free" ? `<div class="status">A friend invited you: your first month of Pro or Premium Pro is free. You won't be charged until the month ends, and you can cancel before then.</div>` : ""}
     ${BUY === "none" ? `<div class="status">${signedIn() ? `Your plan: ${esc(PLAN[cur] || cur)}.` : "Have a Pro or Premium Pro plan? Sign in to use it in the app."}</div>` : live ? "" : `<div class="status">Paid plans are opening soon. The Free plan works today, with no sign-up.</div>`}
     <div class="plancards">
       <div class="panel plancard"><h2>Free</h2>${price({}, "$0")}
@@ -1100,7 +1198,8 @@
 
   CertHub.accountViews = {
     plans: plansView,
-    account: () => { setTimeout(() => { renderStatus(); if (signedIn()) { classPanel(); passkeyPanel(); devicePanel(); } else turnstile(); }, 0); return accountView(); },
+    account: () => { setTimeout(() => { renderStatus(); if (signedIn()) { classPanel(); passkeyPanel(); devicePanel(); refPanel(); } else turnstile(); }, 0); return accountView(); },
+    admin: adminView,
     login: mode => { setTimeout(turnstile, 0); return loginView(mode); },
     profile: profileView,
     cohort: cohortView,
