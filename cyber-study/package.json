@@ -15,6 +15,7 @@
     "test:a11y": "node tools/a11y.js",
     "test:layout": "node tools/layout.js",
     "test:live": "node tools/live-journey.js",
+    "test:app": "node mobile/build-www.js && node tools/app-e2e.js",
     "start": "node tools/serve.js 8000",
     "api:dev": "node api/dev-server.js 8787 http://localhost:8000",
     "start:accounts": "node tools/serve.js 8000 http://localhost:8787",

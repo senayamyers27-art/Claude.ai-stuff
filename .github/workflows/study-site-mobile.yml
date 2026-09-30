@@ -1,0 +1,158 @@
+name: Study site mobile apps
+
+# Builds the StudyToCert apps for Google Play and the App Store from cyber-study/mobile (Capacitor), with the
+# site as it is on main. Run it by hand from the Actions tab. See cyber-study/docs/MOBILE_APPS.md for the one-time
+# store setup.
+#
+# Android: an .aab for Play Console and studytocert-test.apk (a debug build anyone can install on a phone to try
+#   the app, no store needed), kept as run artifacts.
+#   Signed with your upload key when these secrets are set: ANDROID_KEYSTORE_BASE64 (the .jks file, base64),
+#   ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD. Upload the .aab in Play Console.
+# iOS: with the App Store Connect API key secrets (APP_STORE_CONNECT_KEY_ID, APP_STORE_CONNECT_ISSUER_ID,
+#   APP_STORE_CONNECT_KEY: the .p8 file's contents) and the APPLE_TEAM_ID variable, archives the app, signs it
+#   (Xcode manages the certificate and profile) and uploads it to App Store Connect, where it appears in TestFlight
+#   and can be submitted for review. Without them it only checks that the app compiles (simulator build).
+# Version: "version" in cyber-study/mobile/package.json; the build number is this workflow's run number.
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Which apps to build
+        type: choice
+        options: [both, android, ios]
+        default: both
+
+permissions:
+  contents: read
+
+concurrency:
+  group: study-site-mobile
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: cyber-study/mobile
+
+jobs:
+  android:
+    if: github.ref == 'refs/heads/main' && inputs.platform != 'ios'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: study-mobile
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cyber-study/mobile/package-lock.json
+
+      - name: Install Capacitor
+        run: npm ci
+
+      - name: Copy the site into the app
+        run: node build-www.js && npx cap sync android
+
+      - name: Build
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          APP_VERSION_CODE: ${{ github.run_number }}
+        run: |
+          export JAVA_HOME="${JAVA_HOME_21_X64:-$JAVA_HOME}"
+          export APP_VERSION_NAME="$(node -p 'require("./package.json").version')"
+          if [ -n "$KEYSTORE_B64" ]; then
+            printf '%s' "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+            export ANDROID_KEYSTORE_FILE="$RUNNER_TEMP/upload.jks"
+          fi
+          cd android
+          ./gradlew --no-daemon bundleRelease assembleRelease assembleDebug
+          signed=$([ -n "$KEYSTORE_B64" ] && echo "signed with your upload key" || echo "UNSIGNED: add the ANDROID_KEYSTORE_* secrets to sign it for Play")
+          {
+            echo "## Android $APP_VERSION_NAME ($APP_VERSION_CODE)"
+            echo ""
+            echo "- \`studytocert.aab\`, $signed. Upload it in Play Console → your app → Test and release."
+            echo "- \`studytocert-test.apk\`: install it on an Android phone to try the app (a test build; it can't go to Play)."
+          } >> "$GITHUB_STEP_SUMMARY"
+          mkdir -p "$RUNNER_TEMP/out"
+          cp app/build/outputs/bundle/release/*.aab "$RUNNER_TEMP/out/studytocert.aab"
+          cp app/build/outputs/apk/debug/app-debug.apk "$RUNNER_TEMP/out/studytocert-test.apk"
+          rm -f "$RUNNER_TEMP/upload.jks"
+
+      - name: Keep the Android build
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: android-${{ github.run_number }}
+          path: ${{ runner.temp }}/out/
+          retention-days: 30
+
+  ios:
+    if: github.ref == 'refs/heads/main' && inputs.platform != 'android'
+    runs-on: macos-latest
+    timeout-minutes: 45
+    environment:
+      name: study-mobile
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cyber-study/mobile/package-lock.json
+
+      - name: Install Capacitor
+        run: npm ci
+
+      - name: Copy the site into the app
+        run: node build-www.js && npx cap sync ios
+
+      - name: Build, sign and upload to App Store Connect
+        env:
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          KEY_P8: ${{ secrets.APP_STORE_CONNECT_KEY }}
+          TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          VERSION="$(node -p 'require("./package.json").version')"
+          cd ios/App
+          if [ -z "$KEY_ID" ] || [ -z "$ISSUER_ID" ] || [ -z "$KEY_P8" ] || [ -z "$TEAM_ID" ]; then
+            xcodebuild -project App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build | tail -20
+            echo "## iOS $VERSION: compiled for the simulator only. Add the App Store Connect API key secrets and the APPLE_TEAM_ID variable to sign and upload." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          KEY_FILE="$RUNNER_TEMP/AuthKey_$KEY_ID.p8"
+          printf '%s' "$KEY_P8" > "$KEY_FILE"
+          AUTH=(-allowProvisioningUpdates -authenticationKeyPath "$KEY_FILE" -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER_ID")
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" "${AUTH[@]}" \
+            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Automatic MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            archive | tail -20
+          cat > "$RUNNER_TEMP/export.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict></plist>
+          EOF
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" -exportOptionsPlist "$RUNNER_TEMP/export.plist" -exportPath "$RUNNER_TEMP/export" "${AUTH[@]}" | tail -20
+          rm -f "$KEY_FILE"
+          echo "## iOS $VERSION ($BUILD_NUMBER): uploaded to App Store Connect. It shows in TestFlight after Apple's processing (usually 10-30 minutes)." >> "$GITHUB_STEP_SUMMARY"
