@@ -15,6 +15,8 @@ const ids = CertHub.catalog.filter(id => fs.existsSync(path.join(PUB, "data", id
 
 const PORT = 8123, BASE = `http://localhost:${PORT}`;
 let failures = 0;
+// Forget practice exams taken on a certification, so the Free plan's one practice exam is available again.
+const resetExams = (page, id) => page.evaluate(k => { const p = JSON.parse(localStorage.getItem(k) || "{}"); delete p.examStarts; p.history = (p.history || []).filter(h => !/^(Practice exam|Hard mode exam)$/.test(h.title)); localStorage.setItem(k, JSON.stringify(p)); }, "certhub:v1:" + id);
 const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (!ok) failures++; };
 
 (async () => {
@@ -108,6 +110,9 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
       check(ran, "practice VM runs commands");
     }
     await page.goto(`${BASE}/#vm-lab-cron`);
+    await page.waitForSelector("#vmgo");
+    check(/Free plan includes 5 graded VM labs/.test(await page.textContent("#app")), "a graded lab outside the Free plan explains the limit");
+    await page.goto(`${BASE}/#vm-lab-users`);
     await page.waitForSelector("#vmgo"); await page.click("#vmgo");
     if (await vmReady()) {
       await page.click("[data-vm=check]");
@@ -259,6 +264,7 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   check(await page.evaluate(() => { const r = document.documentElement; return r.dataset.motion === "reduce" && r.dataset.links === "on" && r.dataset.focusring === "strong" && CertHub.fx.calm(); }), "accessibility settings (reduce motion, underlined links, focus outline) apply and survive a reload");
   await page.click('[data-pref="motion:auto"]'); await page.click('[data-pref="links:off"]'); await page.click('[data-pref="focusring:normal"]');
   await page.click('[data-pref="time:1.5"]'); await page.click('[data-pref="keys:off"]');
+  await resetExams(page, "security-plus"); await page.goto(`${BASE}/#home`); await page.reload();
   await page.goto(`${BASE}/#security-plus.practice`);
   await page.waitForSelector("[data-act=exam]"); await page.click("[data-act=exam]"); await page.waitForSelector(".qhead");
   const xt = await page.evaluate(() => ({ chip: /Time and a half/.test(document.querySelector(".qhead").textContent) }));
@@ -430,6 +436,16 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(`${BASE}/#plans`); await page.waitForSelector(".plancards");
   check((await page.$$(".plancard")).length === 3 && /Coming soon/.test(await page.textContent(".plancards")), "plans page compares Free, Pro and Premium Pro; paid plans say Coming soon");
   check(!(await page.$(".tutbtn")), "no AI tutor buttons when paid plans aren't on sale");
+  await resetExams(page, "security-plus"); await page.goto(`${BASE}/#home`); await page.reload();
+  await page.goto(`${BASE}/#security-plus.practice`); await page.waitForSelector(".planlimit");
+  check(/1 practice exam left for Security\+/.test(await page.textContent("#app")), "Free plan: one practice exam per certification, with the count shown");
+  await page.waitForFunction(() => document.querySelectorAll("[data-act=simstart]").length > 0);
+  check(await page.$('.lockbtn[href="#plans"]') && await page.$("[data-act=simstart]"), "Free plan: the first simulation in each domain is open and the rest link to Plans");
+  await page.click("[data-act=exam]");
+  await page.waitForSelector(".qhead");
+  await page.click("[data-act=quit]"); await page.click('.modal [data-v="1"]');
+  await page.waitForSelector(".planlimit");
+  check(/used your practice exam/.test(await page.textContent("#app")) && !(await page.$("[data-act=exam]")), "after the free practice exam, starting another points to Plans");
   await page.goto(`${BASE}/#profile`); await page.waitForSelector("[data-aact=removeprofile]");
   await page.click("[data-aact=removeprofile]");
   await page.waitForSelector(".modal [data-v='1']"); await page.click(".modal [data-v='1']");

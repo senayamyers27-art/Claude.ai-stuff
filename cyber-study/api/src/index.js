@@ -125,7 +125,11 @@ async function route(request, env) {
   if (path === "/v1/health" && method === "GET") return json(env, request, { ok: true, billing: billingEnabled(env), premium: premiumEnabled(env), support: supportEnabled(env) });
 
   // AI support assistant (./support.js): open to everyone, rate limited, nothing stored.
-  if (path === "/v1/support/chat" && method === "POST") return json(env, request, await supportChat(env, request, await readJson(request, 32 * 1024)));
+  if (path === "/v1/support/chat" && method === "POST") {
+    const u = await currentUser(env, request).catch(() => null);
+    const who = u ? { userId: u.id, plan: (await entitlementsFor(env, u.id)).plan } : null;
+    return json(env, request, await supportChat(env, request, await readJson(request, 32 * 1024), who));
+  }
 
   if (path === "/v1/auth/magic-link" && method === "POST") return json(env, request, await requestMagicLink(env, request, await readJson(request)));
   if (path === "/v1/auth/magic-link/verify" && method === "POST") {

@@ -766,6 +766,9 @@ nav.tabs.fl.fr{-webkit-mask-image:linear-gradient(to right,transparent,#000 36px
 .ptable thead th{font-weight:800;background:var(--soft)}
 .ptable .pgroup th{text-align:left;font-weight:800;background:var(--soft);font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
 .ptick{color:var(--ok);font-weight:800}
+.pval{font-size:13px;font-weight:600}
+.planlimit{margin:6px 0 10px}
+.lockbtn .ico{width:15px;height:15px;vertical-align:-2px;margin-right:4px}
 .pno{color:var(--muted)}
 /* AI tutor (Premium Pro) */
 .tutbtn .ico{width:16px;height:16px;vertical-align:-3px;margin-right:4px}

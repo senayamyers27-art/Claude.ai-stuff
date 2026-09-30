@@ -230,6 +230,21 @@
     syncAll, refreshMe, savePrompt, api, get me() { return me; }, get enabled() { return !!API; }
   };
 
+  /* ---------- plan limits ---------- */
+  // What the Free plan includes, and helpers for the pages that limit it. Pro, Premium Pro and organization seats
+  // lift the limits. Everyone without a paid plan (including everyone while accounts aren't switched on) is on Free.
+  CertHub.plans = {
+    FREE: { exams: 1, vmLabs: 5 },
+    get current() { return API && me && me.user ? (me.plan || "free") : "free"; },
+    get paid() { return ["pro", "premium", "org"].includes(this.current); },
+    // A "Pro" lock button that opens the plans page.
+    lock(label = "Unlock with Pro") { return `<a class="btn ghost sm lockbtn" href="#plans">${CertHub.fx.icon("spark")}${esc(label)}</a>`; },
+    // Explains a limit and offers the plans page.
+    async upsell(message) {
+      if (await ui.confirm(message, { ok: "See plans", cancel: "Not now" })) location.hash = "plans";
+    }
+  };
+
   /* ---------- Premium Pro features (AI tutor, study coach, mock interviews: assets/tutor.js) ---------- */
   // Pages add a button with premium.button(mode, label, getContext). For Premium Pro members it opens the tutor with
   // the context getContext() returns when clicked; where Premium Pro can be bought it links to the plans page;
@@ -266,8 +281,8 @@
   const PLAN = { free: "Free", pro: "Pro", premium: "Premium Pro", org: "Organization" };
   const PRICE = (CertHub.site && CertHub.site.pro) || {};
   const PREMIUM = (CertHub.site && CertHub.site.premium) || {};
-  // What Pro adds. Everything else on the site stays free.
-  const proPitch = () => `<p data-style="margin:0">Everything on the site stays free. Pro adds:</p><ul class="clean">
+  // What Pro adds on top of the Free plan.
+  const proPitch = () => `<p data-style="margin:0">Pro removes the Free plan's limits (unlimited practice exams, every simulation and graded VM lab) and adds:</p><ul class="clean">
       <li>About 300 extra practice questions per certification, with explanations</li>
       <li>Full-length timed exams at the real exam's length, with a pass estimate</li>
       <li>A score report: weakest domains and objectives, trend and exam readiness</li>
@@ -947,18 +962,23 @@
     ["Study", [
       ["Week-by-week study plans for every certification", 1, 1, 1],
       ["Lessons, diagrams, cheat sheets and flashcards", 1, 1, 1],
-      ["Weekly quizzes, checkpoint tests and a practice exam", 1, 1, 1],
+      ["Weekly quizzes, checkpoint tests and smart practice", 1, 1, 1],
+      ["Timed practice exams (regular and hard mode)", "1 per certification", "Unlimited", "Unlimited"],
+      ["Exam simulations (performance-based questions)", "First in each domain", "All", "All"],
       ["Spaced review, readiness score and exam countdown", 1, 1, 1],
       ["About 300 extra practice questions per certification", 0, 1, 1],
       ["Full-length timed exams with a pass estimate", 0, 1, 1],
       ["Score report by exam objective, with trends", 0, 1, 1],
       ["Printable study guides", 0, 1, 1]]],
     ["Practice", [
-      ["106 hands-on labs and the Linux practice VM", 1, 1, 1],
+      ["106 hands-on lab guides", 1, 1, 1],
+      ["Linux practice VMs in your browser (free practice)", 1, 1, 1],
+      ["Graded VM labs", "5", "All", "All"],
+      ["Timed VM exam", 0, 1, 1],
       ["Games, log puzzles, incident tabletops and network design", 1, 1, 1],
       ["Capstone projects with grading rubrics for your portfolio", 0, 1, 1]]],
     ["AI help", [
-      ["Help assistant for questions about the site", 1, 1, 1],
+      ["Help assistant questions a day", "5", "30", "100"],
       ["AI Tutor: a personal explanation of any question you miss, with follow-up questions", 0, 0, 1],
       ["AI Study Coach: a 7-day plan from your own progress and exam date", 0, 0, 1],
       ["AI mock job interviews with feedback on every answer", 0, 0, 1]]],
@@ -981,22 +1001,22 @@
       if (cur === "pro" || cur === "premium") return `<button type="button" class="btn" data-aact="portal">Switch plans</button><p class="note">Change plans in Manage billing. The difference is prorated.</p>`;
       return `<button type="button" class="btn" data-aact="upgrade" data-plan="${esc(kind)}" data-interval="month">${X.monthly ? `${esc(X.monthly)} a month` : "Monthly"}</button><button type="button" class="btn ghost" data-aact="upgrade" data-plan="${esc(kind)}" data-interval="year">${X.yearly ? `${esc(X.yearly)} a year` : "Yearly"}</button>`;
     };
-    const tick = v => v ? `<span class="ptick" aria-label="Included">✓</span>` : `<span class="pno" aria-label="Not included">–</span>`;
+    const tick = v => typeof v === "string" ? `<span class="pval">${esc(v)}</span>` : v ? `<span class="ptick" aria-label="Included">✓</span>` : `<span class="pno" aria-label="Not included">–</span>`;
     return `<h1>Plans</h1>
-    <p class="meta">Everything you need to study and pass is free, and it stays free. Pro adds more practice and exam simulation. Premium Pro adds an AI tutor, study coach and mock interviews on top.</p>
-    ${live ? "" : `<div class="status">Paid plans are opening soon. Everything in the Free plan works today, with no sign-up.</div>`}
+    <p class="meta">Every study plan, lesson, quiz and lab guide is free. Pro removes the Free plan's limits and adds more practice and exam simulation. Premium Pro adds an AI tutor, study coach and mock interviews on top.</p>
+    ${live ? "" : `<div class="status">Paid plans are opening soon. The Free plan works today, with no sign-up.</div>`}
     <div class="plancards">
       <div class="panel plancard"><h2>Free</h2>${price({}, "$0")}
         <p>For everyone. The full study site, with no ads and no sign-up.</p>
-        <ul class="clean"><li>Study plans for ${esc(Object.keys(CertHub.certs).length)} certifications</li><li>Lessons, quizzes and a practice exam</li><li>106 labs and the practice VM</li><li>Free profile and sync</li></ul>
+        <ul class="clean"><li>Study plans for ${esc(Object.keys(CertHub.certs).length)} certifications</li><li>Lessons, quizzes and checkpoint tests</li><li>1 practice exam per certification</li><li>106 lab guides, practice VMs and 5 graded VM labs</li><li>5 help assistant questions a day</li></ul>
         <div class="btns">${cur === "free" && signedIn() ? `<p class="pcur">Your current plan</p>` : `<a class="btn ghost" href="#certifications">Start studying</a>`}</div></div>
       <div class="panel plancard"><h2>Pro</h2>${price(PRICE, "Pro")}
         <p>For exam prep at full length: more questions, real-length timed exams and a detailed score report.</p>
-        <ul class="clean"><li>Everything in Free</li><li>About 300 extra questions per certification</li><li>Full-length timed exams</li><li>Score report by objective</li><li>Study guides and capstone projects</li></ul>
+        <ul class="clean"><li>Everything in Free, without its limits</li><li>Unlimited practice exams</li><li>Every exam simulation, graded VM lab and the VM exam</li><li>About 300 extra questions per certification</li><li>Full-length timed exams and a score report</li><li>30 help assistant questions a day</li></ul>
         <div class="btns">${/* html: fixed markup with esc() */ cta("pro")}</div></div>
       <div class="panel plancard best"><span class="chip premchip">Most help</span><h2>Premium Pro</h2>${price(PREMIUM, "Premium Pro")}
         <p>For personal coaching: an AI tutor that explains your mistakes, a study coach and interview practice.</p>
-        <ul class="clean"><li>Everything in Pro</li><li>AI Tutor for every missed question</li><li>AI Study Coach with a weekly plan</li><li>AI mock job interviews</li></ul>
+        <ul class="clean"><li>Everything in Pro</li><li>AI Tutor for every missed question</li><li>AI Study Coach with a weekly plan</li><li>AI mock job interviews</li><li>100 help assistant questions a day</li></ul>
         <div class="btns">${/* html: fixed markup with esc() */ cta("premium")}</div></div>
     </div>
     <h2>Compare plans</h2>
@@ -1006,7 +1026,7 @@
     </table></div>
     <h2>Questions</h2>
     <div class="panel">
-      <details class="sq"><summary>Will the free site stay free?</summary><p>Yes. Every study plan, lesson, lab, quiz and practice exam that's free today stays free. Paid plans add extra practice and AI help on top; they pay for the site's running costs.</p></details>
+      <details class="sq"><summary>What does the Free plan include?</summary><p>Every study plan, lesson, weekly quiz, checkpoint test, flashcard, cheat sheet and lab guide, free practice VMs, games and career pages, with no ads. Its limits: 1 timed practice exam per certification, the first exam simulation in each domain, 5 graded VM labs and 5 help assistant questions a day. Paid plans remove the limits and pay for the site's running costs.</p></details>
       <details class="sq"><summary>Can I cancel any time?</summary><p>Yes. Cancel from Manage billing on your Account page and keep your plan until the end of the period you paid for. Your first payment can be refunded within 7 days.</p></details>
       <details class="sq"><summary>Can I switch between Pro and Premium Pro?</summary><p>Yes, from Manage billing. The price difference is prorated, so you only pay for the time on each plan.</p></details>
       <details class="sq"><summary>How does the AI tutor work? Is it always right?</summary><p>It's Claude, an AI model by Anthropic, set up to teach exam topics from each question, your progress numbers or the job you're practicing for. It explains, asks you check questions and gives feedback, but like any AI it can make mistakes, so check important facts against the lessons and official objectives. Nothing you type to it is stored.</p></details>

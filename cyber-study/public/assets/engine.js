@@ -471,6 +471,20 @@
   }
   const lessonLink = q => { const t = lessonFor(q); return t ? `<button type="button" class="linkbtn" data-ui data-act="golesson" data-k="${lessonKey(t)}">Review the lesson: ${esc(t.length > 70 ? t.slice(0, 68) + "…" : t)}</button>` : ""; };
   const reportLink = (title, body) => { const u = CertHub.reportUrl(title, body); return u ? `<a class="report" data-ui href="${esc(u)}" target="_blank" rel="noopener">Report a mistake</a>` : ""; };
+  // Free plan: one timed practice exam per certification (the regular or hard mode exam); paid plans are unlimited.
+  // Counts exams started (S.p.examStarts) and, for progress saved before the limit existed, finished ones.
+  const PLANS = () => CertHub.plans || { paid: true, FREE: {} };
+  const examsUsed = () => Math.max(S.p.examStarts || 0, (S.p.history || []).filter(h => /^(Practice exam|Hard mode exam)$/.test(h.title)).length);
+  const examsLeft = () => PLANS().paid ? Infinity : Math.max(0, PLANS().FREE.exams - examsUsed());
+  function startExam(title, qs) {
+    if (!examsLeft()) { PLANS().upsell(`The Free plan includes ${PLANS().FREE.exams} practice exam for each certification, and you've used the one for ${C.short}. Pro and Premium Pro include unlimited practice exams, plus full-length exams and a score report. Weekly quizzes, checkpoint tests and smart practice stay free.`); return; }
+    if (!PLANS().paid) { S.p.examStarts = examsUsed() + 1; save(); }
+    startQuiz({ title, qs, mode: "test", minutes: examMinutes(qs.length) });
+  }
+  const examBtn = (act, cls) => examsLeft() ? `<button class="${esc(cls)}" data-act="${esc(act)}">Start</button>` : CertHub.plans.lock();
+  // Free plan: the first exam simulation in each domain.
+  const simFree = p => PLANS().paid || !SIMS || SIMS.find(x => x.d === p.d) === p;
+
   // Premium Pro: "Explain with the AI tutor" for a question (CertHub.premium in sync.js; empty when not offered).
   const tutorBtn = (q, picked) => { const b = CertHub.premium ? CertHub.premium.button("explain", "Explain with the AI tutor", () => ({
     subtitle: `${C.short} ${C.exam} · ${domName(q.d)}`,
@@ -591,7 +605,7 @@
     unread.forEach(t => items.push(`<li>Read: <button type="button" class="linkbtn" data-act="golesson" data-k="${lessonKey(t)}">${esc(t.length > 80 ? t.slice(0, 78) + "…" : t)}</button></li>`));
     if (due) items.push(`<li><button type="button" class="linkbtn" data-act="review">Review ${due} question${due > 1 ? "s" : ""} due today</button></li>`);
     if (di === 4) items.push(`<li><button type="button" class="linkbtn" data-act="weekly" data-w="${esc(n)}">Take the week ${esc(n)} quiz</button></li>`);
-    if (SIMS && SIMS.length && di === 3) { const next = SIMS.find(p => p.d === w.dom && !(S.p.sims || {})[p.id]); if (next) items.push(`<li>Try a simulation: <button type="button" class="linkbtn" data-act="gosim" data-id="${esc(next.id)}">${esc(next.title)}</button></li>`); }
+    if (SIMS && SIMS.length && di === 3) { const next = SIMS.find(p => p.d === w.dom && !(S.p.sims || {})[p.id] && simFree(p)); if (next) items.push(`<li>Try a simulation: <button type="button" class="linkbtn" data-act="gosim" data-id="${esc(next.id)}">${esc(next.title)}</button></li>`); }
     return `<div class="panel today"><div class="flex"><h2 data-style="margin:0">Today · ${esc(day)}</h2><label class="note"><input type="checkbox" data-check="${esc(k)}" ${doneToday ? "checked" : ""}> Done</label></div>
       <p data-style="margin:8px 0 6px">${esc(di === 3 ? "Hands-on: " + (weekLabs(w).map(l => l.title).join("; ") || w.lab) : text)}</p>
       ${items.length ? `<ul class="clean">${/* html: list items built above, each value escaped */ items.join("")}</ul>` : `<p class="note" data-style="margin:0">Nothing else due today. Nice work.</p>`}</div>`;
@@ -714,10 +728,12 @@
     const res = S.p.sims || {};
     return `<h2>Exam simulations</h2>
     <p class="note">Hands-on items like the performance-based questions on the real exam: match, order, read logs and configs, and fill in values.</p>
-    <div class="panel">${SIMS.map(p => { const r = res[p.id]; return `<div class="row"><div class="grow"><h3>${esc(p.title)}</h3><span class="note">${esc(SIM_TYPE[p.type]) || ""} · Domain ${esc(p.d)}${r ? ` · best ${esc(r.best)}%` : ""}</span></div><button class="btn ${r ? "ghost" : ""}" data-act="simstart" data-id="${esc(p.id)}">${r ? "Retry" : "Start"}</button></div>`; }).join("")}</div>`;
+    ${PLANS().paid ? "" : `<p class="note planlimit">Free plan: the first simulation in each domain. <a href="#plans">Pro and Premium Pro</a> include all ${esc(SIMS.length)}.</p>`}
+    <div class="panel">${SIMS.map(p => { const r = res[p.id]; return `<div class="row"><div class="grow"><h3>${esc(p.title)}</h3><span class="note">${esc(SIM_TYPE[p.type]) || ""} · Domain ${esc(p.d)}${r ? ` · best ${esc(r.best)}%` : ""}</span></div>${simFree(p) ? `<button class="btn ${r ? "ghost" : ""}" data-act="simstart" data-id="${esc(p.id)}">${r ? "Retry" : "Start"}</button>` : CertHub.plans.lock("Pro")}</div>`; }).join("")}</div>`;
   }
   function simStart(id) {
     const p = SIMS && SIMS.find(x => x.id === id); if (!p) return;
+    if (!simFree(p)) { PLANS().upsell("The Free plan includes the first exam simulation in each domain. Pro and Premium Pro include every simulation for every certification."); return; }
     const st = { p, done: false };
     if (p.type === "match") { st.opts = shuffle([...new Set(p.pairs.map(x => x[1]).concat(p.extra || []))]); st.items = shuffle(p.pairs.map((_, i) => i)); st.ans = p.pairs.map(() => ""); }
     if (p.type === "order") { do { st.order = shuffle(p.steps.map((_, i) => i)); } while (p.steps.length > 1 && st.order.every((v, i) => v === i)); }
@@ -1141,9 +1157,10 @@
     <p class="note">Timed, up to 25 questions, answers shown at the end. Aim for 80% or better before moving on.</p>
     <div class="panel">${PLAN.checkpoints.map(c => `<div class="row"><div class="grow"><h3>Domain ${esc(c.dom)}: ${esc(DOM[c.dom].name)}</h3><span class="note">End of week ${esc(c.after)} · ${Math.min(25, cnt(c.dom))} questions, ${Math.max(5, Math.round(30 * Math.min(25, cnt(c.dom)) / 25))} minutes</span></div><button class="btn ghost" data-act="checkpoint" data-d="${esc(c.dom)}">Start</button></div>`).join("")}</div>
     <h2>Full practice exam</h2>
-    <div class="panel"><div class="row"><div class="grow"><h3>Exam simulation</h3><span class="note">Weighted like the real exam. ${ex} questions available now${ex < C.examSim.questions ? ` (the real exam has ${esc(C.examSim.questions)})` : ""}, ${examMinutes(ex)} minutes at the real exam's pace.</span></div><button class="btn" data-act="exam">Start</button></div>
-    ${Q.some(q => q.lv === 3) ? `<div class="row"><div class="grow"><h3>Hard mode exam</h3><span class="note">Only medium and hard questions, weighted like the real exam. A good test in your last week.</span></div><button class="btn ghost" data-act="hardexam">Start</button></div>` : ""}
+    <div class="panel"><div class="row"><div class="grow"><h3>Exam simulation</h3><span class="note">Weighted like the real exam. ${ex} questions available now${ex < C.examSim.questions ? ` (the real exam has ${esc(C.examSim.questions)})` : ""}, ${examMinutes(ex)} minutes at the real exam's pace.</span></div>${/* html: fixed markup */ examBtn("exam", "btn")}</div>
+    ${Q.some(q => q.lv === 3) ? `<div class="row"><div class="grow"><h3>Hard mode exam</h3><span class="note">Only medium and hard questions, weighted like the real exam. A good test in your last week.</span></div>${/* html: fixed markup */ examBtn("hardexam", "btn ghost")}</div>` : ""}
     ${fullExamRow()}</div>
+    ${PLANS().paid ? "" : `<p class="note planlimit">Free plan: ${examsLeft() ? `${esc(examsLeft())} practice exam left` : "you've used your practice exam"} for ${esc(C.short)}. <a href="#plans">Pro and Premium Pro</a> include unlimited practice exams.</p>`}
     ${Pro().available && !Pro().active ? Pro().teaser(`Get about 300 more ${C.short} questions and full-length ${C.examSim.questions}-question exams with a pass estimate.`) : ""}`;
   }
   function fullExamRow() {
@@ -1460,9 +1477,9 @@
       },
       fixclear: () => { if (!S.p.fix) return; if ((S.p.fix.done || []).length >= S.p.fix.steps.length) S.p.fix = null; else S.p.fix.hidden = true; save(); render(); },
       checkpoint: () => cp(d),
-      exam: () => { const qs = examQs(); startQuiz({ title: "Practice exam", qs, mode: "test", minutes: examMinutes(qs.length) }); },
+      exam: () => startExam("Practice exam", examQs()),
       smart: () => { const qs = smartQs(); if (!qs.length) return; startQuiz({ title: "Smart practice", qs, mode: "learn" }); },
-      hardexam: () => { const qs = hardQs(); startQuiz({ title: "Hard mode exam", qs, mode: "test", minutes: examMinutes(qs.length) }); },
+      hardexam: () => startExam("Hard mode exam", hardQs()),
       fullexam: () => { if (!PRO) return; startQuiz({ title: "Full-length exam", qs: fullExamQs(), mode: "test", minutes: C.examSim.minutes, kind: "full" }); },
       fcstart: () => {
         const dom = +$("#fcsel").value, sched = S.p.cards || {}, now = today().getTime() + 1000;

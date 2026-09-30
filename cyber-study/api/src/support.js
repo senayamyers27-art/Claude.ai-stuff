@@ -67,13 +67,27 @@ async function checkTurnstile(env, request, token) {
   if (!r.success) { await securityLog(request, "support_turnstile_failed"); throw bad("challenge_failed", "The check that you're not a bot didn't pass. Try again."); }
 }
 
-export async function supportChat(env, request, body) {
+// Questions a day by plan: Free (and signed out) 5, Pro 30, Premium Pro 100. Organization seats count as Pro.
+const PLAN_LIMITS = { free: ["SUPPORT_FREE_PER_DAY", 5], pro: ["SUPPORT_PRO_PER_DAY", 30], org: ["SUPPORT_PRO_PER_DAY", 30], premium: ["SUPPORT_PREMIUM_PER_DAY", 100] };
+const LIMIT_MSG = {
+  free: n => `You've used today's ${n} free assistant questions. Pro includes 30 a day and Premium Pro 100: see the Plans page. You can still search the help answers above.`,
+  pro: n => `You've used today's ${n} assistant questions. Premium Pro includes 100 a day. You can still search the help answers above.`,
+  premium: n => `You've used today's ${n} assistant questions. Try again tomorrow, or search the help answers above.`
+};
+
+// who: { userId, plan } for a signed-in visitor, or null.
+export async function supportChat(env, request, body, who = null) {
   if (!supportEnabled(env)) throw new HttpError(404, "support_off", "The assistant isn't available right now.");
   const messages = cleanMessages(body.messages);
   if (messages.length === 1) await checkTurnstile(env, request, body.turnstile);
   const ip = clientIp(request);
   await rateLimit(env, "support:ip:h:" + ip, Number(env.SUPPORT_PER_HOUR) || 20, HOUR);
   await rateLimit(env, "support:ip:d:" + ip, Number(env.SUPPORT_PER_DAY) || 60, DAY);
+  const plan = who && PLAN_LIMITS[who.plan] ? who.plan : "free";
+  const [limitVar, limitDefault] = PLAN_LIMITS[plan], daily = Number(env[limitVar]) || limitDefault;
+  // Signed-in visitors are counted per account; signed-out ones per address (the same count as a Free account).
+  try { await rateLimit(env, who ? `support:u:d:${who.userId}` : `support:free:d:${ip}`, daily, DAY); }
+  catch (e) { throw new HttpError(429, "support_limit", (LIMIT_MSG[plan] || LIMIT_MSG.pro)(daily)); }
   try { await rateLimit(env, "support:all:d", Number(env.SUPPORT_DAILY_LIMIT) || 1500, DAY); }
   catch (e) { throw new HttpError(429, "support_busy", "The assistant has answered a lot of questions today. Try again tomorrow, or search the help answers above."); }
 

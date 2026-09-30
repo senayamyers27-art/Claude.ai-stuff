@@ -242,7 +242,7 @@
       : "";
     const shareUrl = location.origin && /^https:/.test(location.origin) ? location.origin + "/" : "";
     return `<h1>Support</h1>
-    <p class="meta">${SITE} is free, with no ads, no accounts and no tracking. Here's how you can help keep it that way.</p>
+    <p class="meta">${SITE} is free to use, with no ads and no tracking. Here's how you can help keep it that way.</p>
     ${donate}
     <h2>Share it</h2>
     <p>Send it to classmates, your bootcamp cohort or anyone studying for a certification. Word of mouth is the biggest help.</p>
