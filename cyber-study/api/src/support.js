@@ -7,7 +7,7 @@
    - Turned on by setting the ANTHROPIC_API_KEY secret on the Worker (docs/SUPPORT_BOT.md). Without it the widget
      still answers from the built-in help. */
 import Anthropic from "@anthropic-ai/sdk";
-import { HttpError, bad, clientIp } from "./util.js";
+import { HttpError, bad, clientIp, hmacSha256Hex, safeEqual } from "./util.js";
 import { rateLimit, securityLog } from "./audit.js";
 import KB from "./support-kb.js";
 
@@ -56,15 +56,35 @@ export function cleanMessages(input) {
   return msgs;
 }
 
-// Optional Turnstile check, shared with sign-in (TURNSTILE_SECRET_KEY). Asked for on the first message of a chat only.
-async function checkTurnstile(env, request, token) {
-  if (!env.TURNSTILE_SECRET_KEY) return;
+// Optional Turnstile check, shared with sign-in (TURNSTILE_SECRET_KEY). Signed-out visitors pass it once and get a
+// short-lived signed pass for the rest of the chat. The pass, not the message history (which the browser controls),
+// decides whether the check is needed, and each pass is good for at most a Free day's worth of questions.
+const PASS_MS = 2 * 60 * 60 * 1000;
+async function verifyTurnstile(env, request, token) {
   if (typeof token !== "string" || !token || token.length > 2048) throw bad("challenge_required", "Complete the check that you're not a bot, then try again.");
   const form = new FormData();
   form.append("secret", env.TURNSTILE_SECRET_KEY); form.append("response", token);
   let r = {};
   try { r = await (await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: form })).json(); } catch (e) {}
   if (!r.success) { await securityLog(request, "support_turnstile_failed"); throw bad("challenge_failed", "The check that you're not a bot didn't pass. Try again."); }
+}
+const passSig = (env, body) => hmacSha256Hex(env.TURNSTILE_SECRET_KEY, "support-pass:" + body);
+async function makePass(env) {
+  const body = `${Date.now() + PASS_MS}.${crypto.randomUUID().replace(/-/g, "")}`;
+  return `${body}.${await passSig(env, body)}`;
+}
+async function readPass(env, pass) {
+  const m = typeof pass === "string" && /^(\d{13})\.([0-9a-f]{32})\.([0-9a-f]{64})$/.exec(pass);
+  if (!m || Number(m[1]) < Date.now()) return null;
+  return safeEqual(m[3], await passSig(env, `${m[1]}.${m[2]}`)) ? m[2] : null;
+}
+// Returns { id, pass? }: the pass id to count questions against, and a new pass to hand back after a fresh check.
+async function checkTurnstile(env, request, body) {
+  const id = await readPass(env, body.pass);
+  if (id) return { id };
+  await verifyTurnstile(env, request, body.turnstile);
+  const pass = await makePass(env);
+  return { id: pass.split(".")[1], pass };
 }
 
 // Questions a day by plan: Free (and signed out) 5, Pro 30, Premium Pro 100. Organization seats count as Pro.
@@ -79,7 +99,7 @@ const LIMIT_MSG = {
 export async function supportChat(env, request, body, who = null) {
   if (!supportEnabled(env)) throw new HttpError(404, "support_off", "The assistant isn't available right now.");
   const messages = cleanMessages(body.messages);
-  if (messages.length === 1) await checkTurnstile(env, request, body.turnstile);
+  const gate = env.TURNSTILE_SECRET_KEY && !who ? await checkTurnstile(env, request, body) : null;
   const ip = clientIp(request);
   await rateLimit(env, "support:ip:h:" + ip, Number(env.SUPPORT_PER_HOUR) || 20, HOUR);
   await rateLimit(env, "support:ip:d:" + ip, Number(env.SUPPORT_PER_DAY) || 60, DAY);
@@ -88,16 +108,21 @@ export async function supportChat(env, request, body, who = null) {
   // Signed-in visitors are counted per account; signed-out ones per address (the same count as a Free account).
   try { await rateLimit(env, who ? `support:u:d:${who.userId}` : `support:free:d:${ip}`, daily, DAY); }
   catch (e) { throw new HttpError(429, "support_limit", (LIMIT_MSG[plan] || LIMIT_MSG.pro)(daily)); }
+  if (gate) {
+    try { await rateLimit(env, `support:pass:${gate.id}`, daily, PASS_MS); }
+    catch (e) { throw new HttpError(429, "support_limit", LIMIT_MSG.free(daily)); }
+  }
   try { await rateLimit(env, "support:all:d", Number(env.SUPPORT_DAILY_LIMIT) || 1500, DAY); }
   catch (e) { throw new HttpError(429, "support_busy", "The assistant has answered a lot of questions today. Try again tomorrow, or search the help answers above."); }
 
   if (env.APP_ENV === "development" && env.SUPPORT_DEV_STUB && !env.ANTHROPIC_API_KEY) {
-    return { reply: `Development stub: you asked "${messages[messages.length - 1].content.slice(0, 80)}". See [Settings](#settings).` };
+    return { ...(gate && gate.pass ? { pass: gate.pass } : {}), reply: `Development stub: you asked "${messages[messages.length - 1].content.slice(0, 80)}". See [Settings](#settings).` };
   }
 
-  return { reply: await askClaude(env, SYSTEM, messages, { maxTokens: 1500, tag: "support",
+  const reply = await askClaude(env, SYSTEM, messages, { maxTokens: 1500, tag: "support",
     refusal: "I can't help with that one. I can explain how attacks work and how to defend against them, help you study for an exam, or help you use the site.",
-    empty: "Sorry, I don't have an answer for that. Try rephrasing, or search the help answers above." }) };
+    empty: "Sorry, I don't have an answer for that. Try rephrasing, or search the help answers above." });
+  return { ...(gate && gate.pass ? { pass: gate.pass } : {}), reply };
 }
 
 // One Claude call with a frozen, cached system prompt. Shared by the help assistant and the Premium Pro tutor (./tutor.js).

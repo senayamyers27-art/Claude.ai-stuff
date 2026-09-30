@@ -22,6 +22,8 @@ What remains needs your accounts, payment details and secrets, so only you can d
 
 ## 2. Cloudflare (API, database, content storage)
 
+> **Shortcut:** after adding `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, run **Actions → Study site Cloudflare setup → Run workflow**. It creates the D1 database and the R2 bucket (or finds them) and shows `STUDY_API_D1_ID` and `STUDY_API_R2_BUCKET` in the run summary. With an optional `SETUP_GITHUB_TOKEN` secret (a fine-grained token for this repository with Secrets and Variables: Read and write) it saves them for you. The manual steps below do the same.
+
 - [ ] **Create an API token** under My Profile → API Tokens with these permissions:
   - Workers Scripts: Edit
   - D1: Edit
@@ -48,6 +50,8 @@ What remains needs your accounts, payment details and secrets, so only you can d
 
 ## 4. Stripe (payments)
 
+> **Shortcut:** after adding `STRIPE_SECRET_KEY` (test mode first), run **Actions → Study site Stripe setup → Run workflow**. It creates or reuses both products, all four prices (from `site.config.json`), the Customer Portal configuration with plan switching, and the webhook pinned to the Worker's API version (`tools/stripe-setup.js`). The run summary lists the price ids; with `SETUP_GITHUB_TOKEN` it saves them and, for a new webhook, `STRIPE_WEBHOOK_SECRET`. To go live, replace `STRIPE_SECRET_KEY` with the live key and run it again, then turn on Smart Retries in the live Dashboard. Steps 2–5 and 7 below are the manual equivalent.
+
 1. [ ] **Create the account.** Set up a Stripe account and finish business verification. Work in **test mode** first.
 2. [ ] **Create products.** Make two products, each with a monthly and a yearly price:
    - **StudyToCert Pro:** `site.config.json` shows $7 a month and $49 a year (`pro`).
@@ -62,7 +66,7 @@ What remains needs your accounts, payment details and secrets, so only you can d
 4. [ ] **Add the secret key.** Add `STRIPE_SECRET_KEY` as a secret. Use a restricted key if you can.
 5. [ ] **Create the webhook.** Point it at `https://api.<your-domain>/v1/stripe/webhook` and select `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted` and `invoice.payment_failed`. Set its **API version** to `2025-06-30.basil`, the version the API code pins on every request (`STRIPE_API_VERSION` in `api/src/billing.js`), so events arrive in the shape the code expects. Add its signing secret as `STRIPE_WEBHOOK_SECRET`.
 6. [ ] **Set up Stripe Tax** if you need it, and set the variable `STRIPE_TAX` to `on`.
-7. [ ] **Set up the Customer Portal** in Stripe settings, so members can cancel or change plans themselves. Under **Subscriptions → Customers can switch plans**, add both products (Pro and Premium Pro, monthly and yearly) and choose to prorate. Members switch between Pro and Premium Pro there; the site never sells a second plan to someone who already has one, and the webhook records the new plan from the price.
+7. [ ] **Set up the Customer Portal** in Stripe settings, so members can cancel or change plans themselves. Under **Subscriptions → Customers can switch plans**, add both products (Pro and Premium Pro, monthly and yearly) and choose to prorate with an immediate invoice (the Stripe setup workflow does this for you). Members switch between Pro and Premium Pro there; the site never sells a second plan to someone who already has one, and the webhook records the new plan from the price.
 
 ## 5. Deploy and test (still in Stripe test mode)
 

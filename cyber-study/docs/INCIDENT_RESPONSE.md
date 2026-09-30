@@ -12,6 +12,7 @@ What to do when a security check fails or someone reports a problem. The aim for
 | Secret scanning alert, or a token seen somewhere public | A credential may be in someone else's hands | [Leaked secret](#leaked-secret) |
 | A private vulnerability report (**Security → Advisories**) | A researcher found something | [Vulnerability report](#vulnerability-report) |
 | "Study site live check" or ZAP scan failed | HTTPS, headers or redirects changed | Read the run log; usually a setting, not an attack. If the site points somewhere unexpected, see [Domain or DNS changed](#domain-or-dns-changed) |
+| "Daily quality report" issue opened | The test suite on main or the live-site journey failed | Open the linked run. A test-suite failure with no recent change is usually a date, dependency advisory or browser update; a live failure lists the exact check. Check the site in a browser before assuming an outage |
 | Many `"type":"security"` lines in the API's Worker logs | Someone is probing or flooding the accounts API | [API abuse](#api-abuse) |
 
 ## Site files changed

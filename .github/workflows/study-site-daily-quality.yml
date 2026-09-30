@@ -1,0 +1,139 @@
+name: Study site daily quality
+
+# Daily quality check of the study site and its accounts API, front end and back end:
+#   1. "tests": the full test suite on main, the same one every change must pass: data and generated-file
+#      checks, security and XSS lint, dependency audit, API unit tests, browser smoke test of every study page
+#      (including the practice VM and offline mode), accounts end to end, accessibility (WCAG 2.2 AA) and
+#      layout at phone and desktop widths. Catches anything that broke without a code change (dates, expired
+#      content, dependency advisories, browser updates).
+#   2. "live": the deployed site as a visitor sees it (tools/live-journey.js): pages load quickly, the app
+#      installs and works offline, a quiz can be answered, Plans and Help work, a rotating sample of sitemap
+#      pages load, and, once apiOrigin is set, the API's health, CORS and origin checks.
+# Results go to one issue titled "Daily quality report": opened (or updated) when something fails, closed
+# with a comment when everything passes again. GitHub also emails the repository owner about failed runs.
+
+on:
+  schedule:
+    - cron: "43 11 * * *" # daily, ~06:43 America/Chicago
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: study-site-daily-quality
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: cyber-study
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cyber-study/package-lock.json
+
+      - name: Install tools
+        run: npm ci
+
+      - name: Question banks, generated files and security lint
+        run: npm run check
+
+      - name: Accounts API tests (back end)
+        run: npm run test:api
+
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+
+      - name: Install headless Chromium
+        run: npx playwright install --with-deps --only-shell chromium
+
+      - name: Browser smoke test (front end)
+        run: npm test
+
+      - name: Accounts browser test (front end with a local API)
+        run: npm run test:accounts
+
+      - name: Accessibility check (WCAG 2.2 AA, axe-core)
+        run: npm run test:a11y
+
+      - name: Layout check (phone and desktop, light and dark)
+        run: npm run test:layout
+
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cyber-study/package-lock.json
+
+      - name: Install tools
+        run: npm ci
+
+      - name: Install headless Chromium
+        run: npx playwright install --with-deps --only-shell chromium
+
+      - name: Live site and API, as a visitor
+        run: node tools/live-journey.js
+
+  report:
+    needs: [tests, live]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Update the "Daily quality report" issue
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553 # v9
+        env:
+          TESTS: ${{ needs.tests.result }}
+          LIVE: ${{ needs.live.result }}
+        with:
+          script: |
+            const title = "Daily quality report";
+            const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const icon = r => r === "success" ? "✅" : r === "skipped" || r === "cancelled" ? "⚪" : "❌";
+            const rows = [["Test suite (front end and back end, on main)", process.env.TESTS], ["Live site and API", process.env.LIVE]];
+            const ok = rows.every(([, r]) => r === "success");
+            const day = new Date().toISOString().slice(0, 10);
+            const table = rows.map(([n, r]) => `| ${n} | ${icon(r)} ${r} |`).join("\n");
+            const { data } = await github.rest.issues.listForRepo({ ...context.repo, state: "open", per_page: 100 });
+            const issue = data.find(i => i.title === title && !i.pull_request);
+            if (ok) {
+              if (issue) {
+                await github.rest.issues.createComment({ ...context.repo, issue_number: issue.number, body: `All daily checks passed on ${day}. [Run](${run})` });
+                await github.rest.issues.update({ ...context.repo, issue_number: issue.number, state: "closed", state_reason: "completed" });
+              }
+              core.summary.addRaw(`All daily checks passed on ${day}.`).write();
+              return;
+            }
+            const body = `Daily quality check on ${day}: something failed.\n\n| Check | Result |\n|---|---|\n${table}\n\nOpen the [run](${run}) for the failing step's log; the live check's summary lists each check it made.\n\nThis issue closes itself when a later daily run passes.`;
+            if (issue) {
+              await github.rest.issues.update({ ...context.repo, issue_number: issue.number, body });
+              await github.rest.issues.createComment({ ...context.repo, issue_number: issue.number, body: `Still failing on ${day}. [Run](${run})` });
+            } else {
+              await github.rest.issues.create({ ...context.repo, title, body, labels: ["study-site"] });
+            }
+            core.setFailed("A daily check failed; see the Daily quality report issue.");

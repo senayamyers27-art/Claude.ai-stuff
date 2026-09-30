@@ -14,18 +14,18 @@ export async function audit(env, request, { actor = null, org = null, action, ta
     .bind(now(), actor, org, action, target, ipHash_).run();
 }
 
-// Fixed-window counter. Throws 429 when `limit` requests happen within `windowMs`.
+// Fixed-window counter. Throws 429 when more than `limit` requests happen within `windowMs`.
+// One atomic statement (insert, reset an expired window, or count up), so parallel requests can't all slip under
+// the limit between a read and a write.
 export async function rateLimit(env, bucket, limit, windowMs) {
   const t = now();
   const key = (await keyedHash(bucket)).slice(0, 32);
-  const row = await env.DB.prepare("SELECT window_start, count FROM rate_limits WHERE bucket = ?").bind(key).first();
-  if (!row || t - row.window_start >= windowMs) {
-    await env.DB.prepare("INSERT INTO rate_limits (bucket, window_start, count) VALUES (?, ?, 1) ON CONFLICT(bucket) DO UPDATE SET window_start = excluded.window_start, count = 1")
-      .bind(key, t).run();
-    return;
-  }
-  if (row.count >= limit) throw new HttpError(429, "rate_limited", "Too many requests. Wait a few minutes and try again.");
-  await env.DB.prepare("UPDATE rate_limits SET count = count + 1 WHERE bucket = ?").bind(key).run();
+  const row = await env.DB.prepare(`INSERT INTO rate_limits (bucket, window_start, count) VALUES (?, ?, 1)
+    ON CONFLICT(bucket) DO UPDATE SET
+      count = CASE WHEN ? - window_start >= ? THEN 1 ELSE count + 1 END,
+      window_start = CASE WHEN ? - window_start >= ? THEN ? ELSE window_start END
+    RETURNING count`).bind(key, t, t, windowMs, t, windowMs, t).first();
+  if (row && row.count > limit) throw new HttpError(429, "rate_limited", "Too many requests. Wait a few minutes and try again.");
 }
 
 // Security events (refused origins, rate limits, failed sign-ins, failed challenges) go to the Worker's

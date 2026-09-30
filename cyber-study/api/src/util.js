@@ -67,8 +67,19 @@ export function parseCookies(request) {
   return out;
 }
 
+// The visitor's address for rate limits. An IPv6 address counts by its /64 prefix: one connection usually gets a
+// whole /64, so counting full addresses would let a single visitor rotate through billions of them.
 export function clientIp(request) {
-  return request.headers.get("cf-connecting-ip") || request.headers.get("x-forwarded-for") || "unknown";
+  const ip = (request.headers.get("cf-connecting-ip") || request.headers.get("x-forwarded-for") || "unknown").split(",")[0].trim();
+  return ip.includes(":") ? ipv6Prefix64(ip) : ip;
+}
+export function ipv6Prefix64(ip) {
+  const addr = ip.replace(/^\[|\]$/g, "").split("%")[0].toLowerCase();
+  if (/^::ffff:\d+\.\d+\.\d+\.\d+$/.test(addr)) return addr.slice(7); // IPv4-mapped
+  const [head, tail] = addr.split("::");
+  const h = head ? head.split(":") : [], tl = tail !== undefined && tail ? tail.split(":") : [];
+  const groups = tail === undefined ? h : [...h, ...Array(Math.max(8 - h.length - tl.length, 0)).fill("0"), ...tl];
+  return groups.slice(0, 4).map(g => (parseInt(g, 16) || 0).toString(16)).join(":") + "::/64";
 }
 
 export const isHttps = url => /^https:\/\//.test(url || "");

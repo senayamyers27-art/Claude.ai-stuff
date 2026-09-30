@@ -1,0 +1,107 @@
+name: Study site Cloudflare setup
+
+# One-click setup for the accounts API's Cloudflare resources. Run it by hand from the Actions tab.
+# Creates (or finds, if they already exist) the D1 database "cyber-cert-study" and the R2 bucket
+# "cyber-cert-study-content", then:
+#   - with the optional SETUP_GITHUB_TOKEN secret (a fine-grained token for this repository with
+#     "Secrets: Read and write" and "Variables: Read and write"), saves STUDY_API_D1_ID and
+#     STUDY_API_R2_BUCKET for you;
+#   - without it, prints both values in the run summary so you can add them yourself.
+# Needs secrets CLOUDFLARE_API_TOKEN (Workers Scripts, D1, Workers Routes and Workers R2 Storage: Edit)
+# and CLOUDFLARE_ACCOUNT_ID. Safe to run more than once.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: study-site-cloudflare-setup
+  cancel-in-progress: false
+
+jobs:
+  setup:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: study-api-production
+    env:
+      CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      GH_TOKEN: ${{ secrets.SETUP_GITHUB_TOKEN }}
+      DB_NAME: cyber-cert-study
+      BUCKET: cyber-cert-study-content
+    steps:
+      - name: Check the Cloudflare secrets
+        run: |
+          if [ -z "$CF_TOKEN" ] || [ -z "$CF_ACCOUNT" ]; then
+            echo "::error::Add the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets first (docs/PRO_LAUNCH.md, section 2)."
+            exit 1
+          fi
+          if ! printf '%s' "$CF_ACCOUNT" | grep -Eq '^[0-9a-f]{32}$'; then
+            echo "::error::CLOUDFLARE_ACCOUNT_ID should be 32 hexadecimal characters (Cloudflare dashboard → Account home → Account ID)."
+            exit 1
+          fi
+
+      - name: Create or find the D1 database
+        id: d1
+        run: |
+          api() { curl -sS --fail-with-body -H "Authorization: Bearer $CF_TOKEN" -H "Content-Type: application/json" "$@"; }
+          base="https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT/d1/database"
+          id=$(api "$base?name=$DB_NAME" | jq -r --arg n "$DB_NAME" '.result[] | select(.name == $n) | .uuid' | head -1)
+          if [ -z "$id" ]; then
+            id=$(api -X POST "$base" -d "{\"name\":\"$DB_NAME\"}" | jq -r '.result.uuid')
+            echo "Created D1 database $DB_NAME."
+          else
+            echo "D1 database $DB_NAME already exists."
+          fi
+          if ! printf '%s' "$id" | grep -Eq '^[0-9a-f-]{36}$'; then echo "::error::Couldn't read the database id. Check the API token has D1: Edit."; exit 1; fi
+          echo "id=$id" >> "$GITHUB_OUTPUT"
+
+      - name: Create or find the R2 bucket
+        run: |
+          api() { curl -sS -H "Authorization: Bearer $CF_TOKEN" -H "Content-Type: application/json" "$@"; }
+          base="https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT/r2/buckets"
+          if [ "$(api -o /dev/null -w '%{http_code}' "$base/$BUCKET")" = "200" ]; then
+            echo "R2 bucket $BUCKET already exists."
+          else
+            out=$(api -X POST "$base" -d "{\"name\":\"$BUCKET\"}")
+            if [ "$(printf '%s' "$out" | jq -r '.success')" != "true" ]; then
+              echo "::error::Couldn't create the R2 bucket. Turn on R2 in the Cloudflare dashboard (R2 → Purchase/Enable, free tier) and check the token has Workers R2 Storage: Edit."
+              printf '%s\n' "$out" | jq -c '.errors' || true
+              exit 1
+            fi
+            echo "Created R2 bucket $BUCKET."
+          fi
+
+      - name: Save the values to GitHub
+        env:
+          D1_ID: ${{ steps.d1.outputs.id }}
+        run: |
+          saved=no
+          if [ -n "$GH_TOKEN" ]; then
+            gh secret set STUDY_API_D1_ID --repo "$GITHUB_REPOSITORY" --body "$D1_ID" &&
+            gh variable set STUDY_API_R2_BUCKET --repo "$GITHUB_REPOSITORY" --body "$BUCKET" && saved=yes || true
+          fi
+          {
+            echo "## Cloudflare setup"
+            echo ""
+            echo "| Name | Value |"
+            echo "|---|---|"
+            echo "| D1 database \`$DB_NAME\` id | \`$D1_ID\` |"
+            echo "| R2 bucket | \`$BUCKET\` |"
+            echo ""
+            if [ "$saved" = yes ]; then
+              echo "Saved **STUDY_API_D1_ID** (secret) and **STUDY_API_R2_BUCKET** (variable) to this repository."
+            else
+              echo "Add these in **Settings → Secrets and variables → Actions**:"
+              echo "- Secret **STUDY_API_D1_ID** = \`$D1_ID\`"
+              echo "- Variable **STUDY_API_R2_BUCKET** = \`$BUCKET\`"
+              echo ""
+              echo "(Add a SETUP_GITHUB_TOKEN secret to have this workflow save them for you next time.)"
+            fi
+            echo ""
+            echo "Next: set \"apiOrigin\" in cyber-study/site.config.json, then run **Study site API deploy**."
+          } >> "$GITHUB_STEP_SUMMARY"

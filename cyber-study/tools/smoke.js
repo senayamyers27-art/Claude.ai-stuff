@@ -38,6 +38,8 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.goto(BASE + "/");
   await page.waitForSelector(".tiles .tile");
   check(!(await page.$("#trackcards")) && (await page.$$(".tiles .tile")).length >= 6, "home page is a short landing page with tiles to each section");
+  // Safari ignores CSS width/height on an <svg> nested inside another one, so the hero picture's icons need attributes.
+  check(await page.$$eval(".heroart svg svg", a => a.length >= 5 && a.every(s => s.getAttribute("width") === "20" && s.getAttribute("height") === "20")), "hero picture icons are sized with attributes (Safari)");
   await page.click("#menubtn"); await page.waitForSelector("#sitemenu a");
   check((await page.$$("#sitemenu .menugroup")).length >= 4 && await page.evaluate(() => document.activeElement && !!document.activeElement.closest("#sitemenu")), "Menu opens with every section, grouped, and takes focus");
   await page.keyboard.press("Escape");

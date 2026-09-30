@@ -3,7 +3,7 @@
    variables, so no account-specific ids live in the repository.
    Needs: STUDY_API_D1_ID. Optional: STUDY_API_R2_BUCKET, STUDY_API_EMAIL_FROM,
    STRIPE_PRICE_PRO_MONTHLY, STRIPE_PRICE_PRO_YEARLY, STRIPE_PRICE_PREMIUM_MONTHLY, STRIPE_PRICE_PREMIUM_YEARLY,
-   STRIPE_PRICE_ORG_SEAT, STRIPE_TAX. */
+   STRIPE_PRICE_ORG_SEAT, STRIPE_TAX, STRIPE_PORTAL_CONFIG. */
 const fs = require("fs"), path = require("path");
 const ROOT = path.join(__dirname, "..");
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "site.config.json"), "utf8"));
@@ -28,6 +28,7 @@ const vars = {
 };
 for (const k of ["STRIPE_PRICE_PRO_MONTHLY", "STRIPE_PRICE_PRO_YEARLY", "STRIPE_PRICE_PREMIUM_MONTHLY", "STRIPE_PRICE_PREMIUM_YEARLY", "STRIPE_PRICE_ORG_SEAT"])
   if (/^price_[A-Za-z0-9]+$/.test(process.env[k] || "")) vars[k] = process.env[k];
+if (/^bpc_[A-Za-z0-9]+$/.test(process.env.STRIPE_PORTAL_CONFIG || "")) vars.STRIPE_PORTAL_CONFIG = process.env.STRIPE_PORTAL_CONFIG;
 
 // One compatibility date for local and deployed Workers: the one in api/wrangler.toml.
 const compat = (fs.readFileSync(path.join(ROOT, "api/wrangler.toml"), "utf8").match(/^compatibility_date\s*=\s*"(\d{4}-\d{2}-\d{2})"/m) || [])[1];
