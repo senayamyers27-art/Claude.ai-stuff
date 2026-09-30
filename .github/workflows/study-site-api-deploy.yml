@@ -63,7 +63,7 @@ jobs:
         id: ready
         run: |
           API=$(node -p 'require("./site.config.json").apiOrigin || ""')
-          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$STUDY_API_D1_ID" ] || [ -z "$API" ]; then
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$API" ]; then
             echo "::notice::The accounts API isn't set up yet (see the comments in this workflow), so nothing was deployed."
             echo "ok=false" >> "$GITHUB_OUTPUT"
           else
@@ -81,6 +81,25 @@ jobs:
       - name: Install wrangler
         if: steps.ready.outputs.ok == 'true'
         run: npm ci
+
+      # The database id isn't secret. If STUDY_API_D1_ID is missing or doesn't hold one (a pasted name or account id,
+      # say), look the "cyber-cert-study" database up by name with the Cloudflare token.
+      - name: Find the D1 database
+        if: steps.ready.outputs.ok == 'true'
+        run: |
+          UUID='[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'
+          ACCOUNT=$(printf '%s' "$CLOUDFLARE_ACCOUNT_ID" | tr -d '[:space:]"'"'")
+          echo "::add-mask::$ACCOUNT"
+          if printf '%s' "$STUDY_API_D1_ID" | grep -Eq "$UUID"; then echo "Using STUDY_API_D1_ID."; exit 0; fi
+          id=$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT/d1/database?name=cyber-cert-study" \
+            | jq -r '[.result[]? | select(.name == "cyber-cert-study") | .uuid][0] // empty')
+          if [ -z "$id" ]; then
+            echo "::error::STUDY_API_D1_ID doesn't hold a database id, and the database \"cyber-cert-study\" couldn't be found. Check CLOUDFLARE_ACCOUNT_ID and that the token has D1: Edit, or set STUDY_API_D1_ID to the id shown in Cloudflare → D1."
+            exit 1
+          fi
+          echo "STUDY_API_D1_ID doesn't hold a database id; found \"cyber-cert-study\" by name."
+          # A different name: the workflow's own env: block would win over a STUDY_API_D1_ID written here.
+          echo "STUDY_API_D1_ID_FOUND=$id" >> "$GITHUB_ENV"
 
       - name: Generate Worker config
         if: steps.ready.outputs.ok == 'true'
