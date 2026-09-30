@@ -165,3 +165,33 @@ test("checkout: Premium Pro is refused until its price is set", async () => {
   assert.equal((await call(env, "GET", "/v1/me", { cookie: u.cookie })).json.premium, false);
   assert.equal((await call(env, "POST", "/v1/billing/checkout", { cookie: u.cookie, body: { plan: "premium" } })).status, 503);
 });
+
+test("tutor: resume review, lab write-up feedback and weak-spot practice (Premium Pro only)", async () => {
+  const env = makeEnv();
+  const u = await signIn(env, "more@example.com"), pro = await signIn(env, "pro2@example.com");
+  await subscribe(env, u.user.id, "premium"); await subscribe(env, pro.user.id, "pro");
+  const post = (cookie, body) => call(env, "POST", "/v1/tutor/chat", { cookie, body });
+  const resume = { mode: "resume", context: { role: "SOC analyst", resume: "Help desk technician, 2 years.\n- Reset passwords and unlocked accounts in Active Directory\n- Built a home lab with a SIEM" } };
+  assert.equal((await post(pro.cookie, resume)).status, 402, "Pro doesn't include the resume review");
+  assert.equal((await post(u.cookie, { mode: "resume", context: { role: "SOC analyst", resume: "short" } })).status, 400);
+  next = reply("Strong start.");
+  assert.equal((await post(u.cookie, resume)).status, 200);
+  let req = sent.filter(s => s.body).pop().body;
+  assert.match(req.system[0].text, /Resume Reviewer/);
+  assert.match(req.messages[0].content, /Target role: SOC analyst/);
+  assert.equal(req.max_tokens, 2500);
+
+  assert.equal((await post(u.cookie, { mode: "writeup", context: { title: "Harden SSH", notes: "" } })).status, 400);
+  next = reply("Good notes.");
+  assert.equal((await post(u.cookie, { mode: "writeup", context: { title: "Harden SSH", goal: "Key-only SSH", notes: "Disabled password auth, set PermitRootLogin no, tested from a second VM." } })).status, 200);
+  req = sent.filter(s => s.body).pop().body;
+  assert.match(req.system[0].text, /Lab Reviewer/);
+  assert.match(req.messages[0].content, /Learner's notes:\nDisabled password auth/);
+
+  next = reply("Question 1: ...");
+  assert.equal((await post(u.cookie, { mode: "drill", context: { certId: "network-plus", certName: "Network+", weak: [{ name: "Network troubleshooting", accuracy: 48, answered: 25 }], missed: ["Which tool shows the path packets take?"] } })).status, 200);
+  req = sent.filter(s => s.body).pop().body;
+  assert.match(req.system[0].text, /Practice Coach/);
+  assert.match(req.messages[0].content, /Network troubleshooting: 48% correct over 25 questions/);
+  assert.match(req.messages[0].content, /Give me my first practice question\.$/);
+});

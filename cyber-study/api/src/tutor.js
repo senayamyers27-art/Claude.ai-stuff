@@ -2,6 +2,9 @@
    - explain:   a practice question the learner answered, explained for them, with follow-up questions
    - coach:     a personal 7-day study plan from their progress numbers, and questions about it
    - interview: a mock job interview for a role, one question at a time, with feedback
+   - resume:    feedback on a resume or LinkedIn summary for a target role, with rewritten bullets
+   - writeup:   feedback on a finished lab's notes and write-up, with portfolio-ready bullets
+   - drill:     new practice questions on the learner's weakest topics, one at a time, graded
 
    - Needs a signed-in account with the "ai_tutor" feature (Premium Pro, ./billing.js).
    - The browser sends the context (question, progress numbers, role) as structured fields. They're validated and
@@ -57,10 +60,45 @@ Your job:
 
 ${RULES}`
 };
+Object.assign(SYSTEM, {
+  resume: `You are the StudyToCert AI Resume Reviewer, helping someone apply for IT, cloud or cybersecurity jobs. The CONTEXT block gives the target role and the learner's resume text or LinkedIn summary (it may be a draft the site generated from their finished labs and certifications).
+
+Your job:
+- Start with a two or three sentence overall read: how well it fits the target role and the single biggest improvement.
+- Then give specific feedback: missing keywords and skills employers ask for in this role, weak or vague bullets, and anything that reads as inflated or unverifiable.
+- Rewrite up to six bullet points in strong, honest form: action verb, what they did, the tool or technology, and a result or scale. Never invent employers, dates, numbers, certifications or experience that aren't in the text; where a number would help, show a placeholder like [N] for them to fill in.
+- Suggest a two-sentence professional summary for the target role.
+- On follow-up messages, help with the parts they ask about.
+
+${RULES}`,
+  writeup: `You are the StudyToCert AI Lab Reviewer. The CONTEXT block describes a hands-on lab the learner finished (title, goal, what to deliver, the site's sample resume bullet) and the learner's own notes and findings.
+
+Your job:
+- Say what their notes show they did well, in one or two sentences.
+- Point out what's missing for a strong portfolio write-up: the goal, the environment, key commands or settings, evidence (before and after), problems they hit and how they solved them, and what they'd do in a real job.
+- Suggest a short, well-structured write-up outline they can fill in, using only facts from their notes (mark gaps as [add ...]).
+- Offer two or three portfolio or resume bullets based on what they actually did. Don't invent results or numbers.
+- On follow-up messages, help them improve specific parts.
+
+${RULES}`,
+  drill: `You are the StudyToCert AI Practice Coach. The CONTEXT block lists a learner's certification, their weakest exam domains with accuracy, and some questions they recently missed.
+
+Your job:
+- Write new, original multiple-choice practice questions on the topics behind their weak areas and missed questions. Never copy the missed questions and never use real exam questions.
+- Ask ONE question at a time: a short scenario, then four options labeled A to D, and ask for their answer. Don't reveal the answer yet.
+- When they answer, say whether it's right, explain why the right option is right and why their choice (if wrong) is tempting but wrong, give a one-line tip, then ask the next question on a different weak topic.
+- After five questions, or when they ask to stop, give a short summary: score, the topics to review, and which of the site's lessons or quizzes to do next.
+- Questions must be accurate for the current exam objectives and at the certification's level.
+
+${RULES}`
+});
 const OPENERS = {
   explain: "Explain this question for me.",
   coach: "Make my study plan for the next 7 days.",
-  interview: "I'm ready. Please start the interview."
+  interview: "I'm ready. Please start the interview.",
+  resume: "Please review my resume for this role.",
+  writeup: "Please review my lab notes and help me turn them into a strong write-up.",
+  drill: "Give me my first practice question."
 };
 
 // Validators for the context fields. Strings are trimmed, stripped of control characters and length-limited.
@@ -107,6 +145,24 @@ function contextText(mode, ctx) {
     const certs = Array.isArray(ctx.certs) ? ctx.certs.slice(0, 8).map(x => text(x, 60)).filter(Boolean) : [];
     return [`Role: ${role}`, `Level: ${level}`, `Certifications held or in progress: ${certs.length ? certs.join(", ") : "none given"}`].join("\n");
   }
+  if (mode === "resume") {
+    const role = text(ctx.role, 120), resume = text(ctx.resume, 8000);
+    if (!role || resume.length < 40) throw bad("bad_context", "Add your resume text (at least a few lines) and choose a target role.");
+    return [`Target role: ${role}`, "Resume or LinkedIn summary:", resume].join("\n");
+  }
+  if (mode === "writeup") {
+    const title = text(ctx.title, 200), notes = text(ctx.notes, 5000);
+    if (!title || notes.length < 20) throw bad("bad_context", "Write a few notes about what you did in this lab first.");
+    return [`Lab: ${title}`, `Goal: ${text(ctx.goal, 600) || "not given"}`, `Deliverable: ${text(ctx.deliverable, 600) || "not given"}`,
+      `Sample resume bullet from the site: ${text(ctx.bullet, 400) || "none"}`, "Learner's notes:", notes].join("\n");
+  }
+  if (mode === "drill") {
+    const c = certOf(ctx);
+    const weak = Array.isArray(ctx.weak) ? ctx.weak.slice(0, 6).map(d => `- ${text(d && d.name, 120)}: ${int(d && d.accuracy, 0, 100) ?? "?"}% correct over ${int(d && d.answered, 0, 100000) || 0} questions`) : [];
+    const missed = Array.isArray(ctx.missed) ? ctx.missed.slice(0, 6).map(q => "- " + text(q, 400)).filter(x => x.length > 2) : [];
+    return [`Certification: ${c.name}`, "Weakest domains:", ...(weak.length ? weak : ["- not enough answers yet; cover the exam's main domains"]),
+      "Recently missed questions (for topics only; don't reuse them):", ...(missed.length ? missed : ["- none recorded"])].join("\n");
+  }
   throw bad("bad_mode", "Unknown tutor mode.");
 }
 
@@ -128,7 +184,7 @@ export async function tutorChat(env, request, user, entitlements, body) {
   if (env.APP_ENV === "development" && env.SUPPORT_DEV_STUB && !env.ANTHROPIC_API_KEY) {
     return { reply: `Development stub (${mode}): ${messages[messages.length - 1].content.split("\n").pop().slice(0, 80)}` };
   }
-  return { reply: await askClaude(env, SYSTEM[mode], messages, { maxTokens: mode === "coach" ? 2500 : 1500, tag: "tutor",
+  return { reply: await askClaude(env, SYSTEM[mode], messages, { maxTokens: mode === "coach" || mode === "resume" || mode === "writeup" ? 2500 : 1500, tag: "tutor",
     refusal: "I can't help with that one. Ask me about this topic, your study plan or the interview instead.",
     empty: "Sorry, I don't have an answer for that. Try asking another way." }) };
 }
