@@ -1,7 +1,7 @@
 {
   "siteName": "StudyToCert",
   "description": "Free study plans for IT and cybersecurity certifications: week-by-week lessons, hands-on labs, quizzes, practice exams and spaced review.",
-  "domain": "senayamyers27-art.github.io",
+  "domain": "www.studytocert.com",
   "redirectWww": true,
   "hstsPreload": false,
   "crossOriginIsolation": false,
@@ -26,6 +26,10 @@
   },
   "analytics": {
     "goatcounter": ""
+  },
+  "searchVerification": {
+    "google": "",
+    "bing": ""
   },
   "android": {
     "package": "",

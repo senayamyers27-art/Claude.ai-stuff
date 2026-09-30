@@ -48,6 +48,14 @@ const analyticsOrigin = (() => {
   if (!/^[a-z0-9][a-z0-9-]{1,48}$/.test(code)) { console.error(`site.config.json analytics.goatcounter must be your GoatCounter code (the part before .goatcounter.com), got "${code}"`); process.exit(1); }
   return `https://${code}.goatcounter.com`;
 })();
+// Optional search engine ownership checks (Google Search Console, Bing Webmaster Tools): the content value of the
+// verification meta tag each one gives you. Added to the home page only. Empty = off.
+const verifyMeta = Object.entries({ "google-site-verification": "google", "msvalidate.01": "bing" }).map(([name, key]) => {
+  const v = String(((cfg.searchVerification || {})[key]) || "").trim();
+  if (!v) return "";
+  if (!/^[A-Za-z0-9_-]{10,100}$/.test(v)) { console.error(`site.config.json searchVerification.${key} must be the content value of the verification meta tag, got "${v}"`); process.exit(1); }
+  return `\n<meta name="${name}" content="${v}">`;
+}).join("");
 global.CertHub = { certs: {}, register(c) { this.certs[c.id] = c; } };
 require(path.join(PUB, "data/catalog.js"));
 // ALLOW_PARTIAL=1 skips data files that don't load yet (useful while several people write content at once).
@@ -129,7 +137,7 @@ function head({ title, desc, prefix, urlPath, scripts, lang = "en", ld = null, o
 <title>${esc(titleCase(title))}</title>
 <meta name="description" content="${esc(desc)}">
 <meta http-equiv="Content-Security-Policy" content="${CSP_META}">
-<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="referrer" content="strict-origin-when-cross-origin">${urlPath === "/" ? verifyMeta : ""}
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0E1319" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">

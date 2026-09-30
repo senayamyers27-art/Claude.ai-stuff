@@ -71,7 +71,7 @@ function vtt(parts) {
   const pick = only ? topics.map((t, i) => [t, i + 1]).filter(([, n]) => n >= +only[1] && n <= +(only[2] || only[1])) : topics.map((t, i) => [t, i + 1]);
   console.log(`${meta.short} ${meta.exam}: ${pick.length} of ${topics.length} lessons -> ${path.relative(process.cwd(), OUT)}`);
   const rows = [["file", "title", "description", "tags"]];
-  const origin = process.env.SITE_URL || "https://senayamyers27-art.github.io";
+  const origin = process.env.SITE_URL || "https://www.studytocert.com";
 
   for (const [topic, n] of pick) {
     const slides = await page.evaluate(t => CertHub.certView.slides(t).map(s => ({ h: s.h, say: s.say })), topic);
