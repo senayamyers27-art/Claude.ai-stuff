@@ -16,7 +16,7 @@ test.before(async () => {
     const u = String(typeof url === "string" ? url : url.url);
     if (u.startsWith("https://api.stripe.com/")) {
       const params = new URLSearchParams(typeof init.body === "string" ? init.body : "");
-      sent.push({ url: u, params });
+      sent.push({ url: u, params, headers: new Headers(init.headers) });
       const body = u.endsWith("/customers") ? { id: "cus_t" } : { id: "cs_t", url: "https://checkout.stripe.com/c/pay/cs_t" };
       return new Response(JSON.stringify(body), { status: 200, headers: { "content-type": "application/json" } });
     }
@@ -142,6 +142,11 @@ test("checkout: Premium Pro uses its own prices; the webhook records the plan fr
   const session = sent.filter(s => s.params && s.url.endsWith("/checkout/sessions")).pop().params;
   assert.equal(session.get("line_items[0][price]"), "price_prem_y");
   assert.equal(session.get("metadata[plan]"), "premium");
+  assert.equal(session.get("success_url"), "https://study.example/?checkout={CHECKOUT_SESSION_ID}#account", "the site learns it's back from Checkout");
+  const calls = sent.filter(s => s.params);
+  assert.ok(calls.every(c => c.headers.get("stripe-version") === "2025-03-31.basil"), "every Stripe request pins the API version");
+  assert.equal(calls.find(c => c.url.endsWith("/customers")).headers.get("idempotency-key"), `customer-${u.user.id}`, "customer creation is idempotent per user");
+  assert.equal(calls.filter(c => c.url.endsWith("/customers")).length, 1, "the second checkout reuses the saved customer");
   const pro = await call(env, "POST", "/v1/billing/checkout", { cookie: u.cookie, body: { plan: "pro" } });
   assert.equal(pro.status, 200);
   assert.equal(sent.filter(s => s.params && s.url.endsWith("/checkout/sessions")).pop().params.get("line_items[0][price]"), "price_pro_m");
@@ -157,6 +162,18 @@ test("checkout: Premium Pro uses its own prices; the webhook records the plan fr
     assert.equal((await call(env, "POST", "/v1/stripe/webhook", { raw, origin: null, headers: { "stripe-signature": stripeSig("whsec_t", raw) } })).status, 200);
     assert.equal((await call(env, "GET", "/v1/me", { cookie: u.cookie })).json.plan, plan);
   }
+});
+
+test("webhook: a failed invoice marks the subscription past due (current and older invoice shapes)", async () => {
+  const env = makeEnv({ ...PRICES, STRIPE_WEBHOOK_SECRET: "whsec_t" });
+  const u = await signIn(env, "late@example.com");
+  const send = async obj => { const raw = JSON.stringify(obj); return call(env, "POST", "/v1/stripe/webhook", { raw, origin: null, headers: { "stripe-signature": stripeSig("whsec_t", raw) } }); };
+  const t = Math.floor(Date.now() / 1000);
+  for (const [n, id] of [[1, "sub_new"], [2, "sub_old"]]) await send({ id: "evt_s" + n, created: t, type: "customer.subscription.created", data: { object: { id, customer: "cus_x", status: "active", metadata: { user_id: u.user.id, plan: "pro" }, items: { data: [{ quantity: 1, price: { id: "price_pro_m" }, current_period_end: t + 86400 }] } } } });
+  await send({ id: "evt_f1", created: t + 1, type: "invoice.payment_failed", data: { object: { id: "in_1", parent: { type: "subscription_details", subscription_details: { subscription: "sub_new" } } } } });
+  await send({ id: "evt_f2", created: t + 1, type: "invoice.payment_failed", data: { object: { id: "in_2", subscription: "sub_old" } } });
+  const rows = (await env.DB.prepare("SELECT stripe_subscription, status FROM subscriptions ORDER BY stripe_subscription").all()).results;
+  assert.deepEqual(rows.map(r => r.status), ["past_due", "past_due"]);
 });
 
 test("checkout: Premium Pro is refused until its price is set", async () => {

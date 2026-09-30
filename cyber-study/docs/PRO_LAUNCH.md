@@ -60,7 +60,7 @@ What remains needs your accounts, payment details and secrets, so only you can d
    - `STRIPE_PRICE_PREMIUM_YEARLY`
    - `STRIPE_PRICE_ORG_SEAT` (optional)
 4. [ ] **Add the secret key.** Add `STRIPE_SECRET_KEY` as a secret. Use a restricted key if you can.
-5. [ ] **Create the webhook.** Point it at `https://api.<your-domain>/v1/stripe/webhook` for the checkout and subscription events listed in `docs/BACKEND_DESIGN.md` (Payments). Add its signing secret as `STRIPE_WEBHOOK_SECRET`.
+5. [ ] **Create the webhook.** Point it at `https://api.<your-domain>/v1/stripe/webhook` and select `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted` and `invoice.payment_failed`. Set its **API version** to `2025-03-31.basil`, the version the API code pins on every request (`STRIPE_API_VERSION` in `api/src/billing.js`), so events arrive in the shape the code expects. Add its signing secret as `STRIPE_WEBHOOK_SECRET`.
 6. [ ] **Set up Stripe Tax** if you need it, and set the variable `STRIPE_TAX` to `on`.
 7. [ ] **Set up the Customer Portal** in Stripe settings, so members can cancel or change plans themselves. Under **Subscriptions → Customers can switch plans**, add both products (Pro and Premium Pro, monthly and yearly) and choose to prorate. Members switch between Pro and Premium Pro there; the site never sells a second plan to someone who already has one, and the webhook records the new plan from the price.
 

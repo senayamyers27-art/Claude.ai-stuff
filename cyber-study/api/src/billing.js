@@ -20,11 +20,21 @@ function planForPrice(env, priceId) {
   return null;
 }
 
-async function stripe(env, method, path, params) {
+// Every request names the API version this code is written for, so a new Stripe default can't change response
+// shapes under it. Create the webhook endpoint with the same version (docs/PRO_LAUNCH.md) so events match too.
+// Override with the STRIPE_API_VERSION variable only after checking the code against that version's changes.
+export const STRIPE_API_VERSION = "2025-03-31.basil";
+
+async function stripe(env, method, path, params, { idempotencyKey } = {}) {
   const body = params ? new URLSearchParams(flatten(params)).toString() : undefined;
   const res = await fetch(`https://api.stripe.com/v1${path}`, {
     method,
-    headers: { Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`, ...(body ? { "Content-Type": "application/x-www-form-urlencoded" } : {}) },
+    headers: {
+      Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
+      "Stripe-Version": env.STRIPE_API_VERSION || STRIPE_API_VERSION,
+      ...(body ? { "Content-Type": "application/x-www-form-urlencoded" } : {}),
+      ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {})
+    },
     body
   });
   const j = await res.json().catch(() => ({}));
@@ -79,9 +89,11 @@ async function orgHasAccess(env, orgId) { return (await orgSeatLimit(env, orgId)
 async function customerFor(env, user) {
   const row = await env.DB.prepare("SELECT stripe_customer FROM stripe_customers WHERE user_id = ?").bind(user.id).first();
   if (row) return row.stripe_customer;
-  const c = await stripe(env, "POST", "/customers", { email: user.email, metadata: { user_id: user.id } });
-  await env.DB.prepare("INSERT INTO stripe_customers (user_id, stripe_customer) VALUES (?, ?)").bind(user.id, c.id).run();
-  return c.id;
+  // Two checkouts started at once send the same key, so Stripe creates one customer and returns it to both.
+  const c = await stripe(env, "POST", "/customers", { email: user.email, metadata: { user_id: user.id } }, { idempotencyKey: `customer-${user.id}` });
+  await env.DB.prepare("INSERT INTO stripe_customers (user_id, stripe_customer) VALUES (?, ?) ON CONFLICT(user_id) DO NOTHING").bind(user.id, c.id).run();
+  const saved = await env.DB.prepare("SELECT stripe_customer FROM stripe_customers WHERE user_id = ?").bind(user.id).first();
+  return saved ? saved.stripe_customer : c.id;
 }
 
 export async function createCheckout(env, request, user, body) {
@@ -115,7 +127,8 @@ export async function createCheckout(env, request, user, body) {
     allow_promotion_codes: "true",
     automatic_tax: env.STRIPE_TAX === "on" ? { enabled: "true" } : undefined,
     customer_update: env.STRIPE_TAX === "on" ? { address: "auto" } : undefined,
-    success_url: `${env.SITE_ORIGIN}/#account`,
+    // Stripe fills in {CHECKOUT_SESSION_ID}; the site sees ?checkout=… and waits for the webhook to record the plan.
+    success_url: `${env.SITE_ORIGIN}/?checkout={CHECKOUT_SESSION_ID}#account`,
     cancel_url: `${env.SITE_ORIGIN}/#plans`
   });
   await audit(env, request, { actor: user.id, org: metadata.org_id || null, action: "billing.checkout", target: kind });
@@ -149,6 +162,13 @@ export async function verifyStripeSignature(secret, payload, header, toleranceSe
   return sigs.some(s => safeEqual(s, expected));
 }
 
+// An invoice's subscription id: under parent.subscription_details since API version 2025-03-31 (basil); older
+// versions put it at the top level.
+function invoiceSubscription(inv) {
+  const s = (inv && inv.parent && inv.parent.subscription_details && inv.parent.subscription_details.subscription) || (inv && inv.subscription);
+  return typeof s === "string" ? s : s && s.id;
+}
+
 export async function handleWebhook(env, request) {
   const payload = await request.text();
   if (payload.length > 512 * 1024) throw new HttpError(413, "too_large", "Payload too large.");
@@ -168,9 +188,9 @@ export async function handleWebhook(env, request) {
     else if (event.type === "checkout.session.completed" && obj.subscription) {
       const sub = typeof obj.subscription === "string" ? await stripe(env, "GET", `/subscriptions/${obj.subscription}`) : obj.subscription;
       await upsertSubscription(env, sub, false, at);
-    } else if (event.type === "invoice.payment_failed" && obj.subscription) {
+    } else if (event.type === "invoice.payment_failed" && invoiceSubscription(obj)) {
       await env.DB.prepare("UPDATE subscriptions SET status = 'past_due', updated_at = ?, stripe_event_at = ? WHERE stripe_subscription = ? AND COALESCE(stripe_event_at, 0) <= ?")
-        .bind(now(), at, obj.subscription, at).run();
+        .bind(now(), at, invoiceSubscription(obj), at).run();
     }
   } catch (e) {
     // Forget the event so Stripe's retry is processed instead of being skipped as a duplicate.
