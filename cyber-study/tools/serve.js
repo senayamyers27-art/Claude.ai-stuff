@@ -13,7 +13,7 @@ const globalHeaders = {};
 
 // root: another folder to serve instead of public/ (the app's copy, mobile/www, for tools/app-e2e.js).
 function serve(port, { apiOrigin = "", root = PUB } = {}) {
-  // With an API origin, the pages allow connecting to it and data/site.js points at it.
+  // With an API origin, the pages allow connecting to it and data/site.js points at it; without one, accounts are off.
   const SITE_JS = path.join(root, "data/site.js");
   const siteJs = () => fs.readFileSync(SITE_JS, "utf8").replace(/"apiUrl": "[^"]*"/, `"apiUrl": ${JSON.stringify(apiOrigin)}`);
   // The rewritten data/site.js needs a matching integrity hash in the pages that load it.
@@ -34,8 +34,10 @@ function serve(port, { apiOrigin = "", root = PUB } = {}) {
     if (!fs.existsSync(file) || path.basename(file).startsWith("_")) { status = 404; file = path.join(PUB, "404.html"); }
     const type = TYPES[path.extname(file)] || "application/octet-stream";
     res.writeHead(status, { "Content-Type": type, ...headers });
-    if (apiOrigin && file.endsWith(".html")) return res.end(withSri(withApi(fs.readFileSync(file, "utf8"))));
-    if (apiOrigin && file === SITE_JS) return res.end(siteJs());
+    // data/site.js always gets this server's API origin: the local API a test starts, or none, so the pages never
+    // call the real accounts API (site.config.json's apiOrigin) from a local preview or test.
+    if (file.endsWith(".html")) return res.end(withSri(withApi(fs.readFileSync(file, "utf8"))));
+    if (file === SITE_JS) return res.end(siteJs());
     fs.createReadStream(file).pipe(res);
   });
   return new Promise(ok => server.listen(port, () => ok(server)));
