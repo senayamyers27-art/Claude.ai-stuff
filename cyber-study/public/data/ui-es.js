@@ -277,7 +277,6 @@ CertHub.addUiEs({
     "VPN concentrator": "Concentrador VPN",
     "Put the right device in each blank.": "Pon el dispositivo correcto en cada hueco.",
     "Pay and Job Outlook": "Salario y perspectivas laborales",
-    "Pay and Job Outlook": "Salario y perspectivas laborales",
     "/ Pay and Job Outlook": "/ Salario y perspectivas laborales",
     "Occupation": "Ocupación",
     "Median pay (US)": "Salario mediano (EE. UU.)",
