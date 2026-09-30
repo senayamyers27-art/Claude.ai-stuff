@@ -4,7 +4,8 @@ name: Study site mobile apps
 # site as it is on main. Run it by hand from the Actions tab. See cyber-study/docs/MOBILE_APPS.md for the one-time
 # store setup.
 #
-# Android: an .aab for Play Console (and an .apk to install on a phone for testing), kept as run artifacts.
+# Android: an .aab for Play Console and studytocert-test.apk (a debug build anyone can install on a phone to try
+#   the app, no store needed), kept as run artifacts.
 #   Signed with your upload key when these secrets are set: ANDROID_KEYSTORE_BASE64 (the .jks file, base64),
 #   ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD. Upload the .aab in Play Console.
 # iOS: with the App Store Connect API key secrets (APP_STORE_CONNECT_KEY_ID, APP_STORE_CONNECT_ISSUER_ID,
@@ -74,17 +75,17 @@ jobs:
             export ANDROID_KEYSTORE_FILE="$RUNNER_TEMP/upload.jks"
           fi
           cd android
-          ./gradlew --no-daemon bundleRelease assembleRelease
+          ./gradlew --no-daemon bundleRelease assembleRelease assembleDebug
           signed=$([ -n "$KEYSTORE_B64" ] && echo "signed with your upload key" || echo "UNSIGNED: add the ANDROID_KEYSTORE_* secrets to sign it for Play")
           {
             echo "## Android $APP_VERSION_NAME ($APP_VERSION_CODE)"
             echo ""
             echo "- \`studytocert.aab\`, $signed. Upload it in Play Console → your app → Test and release."
-            echo "- \`studytocert.apk\` to install on an Android phone for a quick test."
+            echo "- \`studytocert-test.apk\`: install it on an Android phone to try the app (a test build; it can't go to Play)."
           } >> "$GITHUB_STEP_SUMMARY"
           mkdir -p "$RUNNER_TEMP/out"
           cp app/build/outputs/bundle/release/*.aab "$RUNNER_TEMP/out/studytocert.aab"
-          cp app/build/outputs/apk/release/*.apk "$RUNNER_TEMP/out/studytocert.apk"
+          cp app/build/outputs/apk/debug/app-debug.apk "$RUNNER_TEMP/out/studytocert-test.apk"
           rm -f "$RUNNER_TEMP/upload.jks"
 
       - name: Keep the Android build
