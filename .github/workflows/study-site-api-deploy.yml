@@ -176,9 +176,10 @@ jobs:
         if: steps.ready.outputs.ok == 'true'
         run: |
           API=$(node -p 'require("./site.config.json").apiOrigin')
-          for i in 1 2 3 4 5 6; do
+          # A custom domain attached for the first time needs a few minutes for its certificate, so wait up to 6.
+          for i in $(seq 1 36); do
             if curl -fsS "$API/v1/health"; then echo; exit 0; fi
             sleep 10
           done
-          echo "::error::$API/v1/health didn't respond after deploy."
+          echo "::error::$API/v1/health didn't respond after deploy. In Cloudflare → Workers & Pages → cyber-cert-study-api → Settings → Domains & Routes, check that ${API#https://} is listed and active; if Cloudflare DNS has an older record for that name, delete it and run this workflow again."
           exit 1
