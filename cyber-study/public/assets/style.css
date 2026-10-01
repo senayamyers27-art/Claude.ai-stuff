@@ -835,7 +835,7 @@ html[data-links="on"] main a,html[data-links="on"] #app a,html[data-links="on"] 
 html[data-links="on"] #app a.btn,html[data-links="on"] #app a.stat,html[data-links="on"] #app a.card{text-decoration:none}
 html[data-focusring="strong"] :focus-visible{outline:4px solid var(--ink)!important;outline-offset:3px!important;box-shadow:0 0 0 7px var(--accent)!important;border-radius:4px}
 .savecard{border-left:5px solid var(--accent)}
-.savedline{margin:6px 0 10px;color:var(--ok)}
+.savedline{margin:6px 0 10px;color:var(--ink)}
 .savedline a{color:inherit}
 /* Title case: every word in headings, titles, subheadings and tabs starts with a capital letter. */
 h1,h2,h3,h4,h5,h6,summary,nav.tabs a,nav.tabs button,.settabs a,.pickq,.qhead>strong,

@@ -47,6 +47,18 @@ async function audit(page, label) {
 
     await go("", "home", ".tile");
     await go("#certifications", "certifications", ".card");
+    // Signed out: the sign-up and login pages, and the free-account sample (locked lessons and quizzes).
+    await go("#signup", "sign up", ".authsignup, .authcard");
+    await go("#login", "log in", ".authlogin, .authcard");
+    await page.click(".pwlogin summary").catch(() => {}); await audit(page, `log in with password (${scheme})`);
+    await go("#security-plus.learn", "lessons (signed out)", ".lesson.locked");
+    await go("#security-plus.practice", "quizzes (signed out)", ".gatewall");
+    // Then sign in (development mode shows the link on the page) so the rest is checked as a member sees it.
+    await page.goto(`${BASE}/#login`); await page.fill("#signin-email", "a11y@example.com");
+    await page.click("#signin-form button[type=submit]");
+    await page.goto(await page.getAttribute("#signin-msg a", "href"));
+    await page.waitForSelector("[data-aact=signout]");
+    await go("#profile", "profile with backup password form", ".setpw");
     await page.click("#menubtn"); await page.waitForSelector("#sitemenu a"); await audit(page, `site menu (${scheme})`); await page.keyboard.press("Escape");
     for (const id of certIds) for (const tab of ["week", "learn", "plan", "practice", "labs", "progress", "guide", "about"]) await go(`#${id}.${tab}`, `${id}.${tab}`);
     // Lessons with every section open.
@@ -79,18 +91,13 @@ async function audit(page, label) {
     await go("#help", "help page", "#helppage .supqa");
     await go("#settings", "settings", ".settabs");
     await go("#plans", "plans", ".ptable");
-    await go("#signup", "sign up", ".authsignup, .authcard");
-    await go("#login", "log in", ".authlogin, .authcard");
     await page.click("#helpbtn"); await page.waitForSelector("#supsearch"); await page.fill("#supsearch", "labs"); await page.waitForTimeout(150); await audit(page, `help widget (${scheme})`); await page.keyboard.press("Escape"); await go("#settings.accessibility", "accessibility settings", '[data-pref="keys:off"]'); await go("#settings.study", "study settings", "#set-name");
     await page.evaluate(() => document.querySelectorAll("details").forEach(d => { d.open = true; }));
     await audit(page, `frameworks expanded (${scheme})`);
     for (const p of ["privacy", "terms", "security", "install", "support"]) await go(`#${p}`, p);
     await page.goto(`${BASE}/no-such-page`); await page.waitForSelector("h1"); await audit(page, `404 (${scheme})`);
     // Accounts and Pro.
-    await go("#account", "sign-in", "#signin-form");
-    await page.fill("#signin-email", "a11y@example.com"); await page.click("#signin-form button[type=submit]");
-    await page.goto(await page.getAttribute("#signin-msg a", "href")); await page.waitForSelector("[data-aact=signout]");
-    await audit(page, `account (${scheme})`);
+    await go("#account", "account", "[data-aact=signout]");
     await go(`#security-plus.practice`, "Pro practice", "[data-act=fullexam]");
     await go(`#security-plus.progress`, "Pro progress");
     await go(`#security-plus.guide`, "Pro guide", "[data-act=fcstart]");
