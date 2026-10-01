@@ -1,5 +1,5 @@
 /* Checks for exam simulations (data/pbq), wrong-answer notes (data/whys), Spanish lessons
-   (data/lessons-es) and career pages (data/careers.js). Used by tools/check-data.js. */
+   (content/lessons-es) and career pages (data/careers.js). Used by tools/check-data.js. */
 const fs = require("fs"), path = require("path");
 const str = (x, n = 1) => typeof x === "string" && x.trim().length >= n;
 const pair = x => Array.isArray(x) && x.length === 2 && x.every(y => str(y));

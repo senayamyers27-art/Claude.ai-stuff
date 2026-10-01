@@ -8,6 +8,25 @@ The site now lives at `https://www.studytocert.com/`, so verify that address.
 
 ## Google Search Console
 
+**Quickest (the domain is on Cloudflare): verify the whole domain with a DNS record.** This covers
+`www.studytocert.com`, `studytocert.com` and every subdomain, and needs no change to the site.
+
+1. Go to <https://search.google.com/search-console> and sign in with your Google account.
+2. **Add property** → choose **Domain** (the left box) → enter `studytocert.com` (no `www`, no `https://`) → **Continue**.
+3. Google shows a **TXT record** like `google-site-verification=AbC123...`. Click **Copy**.
+4. In another tab, open Cloudflare → **studytocert.com** → **DNS** → **Records** → **Add record**:
+   - Type: **TXT**
+   - Name: **@**
+   - Content: paste the whole value, including `google-site-verification=`
+   - TTL: Auto → **Save**
+5. Back in Search Console, click **Verify**. If it says it can't find the record yet, wait 5–10 minutes and try again.
+6. Open **Sitemaps** (left menu), enter `https://www.studytocert.com/sitemap.xml` and click **Submit**.
+7. Optional: **URL inspection** → paste `https://www.studytocert.com/` → **Request indexing** to speed up the home page.
+
+Leave the TXT record in place; Google checks it again from time to time.
+
+**Or verify with an HTML tag** (works for any host):
+
 1. Go to <https://search.google.com/search-console> and sign in with your Google account.
 2. **Add property** → choose **URL prefix** → enter the site address, `https://www.studytocert.com/`.
 3. Pick the **HTML tag** method. Google shows a tag like

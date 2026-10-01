@@ -181,6 +181,12 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await p.waitForSelector("text=Grade your project");
     check(/SAMPLE capstone/.test(await p.textContent("#app")) && (await p.$$(".sectable tbody tr")).length === 4, "capstone opens with its rubric");
     check(contentCalls.length >= 2 && contentCalls.every(s => s === 200), "Pro content was served to the Pro member");
+    // Lessons past the free sample aren't in the public files; signed-in members get them from the API.
+    const pubLessons = await p.evaluate(async () => (await fetch("data/lessons/security-plus.js")).text());
+    check(/"locked":true/.test(pubLessons) && !/"check":/.test(pubLessons.split('"locked":true')[1] || ""), "the public lesson file has only the opening of locked lessons");
+    await p.goto(BASE + "/#security-plus.learn"); await p.reload();
+    await p.waitForFunction(() => document.querySelectorAll("details.lesson").length > 10 && !document.querySelector(".lesson.locked"));
+    check(true, "signed in: every lesson opens, with the full text from the API");
     await p.goto(BASE + "/#account");
     await p.click("[data-aact=signout]");
     await p.waitForSelector("#signin-form");
@@ -192,6 +198,7 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await p.goto(BASE + "/#security-plus.learn");
     await p.waitForSelector("details.lesson");
     check((await p.$$("details.lesson")).length === 2 && (await p.$$(".lesson.locked")).length > 10, "signed out: the first 2 lessons open; the rest ask for a free account");
+    check(await p.evaluate(async () => !(await caches.keys()).includes("certhub-member")), "signing out deletes the saved copy of the members' lessons");
     await p.goto(BASE + "/#labs");
     await p.waitForSelector(".labcard");
     const labHrefs = await p.$$eval(".labgrid .labcard", els => els.map(e => e.getAttribute("href")));
@@ -367,6 +374,29 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await s.click("#password-form button[type=submit]");
     await s.waitForSelector("#profile-form");
     check((await s.textContent(".profhead h1")).trim() === "Sam Rivera", "logged in with the backup password");
+    // Text-message codes: add the mobile number from the profile, then log in with a texted code.
+    await s.click(".pwchange summary:has-text('Add a mobile number')");
+    check(await s.inputValue("#smsadd-phone") === "+15551234567", "the mobile number form starts with the sign-up phone number");
+    await s.click("#smsadd-btn");
+    await s.waitForFunction(() => !document.querySelector("#smsadd-step2").hidden && /texted/.test(document.querySelector("#smsadd-msg").textContent));
+    await s.click("#smsadd-btn");
+    await s.waitForSelector("[data-aact=rmsms]");
+    check(/•••• 4567/.test(await s.textContent("#app")), "mobile number confirmed with a texted code");
+    await s.click("[data-aact=signout]");
+    await s.waitForSelector("#acctchip a[href='#login']");
+    await s.goto(BASE + "/#login"); await s.reload();
+    await s.waitForSelector(".pwlogin");
+    await s.click(".pwlogin summary");
+    await s.fill("#sms-email", "sam.social@example.com");
+    await s.click("#sms-btn");
+    await s.waitForFunction(() => !document.querySelector("#sms-step2").hidden);
+    await s.click("#sms-btn");
+    await s.waitForSelector("#profile-form");
+    check((await s.textContent(".profhead h1")).trim() === "Sam Rivera", "logged in with a texted code");
+    // Study tips by email can be switched off.
+    await s.click("[data-aact=emailtips]");
+    await s.waitForSelector('[data-aact=emailtips][data-on="0"]');
+    check(true, "study tips by email switched off on the profile");
     if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/profile.png`, fullPage: true });
     // Connect LinkedIn from the profile, then disconnect it.
     await s.click('a[href$="/v1/auth/oauth/linkedin/start?link=1"]');

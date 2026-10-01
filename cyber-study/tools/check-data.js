@@ -53,7 +53,7 @@ for (const id of CertHub.catalog) {
   console.log(`${id}: ${c.questions.length} questions, per domain ${JSON.stringify(per)}, answer positions ${pos.join("/")}, ${c.status}`);
 }
 /* ---------- lessons ---------- */
-// data/lessons/<id>.js: one lesson per plan topic, matched by the exact topic text.
+// content/lessons/<id>.js: one lesson per plan topic, matched by the exact topic text.
 CertHub.lessons = {};
 CertHub.addLessons = (id, list, meta) => { CertHub.lessons[id] = list; (CertHub.lessonMetaById = CertHub.lessonMetaById || {})[id] = meta || {}; };
 const planTopics = c => (c.weeks ? c.weeks.filter(w => w.dom).flatMap(w => w.topics) : c.domains.flatMap(d => d.topics || [])).filter(t => !/^Checkpoint test/i.test(t));
@@ -61,7 +61,7 @@ const pair = x => Array.isArray(x) && x.length === 2 && x.every(y => typeof y ==
 let lessonTotal = 0; const noLessons = [];
 for (const id of CertHub.catalog) {
   const c = CertHub.certs[id]; if (!c) continue;
-  const f = path.join(root, "data/lessons", id + ".js");
+  const f = path.join(root, "../content/lessons", id + ".js");
   if (!fs.existsSync(f)) { noLessons.push(id); continue; }
   require(f);
   const list = CertHub.lessons[id];
@@ -93,7 +93,7 @@ for (const id of CertHub.catalog) {
   CertHub.addPbqs = (id, l) => { cur = { id, l }; };
   CertHub.addWhys = (id, m) => { cur = { id, m }; };
   CertHub.addHandson = (id, h) => { cur = { id, h }; };
-  const loadAs = (dir, id, kind) => { const f = path.join(root, "data", dir, id + ".js"); if (!fs.existsSync(f)) return null; cur = null; if (kind === "es") CertHub.addLessons = (i, l, meta) => { cur = { id: i, l, meta }; }; require(f); if (!cur || cur.id !== id) { fail(id, `${dir}/${id}.js must register "${id}"`); return null; } return cur; };
+  const loadAs = (dir, id, kind) => { const f = /^lessons/.test(dir) ? path.join(root, "../content", dir, id + ".js") : path.join(root, "data", dir, id + ".js"); if (!fs.existsSync(f)) return null; cur = null; if (kind === "es") CertHub.addLessons = (i, l, meta) => { cur = { id: i, l, meta }; }; require(f); if (!cur || cur.id !== id) { fail(id, `${dir}/${id}.js must register "${id}"`); return null; } return cur; };
   for (const id of CertHub.catalog) {
     const c = CertHub.certs[id]; if (!c) continue;
     const p = loadAs("pbq", id); if (p) { K.pbqs(c, p.l, m => fail(id, m)); counts.pbq++; }
@@ -101,7 +101,7 @@ for (const id of CertHub.catalog) {
     const ho = loadAs("handson", id); if (ho) { K.handson(c, ho.h, m => fail(id, m)); counts.handson++; }
     const w = loadAs("whys", id); if (w && c.extraWhys) Object.assign(w.m, c.extraWhys); if (w) { K.whys(c, w.m, m => fail(id, m)); counts.whys++; }
     const e = loadAs("lessons-es", id, "es"); if (e) { if (!e.meta || e.meta.lang !== "es") fail(id, 'Spanish lessons need { lang: "es" }'); K.spanish(c, e.l, planTopics(c), m => fail(id, m)); counts.es++; }
-    if (fs.existsSync(path.join(root, "data/lessons", id + ".js"))) { const r = ((CertHub.lessonMetaById || {})[id] || {}).reviewed; if (!/^\d{4}-\d{2}-\d{2}$/.test(r || "")) fail(id, 'lessons need a last-reviewed date: CertHub.addLessons(id, [...], { reviewed: "YYYY-MM-DD" })'); }
+    if (fs.existsSync(path.join(root, "../content/lessons", id + ".js"))) { const r = ((CertHub.lessonMetaById || {})[id] || {}).reviewed; if (!/^\d{4}-\d{2}-\d{2}$/.test(r || "")) fail(id, 'lessons need a last-reviewed date: CertHub.addLessons(id, [...], { reviewed: "YYYY-MM-DD" })'); }
   }
   const cf = path.join(root, "data/careers.js");
   if (fs.existsSync(cf)) {

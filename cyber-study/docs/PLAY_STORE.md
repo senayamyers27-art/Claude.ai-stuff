@@ -9,7 +9,7 @@ Some steps need your own accounts and signing keys, so only you can do them. The
 - **The site must be at the root of its domain.** `https://senayamyers27-art.github.io/` qualifies. A TWA checks `https://<domain>/.well-known/assetlinks.json`.
 - **If you move to a custom domain later**, the Android app must be rebuilt for that domain. Choose your domain before you publish if you can.
 - **Google Play Console developer account.** Registration has a one-time fee and needs identity verification.
-- **Testing rule for new personal accounts.** Google has required a closed test (a set number of testers over a set number of days) before production access. Check the current rule in Play Console when you create the account.
+- **Testing rule for new personal accounts.** Google requires new personal developer accounts to run a closed test before they can publish to production (at the time of writing: at least 12 testers opted in for 14 days in a row). Line up testers early: classmates, friends, a study group. Check the current rule in Play Console when you create the account; organization accounts (which need a D-U-N-S number) skip it.
 - **Node.js and a Java JDK** on your computer, for Bubblewrap. Alternatively, use PWABuilder (pwabuilder.com), which builds the package in the browser.
 
 ## 1. Build the Android package

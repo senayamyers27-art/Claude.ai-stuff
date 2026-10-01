@@ -4,7 +4,7 @@
    Usage: node api/dev-server.js [port] [site-origin]   (defaults 8787, http://localhost:8000)
    Pro content: loads every *.json in PRO_CONTENT_DIR (for example ../cyber-study-pro/content)
    or, if unset, the small samples in api/test/fixtures/pro. Make a local account Pro with
-   PRO_EMAILS=you@example.com (comma-separated). */
+   PRO_EMAILS=you@example.com (comma-separated). Members' lessons come from content/ (tools/lesson-split.js). */
 process.removeAllListeners("warning");
 const http = require("http");
 const fs = require("fs"), path = require("path");
@@ -12,6 +12,9 @@ const { createD1, createR2 } = require("./test/d1-shim.js");
 
 async function loadContent(r2, dir) {
   for (const f of fs.readdirSync(dir).filter(f => /^[a-z0-9-]+\.json$/.test(f))) await r2.put(`pro/${f}`, fs.readFileSync(path.join(dir, f), "utf8"));
+  // Members' lessons (tools/lesson-split.js), built fresh so they match the public files.
+  const split = require("../tools/lesson-split.js");
+  for (const [rel, text] of Object.entries(split.split().member)) await r2.put(rel, text);
 }
 // A development stand-in for Stripe: gives these emails an active Pro subscription once they exist.
 async function grantPro(db, emails, plan = "pro") {

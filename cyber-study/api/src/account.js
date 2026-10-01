@@ -5,7 +5,7 @@ import { billingEnabled } from "./billing.js";
 
 export async function exportAccount(env, user) {
   const q = (sql, ...a) => env.DB.prepare(sql).bind(...a);
-  const u = await q("SELECT id, email, created_at, display_name, bio, goal_cert, weekly_hours, phone, role, exam_date, password_set_at FROM users WHERE id = ?", user.id).first();
+  const u = await q("SELECT id, email, created_at, display_name, bio, goal_cert, weekly_hours, phone, role, exam_date, password_set_at, sms_phone, sms_verified_at, email_tips FROM users WHERE id = ?", user.id).first();
   const docs = (await q("SELECT doc_key, body, version, updated_at FROM progress_docs WHERE user_id = ?", user.id).all()).results || [];
   const orgs = (await q("SELECT o.id, o.name, m.role, m.joined_at FROM org_members m JOIN orgs o ON o.id = m.org_id WHERE m.user_id = ?", user.id).all()).results || [];
   const cohorts = (await q("SELECT c.id, c.name, c.cert_id FROM cohort_members m JOIN cohorts c ON c.id = m.cohort_id WHERE m.user_id = ?", user.id).all()).results || [];

@@ -3,6 +3,8 @@
    when someone signs in. */
 import { HttpError, readJson, notFound, clientIp } from "./util.js";
 import { rateLimit, securityLog, setHashKey } from "./audit.js";
+import { smsEnabled, startAddPhone, confirmPhone, removePhone, startSmsSignIn, verifySmsSignIn } from "./sms.js";
+import { sendWelcomeEmails, unsubscribe } from "./welcome.js";
 import { requestMagicLink, verifyMagicLink, verifyCode, requireUser, currentUser, logout, clearCookie, refreshedCookies, isAppOrigin, isAppRequest, createSession, createSessionToken } from "./auth.js";
 import { listDocs, putDoc, MAX_DOC_BYTES } from "./progress.js";
 import { entitlementsFor, createCheckout, createPortal, handleWebhook, billingEnabled, premiumEnabled, referralInfo } from "./billing.js";
@@ -76,7 +78,8 @@ export default {
   },
   // Daily clean-up (wrangler [triggers] crons), so expired sign-in links, sessions and logs don't pile up.
   async scheduled(controller, env, ctx) {
-    ctx.waitUntil(purgeExpired(env));
+    // 15:47 UTC: the welcome emails (./welcome.js); the other run cleans up.
+    ctx.waitUntil(controller && controller.cron === "47 15 * * *" ? sendWelcomeEmails(env) : purgeExpired(env));
   }
 };
 
@@ -89,6 +92,7 @@ export async function purgeExpired(env, t = Date.now()) {
     ["DELETE FROM sessions WHERE expires_at < ?", t],
     ["DELETE FROM webauthn_challenges WHERE expires_at < ?", t],
     ["DELETE FROM oauth_states WHERE expires_at < ?", t],
+    ["DELETE FROM sms_codes WHERE expires_at < ?", t],
     ["DELETE FROM rate_limits WHERE window_start < ?", t - DAY],
     ["DELETE FROM stripe_events WHERE received_at < ?", t - 90 * DAY],
     ["DELETE FROM audit_log WHERE at < ?", t - 365 * DAY]
@@ -120,6 +124,13 @@ async function route(request, env) {
   // Stripe calls this directly, authenticated by signature, not by cookie or origin.
   if (path === "/v1/stripe/webhook" && method === "POST") return json(env, request, await handleWebhook(env, request));
 
+  // Unsubscribe from the welcome emails: a signed link (GET shows a button, POST unsubscribes), also posted to
+  // directly by mail apps' one-click unsubscribe, so it comes before the origin check.
+  if (path === "/v1/email/unsubscribe" && (method === "GET" || method === "POST")) {
+    const { html } = await unsubscribe(env, request, url);
+    return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", ...SECURITY_HEADERS, "Content-Security-Policy": "default-src 'none'; form-action 'self'; frame-ancestors 'none'" } });
+  }
+
   // Browsers send Origin on every cross-origin and state-changing request. Anything writing
   // with a cookie must come from the site itself (defense against cross-site request forgery).
   if (method !== "GET") {
@@ -150,6 +161,13 @@ async function route(request, env) {
     const user = await passwordSignIn(env, request, await readJson(request));
     if (isAppRequest(env, request)) return json(env, request, { user, token: await createSessionToken(env, request, user, "password") });
     return json(env, request, { user }, 200, { "Set-Cookie": await createSession(env, request, user, "password") });
+  }
+  // Backup sign-in with a code texted to the account's confirmed mobile number (./sms.js).
+  if (path === "/v1/auth/sms/start" && method === "POST") return json(env, request, await startSmsSignIn(env, request, await readJson(request)));
+  if (path === "/v1/auth/sms/verify" && method === "POST") {
+    const user = await verifySmsSignIn(env, request, await readJson(request));
+    if (isAppRequest(env, request)) return json(env, request, { user, token: await createSessionToken(env, request, user, "sms") });
+    return json(env, request, { user }, 200, { "Set-Cookie": await createSession(env, request, user, "sms") });
   }
   if (path === "/v1/auth/passkey/options" && method === "POST") return json(env, request, await signinOptions(env, request));
   if (path === "/v1/auth/passkey/verify" && method === "POST") {
@@ -189,9 +207,9 @@ async function route(request, env) {
   if (path === "/v1/me" && method === "GET") {
     const u = await currentUser(env, request);
     const providers = enabledProviders(env);
-    if (!u) return json(env, request, { user: null, billing: billingEnabled(env), premium: premiumEnabled(env), providers, support: supportEnabled(env) });
+    if (!u) return json(env, request, { user: null, billing: billingEnabled(env), premium: premiumEnabled(env), providers, support: supportEnabled(env), sms: smsEnabled(env) });
     const p = await env.DB.prepare("SELECT display_name FROM users WHERE id = ?").bind(u.id).first();
-    return json(env, request, { user: { id: u.id, email: u.email, displayName: (p && p.display_name) || "" }, billing: billingEnabled(env), premium: premiumEnabled(env), providers, support: supportEnabled(env), ...(isAdmin(env, u) ? { admin: true } : {}), ...(await entitlementsFor(env, u.id)) });
+    return json(env, request, { user: { id: u.id, email: u.email, displayName: (p && p.display_name) || "" }, billing: billingEnabled(env), premium: premiumEnabled(env), providers, support: supportEnabled(env), sms: smsEnabled(env), ...(isAdmin(env, u) ? { admin: true } : {}), ...(await entitlementsFor(env, u.id)) });
   }
 
   // Everything below needs a signed-in user.
@@ -203,6 +221,15 @@ async function route(request, env) {
   if ((m = path.match(/^\/v1\/progress\/([a-z0-9:-]{1,50})$/)) && method === "PUT") {
     const r = await putDoc(env, user, m[1], await readJson(request, MAX_DOC_BYTES + 1024));
     return json(env, request, r.data, r.status);
+  }
+
+  // Lessons past the free sample, for any signed-in account: /v1/content/lessons/<cert-id>[?lang=es]
+  // (uploaded from member/ by the API deploy; see tools/lesson-split.js).
+  if ((m = path.match(/^\/v1\/content\/lessons\/([a-z0-9-]{1,40})$/)) && method === "GET") {
+    const dir = url.searchParams.get("lang") === "es" ? "lessons-es" : "lessons";
+    const obj = env.CONTENT ? await env.CONTENT.get(`member/${dir}/${m[1]}.json`) : null;
+    if (!obj) throw notFound("No lessons for this yet.");
+    return new Response(obj.body, { headers: { "Content-Type": "application/json; charset=utf-8", ...SECURITY_HEADERS, ...cors(env, request) } });
   }
 
   // Pro bundles: /v1/content/<cert-id> (questions, flashcards, study guide) and
@@ -275,6 +302,9 @@ async function route(request, env) {
     if (method === "GET") return json(env, request, await getProfile(env, user));
     if (method === "PUT") return json(env, request, await updateProfile(env, request, user, await readJson(request)));
   }
+  if (path === "/v1/account/sms" && method === "POST") return json(env, request, await startAddPhone(env, request, user, await readJson(request)));
+  if (path === "/v1/account/sms/confirm" && method === "POST") return json(env, request, await confirmPhone(env, request, user, await readJson(request)));
+  if (path === "/v1/account/sms" && method === "DELETE") return json(env, request, await removePhone(env, request, user));
   if (path === "/v1/account/password" && method === "POST") return json(env, request, await setPassword(env, request, user, await readJson(request)));
   if (path === "/v1/account/password" && method === "DELETE") return json(env, request, await removePassword(env, request, user));
   if ((m = path.match(/^\/v1\/identities\/([a-z]{3,12})$/)) && method === "DELETE") return json(env, request, await unlinkIdentity(env, request, user, m[1]));

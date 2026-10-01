@@ -154,7 +154,7 @@ async function userForEmail(env, request, email, t) {
 // Called when the owner proves the address (an emailed link, or a provider that verified it): removes the linked
 // sign-ins, passkeys, password and sessions that came before, then marks the address verified.
 export async function claimEmail(env, request, userId) {
-  for (const sql of ["DELETE FROM identities WHERE user_id = ?", "DELETE FROM passkeys WHERE user_id = ?", "DELETE FROM sessions WHERE user_id = ?", "UPDATE users SET email_verified = 1, password_hash = NULL, password_set_at = NULL WHERE id = ?"])
+  for (const sql of ["DELETE FROM identities WHERE user_id = ?", "DELETE FROM passkeys WHERE user_id = ?", "DELETE FROM sessions WHERE user_id = ?", "UPDATE users SET email_verified = 1, password_hash = NULL, password_set_at = NULL, sms_phone = NULL, sms_verified_at = NULL WHERE id = ?"])
     await env.DB.prepare(sql).bind(userId).run();
   await audit(env, request, { actor: userId, action: "email.verified" });
 }

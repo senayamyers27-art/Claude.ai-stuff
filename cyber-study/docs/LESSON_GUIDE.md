@@ -4,7 +4,7 @@ Every topic in a certification's study plan has a free lesson that teaches it. L
 
 ## File
 
-`public/data/lessons/<cert-id>.js`, loaded only when someone opens that certification:
+`content/lessons/<cert-id>.js`, loaded only when someone opens that certification:
 
 ```js
 /* Lessons for <Cert name> (<exam code>). One per plan topic; "t" must match the topic text exactly. */

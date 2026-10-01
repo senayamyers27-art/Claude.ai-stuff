@@ -12,6 +12,7 @@ const globalHeaders = {};
   .forEach(l => { const m = l.match(/^\s+([\w-]+):\s*(.+)$/); if (m && m[1] !== "Strict-Transport-Security") globalHeaders[m[1]] = m[2].replace("; upgrade-insecure-requests", ""); });
 
 // root: another folder to serve instead of public/ (the app's copy, mobile/www, for tools/app-e2e.js).
+let fullLessons = null;
 function serve(port, { apiOrigin = "", root = PUB } = {}) {
   // With an API origin, the pages allow connecting to it and data/site.js points at it; without one, accounts are off.
   const SITE_JS = path.join(root, "data/site.js");
@@ -38,6 +39,9 @@ function serve(port, { apiOrigin = "", root = PUB } = {}) {
     // call the real accounts API (site.config.json's apiOrigin) from a local preview or test.
     if (file.endsWith(".html")) return res.end(withSri(withApi(fs.readFileSync(file, "utf8"))));
     if (file === SITE_JS) return res.end(siteJs());
+    // Without an API there are no accounts, so lessons aren't locked: serve them whole from content/.
+    const les = !apiOrigin && status === 200 && path.relative(root, file).match(/^data[\\/](lessons(?:-es)?)[\\/]([a-z0-9-]+\.js)$/);
+    if (les) { fullLessons = fullLessons || require("./lesson-split").split("").public; const t = fullLessons[`public/data/${les[1]}/${les[2]}`]; if (t) return res.end(t); }
     fs.createReadStream(file).pipe(res);
   });
   return new Promise(ok => server.listen(port, () => ok(server)));

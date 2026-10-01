@@ -3,7 +3,7 @@
    link back instead, so the whole flow can be tested locally. */
 import { HttpError } from "./util.js";
 
-export async function sendEmail(env, { to, subject, text, html }) {
+export async function sendEmail(env, { to, subject, text, html, headers }) {
   if (!env.EMAIL_API_KEY) {
     if (env.APP_ENV === "development") return { devLink: true };
     throw new HttpError(503, "email_not_configured", "Sign-in email isn't set up yet.");
@@ -11,7 +11,7 @@ export async function sendEmail(env, { to, subject, text, html }) {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${env.EMAIL_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: env.EMAIL_FROM, to: [to], subject, text, html })
+    body: JSON.stringify({ from: env.EMAIL_FROM, to: [to], subject, text, html, ...(headers ? { headers } : {}) })
   });
   if (!res.ok) throw new HttpError(502, "email_failed", "Couldn't send the email. Try again in a minute.");
   return { sent: true };
