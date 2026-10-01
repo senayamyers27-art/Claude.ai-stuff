@@ -55,7 +55,7 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     check(await a.$('nav.tabs a[href="#account"]'), "Account tab shown when an API is configured");
     await a.goto(BASE + "/#account");
     check(await a.$("#signin-form"), "account page offers sign-in");
-    check(/Optional accounts/.test(await (await a.goto(BASE + "/#privacy"), a.textContent("#app"))), "Privacy Policy describes accounts");
+    check(/A free account unlocks the rest/.test(await (await a.goto(BASE + "/#privacy"), a.textContent("#app"))), "Privacy Policy describes accounts");
 
     console.log("Device A: sign in and upload");
     await a.evaluate(() => {
@@ -185,8 +185,22 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await p.click("[data-aact=signout]");
     await p.waitForSelector("#signin-form");
     await p.goto(BASE + "/#security-plus.practice");
-    await p.waitForSelector("text=Full-length exam");
+    await p.waitForSelector(".gatewall");
     check(!(await p.$("[data-act=fullexam]")) && !/\+ 12 Pro/.test(await p.textContent("#app")), "signing out removes Pro content from the page");
+    // Free-account gate: signed out, a sample only.
+    check(!!(await p.$('[data-act="weekly-sel"]')) && !!(await p.$('[data-act="placement"]')) && !(await p.$('[data-act="smart"]')) && !(await p.$('[data-act="exam"]')), "signed out: the quiz page offers the placement test and weekly quiz, and asks for a free account for the rest");
+    await p.goto(BASE + "/#security-plus.learn");
+    await p.waitForSelector("details.lesson");
+    check((await p.$$("details.lesson")).length === 2 && (await p.$$(".lesson.locked")).length > 10, "signed out: the first 2 lessons open; the rest ask for a free account");
+    await p.goto(BASE + "/#labs");
+    await p.waitForSelector(".labcard");
+    const labHrefs = await p.$$eval(".labgrid .labcard", els => els.map(e => e.getAttribute("href")));
+    await p.goto(BASE + "/" + labHrefs[0]); await p.waitForSelector("#app h1");
+    const firstOpen = !(await p.$(".gatewall"));
+    await p.goto(BASE + "/" + labHrefs[1]); await p.waitForSelector(".gatewall");
+    check(firstOpen, "signed out: the first lab of a track opens as a sample, the next one asks for a free account");
+    await p.goto(BASE + "/#vm"); await p.waitForSelector(".gatewall");
+    check(true, "signed out: practice VMs ask for a free account");
 
     console.log("Class mode (free)");
     const tch = await device();
@@ -314,6 +328,12 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await s.waitForSelector(".authsignup .socialbtn");
     check(/Log in/.test(await s.textContent("#acctchip")), "header shows Log in when signed out");
     if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/signup.png`, fullPage: true });
+    // Sign-up asks about the person first: Google waits until the details are filled in.
+    await s.click('.socialbtn[data-provider="google"]');
+    await s.waitForFunction(() => /full name/i.test((document.querySelector("#su-msg") || {}).textContent || ""));
+    check(/#signup$/.test(s.url()), "sign-up needs the details before Google");
+    await s.fill("#su-name", "Sam Rivera"); await s.fill("#su-phone", "+1 555 123 4567");
+    await s.selectOption("#su-role", "career-changer"); await s.selectOption("#su-goal", "network-plus");
     await s.click('.socialbtn[data-provider="google"]');
     await s.waitForSelector("#fake-continue");
     await s.fill("#fake-name", "Sam Rivera"); await s.fill("#fake-email", "sam.social@example.com");
@@ -327,8 +347,26 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await s.selectOption("#pf-goal", "security-plus");
     await s.fill("#pf-hours", "6");
     await s.click("#profile-form button[type=submit]");
-    await s.waitForFunction(() => /Working toward/.test((document.querySelector(".profhead") || {}).textContent || ""));
+    await s.waitForFunction(() => /Working toward.*Security\+/.test((document.querySelector(".profhead") || {}).textContent || ""));
     check(/Security\+/.test(await s.textContent(".profhead")) && /6 hours a week/.test(await s.textContent(".profhead")), "profile edits saved and shown");
+    check(await s.inputValue("#pf-phone") === "+15551234567" && await s.inputValue("#pf-role") === "career-changer", "the sign-up details were saved to the profile");
+    // Backup password: add it from the profile, then log in with it instead of email.
+    await s.fill("#pw-new", "violet canyon tractor 9"); await s.fill("#pw-new2", "violet canyon tractor 9");
+    await s.click("#setpw-form button[type=submit]");
+    await s.waitForSelector("[data-aact=rmpassword]");
+    check(!(await s.$(".setpw")), "backup password saved; the profile shows it's set");
+    await s.click("[data-aact=signout]");
+    await s.waitForSelector("#acctchip a[href='#login']");
+    await s.goto(BASE + "/#login"); await s.reload();
+    try { await s.waitForSelector(".pwlogin"); } catch (e) { await s.screenshot({ path: "/tmp/claude-0/-home-user-Claude-ai-stuff/80d82bf2-f974-54e4-ad55-c3f1f693c0a6/scratchpad/pwlogin.png", fullPage: true }); throw e; }
+    await s.click(".pwlogin summary");
+    await s.fill("#pw-email", "sam.social@example.com"); await s.fill("#pw-pass", "wrong password guess");
+    await s.click("#password-form button[type=submit]");
+    await s.waitForFunction(() => /don't match/.test((document.querySelector("#pw-msg") || {}).textContent || ""));
+    await s.fill("#pw-pass", "violet canyon tractor 9");
+    await s.click("#password-form button[type=submit]");
+    await s.waitForSelector("#profile-form");
+    check((await s.textContent(".profhead h1")).trim() === "Sam Rivera", "logged in with the backup password");
     if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/profile.png`, fullPage: true });
     // Connect LinkedIn from the profile, then disconnect it.
     await s.click('a[href$="/v1/auth/oauth/linkedin/start?link=1"]');
@@ -395,7 +433,14 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await pm.evaluate(() => { document.getElementById("app").insertAdjacentHTML("beforeend", CertHub.premium.button("interview", "Practice with the AI interviewer", () => ({ subtitle: "SOC analyst", context: { role: "SOC analyst", level: "entry", certs: ["Security+"] } }))); });
     await pm.click("[data-tutor=interview]");
     await pm.waitForSelector(".tutor .tutmsg.ai");
+    await pm.waitForFunction(() => /Development stub \(interview\)/.test((document.querySelector(".tutlog") || {}).textContent || ""), null, { timeout: 8000 }).catch(() => {});
     check(/Development stub \(interview\)/.test(await pm.textContent(".tutlog")), "the AI interviewer answers in the tutor window");
+    await pm.keyboard.press("Escape");
+    await pm.goto(BASE + "/#careers"); await pm.waitForSelector("#advisor-form");
+    await pm.fill("#adv-goal", "Move from help desk into a SOC analyst job");
+    await pm.click("#advisor-form button[type=submit]");
+    await pm.waitForFunction(() => /Development stub \(path\)/.test((document.querySelector(".tutlog") || {}).textContent || ""), null, { timeout: 8000 }).catch(() => {});
+    check(/Development stub \(path\)/.test(await pm.textContent(".tutlog")) && /Career & Certification Advisor/.test(await pm.textContent(".tutor")), "the AI career and certification advisor answers from the Career Paths page");
     await pm.fill("#tut-in", "DNS turns names into addresses.");
     await pm.press("#tut-in", "Enter");
     await pm.waitForFunction(() => document.querySelectorAll(".tutor .tutmsg.ai").length >= 2);
