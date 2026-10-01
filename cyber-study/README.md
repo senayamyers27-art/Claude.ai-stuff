@@ -29,7 +29,9 @@ cyber-study/
     data/gen/<id>.js      plan summary for cards; <id>-plan.js is the full weekly
                           plan, <id>-q.js the question bank           (generated)
     data/news.js          What's new entries (#whats-new), English and Spanish
-    data/lessons-es/ questions-es/ pbq-es/ handson-es/ examday-es.js
+    data/lessons/ lessons-es/  lessons for the app, from content/ (generated; locked
+                          lessons keep only their opening without an account)
+    data/questions-es/ pbq-es/ handson-es/ examday-es.js
                           Spanish translations, used when the interface is in Spanish
     _headers _redirects robots.txt sitemap.xml manifest.webmanifest sw.js
     .well-known/security.txt                                        (all generated)
@@ -45,7 +47,7 @@ content has its own Spanish file with the same ids as the English one; when a fi
 English is shown. Keep translations in step when the English changes:
 
 - `data/ui-es.js`: interface text (exact strings plus patterns with numbers).
-- `data/lessons-es/<id>.js`: lessons, keyed by the English topic text.
+- `content/lessons-es/<id>.js`: lessons, keyed by the English topic text (English lessons are in `content/lessons/`; the build writes the public copies, see `tools/lesson-split.js`).
 - `data/questions-es/<id>.js`: practice questions, same option order as English.
 - `data/pbq-es/<id>.js`: exam simulations, same structure; fill-in answers also accept the English answers.
 - `data/handson-es/<id>.js`: hands-on titles, prompts, hints, explanations and check labels only.

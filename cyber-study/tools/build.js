@@ -16,6 +16,8 @@ const crypto = require("crypto");
 
 const ROOT = path.join(__dirname, "..");
 const PUB = path.join(ROOT, "public");
+// Lesson sources. The public copies in public/data/lessons(-es) are generated (tools/lesson-split.js).
+const CONTENT = path.join(ROOT, "content");
 const CHECK = process.argv.includes("--check");
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "site.config.json"), "utf8"));
 const domain = (cfg.domain || "").trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, "");
@@ -171,13 +173,23 @@ function planBuilder() {
   vm.runInContext(fs.readFileSync(path.join(PUB, "data/lab-map.js"), "utf8"), ctx);
   return (PB = ctx.CertHub);
 }
+/* ---------- lessons: the public sample and the members' text ---------- */
+// public/data/lessons(-es)/<id>.js from content/; with accounts on, lessons past the free sample keep only their
+// title and opening paragraph there, and the full text goes to member/ for the API (tools/lesson-split.js).
+{
+  const split = require("./lesson-split");
+  const res = split.split(apiOrigin);
+  Object.entries(res.public).forEach(([rel, text]) => out(rel, text));
+  if (!CHECK) split.writeMember(res);
+}
+
 /* ---------- certification data, split for fast pages ---------- */
 // Pages load each certification's plan (data/gen/<id>.js); its question bank
 // (data/gen/<id>-q.js) loads only when someone opens that certification.
 for (const c of certs) {
   const plan = { ...c, qCount: c.questions.length };
   // Pages only ask for lessons, translations and simulations that exist.
-  const has = rel => fs.existsSync(path.join(PUB, "data", rel, c.id + ".js"));
+  const has = rel => fs.existsSync(path.join(/^lessons/.test(rel) ? CONTENT : path.join(PUB, "data"), rel, c.id + ".js"));
   if (has("lessons")) plan.hasLessons = true;
   if (has("lessons-es")) plan.hasLessonsEs = true;
   if (has("pbq")) plan.hasPbqs = true;
@@ -280,9 +292,9 @@ const inl = x => esc(x).replace(/`([^`\n]+)`/g, "<code>$1</code>");
 const par = x => /^```/.test(x) ? `<pre class="code" tabindex="0"><code>${esc(x.replace(/^```[a-z]*\n?/i, "").replace(/\n?```$/, ""))}</code></pre>` : `<p>${inl(x)}</p>`;
 const lessonPages = [];
 const reviewedOf = id => { const r = ((CertHub.lessonMeta || {})[id] || {}).reviewed; return r ? new Date(r + "T12:00:00Z").toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" }) : ""; };
-const esOf = (id, t) => { const f = path.join(PUB, "data/lessons-es", id + ".js"); if (!fs.existsSync(f)) return null; if (!(CertHub.lessonDataEs || {})[id]) require(f); return ((CertHub.lessonDataEs || {})[id] || []).find(l => l.t === t) || null; };
+const esOf = (id, t) => { const f = path.join(CONTENT, "lessons-es", id + ".js"); if (!fs.existsSync(f)) return null; if (!(CertHub.lessonDataEs || {})[id]) require(f); return ((CertHub.lessonDataEs || {})[id] || []).find(l => l.t === t) || null; };
 certs.forEach(c => {
-  const f = path.join(PUB, "data/lessons", c.id + ".js");
+  const f = path.join(CONTENT, "lessons", c.id + ".js");
   if (!fs.existsSync(f) || !tryRequire(f)) return;
   const list = (CertHub.lessonData || {})[c.id] || [];
   const plan = (c.weeks ? c.weeks.filter(w => w.dom).map(w => [w.dom, w.topics]) : c.domains.map(d => [d.id, d.topics || []]));
@@ -292,7 +304,7 @@ certs.forEach(c => {
   const top = `<header class="top"><div class="bar"><a class="brand" href="../../">${BRAND_HTML}</a></div></header>`;
   const cta = `<div class="panel startcard"><div class="grow"><strong>Study ${esc(c.short)} for free</strong><br><span class="note">A week-by-week plan with every lesson, quizzes, checkpoint tests, a practice exam and hands-on labs.</span></div><a class="btn sm" href="${"../../"}${c.id}/">Open the ${esc(c.short)} study plan</a></div>`;
   // Index of all lessons for the certification.
-  out(`public/${c.id}/lessons/index.html`, `${head({ title: `${c.short} ${c.exam} Lessons: Free Study Guide`, desc: `${items.length} free lessons covering every ${c.name} (${c.exam}) exam topic, with key terms, examples, exam tips and self-check questions.`, prefix: "../../", urlPath: `/${c.id}/lessons/`, scripts: [], og: c.id, ld: crumbs([["Home", "/"], [c.short, `/${c.id}/`], ["Lessons", `/${c.id}/lessons/`]]) , alt: fs.existsSync(path.join(PUB, "data/lessons-es", c.id + ".js")) ? { en: `/${c.id}/lessons/`, es: `/es/${c.id}/lessons/` } : null})}
+  out(`public/${c.id}/lessons/index.html`, `${head({ title: `${c.short} ${c.exam} Lessons: Free Study Guide`, desc: `${items.length} free lessons covering every ${c.name} (${c.exam}) exam topic, with key terms, examples, exam tips and self-check questions.`, prefix: "../../", urlPath: `/${c.id}/lessons/`, scripts: [], og: c.id, ld: crumbs([["Home", "/"], [c.short, `/${c.id}/`], ["Lessons", `/${c.id}/lessons/`]]) , alt: fs.existsSync(path.join(CONTENT, "lessons-es", c.id + ".js")) ? { en: `/${c.id}/lessons/`, es: `/es/${c.id}/lessons/` } : null})}
 <body>
 ${top.replace(/\.\.\/\.\.\//g, "../../")}
 <main class="wrap lesson-page">
@@ -422,7 +434,7 @@ ${l.check.map(([q, a]) => `<details class="sq"><summary>${inl(q)}</summary><p>${
 
 /* ---------- Spanish hub (/es/) and Spanish cheat sheets (/es/<cert>/cheat-sheet/) ---------- */
 {
-  const withEs = certs.filter(c => (CertHub.lessonData || {})[c.id] && fs.existsSync(path.join(PUB, "data/lessons-es", c.id + ".js")));
+  const withEs = certs.filter(c => (CertHub.lessonData || {})[c.id] && fs.existsSync(path.join(CONTENT, "lessons-es", c.id + ".js")));
   const esList = c => ((CertHub.lessonDataEs || {})[c.id] || []);
   const TRACK_ES = { cybersecurity: "Ciberseguridad", network: "Ingeniería de redes", software: "Ingeniería de software", secadmin: "Administración de ciberseguridad", sysadmin: "Administración de sistemas", cloud: "Computación en la nube", "data-ai": "Datos e IA" };
   withEs.forEach(c => {
@@ -468,7 +480,7 @@ certs.forEach(c => {
   const list = (CertHub.lessonData || {})[c.id]; if (!list) return;
   const plan = (c.weeks ? c.weeks.filter(w => w.dom).map(w => [w.dom, w.topics]) : c.domains.map(d => [d.id, d.topics || []]));
   const byDom = d => list.filter(l => (plan.find(([, ts]) => ts.includes(l.t)) || [])[0] === d.id);
-  out(`public/${c.id}/cheat-sheet/index.html`, `${head({ title: `${c.short} ${c.exam} Cheat Sheet`, desc: `Free ${c.name} (${c.exam}) cheat sheet: every exam tip and key term by domain, ready to print.`, prefix: "../../", urlPath: `/${c.id}/cheat-sheet/`, scripts: [], og: c.id, ld: crumbs([["Home", "/"], [c.short, `/${c.id}/`], ["Cheat sheet", `/${c.id}/cheat-sheet/`]]) , alt: fs.existsSync(path.join(PUB, "data/lessons-es", c.id + ".js")) ? { en: `/${c.id}/cheat-sheet/`, es: `/es/${c.id}/cheat-sheet/` } : null})}
+  out(`public/${c.id}/cheat-sheet/index.html`, `${head({ title: `${c.short} ${c.exam} Cheat Sheet`, desc: `Free ${c.name} (${c.exam}) cheat sheet: every exam tip and key term by domain, ready to print.`, prefix: "../../", urlPath: `/${c.id}/cheat-sheet/`, scripts: [], og: c.id, ld: crumbs([["Home", "/"], [c.short, `/${c.id}/`], ["Cheat sheet", `/${c.id}/cheat-sheet/`]]) , alt: fs.existsSync(path.join(CONTENT, "lessons-es", c.id + ".js")) ? { en: `/${c.id}/cheat-sheet/`, es: `/es/${c.id}/cheat-sheet/` } : null})}
 <body>
 <header class="top"><div class="bar"><a class="brand" href="../../">${BRAND_HTML}</a></div></header>
 <main class="wrap lesson-page">

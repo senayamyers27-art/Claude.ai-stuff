@@ -62,7 +62,7 @@ async function audit(page, label) {
     await page.click("#menubtn"); await page.waitForSelector("#sitemenu a"); await audit(page, `site menu (${scheme})`); await page.keyboard.press("Escape");
     for (const id of certIds) for (const tab of ["week", "learn", "plan", "practice", "labs", "progress", "guide", "about"]) await go(`#${id}.${tab}`, `${id}.${tab}`);
     // Lessons with every section open.
-    if (fs.existsSync(path.join(__dirname, "../public/data/lessons/security-plus.js"))) {
+    if (fs.existsSync(path.join(__dirname, "../content/lessons/security-plus.js"))) {
       await go("#security-plus.learn", "lessons", "details.lesson");
       await page.evaluate(() => document.querySelectorAll("details").forEach(d => { d.open = true; }));
       await audit(page, `lessons expanded (${scheme})`);

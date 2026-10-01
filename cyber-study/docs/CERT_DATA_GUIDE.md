@@ -39,7 +39,7 @@ set `status: "check"`.
 
 ## Lessons
 
-Every plan topic needs a lesson in `public/data/lessons/<id>.js`, matched by its exact topic text. If you change a topic's wording, change its lesson's `t` too. See [LESSON_GUIDE.md](LESSON_GUIDE.md).
+Every plan topic needs a lesson in `content/lessons/<id>.js`, matched by its exact topic text. If you change a topic's wording, change its lesson's `t` too. See [LESSON_GUIDE.md](LESSON_GUIDE.md).
 
 ## Checking
 From `cyber-study/`: `node tools/check-data.js` must show no ✗ lines for your cert (it also checks

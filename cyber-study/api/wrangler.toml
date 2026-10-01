@@ -19,9 +19,9 @@ name = "API_LIMIT"
 namespace_id = "1001"
 simple = { limit = 120, period = 60 }
 
-# Daily clean-up of expired sign-in links, sessions and old logs (scheduled() in src/index.js).
+# Daily clean-up of expired sign-in links, sessions and old logs, and the welcome emails (scheduled() in src/index.js).
 [triggers]
-crons = ["23 4 * * *"]
+crons = ["23 4 * * *", "47 15 * * *"]
 
 [[d1_databases]]
 binding = "DB"
@@ -34,4 +34,7 @@ migrations_dir = "migrations"
 # social sign-in GOOGLE_CLIENT_ID/_SECRET, FACEBOOK_APP_ID/_SECRET, LINKEDIN_CLIENT_ID/_SECRET (docs/SOCIAL_SIGNIN.md).
 # Price ids (plain vars, set by the deploy workflow when present): STRIPE_PRICE_PRO_MONTHLY,
 # STRIPE_PRICE_PRO_YEARLY, STRIPE_PRICE_PREMIUM_MONTHLY, STRIPE_PRICE_PREMIUM_YEARLY, STRIPE_PRICE_ORG_SEAT.
+# Text-message sign-in codes (src/sms.js): secrets TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN and TWILIO_FROM or
+# TWILIO_MESSAGING_SERVICE_SID; optional vars SMS_COUNTRIES ("1") and SMS_DAILY_LIMIT (300).
+# Welcome emails (src/welcome.js): optional var WELCOME_PER_RUN (60), sent daily at 15:47 UTC.
 # AI tutor limits (optional): TUTOR_PER_HOUR (40), TUTOR_PER_DAY (150), TUTOR_DAILY_LIMIT (5000).

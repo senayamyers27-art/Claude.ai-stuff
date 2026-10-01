@@ -25,6 +25,8 @@ const q = s => JSON.stringify(String(s));
 const vars = {
   APP_ENV: "production",
   SITE_ORIGIN: `https://${domain}`,
+  // The API's own address, for links in emails (unsubscribe).
+  API_ORIGIN: api,
   // "Name<address>" and stray spaces are tidied into "Name <address>".
   EMAIL_FROM: (process.env.STUDY_API_EMAIL_FROM || "").trim().replace(/\s*<\s*/, " <").replace(/\s*>\s*$/, ">") || `${cfg.siteName} <signin@${base}>`,
   STRIPE_TAX: process.env.STRIPE_TAX === "on" ? "on" : "off"
@@ -35,6 +37,8 @@ if (/^bpc_[A-Za-z0-9]+$/.test(process.env.STRIPE_PORTAL_CONFIG || "")) vars.STRI
 // The site owner's dashboard (#admin): comma-separated email addresses from the STUDY_API_ADMIN_EMAILS variable.
 const admins = (process.env.STUDY_API_ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(s => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/.test(s));
 if (admins.length) vars.ADMIN_EMAILS = admins.join(",");
+// Country codes text-message sign-in codes may go to (comma-separated, default "1": the US and Canada).
+if (/^\d{1,3}(,\d{1,3})*$/.test((process.env.STUDY_API_SMS_COUNTRIES || "").replace(/\s/g, ""))) vars.SMS_COUNTRIES = process.env.STUDY_API_SMS_COUNTRIES.replace(/\s/g, "");
 
 // One compatibility date for local and deployed Workers: the one in api/wrangler.toml.
 const compat = (fs.readFileSync(path.join(ROOT, "api/wrangler.toml"), "utf8").match(/^compatibility_date\s*=\s*"(\d{4}-\d{2}-\d{2})"/m) || [])[1];
@@ -56,9 +60,9 @@ name = "API_LIMIT"
 namespace_id = "1001"
 simple = { limit = 120, period = 60 }
 
-# Daily clean-up of expired sign-in links, sessions and old logs.
+# Daily clean-up of expired sign-in links, sessions and old logs (04:23 UTC), and the welcome emails (15:47 UTC).
 [triggers]
-crons = ["23 4 * * *"]
+crons = ["23 4 * * *", "47 15 * * *"]
 
 [[d1_databases]]
 binding = "DB"

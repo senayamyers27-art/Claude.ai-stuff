@@ -149,7 +149,7 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
   await page.waitForSelector(".labgrid");
   check((await page.$$(".labgrid .labcard")).length >= 1, "study week links to its labs");
   // Lessons are checked once Security+ has them (docs/LESSON_GUIDE.md).
-  if (require("fs").existsSync(require("path").join(__dirname, "../public/data/lessons/security-plus.js"))) {
+  if (require("fs").existsSync(require("path").join(__dirname, "../content/lessons/security-plus.js"))) {
   await page.waitForSelector("details.lesson");
   await page.click("details.lesson >> nth=0 >> summary");
   check((await page.$$eval("details.lesson[open] .lbody p", ps => ps.length)) >= 3, "study week teaches each topic with a lesson");

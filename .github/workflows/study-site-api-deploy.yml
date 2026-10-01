@@ -11,7 +11,8 @@ name: Study site API deploy
 #   STUDY_API_EMAIL_KEY (Resend), STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
 # Optional variables: STUDY_API_EMAIL_FROM, STUDY_API_R2_BUCKET, STRIPE_PRICE_PRO_MONTHLY,
 #   STRIPE_PRICE_PRO_YEARLY, STRIPE_PRICE_PREMIUM_MONTHLY, STRIPE_PRICE_PREMIUM_YEARLY, STRIPE_PRICE_ORG_SEAT, STRIPE_TAX ("on" to enable Stripe Tax),
-#   STRIPE_PORTAL_CONFIG (the Customer Portal configuration from the Stripe setup workflow)
+#   STRIPE_PORTAL_CONFIG (the Customer Portal configuration from the Stripe setup workflow),
+#   STUDY_API_SMS_COUNTRIES (country codes for text-message sign-in codes, default "1")
 
 on:
   workflow_run:
@@ -33,14 +34,15 @@ jobs:
       github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' ||
       github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     environment:
       name: study-api-production
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       STUDY_API_D1_ID: ${{ secrets.STUDY_API_D1_ID }}
-      STUDY_API_R2_BUCKET: ${{ vars.STUDY_API_R2_BUCKET }}
+      # The private bucket for Pro bundles and members' lessons (made by "Study site Cloudflare setup").
+      STUDY_API_R2_BUCKET: ${{ vars.STUDY_API_R2_BUCKET || 'cyber-cert-study-content' }}
       STUDY_API_EMAIL_FROM: ${{ vars.STUDY_API_EMAIL_FROM }}
       STRIPE_PRICE_PRO_MONTHLY: ${{ vars.STRIPE_PRICE_PRO_MONTHLY }}
       STRIPE_PRICE_PRO_YEARLY: ${{ vars.STRIPE_PRICE_PRO_YEARLY }}
@@ -50,6 +52,7 @@ jobs:
       STRIPE_TAX: ${{ vars.STRIPE_TAX }}
       STRIPE_PORTAL_CONFIG: ${{ vars.STRIPE_PORTAL_CONFIG }}
       STUDY_API_ADMIN_EMAILS: ${{ vars.STUDY_API_ADMIN_EMAILS }}
+      STUDY_API_SMS_COUNTRIES: ${{ vars.STUDY_API_SMS_COUNTRIES }}
     defaults:
       run:
         working-directory: cyber-study
@@ -132,6 +135,22 @@ jobs:
         working-directory: cyber-study/api
         run: npx wrangler d1 migrations apply cyber-cert-study --remote --config wrangler.deploy.toml
 
+      # Lessons past the free sample are only in the private bucket; the API hands them to signed-in accounts
+      # (tools/lesson-split.js). Uploaded before the Worker so a new site never asks for lessons that aren't there.
+      - name: Upload members' lessons
+        if: steps.ready.outputs.ok == 'true'
+        run: |
+          node tools/lesson-split.js --member
+          n=0
+          for f in $(cd member && find . -name '*.json' | sed 's|^\./||' | sort); do
+            if ! npx wrangler r2 object put "$STUDY_API_R2_BUCKET/member/$f" --file "member/$f" --content-type application/json --remote > /dev/null; then
+              echo "::error::Couldn't upload member/$f to the R2 bucket $STUDY_API_R2_BUCKET. Check that the bucket exists (Cloudflare → R2) and the Cloudflare token has Account → Workers R2 Storage → Edit."
+              exit 1
+            fi
+            n=$((n + 1))
+          done
+          echo "Uploaded $n lesson bundles to $STUDY_API_R2_BUCKET."
+
       - name: Deploy Worker
         if: steps.ready.outputs.ok == 'true'
         working-directory: cyber-study/api
@@ -164,11 +183,16 @@ jobs:
           LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
           # AI support assistant (docs/SUPPORT_BOT.md). The Help widget's chat appears once this is set.
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Text-message sign-in codes through Twilio (docs/SMS_SIGNIN.md). The option appears once these are set.
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          TWILIO_FROM: ${{ secrets.TWILIO_FROM }}
+          TWILIO_MESSAGING_SERVICE_SID: ${{ secrets.TWILIO_MESSAGING_SERVICE_SID }}
           # The App Store and Google Play review account (docs/MOBILE_APPS.md): an email and a fixed 8-character code.
           APP_REVIEW_EMAIL: ${{ secrets.APP_REVIEW_EMAIL }}
           APP_REVIEW_CODE: ${{ secrets.APP_REVIEW_CODE }}
         run: |
-          for NAME in EMAIL_API_KEY STRIPE_SECRET_KEY STRIPE_WEBHOOK_SECRET TURNSTILE_SECRET_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET FACEBOOK_APP_ID FACEBOOK_APP_SECRET LINKEDIN_CLIENT_ID LINKEDIN_CLIENT_SECRET ANTHROPIC_API_KEY APP_REVIEW_EMAIL APP_REVIEW_CODE; do
+          for NAME in EMAIL_API_KEY STRIPE_SECRET_KEY STRIPE_WEBHOOK_SECRET TURNSTILE_SECRET_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET FACEBOOK_APP_ID FACEBOOK_APP_SECRET LINKEDIN_CLIENT_ID LINKEDIN_CLIENT_SECRET ANTHROPIC_API_KEY APP_REVIEW_EMAIL APP_REVIEW_CODE TWILIO_ACCOUNT_SID TWILIO_AUTH_TOKEN TWILIO_FROM TWILIO_MESSAGING_SERVICE_SID; do
             if [ -n "${!NAME}" ]; then printf '%s' "${!NAME}" | npx wrangler secret put "$NAME" --config wrangler.deploy.toml; fi
           done
 

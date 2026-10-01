@@ -4,14 +4,16 @@ import { bad } from "./util.js";
 import { audit } from "./audit.js";
 import { enabledProviders, cleanName, PROVIDERS } from "./oauth.js";
 import CERTS from "./cert-meta.js";
+import { maskPhone, smsEnabled } from "./sms.js";
 
 export async function getProfile(env, user) {
-  const u = await env.DB.prepare("SELECT email, created_at, display_name, bio, goal_cert, weekly_hours, phone, role, exam_date, password_set_at FROM users WHERE id = ?").bind(user.id).first();
+  const u = await env.DB.prepare("SELECT email, created_at, display_name, bio, goal_cert, weekly_hours, phone, role, exam_date, password_set_at, sms_phone, email_tips FROM users WHERE id = ?").bind(user.id).first();
   const ids = (await env.DB.prepare("SELECT provider, email, created_at, last_used_at FROM identities WHERE user_id = ? ORDER BY created_at").bind(user.id).all()).results || [];
   return {
     email: u.email, createdAt: u.created_at,
     displayName: u.display_name || "", bio: u.bio || "", goalCert: u.goal_cert || "", weeklyHours: u.weekly_hours || null,
     phone: u.phone || "", role: u.role || "", examDate: u.exam_date || "", hasPassword: !!u.password_set_at,
+    smsPhone: maskPhone(u.sms_phone), sms: smsEnabled(env), emailTips: !!u.email_tips,
     identities: ids.filter(i => PROVIDERS[i.provider]).map(i => ({ provider: i.provider, email: i.email, createdAt: i.created_at, lastUsedAt: i.last_used_at })),
     providers: enabledProviders(env)
   };
@@ -52,6 +54,7 @@ export async function updateProfile(env, request, user, body) {
     set.weekly_hours = weeklyHours;
   }
   if (has("phone")) set.phone = cleanPhone(body.phone);
+  if (has("emailTips")) set.email_tips = body.emailTips ? 1 : 0;
   if (has("role")) {
     const role = body.role ? String(body.role) : null;
     if (role && !Object.prototype.hasOwnProperty.call(ROLES, role)) throw bad("bad_role", "Pick what describes you from the list.");
