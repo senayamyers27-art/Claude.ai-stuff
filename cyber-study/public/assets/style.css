@@ -911,3 +911,15 @@ html.native-app a[href="#install"],html.native-app .row:has(> a[href="#install"]
 .assignlist li.done{border-left-color:var(--ok)}
 .bars li{display:grid;grid-template-columns:48px 1fr 32px;gap:8px;align-items:center;margin:4px 0}
 .bars li .track{margin-top:0;--c:var(--accent)}
+/* Free-account gate, locked lessons, sign-up details and backup password */
+.gatewall{border-color:var(--accent);margin-top:14px}
+.gatewall h2{margin:8px 0 6px}
+.gatewall p{margin:0 0 4px}
+.lesson.locked{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;border:1px dashed var(--line);border-radius:10px;color:var(--muted)}
+.signupdetails{border:0;padding:0;margin:0 0 6px;min-width:0}
+.signupdetails legend{font-weight:800;padding:0;margin-bottom:4px}
+.suhow{margin:14px 0 8px}
+.pwlogin,.pwchange{margin-top:14px;text-align:left}
+.pwlogin summary,.pwchange summary{cursor:pointer;color:var(--accent);font-weight:700}
+.pwlogin form,.pwchange form{margin-top:8px}
+.setpw{border-color:var(--accent);margin-top:14px}

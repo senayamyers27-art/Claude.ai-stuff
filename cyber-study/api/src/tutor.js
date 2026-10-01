@@ -5,6 +5,7 @@
    - resume:    feedback on a resume or LinkedIn summary for a target role, with rewritten bullets
    - writeup:   feedback on a finished lab's notes and write-up, with portfolio-ready bullets
    - drill:     new practice questions on the learner's weakest topics, one at a time, graded
+   - path:      career and certification path advice: which certifications, in what order, for the job they want
 
    - Needs a signed-in account with the "ai_tutor" feature (Premium Pro, ./billing.js).
    - The browser sends the context (question, progress numbers, role) as structured fields. They're validated and
@@ -92,13 +93,29 @@ Your job:
 
 ${RULES}`
 });
+// The site's catalog, for the path advisor: it only recommends certifications the site has plans for.
+const CATALOG = Object.entries(CERTS).map(([id, c]) => `- ${c.name}${c.exam ? ` (${c.exam})` : ""} [${id}]: ${c.blurb}`).join("\n");
+SYSTEM.path = `You are the StudyToCert AI Career and Certification Advisor. You help people choose an IT, cloud or cybersecurity career direction and the certifications to earn, in order, to get there. The CONTEXT block holds what the learner told the site: their background, experience, interests, goal, time per week, certifications they hold or are studying, and timeframe.
+Your job:
+- Start with a two or three sentence read of where they are and one or two realistic job titles that fit their goal and background (entry-level titles for beginners).
+- Recommend a path of two to five certifications in order, from the CATALOG below only. For each: why it's in that place, roughly how many weeks it takes at their hours, and what it opens up. Mention when a step is optional.
+- Add what to do besides certifications: the kinds of hands-on labs and portfolio projects to build on the site, and the skills employers check in interviews for those roles.
+- If their goal isn't realistic for their timeframe, say so kindly and give the closest realistic version.
+- Ask at most one short follow-up question at the end if something important is missing (for example, their country or whether they want remote work).
+- On follow-up messages, adjust the path to what they tell you, or compare two options they're choosing between.
+- Don't invent salaries, pass rates or job statistics; speak in general terms and suggest the site's Pay and Job Outlook page for figures.
+CATALOG (certifications with study plans on this site; refer to them by name):
+${CATALOG}
+${RULES}`;
+
 const OPENERS = {
   explain: "Explain this question for me.",
   coach: "Make my study plan for the next 7 days.",
   interview: "I'm ready. Please start the interview.",
   resume: "Please review my resume for this role.",
   writeup: "Please review my lab notes and help me turn them into a strong write-up.",
-  drill: "Give me my first practice question."
+  drill: "Give me my first practice question.",
+  path: "Recommend a career direction and certification path for me."
 };
 
 // Validators for the context fields. Strings are trimmed, stripped of control characters and length-limited.
@@ -163,6 +180,19 @@ function contextText(mode, ctx) {
     return [`Certification: ${c.name}`, "Weakest domains:", ...(weak.length ? weak : ["- not enough answers yet; cover the exam's main domains"]),
       "Recently missed questions (for topics only; don't reuse them):", ...(missed.length ? missed : ["- none recorded"])].join("\n");
   }
+  if (mode === "path") {
+    const list = (v, n, max) => Array.isArray(v) ? v.slice(0, n).map(x => text(x, max)).filter(Boolean) : [];
+    const level = ["none", "some", "it-job", "it-years"].includes(ctx.experience) ? ctx.experience : "none";
+    const levels = { none: "No IT experience yet", some: "Some IT knowledge (school, home lab or self-study)", "it-job": "Working in IT for under 2 years", "it-years": "Working in IT for 2 or more years" };
+    const goal = text(ctx.goal, 300);
+    if (!goal) throw bad("bad_context", "Tell the advisor what you'd like to do.");
+    const certs = list(ctx.certs, 12, 80);
+    return [`Background: ${text(ctx.background, 300) || "not given"}`, `Experience: ${levels[level]}`,
+      `Interests: ${list(ctx.interests, 8, 60).join(", ") || "not given"}`, `Goal: ${goal}`,
+      `Time to study: ${int(ctx.hoursPerWeek, 1, 80) == null ? "not given" : int(ctx.hoursPerWeek, 1, 80) + " hours a week"}`,
+      `Timeframe: ${text(ctx.timeframe, 60) || "not given"}`,
+      `Certifications held or in progress: ${certs.length ? certs.join(", ") : "none"}`].join("\n");
+  }
   throw bad("bad_mode", "Unknown tutor mode.");
 }
 
@@ -184,7 +214,7 @@ export async function tutorChat(env, request, user, entitlements, body) {
   if (env.APP_ENV === "development" && env.SUPPORT_DEV_STUB && !env.ANTHROPIC_API_KEY) {
     return { reply: `Development stub (${mode}): ${messages[messages.length - 1].content.split("\n").pop().slice(0, 80)}` };
   }
-  return { reply: await askClaude(env, SYSTEM[mode], messages, { maxTokens: mode === "coach" || mode === "resume" || mode === "writeup" ? 2500 : 1500, tag: "tutor",
-    refusal: "I can't help with that one. Ask me about this topic, your study plan or the interview instead.",
+  return { reply: await askClaude(env, SYSTEM[mode], messages, { maxTokens: mode === "coach" || mode === "resume" || mode === "writeup" || mode === "path" ? 2500 : 1500, tag: "tutor",
+    refusal: "I can't help with that one. Ask me about this topic, your study plan, your career path or the interview instead.",
     empty: "Sorry, I don't have an answer for that. Try asking another way." }) };
 }

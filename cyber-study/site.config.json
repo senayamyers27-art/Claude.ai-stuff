@@ -5,7 +5,7 @@
   "redirectWww": true,
   "hstsPreload": false,
   "crossOriginIsolation": false,
-  "securityContact": "https://github.com/senayamyers27-art/Claude.ai-stuff/security/advisories/new",
+  "securityContact": "mailto:security@studytocert.com",
   "securityTxtExpires": "2027-09-24",
   "reviewEveryDays": 180,
   "cloudflarePagesProject": "cyber-cert-study",
@@ -23,7 +23,7 @@
     "label": "",
     "url": ""
   },
-  "feedbackUrl": "https://github.com/senayamyers27-art/senayamyers27-art.github.io/issues",
+  "feedbackUrl": "mailto:support@studytocert.com",
   "newsletter": {
     "url": "",
     "blurb": ""

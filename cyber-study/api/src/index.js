@@ -3,7 +3,7 @@
    when someone signs in. */
 import { HttpError, readJson, notFound, clientIp } from "./util.js";
 import { rateLimit, securityLog, setHashKey } from "./audit.js";
-import { requestMagicLink, verifyMagicLink, verifyCode, requireUser, currentUser, logout, clearCookie, refreshedCookies, isAppOrigin } from "./auth.js";
+import { requestMagicLink, verifyMagicLink, verifyCode, requireUser, currentUser, logout, clearCookie, refreshedCookies, isAppOrigin, isAppRequest, createSession, createSessionToken } from "./auth.js";
 import { listDocs, putDoc, MAX_DOC_BYTES } from "./progress.js";
 import { entitlementsFor, createCheckout, createPortal, handleWebhook, billingEnabled, premiumEnabled, referralInfo } from "./billing.js";
 import { adminStats, isAdmin } from "./admin.js";
@@ -13,6 +13,7 @@ import { exportAccount, deleteAccount } from "./account.js";
 import { registerOptions, registerVerify, signinOptions, signinVerify, listPasskeys, deletePasskey, listSessions, endSession, endOtherSessions } from "./passkeys.js";
 import { startOAuth, finishOAuth, unlinkIdentity, enabledProviders } from "./oauth.js";
 import { getProfile, updateProfile } from "./profile.js";
+import { setPassword, removePassword, passwordSignIn } from "./password.js";
 import { supportChat, supportEnabled } from "./support.js";
 import { createAssignment, deleteAssignment, listClasses, createClass, updateClass, deleteClass, rotateCode, previewJoin, joinClass, leaveClass, removeStudent, roster, rosterCsv } from "./classes.js";
 
@@ -144,6 +145,12 @@ async function route(request, env) {
     const { user, token } = await verifyCode(env, request, await readJson(request));
     return json(env, request, { user: { id: user.id, email: user.email }, token });
   }
+  // Backup sign-in with a password. The apps get a bearer token; the website gets the session cookie.
+  if (path === "/v1/auth/password" && method === "POST") {
+    const user = await passwordSignIn(env, request, await readJson(request));
+    if (isAppRequest(env, request)) return json(env, request, { user, token: await createSessionToken(env, request, user, "password") });
+    return json(env, request, { user }, 200, { "Set-Cookie": await createSession(env, request, user, "password") });
+  }
   if (path === "/v1/auth/passkey/options" && method === "POST") return json(env, request, await signinOptions(env, request));
   if (path === "/v1/auth/passkey/verify" && method === "POST") {
     const { user, cookie } = await signinVerify(env, request, await readJson(request));
@@ -268,6 +275,8 @@ async function route(request, env) {
     if (method === "GET") return json(env, request, await getProfile(env, user));
     if (method === "PUT") return json(env, request, await updateProfile(env, request, user, await readJson(request)));
   }
+  if (path === "/v1/account/password" && method === "POST") return json(env, request, await setPassword(env, request, user, await readJson(request)));
+  if (path === "/v1/account/password" && method === "DELETE") return json(env, request, await removePassword(env, request, user));
   if ((m = path.match(/^\/v1\/identities\/([a-z]{3,12})$/)) && method === "DELETE") return json(env, request, await unlinkIdentity(env, request, user, m[1]));
 
   if (path === "/v1/account/export" && method === "GET") return json(env, request, await exportAccount(env, user), 200, { "Content-Disposition": 'attachment; filename="cyber-cert-study-account.json"' });
