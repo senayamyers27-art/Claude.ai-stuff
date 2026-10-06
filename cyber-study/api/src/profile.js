@@ -5,15 +5,17 @@ import { audit } from "./audit.js";
 import { enabledProviders, cleanName, PROVIDERS } from "./oauth.js";
 import CERTS from "./cert-meta.js";
 import { maskPhone, smsEnabled } from "./sms.js";
+import { REMIND } from "./notify.js";
 
 export async function getProfile(env, user) {
-  const u = await env.DB.prepare("SELECT email, created_at, display_name, bio, goal_cert, weekly_hours, phone, role, exam_date, password_set_at, sms_phone, email_tips FROM users WHERE id = ?").bind(user.id).first();
+  const u = await env.DB.prepare("SELECT email, created_at, display_name, bio, goal_cert, weekly_hours, phone, role, exam_date, password_set_at, sms_phone, email_tips, remind, remind_hour, tz, countdown, news FROM users WHERE id = ?").bind(user.id).first();
   const ids = (await env.DB.prepare("SELECT provider, email, created_at, last_used_at FROM identities WHERE user_id = ? ORDER BY created_at").bind(user.id).all()).results || [];
   return {
     email: u.email, createdAt: u.created_at,
     displayName: u.display_name || "", bio: u.bio || "", goalCert: u.goal_cert || "", weeklyHours: u.weekly_hours || null,
     phone: u.phone || "", role: u.role || "", examDate: u.exam_date || "", hasPassword: !!u.password_set_at,
     smsPhone: maskPhone(u.sms_phone), sms: smsEnabled(env), emailTips: !!u.email_tips,
+    remind: u.remind || "off", remindHour: u.remind_hour == null ? 18 : u.remind_hour, tz: u.tz || "", countdown: !!u.countdown, news: !!u.news,
     identities: ids.filter(i => PROVIDERS[i.provider]).map(i => ({ provider: i.provider, email: i.email, createdAt: i.created_at, lastUsedAt: i.last_used_at })),
     providers: enabledProviders(env)
   };
@@ -55,6 +57,11 @@ export async function updateProfile(env, request, user, body) {
   }
   if (has("phone")) set.phone = cleanPhone(body.phone);
   if (has("emailTips")) set.email_tips = body.emailTips ? 1 : 0;
+  if (has("remind")) { if (!REMIND.includes(body.remind)) throw bad("bad_remind", "Choose how often to get reminders."); set.remind = body.remind; }
+  if (has("remindHour")) { const h = Number(body.remindHour); if (!Number.isInteger(h) || h < 0 || h > 23) throw bad("bad_hour", "Choose a time for reminders."); set.remind_hour = h; }
+  if (has("tz")) { const z = String(body.tz || ""); let ok = !z; try { if (z && z.length <= 64) { new Intl.DateTimeFormat("en-US", { timeZone: z }); ok = true; } } catch (e) {} if (!ok) throw bad("bad_tz", "Unknown time zone."); set.tz = z || null; }
+  if (has("countdown")) set.countdown = body.countdown ? 1 : 0;
+  if (has("news")) set.news = body.news ? 1 : 0;
   if (has("role")) {
     const role = body.role ? String(body.role) : null;
     if (role && !Object.prototype.hasOwnProperty.call(ROLES, role)) throw bad("bad_role", "Pick what describes you from the list.");

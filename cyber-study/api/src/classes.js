@@ -68,8 +68,9 @@ export async function listClasses(env, user) {
     const list = await assignmentsFor(env, j.id);
     if (list.length && !myDocs) myDocs = (await env.DB.prepare("SELECT doc_key, body, updated_at FROM progress_docs WHERE user_id = ?").bind(user.id).all()).results || [];
     const mine = list.length ? studentSummary(myDocs, j.cert_id) : null;
+    const exits = await exitsDoneBy(env, j.id, user.id);
     joinedOut.push({ id: j.id, name: j.name, certId: j.cert_id, teacherName: j.teacher_name, displayName: j.display_name, showEmail: !!j.show_email, joinedAt: j.joined_at,
-      assignments: list.map(a => ({ ...a, ...assignmentProgress(a, mine) })) });
+      assignments: list.map(a => ({ ...a, ...assignmentProgress(a, mine, exits) })) });
   }
   return {
     teaching: teaching.map(classOut),
@@ -168,6 +169,7 @@ export async function leaveClass(env, request, user, classId) {
   if (!CLASS_ID_RE.test(classId)) throw notFound("Class not found.");
   const r = await env.DB.prepare("DELETE FROM class_members WHERE class_id = ? AND user_id = ?").bind(classId, user.id).run();
   if (!r.meta || r.meta.changes !== 1) throw notFound("You're not in that class.");
+  await dropExitAnswers(env, classId, user.id);
   await audit(env, request, { actor: user.id, action: "class.left", target: classId });
   return { left: true };
 }
@@ -175,7 +177,9 @@ export async function leaveClass(env, request, user, classId) {
 export async function removeStudent(env, request, user, classId, memberId) {
   const c = await ownClass(env, user, classId);
   if (!MEMBER_ID_RE.test(memberId)) throw notFound("Student not found.");
+  const mem = await env.DB.prepare("SELECT user_id FROM class_members WHERE id = ? AND class_id = ?").bind(memberId, c.id).first();
   const r = await env.DB.prepare("DELETE FROM class_members WHERE id = ? AND class_id = ?").bind(memberId, c.id).run();
+  if (mem) await dropExitAnswers(env, c.id, mem.user_id);
   if (!r.meta || r.meta.changes !== 1) throw notFound("Student not found.");
   await audit(env, request, { actor: user.id, action: "class.student_removed", target: c.id });
   return { removed: true };
@@ -224,33 +228,53 @@ export function certSummary(doc, meta, at = now()) {
 export function studentSummary(docs, classCertId, at = now()) {
   const certs = [];
   let labsDone = 0, lastActive = null;
+  const detail = { read: {}, labs: new Set() };
   for (const d of docs) {
     lastActive = Math.max(lastActive || 0, num(d.updated_at)) || null;
     let body = null;
     try { body = JSON.parse(d.body); } catch (e) { continue; }
-    if (d.doc_key === "labs") { labsDone = isObj(body) ? Object.values(body).filter(l => isObj(l) && l.done).length : 0; continue; }
+    if (d.doc_key === "labs") {
+      labsDone = isObj(body) ? Object.values(body).filter(l => isObj(l) && l.done).length : 0;
+      if (isObj(body)) Object.entries(body).forEach(([k, l]) => { if (isObj(l) && l.done) detail.labs.add(k); });
+      continue;
+    }
     const m = /^cert:([a-z0-9-]{1,40})$/.exec(d.doc_key);
     if (!m) continue;
+    detail.read[m[1]] = new Set(isObj(body) && isObj(body.read) ? Object.keys(body.read).filter(k => body.read[k]) : []);
     const s = certSummary(body, Object.prototype.hasOwnProperty.call(CERT_META, m[1]) ? CERT_META[m[1]] : undefined, at);
     // A certification counts as studied once there is any activity in it.
     if (m[1] !== classCertId && !s.answered && !s.lessonsRead && !s.handsOn && s.bestExam == null && !countTrue(isObj(body) && body.checks)) continue;
     certs.push({ certId: m[1], ...s, lastActive: num(d.updated_at) || null });
   }
   certs.sort((a, b) => (b.certId === classCertId) - (a.certId === classCertId) || (b.lastActive || 0) - (a.lastActive || 0));
-  return { certs, labsDone, lastActive };
+  const out = { certs, labsDone, lastActive };
+  // Which lessons and labs are done, for one-lesson and one-lab assignments. Not enumerable, so it never reaches
+  // the teacher's roster or the CSV: only "done" or "not yet" for the assigned item does.
+  Object.defineProperty(out, "detail", { value: detail, enumerable: false });
+  return out;
 }
 
 /* ---------- assignments ---------- */
 // A target on one certification: lessons read, best practice exam %, exam readiness %, or questions answered.
-export const ASSIGNMENT_KINDS = { lessons: [1, 500], exam: [1, 100], readiness: [1, 100], questions: [1, 5000] };
+// Or one item: read a lesson, finish a lab, or answer a lesson's exit ticket (from its teacher edition).
+export const ASSIGNMENT_KINDS = { lessons: [1, 500], exam: [1, 100], readiness: [1, 100], questions: [1, 5000], lesson: [1, 1], lab: [1, 1], exit: [1, 1] };
+const ITEM_KINDS = new Set(["lesson", "lab", "exit"]);
+// The same key as lessonKey() in public/assets/engine.js.
+export const lessonKeyOf = t => "l" + [...String(t)].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7).toString(36);
 export const ASSIGNMENT_ID_RE = /^asg_[0-9a-f]{24}$/;
 const MAX_ASSIGNMENTS_PER_CLASS = 50;
-const assignmentOut = a => ({ id: a.id, title: a.title, certId: a.cert_id, kind: a.kind, target: a.target, dueDate: a.due_date || null, createdAt: a.created_at });
+const assignmentOut = a => ({ id: a.id, title: a.title, certId: a.cert_id, kind: a.kind, target: a.target, item: a.item || null, dueDate: a.due_date || null, createdAt: a.created_at });
 async function assignmentsFor(env, classId) {
   return ((await env.DB.prepare("SELECT * FROM class_assignments WHERE class_id = ? ORDER BY COALESCE(due_date, '9999'), created_at").bind(classId).all()).results || []).map(assignmentOut);
 }
 // How far a student is on one assignment: { value, done } from their summary (studentSummary's certs).
-export function assignmentProgress(a, summary) {
+export function assignmentProgress(a, summary, exitsDone = new Set()) {
+  if (a.kind === "exit") { const done = exitsDone.has(a.id); return { value: done ? 1 : 0, done }; }
+  if (a.kind === "lesson" || a.kind === "lab") {
+    const d = summary && summary.detail;
+    const done = !!d && (a.kind === "lab" ? d.labs.has(a.item) : !!(d.read[a.certId] && d.read[a.certId].has(a.item)));
+    return { value: done ? 1 : 0, done };
+  }
   const s = summary && summary.certs.find(c => c.certId === a.certId);
   const value = !s ? 0 : a.kind === "lessons" ? s.lessonsRead : a.kind === "exam" ? (s.bestExam || 0) : a.kind === "readiness" ? (s.readiness || 0) : s.answered;
   return { value, done: value >= a.target };
@@ -264,15 +288,25 @@ export async function createAssignment(env, request, user, classId, body) {
   if (!certId) throw bad("invalid_cert", "Choose a certification.");
   const range = ASSIGNMENT_KINDS[body.kind];
   if (!range) throw bad("invalid_kind", "Choose what the assignment asks for.");
-  const target = parseInt(body.target, 10);
+  const target = ITEM_KINDS.has(body.kind) ? 1 : parseInt(body.target, 10);
   if (!(target >= range[0] && target <= range[1])) throw bad("invalid_target", `The target must be ${range[0]}–${range[1]}.`);
+  let item = null;
+  if (body.kind === "lab") {
+    item = String(body.item || "");
+    if (!/^lab-[a-z0-9-]{1,60}$/.test(item)) throw bad("invalid_item", "Choose a lab.");
+  } else if (ITEM_KINDS.has(body.kind)) {
+    item = String(body.item || "");
+    const meta = Object.prototype.hasOwnProperty.call(CERT_META, certId) ? CERT_META[certId] : null;
+    if (!/^l[a-z0-9]{1,12}$/.test(item) || (meta && Array.isArray(meta.lessons) && !meta.lessons.includes(item))) throw bad("invalid_item", "Choose a lesson from this certification.");
+    if (body.kind === "exit" && !(await teacherPlan(env, certId, item))) throw bad("no_exit_ticket", "That lesson doesn't have an exit ticket yet.");
+  }
   const due = body.dueDate == null || body.dueDate === "" ? null : String(body.dueDate);
   if (due && !/^\d{4}-\d{2}-\d{2}$/.test(due)) throw bad("invalid_due", "Use a date like 2026-10-31.");
   const n = (await env.DB.prepare("SELECT COUNT(*) AS n FROM class_assignments WHERE class_id = ?").bind(c.id).first()).n;
   if (n >= MAX_ASSIGNMENTS_PER_CLASS) throw new HttpError(409, "too_many_assignments", `A class can have up to ${MAX_ASSIGNMENTS_PER_CLASS} assignments. Delete an old one first.`);
-  const a = { id: newId("asg"), class_id: c.id, title, cert_id: certId, kind: body.kind, target, due_date: due, created_at: now() };
-  await env.DB.prepare("INSERT INTO class_assignments (id, class_id, title, cert_id, kind, target, due_date, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-    .bind(a.id, a.class_id, a.title, a.cert_id, a.kind, a.target, a.due_date, a.created_at).run();
+  const a = { id: newId("asg"), class_id: c.id, title, cert_id: certId, kind: body.kind, target, item, due_date: due, created_at: now() };
+  await env.DB.prepare("INSERT INTO class_assignments (id, class_id, title, cert_id, kind, target, item, due_date, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+    .bind(a.id, a.class_id, a.title, a.cert_id, a.kind, a.target, a.item, a.due_date, a.created_at).run();
   await audit(env, request, { actor: user.id, action: "class.assignment_created", target: c.id });
   return assignmentOut(a);
 }
@@ -297,13 +331,14 @@ export async function roster(env, user, classId) {
   for (const m of members) {
     const docs = (await env.DB.prepare("SELECT doc_key, body, updated_at FROM progress_docs WHERE user_id = ?").bind(m.user_id).all()).results || [];
     const summary = studentSummary(docs, c.cert_id, at);
+    const exits = await exitsDoneBy(env, c.id, m.user_id);
     students.push({
       memberId: m.id,
       displayName: m.display_name,
       email: m.show_email ? m.email : null,
       joinedAt: m.joined_at,
       ...summary,
-      assignments: assignments.map(a => ({ id: a.id, ...assignmentProgress(a, summary) }))
+      assignments: assignments.map(a => ({ id: a.id, ...assignmentProgress(a, summary, exits) }))
     });
   }
   return { class: classOut({ ...c, students: members.length }), assignments: assignments.map(a => ({ ...a, done: students.filter(s => s.assignments.find(x => x.id === a.id).done).length })), students };
@@ -322,4 +357,66 @@ export function rosterCsv(r) {
     for (const x of s.certs) rows.push([s.displayName, s.email, x.certId, x.readiness, x.lessonsRead, x.lessonsTotal, x.bestExam, x.answered, x.handsOn, s.labsDone, iso(x.lastActive)]);
   }
   return rows.map(row => row.map(q).join(",")).join("\r\n") + "\r\n";
+}
+
+/* ---------- online exit tickets ---------- */
+// The lesson's plan from its teacher edition (in the private bucket), or null.
+async function teacherPlan(env, certId, key) {
+  const obj = env.CONTENT ? await env.CONTENT.get(`member/teacher/${certId}.json`) : null;
+  if (!obj) return null;
+  let j; try { j = JSON.parse(typeof obj.body === "string" ? obj.body : await new Response(obj.body).text()); } catch (e) { return null; }
+  return ((j && j.plans) || []).find(p => p && lessonKeyOf(p.t) === key && Array.isArray(p.exit) && p.exit.length) || null;
+}
+async function exitsDoneBy(env, classId, userId) {
+  const rows = (await env.DB.prepare("SELECT r.assignment_id FROM exit_responses r JOIN class_assignments a ON a.id = r.assignment_id WHERE a.class_id = ? AND r.user_id = ?").bind(classId, userId).all()).results || [];
+  return new Set(rows.map(r => r.assignment_id));
+}
+async function dropExitAnswers(env, classId, userId) {
+  await env.DB.prepare("DELETE FROM exit_responses WHERE user_id = ? AND assignment_id IN (SELECT id FROM class_assignments WHERE class_id = ?)").bind(userId, classId).run();
+}
+// An exit-ticket assignment in a class the caller teaches or belongs to.
+async function exitAssignment(env, user, classId, asgId) {
+  if (!CLASS_ID_RE.test(classId) || !ASSIGNMENT_ID_RE.test(asgId)) throw notFound("Assignment not found.");
+  const a = await env.DB.prepare("SELECT a.*, c.teacher_id FROM class_assignments a JOIN classes c ON c.id = a.class_id WHERE a.id = ? AND a.class_id = ? AND a.kind = 'exit'").bind(asgId, classId).first();
+  if (!a) throw notFound("Assignment not found.");
+  const teacher = a.teacher_id === user.id;
+  if (!teacher && !(await env.DB.prepare("SELECT 1 AS x FROM class_members WHERE class_id = ? AND user_id = ?").bind(classId, user.id).first())) throw notFound("Assignment not found.");
+  const plan = await teacherPlan(env, a.cert_id, a.item);
+  if (!plan) throw notFound("That exit ticket isn't available right now.");
+  return { a, plan, teacher };
+}
+
+// GET: the questions (never the answers) and the student's own submitted answers, if any.
+export async function exitTicket(env, user, classId, asgId) {
+  const { a, plan } = await exitAssignment(env, user, classId, asgId);
+  const mine = await env.DB.prepare("SELECT answers, created_at FROM exit_responses WHERE assignment_id = ? AND user_id = ?").bind(a.id, user.id).first();
+  return { id: a.id, title: a.title, certId: a.cert_id, lesson: plan.t, questions: plan.exit.map(q => q[0]), answers: mine ? JSON.parse(mine.answers) : null, submittedAt: mine ? mine.created_at : null };
+}
+
+// POST { answers: [..] }: a class member submits (or updates) their answers.
+export async function submitExitTicket(env, request, user, classId, asgId, body) {
+  const { a, plan, teacher } = await exitAssignment(env, user, classId, asgId);
+  if (teacher) throw bad("teacher", "Students answer exit tickets; you'll see their answers here.");
+  await rateLimit(env, "exit:" + user.id, 60, 60 * 60 * 1000);
+  const raw = Array.isArray(body.answers) ? body.answers : [];
+  if (raw.length !== plan.exit.length) throw bad("invalid_answers", "Answer every question.");
+  const answers = raw.map(x => String(x == null ? "" : x).replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, "").trim().slice(0, 1000));
+  if (answers.some(x => !x)) throw bad("invalid_answers", "Answer every question.");
+  await env.DB.prepare(`INSERT INTO exit_responses (assignment_id, user_id, answers, created_at) VALUES (?, ?, ?, ?)
+    ON CONFLICT(assignment_id, user_id) DO UPDATE SET answers = excluded.answers, created_at = excluded.created_at`).bind(a.id, user.id, JSON.stringify(answers), now()).run();
+  return { submitted: true };
+}
+
+// GET (teacher): every student's answers next to the expected answers.
+export async function exitResults(env, user, classId, asgId) {
+  const { a, plan, teacher } = await exitAssignment(env, user, classId, asgId);
+  if (!teacher) throw notFound("Assignment not found.");
+  const rows = (await env.DB.prepare(
+    `SELECT m.display_name, r.answers, r.created_at FROM class_members m LEFT JOIN exit_responses r ON r.user_id = m.user_id AND r.assignment_id = ?
+     WHERE m.class_id = ? ORDER BY m.display_name COLLATE NOCASE`).bind(a.id, classId).all()).results || [];
+  return {
+    id: a.id, title: a.title, lesson: plan.t,
+    questions: plan.exit.map(([q, ans]) => ({ question: q, expected: ans })),
+    students: rows.map(r => ({ displayName: r.display_name, answers: r.answers ? JSON.parse(r.answers) : null, submittedAt: r.created_at || null }))
+  };
 }

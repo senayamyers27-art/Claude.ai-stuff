@@ -21,7 +21,7 @@ simple = { limit = 120, period = 60 }
 
 # Daily clean-up of expired sign-in links, sessions and old logs, and the welcome emails (scheduled() in src/index.js).
 [triggers]
-crons = ["23 4 * * *", "47 15 * * *"]
+crons = ["23 4 * * *", "47 15 * * *", "17 * * * *"]
 
 [[d1_databases]]
 binding = "DB"

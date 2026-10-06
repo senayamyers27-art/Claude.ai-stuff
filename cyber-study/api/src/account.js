@@ -5,7 +5,7 @@ import { billingEnabled } from "./billing.js";
 
 export async function exportAccount(env, user) {
   const q = (sql, ...a) => env.DB.prepare(sql).bind(...a);
-  const u = await q("SELECT id, email, created_at, display_name, bio, goal_cert, weekly_hours, phone, role, exam_date, password_set_at, sms_phone, sms_verified_at, email_tips FROM users WHERE id = ?", user.id).first();
+  const u = await q("SELECT id, email, created_at, display_name, bio, goal_cert, weekly_hours, phone, role, exam_date, password_set_at, sms_phone, sms_verified_at, email_tips, remind, remind_hour, tz, countdown, news FROM users WHERE id = ?", user.id).first();
   const docs = (await q("SELECT doc_key, body, version, updated_at FROM progress_docs WHERE user_id = ?", user.id).all()).results || [];
   const orgs = (await q("SELECT o.id, o.name, m.role, m.joined_at FROM org_members m JOIN orgs o ON o.id = m.org_id WHERE m.user_id = ?", user.id).all()).results || [];
   const cohorts = (await q("SELECT c.id, c.name, c.cert_id FROM cohort_members m JOIN cohorts c ON c.id = m.cohort_id WHERE m.user_id = ?", user.id).all()).results || [];
@@ -14,6 +14,9 @@ export async function exportAccount(env, user) {
   const subs = (await q("SELECT plan, status, seats, current_period_end, updated_at FROM subscriptions WHERE user_id = ?", user.id).all()).results || [];
   const sessions = (await q("SELECT created_at, expires_at, user_agent FROM sessions WHERE user_id = ?", user.id).all()).results || [];
   const identities = (await q("SELECT provider, email, created_at, last_used_at FROM identities WHERE user_id = ?", user.id).all()).results || [];
+  const stories = (await q("SELECT cert_id, passed_on, quote, shown_as, publish, status, created_at FROM stories WHERE user_id = ?", user.id).all()).results || [];
+  const studyGroups = (await q("SELECT g.name, g.cert_id, m.display_name, m.joined_at FROM study_group_members m JOIN study_groups g ON g.id = m.group_id WHERE m.user_id = ?", user.id).all()).results || [];
+  const exitTickets = (await q("SELECT assignment_id, answers, created_at FROM exit_responses WHERE user_id = ?", user.id).all()).results || [];
   const passkeys = (await q("SELECT name, created_at, last_used_at FROM passkeys WHERE user_id = ?", user.id).all()).results || [];
   const referral = await q("SELECT code, created_at FROM referral_codes WHERE user_id = ?", user.id).first();
   const referralRewards = (await q("SELECT amount, status, created_at, credited_at FROM referral_rewards WHERE referrer_id = ?", user.id).all()).results || [];
@@ -21,7 +24,7 @@ export async function exportAccount(env, user) {
     exportedAt: new Date().toISOString(),
     user: u,
     progress: docs.map(d => ({ key: d.doc_key, version: d.version, updatedAt: d.updated_at, body: JSON.parse(d.body) })),
-    organizations: orgs, cohorts, classesTaught, classesJoined, subscriptions: subs, sessions, passkeys, linkedSignIns: identities,
+    organizations: orgs, cohorts, classesTaught, classesJoined, subscriptions: subs, sessions, passkeys, linkedSignIns: identities, studyGroups, successStories: stories, exitTickets: exitTickets.map(e => ({ assignmentId: e.assignment_id, answers: JSON.parse(e.answers), submittedAt: e.created_at })),
     referral: referral || null, referralRewards
   };
 }

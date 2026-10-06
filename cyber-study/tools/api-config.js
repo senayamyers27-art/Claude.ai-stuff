@@ -60,9 +60,9 @@ name = "API_LIMIT"
 namespace_id = "1001"
 simple = { limit = 120, period = 60 }
 
-# Daily clean-up of expired sign-in links, sessions and old logs (04:23 UTC), and the welcome emails (15:47 UTC).
+# Daily clean-up of expired sign-in links, sessions and old logs (04:23 UTC), the welcome emails (15:47 UTC) and the reminders people chose (hourly at :17).
 [triggers]
-crons = ["23 4 * * *", "47 15 * * *"]
+crons = ["23 4 * * *", "47 15 * * *", "17 * * * *"]
 
 [[d1_databases]]
 binding = "DB"

@@ -98,8 +98,8 @@ export async function unsubscribe(env, request, url) {
   const u = url.searchParams.get("u") || "", tk = url.searchParams.get("t") || "";
   if (!/^usr_[0-9a-f]{24}$/.test(u) || !unsubKey(env) || !safeEqual(tk, await unsubToken(env, u))) throw new HttpError(400, "bad_link", "This unsubscribe link isn't valid.");
   if (request.method === "GET") return {
-    html: PAGE("Stop study emails?", `<p>You'll stop getting StudyToCert study tips by email. Sign-in links and account notices still come when you ask for them.</p><form method="post" action="?u=${encodeURIComponent(u)}&amp;t=${encodeURIComponent(tk)}"><button type="submit">Stop study emails</button></form><p><a href="${escHtml(env.SITE_ORIGIN)}/">Back to StudyToCert</a></p>`)
+    html: PAGE("Stop study emails?", `<p>You'll stop getting StudyToCert study emails: tips, reminders, the exam countdown and news. Sign-in links and account notices still come when you ask for them.</p><form method="post" action="?u=${encodeURIComponent(u)}&amp;t=${encodeURIComponent(tk)}"><button type="submit">Stop study emails</button></form><p><a href="${escHtml(env.SITE_ORIGIN)}/">Back to StudyToCert</a></p>`)
   };
-  await env.DB.prepare("UPDATE users SET email_tips = 0 WHERE id = ?").bind(u).run();
-  return { html: PAGE("You're unsubscribed", `<p>You won't get StudyToCert study emails any more. You can turn them back on from your profile.</p><p><a href="${escHtml(env.SITE_ORIGIN)}/">Back to StudyToCert</a></p>`) };
+  await env.DB.prepare("UPDATE users SET email_tips = 0, remind = 'off', countdown = 0, news = 0 WHERE id = ?").bind(u).run();
+  return { html: PAGE("You're unsubscribed", `<p>You won't get StudyToCert study emails any more: no tips, reminders, exam countdown or news. Sign-in links and account notices still come when you ask for them. You can turn emails back on from your profile.</p><p><a href="${escHtml(env.SITE_ORIGIN)}/">Back to StudyToCert</a></p>`) };
 }
