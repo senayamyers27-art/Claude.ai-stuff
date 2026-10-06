@@ -48,7 +48,9 @@ function components() {
 
   // Font
   add({ type: "file", name: "Public Sans", purl: "pkg:github/uswds/public-sans", licenses: [{ license: { id: "OFL-1.1" } }], description: "Self-hosted web font",
-    files: hashes("assets/fonts") });
+    files: hashes("assets/fonts").filter(f => !/opendyslexic|OpenDyslexic/.test(f.name || f.path || JSON.stringify(f))) });
+  add({ type: "file", name: "OpenDyslexic", version: "5.3.0", purl: "pkg:npm/%40fontsource/opendyslexic@5.3.0", licenses: [{ license: { id: "OFL-1.1" } }], description: "Self-hosted web font for the Easy-read font setting",
+    files: hashes("assets/fonts").filter(f => /opendyslexic|OpenDyslexic/.test(f.name || f.path || JSON.stringify(f))) });
 
   // Build and test tools (never shipped).
   const lock = JSON.parse(read("package-lock.json"));

@@ -5,6 +5,9 @@ import { HttpError, readJson, notFound, clientIp } from "./util.js";
 import { rateLimit, securityLog, setHashKey } from "./audit.js";
 import { smsEnabled, startAddPhone, confirmPhone, removePhone, startSmsSignIn, verifySmsSignIn } from "./sms.js";
 import { sendWelcomeEmails, unsubscribe } from "./welcome.js";
+import { sendScheduledEmails } from "./notify.js";
+import { saveStory, myStories, deleteStory, publicStories, adminStories, moderateStory } from "./stories.js";
+import { createGroup, listGroups, previewGroup, joinGroup, leaveGroup, newGroupCode } from "./groups.js";
 import { requestMagicLink, verifyMagicLink, verifyCode, requireUser, currentUser, logout, clearCookie, refreshedCookies, isAppOrigin, isAppRequest, createSession, createSessionToken } from "./auth.js";
 import { listDocs, putDoc, MAX_DOC_BYTES } from "./progress.js";
 import { entitlementsFor, createCheckout, createPortal, handleWebhook, billingEnabled, premiumEnabled, referralInfo } from "./billing.js";
@@ -17,7 +20,7 @@ import { startOAuth, finishOAuth, unlinkIdentity, enabledProviders } from "./oau
 import { getProfile, updateProfile } from "./profile.js";
 import { setPassword, removePassword, passwordSignIn } from "./password.js";
 import { supportChat, supportEnabled } from "./support.js";
-import { createAssignment, deleteAssignment, listClasses, createClass, updateClass, deleteClass, rotateCode, previewJoin, joinClass, leaveClass, removeStudent, roster, rosterCsv } from "./classes.js";
+import { exitTicket, submitExitTicket, exitResults, createAssignment, deleteAssignment, listClasses, createClass, updateClass, deleteClass, rotateCode, previewJoin, joinClass, leaveClass, removeStudent, roster, rosterCsv } from "./classes.js";
 
 const SECURITY_HEADERS = {
   "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
@@ -79,7 +82,9 @@ export default {
   // Daily clean-up (wrangler [triggers] crons), so expired sign-in links, sessions and logs don't pile up.
   async scheduled(controller, env, ctx) {
     // 15:47 UTC: the welcome emails (./welcome.js); the other run cleans up.
-    ctx.waitUntil(controller && controller.cron === "47 15 * * *" ? sendWelcomeEmails(env) : purgeExpired(env));
+    // 15:47 UTC: the welcome emails; every hour at :17, the reminders people chose (./notify.js); 04:23: clean-up.
+    const cron = controller && controller.cron;
+    ctx.waitUntil(cron === "47 15 * * *" ? sendWelcomeEmails(env) : cron === "17 * * * *" ? sendScheduledEmails(env) : purgeExpired(env));
   }
 };
 
@@ -214,6 +219,12 @@ async function route(request, env) {
     return json(env, request, { user: { id: u.id, email: u.email, displayName: (p && p.display_name) || "" }, billing: billingEnabled(env), premium: premiumEnabled(env), providers, support: supportEnabled(env), sms: smsEnabled(env), ...((await isTeacher(env, u)) ? { teacher: true } : {}), ...(isAdmin(env, u) ? { admin: true } : {}), ...(await entitlementsFor(env, u.id)) });
   }
 
+  // Approved success stories (./stories.js): public, no sign-in.
+  if (path === "/v1/stories" && method === "GET") {
+    const c = url.searchParams.get("cert");
+    return json(env, request, await publicStories(env, c && /^[a-z0-9-]{1,40}$/.test(c) ? c : null));
+  }
+
   // Everything below needs a signed-in user.
   const user = await requireUser(env, request);
   if (method !== "GET") await rateLimit(env, "write:" + user.id, Number(env.USER_WRITES_PER_HOUR) || USER_WRITES_PER_HOUR, 60 * 60 * 1000);
@@ -275,6 +286,24 @@ async function route(request, env) {
   }
 
   // Class mode (free): teachers create classes; students join with a code after agreeing to share.
+  if (path === "/v1/stories" && method === "POST") return json(env, request, await saveStory(env, request, user, await readJson(request)));
+  if (path === "/v1/stories/mine" && method === "GET") return json(env, request, await myStories(env, user));
+  if ((m = path.match(/^\/v1\/stories\/(sty_[0-9a-f]{24})$/)) && method === "DELETE") return json(env, request, await deleteStory(env, user, m[1]));
+  if (path === "/v1/admin/stories" && method === "GET") return json(env, request, await adminStories(env, user));
+  if ((m = path.match(/^\/v1\/admin\/stories\/(sty_[0-9a-f]{24})$/)) && method === "POST") return json(env, request, await moderateStory(env, user, m[1], await readJson(request)));
+
+  // Study groups (./groups.js).
+  if (path === "/v1/groups") {
+    if (method === "GET") return json(env, request, await listGroups(env, user));
+    if (method === "POST") return json(env, request, await createGroup(env, request, user, await readJson(request)));
+  }
+  if ((m = path.match(/^\/v1\/groups\/join\/([a-km-np-z2-9]{10})$/))) {
+    if (method === "GET") return json(env, request, await previewGroup(env, request, user, m[1]));
+    if (method === "POST") return json(env, request, await joinGroup(env, request, user, m[1], await readJson(request)));
+  }
+  if ((m = path.match(/^\/v1\/groups\/(grp_[0-9a-f]{24})\/membership$/)) && method === "DELETE") return json(env, request, await leaveGroup(env, request, user, m[1]));
+  if ((m = path.match(/^\/v1\/groups\/(grp_[0-9a-f]{24})\/code$/)) && method === "POST") return json(env, request, await newGroupCode(env, request, user, m[1]));
+
   if (path === "/v1/classes") {
     if (method === "GET") return json(env, request, await listClasses(env, user));
     if (method === "POST") return json(env, request, await createClass(env, request, user, await readJson(request)));
@@ -288,6 +317,11 @@ async function route(request, env) {
     if (method === "DELETE") return json(env, request, await deleteClass(env, request, user, m[1]));
   }
   if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/assignments$/)) && method === "POST") return json(env, request, await createAssignment(env, request, user, m[1], await readJson(request)));
+  if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/assignments\/(asg_[0-9a-f]{24})\/exit$/))) {
+    if (method === "GET") return json(env, request, await exitTicket(env, user, m[1], m[2]));
+    if (method === "POST") return json(env, request, await submitExitTicket(env, request, user, m[1], m[2], await readJson(request)));
+  }
+  if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/assignments\/(asg_[0-9a-f]{24})\/results$/)) && method === "GET") return json(env, request, await exitResults(env, user, m[1], m[2]));
   if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/assignments\/(asg_[0-9a-f]{24})$/)) && method === "DELETE") return json(env, request, await deleteAssignment(env, request, user, m[1], m[2]));
   if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/code$/)) && method === "POST") return json(env, request, await rotateCode(env, request, user, m[1]));
   if ((m = path.match(/^\/v1\/classes\/(cls_[0-9a-f]{24})\/membership$/)) && method === "DELETE") return json(env, request, await leaveClass(env, request, user, m[1]));

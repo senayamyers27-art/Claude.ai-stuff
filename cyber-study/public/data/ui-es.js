@@ -3,6 +3,7 @@ CertHub.addUiEs({
   exact: {
     "Menu": "Menú",
     "Sign up free to read": "Regístrate gratis para leer",
+    "Explain it simpler": "Explícalo más fácil",
     "Loading the full lesson…": "Cargando la lección completa…",
     "Connect to the internet to open this lesson.": "Conéctate a internet para abrir esta lección.",
     "Close menu": "Cerrar menú",

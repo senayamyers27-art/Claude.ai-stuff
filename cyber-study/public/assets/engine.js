@@ -23,15 +23,20 @@
   const LEVELS = ["", "Easy", "Medium", "Hard"];
 
   // "#<cert>.video-<lesson key>" opens the Lessons tab with that lesson's overview video ready to play.
-  let pendingVideo = null;
+  let pendingVideo = null, pendingLesson = null;
   function open(id, tab) {
     const vk = /^video-(l[a-z0-9]+)$/.exec(tab || "");
     if (vk) { tab = "learn"; pendingVideo = vk[1]; }
+    // "#<cert>.lesson-<key>" opens one lesson (links from class assignments and Google Classroom).
+    const lk = /^lesson-(l[a-z0-9]+)$/.exec(tab || "");
+    if (lk) { tab = "learn"; pendingLesson = lk[1]; }
     if (C && C.id === id && S) {
       // Same certification: switch tabs but keep any quiz in progress.
       active = true;
       if (TAB_IDS.includes(tab) && tab !== S.tab) { S.tab = tab; S.planner = false; if (tab === "week") S.viewWeek = null; }
       if (pendingVideo) S.openLesson = pendingVideo;
+    if (pendingLesson) { S.openLesson = pendingLesson; pendingLesson = null; history.replaceState(null, "", `#${C.id}.learn`); }
+      if (pendingLesson) { S.openLesson = pendingLesson; pendingLesson = null; history.replaceState(null, "", `#${C.id}.learn`); }
       render(); return true;
     }
     if (!Object.prototype.hasOwnProperty.call(CertHub.certs, id)) return false;
@@ -397,6 +402,7 @@
     return `<li><details class="lesson" data-k="${lessonKey(t)}"${l.tt ? ` lang="es"` : ""}><summary><span class="grow">${esc(l.tt || t)}</span>${r ? `<span class="chip done">${tr("Read")}</span>` : ""}</summary>
       <div class="lbody">
         <div class="btns" data-style="margin-top:0"><button type="button" class="btn ghost sm" data-act="video" data-k="${lessonKey(t)}">${tr("▶ Watch the overview")}</button>${ytLink(t)}${"speechSynthesis" in window ? `<button type="button" class="btn ghost sm" data-act="listen" data-k="${lessonKey(t)}" aria-pressed="false">${tr("🔊 Listen")}</button>` : ""}</div>
+        ${l.simple ? `<details class="lsimple no-print"><summary>${tr("Explain it simpler")}</summary><p>${inline(l.simple)}</p></details>` : ""}
         ${l.hook ? `<div class="lhook">${CertHub.fx.icon("spark")}<p>${inline(l.hook)}</p></div>` : ""}
         ${(l.body || []).map((x, i) => para(x) + (i === 0 ? diagramHtml(t) : "")).join("")}
         ${l.analogy || l.mnemonic ? `<div class="panel lidea">${l.analogy ? `<p><strong>${tr("Think of it like this")}</strong> ${inline(l.analogy)}</p>` : ""}${l.mnemonic ? `<p><strong>${tr("Memory trick")}</strong> ${inline(l.mnemonic)}</p>` : ""}</div>` : ""}
@@ -1113,8 +1119,58 @@
       ${x.discussion && x.discussion.length ? `<h3>Discussion questions</h3><ul>${x.discussion.map(q => `<li>${inline(q)}</li>`).join("")}</ul>` : ""}
       ${x.exit && x.exit.length ? `<h3>Exit ticket</h3><ol class="texit">${x.exit.map(([q, a]) => `<li>${inline(q)}<p class="tanswer"><strong>Answer:</strong> ${inline(a)}</p></li>`).join("")}</ol>` : ""}
       ${x.differentiation && x.differentiation.length ? `<h3>Differentiation</h3><ul>${x.differentiation.map(d => `<li>${inline(d)}</li>`).join("")}</ul>` : ""}
-      <div class="btns no-print"><button type="button" class="btn ghost sm" data-act="teachstudent" data-k="${k}">Open the student lesson</button><button type="button" class="btn ghost sm" data-act="teachprint" data-k="${k}">Print this plan</button></div>
+      <div class="btns no-print"><button type="button" class="btn sm" data-act="teachslides" data-k="${k}">Present slides</button><button type="button" class="btn ghost sm" data-act="teachsheet" data-k="${k}">Print student worksheet</button><button type="button" class="btn ghost sm" data-act="teachprint" data-k="${k}">Print this plan</button><button type="button" class="btn ghost sm" data-act="teachstudent" data-k="${k}">Open the student lesson</button></div>
+      <div class="btns no-print" data-style="margin-top:0"><button type="button" class="btn ghost sm" data-act="teachassign" data-kind="lesson" data-k="${k}">Assign this lesson to a class</button>${x.exit && x.exit.length ? `<button type="button" class="btn ghost sm" data-act="teachassign" data-kind="exit" data-k="${k}">Assign the exit ticket online</button>` : ""}</div>
     </div></details>`;
+  }
+  const planTopic = k => [...teach[C.id].plans.keys()].find(x => lessonKey(x) === k) || "";
+  // Slides for presenting a lesson, built from the lesson and its plan. Arrow keys or the buttons move between
+  // slides; Print gives one slide per landscape page (save as PDF for a handout or to import elsewhere).
+  function slidesFor(k) {
+    const t = planTopic(k), x = teach[C.id].plans.get(t), l = lessonOf(t) || {};
+    const S2 = [];
+    const add = (cls, html) => S2.push(`<section class="slide ${esc(cls)}">${/* html: slide markup built with esc() and inline() */ html}</section>`);
+    add("title", `<p class="kicker">${esc(C.short)} ${esc(C.exam)}</p><h1>${esc((l.tt) || t)}</h1>${x.objectives && x.objectives.length ? `<h2>Today you will</h2><ul>${x.objectives.map(o => `<li>${inline(o.replace(/^Students will be able to /i, ""))}</li>`).join("")}</ul>` : ""}`);
+    if (x.warmup) add("", `<p class="kicker">Warm-up</p><h1>${inline(x.warmup)}</h1>`);
+    if (l.hook) add("story", `<p class="kicker">Picture this</p><p class="big">${inline(l.hook)}</p>`);
+    (l.body || []).filter(p => !/^```/.test(p)).forEach(p => { const ss = sentences(p); if (!ss.length) return; add("", `<h2>${inline(ss[0].trim())}</h2><ul>${ss.slice(1, 4).map(x2 => `<li>${inline(x2.trim())}</li>`).join("")}</ul>`); });
+    if (l.analogy) add("", `<p class="kicker">Think of it like this</p><p class="big">${inline(l.analogy)}</p>${l.mnemonic ? `<p><strong>Memory trick:</strong> ${inline(l.mnemonic)}</p>` : ""}`);
+    if (l.terms && l.terms.length) for (let i = 0; i < l.terms.length; i += 5) add("", `<p class="kicker">Key terms</p><dl>${l.terms.slice(i, i + 5).map(([a, b]) => `<dt>${inline(a)}</dt><dd>${inline(b)}</dd>`).join("")}</dl>`);
+    if (l.mistakes && l.mistakes.length) add("", `<p class="kicker">Common mistakes</p><ul class="lmistakes">${l.mistakes.slice(0, 4).map(([a, b]) => `<li><span class="wrong">${inline(a)}</span><span class="right">${inline(b)}</span></li>`).join("")}</ul>`);
+    (l.tryit || []).forEach(([q, a]) => { add("", `<p class="kicker">You decide</p><p class="big">${inline(q)}</p>`); add("", `<p class="kicker">Answer</p><p class="big">${inline(a)}</p>`); });
+    if (x.activity) add("", `<p class="kicker">Activity</p><h2>${esc(x.activity.title || "")}</h2><ol>${(x.activity.steps || []).map(st => `<li>${inline(st)}</li>`).join("")}</ol>`);
+    if (x.discussion && x.discussion.length) add("", `<p class="kicker">Discuss</p><ul>${x.discussion.map(q => `<li class="big">${inline(q)}</li>`).join("")}</ul>`);
+    if (x.exit && x.exit.length) add("", `<p class="kicker">Exit ticket</p><ol>${x.exit.map(([q]) => `<li class="big">${inline(q)}</li>`).join("")}</ol>`);
+    return S2;
+  }
+  function openSlides(k) {
+    const list = slidesFor(k); let i = 0;
+    const box = document.createElement("div"); box.className = "slides"; box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-label", "Slides");
+    box.innerHTML = `<div class="slidebar no-print"><span class="slidecount" aria-live="polite"></span><button type="button" class="btn ghost sm" data-s="prev">Previous</button><button type="button" class="btn sm" data-s="next">Next</button><button type="button" class="btn ghost sm" data-s="print">Print or save as PDF</button><button type="button" class="btn ghost sm" data-s="close">Close</button></div><div class="slidedeck">${list.join("")}</div>`;
+    document.body.appendChild(box); document.body.classList.add("presenting");
+    const show = () => { box.querySelectorAll(".slide").forEach((el, j) => { el.hidden = j !== i; }); box.querySelector(".slidecount").textContent = `${i + 1} / ${list.length}`; };
+    const close = () => { box.remove(); document.body.classList.remove("presenting"); document.removeEventListener("keydown", key); };
+    const key = e => { if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { i = Math.min(list.length - 1, i + 1); show(); e.preventDefault(); } else if (e.key === "ArrowLeft" || e.key === "PageUp") { i = Math.max(0, i - 1); show(); e.preventDefault(); } else if (e.key === "Escape") close(); };
+    box.addEventListener("click", e => { const b = e.target.closest("[data-s]"); if (!b) return; const a = b.dataset.s; if (a === "next") { i = Math.min(list.length - 1, i + 1); show(); } else if (a === "prev") { i = Math.max(0, i - 1); show(); } else if (a === "close") close(); else if (a === "print") { box.querySelectorAll(".slide").forEach(el => { el.hidden = false; }); window.print(); show(); } });
+    document.addEventListener("keydown", key);
+    if (box.requestFullscreen) box.requestFullscreen().catch(() => {});
+    show(); box.querySelector('[data-s="next"]').focus();
+  }
+  // A one-page student handout: warm-up, the activity, discussion and the exit ticket, with space to write.
+  function printSheet(k) {
+    const t = planTopic(k), x = teach[C.id].plans.get(t), l = lessonOf(t) || {};
+    const lines = n => `<div class="wlines">${"<span></span>".repeat(n)}</div>`;
+    const box = document.createElement("div"); box.className = "worksheet";
+    box.innerHTML = `<p class="wname">Name ____________________________ &nbsp; Date ______________</p>
+      <h1>${esc((l.tt) || t)}</h1><p class="note">${esc(C.short)} ${esc(C.exam)} · StudyToCert</p>
+      ${x.warmup ? `<h2>Warm-up</h2><p>${inline(x.warmup)}</p>${lines(3)}` : ""}
+      ${x.activity ? `<h2>Activity: ${esc(x.activity.title || "")}</h2><ol>${(x.activity.steps || []).map(st => `<li>${inline(st)}</li>`).join("")}</ol>${lines(5)}` : ""}
+      ${x.discussion && x.discussion.length ? `<h2>Discuss</h2>${x.discussion.map(q => `<p>${inline(q)}</p>${lines(2)}`).join("")}` : ""}
+      ${x.exit && x.exit.length ? `<h2>Exit ticket</h2><ol>${x.exit.map(([q]) => `<li>${inline(q)}${lines(2)}</li>`).join("")}</ol>` : ""}`;
+    document.body.appendChild(box); document.body.classList.add("printsheet");
+    const done = () => { box.remove(); document.body.classList.remove("printsheet"); window.removeEventListener("afterprint", done); };
+    window.addEventListener("afterprint", done); window.print();
+    setTimeout(() => { if (document.body.contains(box) && !window.matchMedia("print").matches) done(); }, 60000);
   }
   function teachView() {
     const head = `<h1>Teacher edition: ${esc(C.short)}</h1>`;
@@ -1669,6 +1725,9 @@
       },
       teachprintall: () => { document.querySelectorAll("#app details.tplan").forEach(d => { d.open = true; }); window.print(); },
       teachplan: () => { S.openPlan = t.dataset.k; location.hash = `${C.id}.teach`; },
+      teachassign: () => { const tt = planTopic(t.dataset.k); CertHub.sync.assignFrom({ kind: t.dataset.kind, cert: C.id, item: t.dataset.k, title: `${t.dataset.kind === "exit" ? "Exit ticket" : "Read"}: ${tt}` }); },
+      teachslides: () => openSlides(t.dataset.k),
+      teachsheet: () => printSheet(t.dataset.k),
       placement: () => {
         const per = Math.max(2, Math.min(5, Math.floor(24 / C.domains.length)));
         const qs = C.domains.flatMap(d => pickFor(q => q.d === d.id, per));

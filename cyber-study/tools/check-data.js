@@ -83,13 +83,14 @@ for (const id of CertHub.catalog) {
     const str = (v, min, max) => typeof v === "string" && v.trim().length >= min && v.length <= max;
     if (l.hook != null && !str(l.hook, 150, 1200)) L("hook should be a short opening scene (150 to 1200 characters)");
     if (l.analogy != null && !str(l.analogy, 60, 900)) L("analogy should be 60 to 900 characters");
+    if (l.simple != null && !str(l.simple, 150, 1200)) L("simple should be a plain-language version (150 to 1200 characters)");
     if (l.mnemonic != null && !str(l.mnemonic, 10, 500)) L("mnemonic should be 10 to 500 characters");
     if (l.mistakes != null && (!Array.isArray(l.mistakes) || l.mistakes.length < 2 || l.mistakes.length > 5 || !l.mistakes.every(pair))) L("mistakes needs 2 to 5 [mistake, correction] pairs");
     if (l.tryit != null && (!Array.isArray(l.tryit) || l.tryit.length < 1 || l.tryit.length > 3 || !l.tryit.every(pair))) L("tryit needs 1 to 3 [scenario, answer] pairs");
-    const extra = Object.keys(l).filter(k => !["t", "body", "terms", "example", "tip", "check", "hook", "analogy", "mnemonic", "mistakes", "tryit"].includes(k));
+    const extra = Object.keys(l).filter(k => !["t", "body", "terms", "example", "tip", "check", "hook", "simple", "analogy", "mnemonic", "mistakes", "tryit"].includes(k));
     if (extra.length) L(`unknown field ${extra[0]}`);
     if (/https?:\/\//.test(JSON.stringify(l))) L("no links inside lessons");
-    if (/[!]\s|[!]$|[\u{1F300}-\u{1FAFF}]/u.test([l.hook, l.analogy, l.mnemonic].concat(...(l.mistakes || []), ...(l.tryit || [])).filter(Boolean).join(" "))) L("no exclamation marks or emoji in the richer parts");
+    if (/[!]\s|[!]$|[\u{1F300}-\u{1FAFF}]/u.test([l.hook, l.simple, l.analogy, l.mnemonic].concat(...(l.mistakes || []), ...(l.tryit || [])).filter(Boolean).join(" "))) L("no exclamation marks or emoji in the richer parts");
   });
   const missing = topics.filter(t => !seen.has(t));
   if (missing.length) fail(id, `${missing.length} plan topics have no lesson, e.g. "${missing[0]}"`);

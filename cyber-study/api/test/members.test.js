@@ -217,3 +217,107 @@ test("teacher plans are built only into the private bundles, never the public fi
   assert.ok(!Object.keys(res.public).some(k => k.includes("teacher")));
   assert.ok(!Object.values(res.public).some(t => /"objectives"/.test(t)));
 });
+
+test("one-lesson, one-lab and exit-ticket assignments; students answer exit tickets and only the teacher sees them", async () => {
+  const env = makeEnv();
+  const meta = (await import("../src/cert-meta.js")).default["security-plus"];
+  const { lessonKeyOf } = await import("../src/classes.js");
+  const key = meta.lessons[0];
+  await env.CONTENT.put("member/teacher/security-plus.json", JSON.stringify({ id: "security-plus", plans: [{ t: "Control categories: technical, managerial, operational, physical", exit: [["Q1?", "A1"], ["Q2?", "A2"]] }] }));
+  assert.equal(lessonKeyOf("Control categories: technical, managerial, operational, physical"), key, "lesson keys match cert-meta");
+  const t = await signIn(env, "t.exit@example.com"), st = await signIn(env, "s.exit@example.com"), other = await signIn(env, "o.exit@example.com");
+  const cls = (await call(env, "POST", "/v1/classes", { cookie: t.cookie, body: { name: "Sec+ A", teacherName: "Ms. K", certId: "security-plus" } })).json;
+  await call(env, "POST", `/v1/classes/join/${cls.code}`, { cookie: st.cookie, body: { displayName: "Ana", consent: true } });
+  const mk = body => call(env, "POST", `/v1/classes/${cls.id}/assignments`, { cookie: t.cookie, body: { certId: "security-plus", ...body } });
+  assert.equal((await mk({ title: "Bad", kind: "lesson", item: "lnotreal" })).status, 400);
+  assert.equal((await mk({ title: "Bad lab", kind: "lab", item: "x" })).status, 400);
+  const lesson = (await mk({ title: "Read it", kind: "lesson", item: key })).json;
+  const lab = (await mk({ title: "Lab", kind: "lab", item: "lab-linux-cli" })).json;
+  const exit = (await mk({ title: "Exit", kind: "exit", item: key })).json;
+  assert.equal(lesson.item, key); assert.equal(exit.kind, "exit"); assert.equal(lab.target, 1);
+  assert.equal((await mk({ title: "No plan", kind: "exit", item: meta.lessons[1] })).json.error, "no_exit_ticket");
+
+  // The student sees questions only, answers, then sees it done; an outsider can't see it.
+  const q = await call(env, "GET", `/v1/classes/${cls.id}/assignments/${exit.id}/exit`, { cookie: st.cookie });
+  assert.deepEqual(q.json.questions, ["Q1?", "Q2?"]);
+  assert.ok(!/A1/.test(q.text), "no expected answers for students");
+  assert.equal((await call(env, "GET", `/v1/classes/${cls.id}/assignments/${exit.id}/exit`, { cookie: other.cookie })).status, 404);
+  assert.equal((await call(env, "POST", `/v1/classes/${cls.id}/assignments/${exit.id}/exit`, { cookie: st.cookie, body: { answers: ["one"] } })).status, 400);
+  assert.equal((await call(env, "POST", `/v1/classes/${cls.id}/assignments/${exit.id}/exit`, { cookie: st.cookie, body: { answers: ["my one", "my two"] } })).status, 200);
+  const mine = (await call(env, "GET", "/v1/classes", { cookie: st.cookie })).json.joined[0].assignments;
+  assert.equal(mine.find(a => a.id === exit.id).done, true);
+  assert.equal(mine.find(a => a.id === lesson.id).done, false);
+
+  // Reading the lesson and finishing the lab (synced progress) mark those done.
+  await call(env, "PUT", "/v1/progress/cert:security-plus", { cookie: st.cookie, body: { baseVersion: 0, body: { read: { [key]: 1 } } } });
+  await call(env, "PUT", "/v1/progress/labs", { cookie: st.cookie, body: { baseVersion: 0, body: { "lab-linux-cli": { done: true } } } });
+  const again = (await call(env, "GET", "/v1/classes", { cookie: st.cookie })).json.joined[0].assignments;
+  assert.ok(again.find(a => a.id === lesson.id).done && again.find(a => a.id === lab.id).done);
+
+  // The teacher sees answers next to the expected ones; the roster doesn't list which lessons were read.
+  const res = (await call(env, "GET", `/v1/classes/${cls.id}/assignments/${exit.id}/results`, { cookie: t.cookie })).json;
+  assert.equal(res.students[0].answers[1], "my two");
+  assert.equal(res.questions[0].expected, "A1");
+  assert.equal((await call(env, "GET", `/v1/classes/${cls.id}/assignments/${exit.id}/results`, { cookie: st.cookie })).status, 404);
+  const roster = await call(env, "GET", `/v1/classes/${cls.id}/roster`, { cookie: t.cookie });
+  assert.ok(!roster.text.includes(key) || roster.text.split(key).length - 1 === 2, "only the assignment items mention the key");
+  assert.equal(roster.json.assignments.find(a => a.id === exit.id).done, 1);
+
+  // Leaving the class removes the student's answers.
+  await call(env, "DELETE", `/v1/classes/${cls.id}/membership`, { cookie: st.cookie });
+  assert.equal((await env.DB.prepare("SELECT COUNT(*) AS n FROM exit_responses").first()).n, 0);
+});
+
+test("study groups: start, join with consent, see each other's numbers, leave; owner hand-over", async () => {
+  const env = makeEnv();
+  const a = await signIn(env, "g.a@example.com"), b = await signIn(env, "g.b@example.com"), c = await signIn(env, "g.c@example.com");
+  assert.equal((await call(env, "POST", "/v1/groups", { cookie: a.cookie, body: { name: "Crew", certId: "nope", displayName: "Ana" } })).status, 400);
+  const g = (await call(env, "POST", "/v1/groups", { cookie: a.cookie, body: { name: "Crew", certId: "security-plus", displayName: "Ana" } })).json;
+  assert.match(g.code, /^[a-km-np-z2-9]{10}$/);
+  assert.equal((await call(env, "GET", `/v1/groups/join/${g.code}`, { cookie: b.cookie })).json.group.members, 1);
+  assert.equal((await call(env, "POST", `/v1/groups/join/${g.code}`, { cookie: b.cookie, body: { displayName: "Ben" } })).json.error, "consent_required");
+  await call(env, "POST", `/v1/groups/join/${g.code}`, { cookie: b.cookie, body: { displayName: "Ben", consent: true } });
+  await call(env, "PUT", "/v1/progress/cert:security-plus", { cookie: b.cookie, body: { baseVersion: 0, body: { stats: { 1: { c: 8, t: 10 } } } } });
+  const board = (await call(env, "GET", "/v1/groups", { cookie: a.cookie })).json.groups[0];
+  assert.deepEqual(board.members.map(m => m.displayName), ["Ana", "Ben"]);
+  assert.equal(board.members[1].answered, 10);
+  assert.ok(!JSON.stringify(board).includes("g.b@example.com"), "no emails on the board");
+  assert.equal((await call(env, "GET", "/v1/groups", { cookie: c.cookie })).json.groups.length, 0, "outsiders see nothing");
+  // The owner leaves: Ben owns it now and can make a new code; the old code stops working.
+  await call(env, "DELETE", `/v1/groups/${g.id}/membership`, { cookie: a.cookie });
+  const code2 = (await call(env, "POST", `/v1/groups/${g.id}/code`, { cookie: b.cookie })).json.code;
+  assert.ok(code2 && code2 !== g.code);
+  assert.equal((await call(env, "GET", `/v1/groups/join/${g.code}`, { cookie: c.cookie })).status, 404);
+  // The last one out closes the group.
+  await call(env, "DELETE", `/v1/groups/${g.id}/membership`, { cookie: b.cookie });
+  assert.equal((await env.DB.prepare("SELECT COUNT(*) AS n FROM study_groups").first()).n, 0);
+});
+
+test("reminders, exam countdown and What's new go out at the right local time, once", async () => {
+  sent.length = 0;
+  const notify = await import("../src/notify.js");
+  const env = makeEnv({ EMAIL_API_KEY: "re_test", IP_HASH_KEY: "k".repeat(64) });
+  env.EMAIL_API_KEY = undefined; const u = await signIn(env, "rem@example.com"); env.EMAIL_API_KEY = "re_test";
+  // 18:00 in New York on a Wednesday = 22:00 UTC (EDT) on 2026-10-07.
+  const t = Date.parse("2026-10-07T22:30:00Z");
+  await call(env, "PUT", "/v1/profile", { cookie: u.cookie, body: { remind: "weekdays", remindHour: 18, tz: "America/New_York", goalCert: "security-plus", examDate: "2026-10-14", countdown: true } });
+  assert.equal((await call(env, "PUT", "/v1/profile", { cookie: u.cookie, body: { tz: "Mars/Olympus" } })).status, 400);
+  assert.equal((await notify.sendScheduledEmails(env, t - 3600e3)).sent, 0, "not before the chosen hour");
+  assert.equal((await notify.sendScheduledEmails(env, t)).sent, 1);
+  const m = sent.filter(s => s.email).pop().email;
+  assert.match(m.subject, /Time to study: CompTIA Security\+/);
+  assert.match(m.text, /7 days until your exam/);
+  assert.equal((await notify.sendScheduledEmails(env, t + 60e3)).sent, 0, "once a day");
+  // Countdown: 9 a.m. local, a week before (2026-10-07 is 7 days before 10-14).
+  const nine = Date.parse("2026-10-07T13:10:00Z");
+  assert.equal((await notify.sendScheduledEmails(env, nine)).sent, 1);
+  assert.match(sent.filter(s => s.email).pop().email.subject, /One week until/);
+  assert.equal((await notify.sendScheduledEmails(env, nine + 60e3)).sent, 0);
+  // Saturday: no weekday reminder.
+  assert.equal((await notify.sendScheduledEmails(env, Date.parse("2026-10-10T22:30:00Z"))).sent, 0);
+  // Unsubscribing turns them all off.
+  const unsubUrl = m.headers["List-Unsubscribe"].slice(1, -1).replace("https://api.study.example", "");
+  await call(env, "POST", unsubUrl, { origin: null });
+  const pr = (await call(env, "GET", "/v1/profile", { cookie: u.cookie })).json;
+  assert.equal(pr.remind, "off"); assert.equal(pr.countdown, false); assert.equal(pr.news, false);
+});

@@ -181,16 +181,32 @@
     t.scrollIntoView({ behavior: CertHub.fx.calm() ? "auto" : "smooth" }); t.focus({ preventScroll: true });
   });
   // Reading and sound settings (Appearance): each button sets one saved preference and an attribute on <html>.
-  const PREFS = { size: ["certhub:size", "data-size", ["md", "lg", "xl"]], read: ["certhub:easyread", "data-read", ["off", "on"]], contrast: ["certhub:contrast", "data-contrast", ["normal", "more"]], sound: ["certhub:sound", null, ["off", "on"]],
+  const PREFS = { size: ["certhub:size", "data-size", ["md", "lg", "xl"]], read: ["certhub:easyread", "data-read", ["off", "on", "dyslexic"]], ruler: ["certhub:ruler", "data-ruler", ["off", "on"]], contrast: ["certhub:contrast", "data-contrast", ["normal", "more"]], sound: ["certhub:sound", null, ["off", "on"]],
     motion: ["certhub:motion", "data-motion", ["auto", "reduce"]], links: ["certhub:links", "data-links", ["off", "on"]], focusring: ["certhub:focusring", "data-focusring", ["normal", "strong"]],
     keys: ["certhub:keys", null, ["on", "off"]], time: ["certhub:extratime", null, ["1", "1.5", "2"]] };
+  // Reading ruler: a band at the pointer (or the focused element), dimming the rest of the page.
+  let rulerEl = null;
+  const rulerMove = e => { if (!rulerEl) return; const y = e.touches ? e.touches[0].clientY : e.clientY; if (typeof y === "number") rulerEl.style.top = `${y}px`; };
+  const rulerFocus = e => { if (!rulerEl || !e.target.getBoundingClientRect) return; const r = e.target.getBoundingClientRect(); rulerEl.style.top = `${r.top + r.height / 2}px`; };
+  function readingRuler(on) {
+    if (on && !rulerEl) {
+      rulerEl = document.createElement("div"); rulerEl.className = "readruler"; rulerEl.setAttribute("aria-hidden", "true"); rulerEl.style.top = "40vh";
+      document.body.appendChild(rulerEl);
+      document.addEventListener("mousemove", rulerMove, { passive: true }); document.addEventListener("touchmove", rulerMove, { passive: true }); document.addEventListener("focusin", rulerFocus);
+    } else if (!on && rulerEl) {
+      rulerEl.remove(); rulerEl = null;
+      document.removeEventListener("mousemove", rulerMove); document.removeEventListener("touchmove", rulerMove); document.removeEventListener("focusin", rulerFocus);
+    }
+  }
+  if (CertHub.store.get("certhub:ruler") === "on") document.addEventListener("DOMContentLoaded", () => readingRuler(true));
   const pref = k => { const [key, , vals] = PREFS[k], v = CertHub.store.get(key); return vals.includes(v) ? v : vals[0]; };
   document.addEventListener("click", e => {
     const b = e.target.closest("button[data-pref]"); if (!b) return;
     const [k, v] = b.dataset.pref.split(":"), p = PREFS[k]; if (!p || !p[2].includes(v)) return;
     CertHub.store.set(p[0], v);
     const root = document.documentElement;
-    if (p[1]) { const attr = k === "read" ? (v === "on" ? "easy" : "") : v === p[2][0] ? "" : v; if (attr) root.setAttribute(p[1], attr); else root.removeAttribute(p[1]); }
+    if (k === "ruler") readingRuler(v === "on");
+    if (p[1]) { const attr = k === "read" ? (v === "on" ? "easy" : v === "dyslexic" ? "dyslexic" : "") : v === p[2][0] ? "" : v; if (attr) root.setAttribute(p[1], attr); else root.removeAttribute(p[1]); }
     document.querySelectorAll(`[data-pref^="${k}:"]`).forEach(x => x.setAttribute("aria-pressed", String(x === b)));
     if (k === "sound" && v === "on") CertHub.fx.sound("right");
   });
@@ -243,7 +259,8 @@
       body = `<h2>Seeing and reading</h2>
       <div class="panel">
         ${prefChips("size", "Text size", [["md", "Normal"], ["lg", "Large"], ["xl", "Larger"]], "Browser zoom also works, up to 400 percent, and the layout reflows to fit.")}
-        ${prefChips("read", "Easy-read spacing", [["off", "Off"], ["on", "On"]], "A plainer font with wider letter, word and line spacing, which many readers with dyslexia find easier.")}
+        ${prefChips("read", "Easy-read font", [["off", "Off"], ["on", "Plain font, wider spacing"], ["dyslexic", "OpenDyslexic"]], "A plainer font with wider letter, word and line spacing, or OpenDyslexic, a font with heavier letter bottoms that many readers with dyslexia find easier.")}
+        ${prefChips("ruler", "Reading ruler", [["off", "Off"], ["on", "On"]], "A bright band that follows your pointer or finger and dims the rest of the page, to help keep your place in long text.")}
         ${prefChips("contrast", "Contrast", [["normal", "Normal"], ["more", "High"]], "Darker text, stronger borders and no faint gray text.")}
         ${prefChips("links", "Underline links", [["off", "Off"], ["on", "On"]], "So links don't rely on color alone.")}
         ${prefChips("focusring", "Keyboard focus outline", [["normal", "Standard"], ["strong", "Extra visible"]], "A thicker, two-color outline around whatever has keyboard focus.")}
@@ -532,6 +549,7 @@
       else if (head === "admin" && CertHub.accountViews) { topNav("account"); CertHub.accountViews.admin(); title = "Site Dashboard"; view = head; }
       else if (head === "account" && CertHub.accountViews) { topNav("account"); $("#app").innerHTML = CertHub.accountViews.account(); title = "Account"; view = "account"; }
       else if (/^join-[a-km-np-z2-9]{10}$/.test(head) && CertHub.accountViews) { topNav("account"); CertHub.accountViews.join(head.slice(5)); title = "Join a Class"; view = head; }
+      else if (/^gjoin-[a-km-np-z2-9]{10}$/.test(head) && CertHub.accountViews) { topNav("account"); CertHub.accountViews.groupJoin(head.slice(6)); title = "Join a Study Group"; view = head; }
       else if (/^class-[0-9a-f]{24}$/.test(head) && CertHub.accountViews) { topNav("account"); CertHub.accountViews.classRoster(head.slice(6)); title = "Class Roster"; view = head; }
       else if (/^cohort-[0-9a-f]{24}$/.test(head) && CertHub.accountViews) { topNav("account"); CertHub.accountViews.cohort(head.slice(7)); title = "Cohort Progress"; view = head; }
       else if (/^cap-[a-z0-9-]{1,60}$/.test(head) && CertHub.pro) { topNav("labs"); CertHub.pro.capstoneView(head); title = "Capstone project"; view = head; }
