@@ -106,6 +106,8 @@ export async function purgeExpired(env, t = Date.now()) {
   return out;
 }
 
+const isTeacher = async (env, u) => isAdmin(env, u) || ((await env.DB.prepare("SELECT role FROM users WHERE id = ?").bind(u.id).first()) || {}).role === "teacher";
+
 async function route(request, env) {
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/+$/, "") || "/";
@@ -209,7 +211,7 @@ async function route(request, env) {
     const providers = enabledProviders(env);
     if (!u) return json(env, request, { user: null, billing: billingEnabled(env), premium: premiumEnabled(env), providers, support: supportEnabled(env), sms: smsEnabled(env) });
     const p = await env.DB.prepare("SELECT display_name FROM users WHERE id = ?").bind(u.id).first();
-    return json(env, request, { user: { id: u.id, email: u.email, displayName: (p && p.display_name) || "" }, billing: billingEnabled(env), premium: premiumEnabled(env), providers, support: supportEnabled(env), sms: smsEnabled(env), ...(isAdmin(env, u) ? { admin: true } : {}), ...(await entitlementsFor(env, u.id)) });
+    return json(env, request, { user: { id: u.id, email: u.email, displayName: (p && p.display_name) || "" }, billing: billingEnabled(env), premium: premiumEnabled(env), providers, support: supportEnabled(env), sms: smsEnabled(env), ...((await isTeacher(env, u)) ? { teacher: true } : {}), ...(isAdmin(env, u) ? { admin: true } : {}), ...(await entitlementsFor(env, u.id)) });
   }
 
   // Everything below needs a signed-in user.
@@ -229,6 +231,15 @@ async function route(request, env) {
     const dir = url.searchParams.get("lang") === "es" ? "lessons-es" : "lessons";
     const obj = env.CONTENT ? await env.CONTENT.get(`member/${dir}/${m[1]}.json`) : null;
     if (!obj) throw notFound("No lessons for this yet.");
+    return new Response(obj.body, { headers: { "Content-Type": "application/json; charset=utf-8", ...SECURITY_HEADERS, ...cors(env, request) } });
+  }
+
+  // Teacher editions (lesson plans, activities, exit tickets with answers): /v1/content/teacher/<cert-id>, for
+  // accounts whose profile says "Teacher or trainer" (and the site owner).
+  if ((m = path.match(/^\/v1\/content\/teacher\/([a-z0-9-]{1,40})$/)) && method === "GET") {
+    if (!(await isTeacher(env, user))) throw new HttpError(403, "teacher_only", "Teacher editions are for teachers. Choose \"Teacher or trainer\" on your profile to see them.");
+    const obj = env.CONTENT ? await env.CONTENT.get(`member/teacher/${m[1]}.json`) : null;
+    if (!obj) throw notFound("No teacher edition for this yet.");
     return new Response(obj.body, { headers: { "Content-Type": "application/json; charset=utf-8", ...SECURITY_HEADERS, ...cors(env, request) } });
   }
 

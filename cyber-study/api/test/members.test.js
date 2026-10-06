@@ -190,3 +190,30 @@ test("accounts from before the series, and ones that missed an email by a week, 
   assert.equal(r.sent, 0);
   assert.equal((await env.DB.prepare("SELECT welcome_step FROM users WHERE email = ?").bind("late@example.com").first()).welcome_step, 3);
 });
+
+test("teacher editions go only to teacher accounts, and /v1/me says who is a teacher", async () => {
+  const env = makeEnv();
+  await env.CONTENT.put("member/teacher/security-plus.json", JSON.stringify({ id: "security-plus", plans: [{ t: "Topic", objectives: ["x"] }] }));
+  const { cookie } = await signIn(env, "student.t@example.com");
+  assert.equal((await call(env, "GET", "/v1/content/teacher/security-plus")).status, 401);
+  const no = await call(env, "GET", "/v1/content/teacher/security-plus", { cookie });
+  assert.equal(no.status, 403);
+  assert.equal(no.json.error, "teacher_only");
+  assert.equal((await call(env, "GET", "/v1/me", { cookie })).json.teacher, undefined);
+  await call(env, "PUT", "/v1/profile", { cookie, body: { role: "teacher" } });
+  assert.equal((await call(env, "GET", "/v1/me", { cookie })).json.teacher, true);
+  const yes = await call(env, "GET", "/v1/content/teacher/security-plus", { cookie });
+  assert.equal(yes.status, 200);
+  assert.equal(yes.json.plans[0].t, "Topic");
+  assert.equal((await call(env, "GET", "/v1/content/teacher/no-such-cert", { cookie })).status, 404);
+});
+
+test("teacher plans are built only into the private bundles, never the public files", () => {
+  const split = require("../../tools/lesson-split.js");
+  if (!split.teacherIds().length) return;
+  const res = split.split("https://api.example.com");
+  const id = split.teacherIds()[0];
+  assert.ok(res.member[`member/teacher/${id}.json`]);
+  assert.ok(!Object.keys(res.public).some(k => k.includes("teacher")));
+  assert.ok(!Object.values(res.public).some(t => /"objectives"/.test(t)));
+});

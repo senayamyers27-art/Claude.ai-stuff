@@ -31,7 +31,7 @@ CertHub.addLessons("<cert-id>", [
   - Skip topics that start with "Checkpoint test" and the final review week.
   - Copy each string character for character.
 - **One lesson per topic,** in plan order, with no extras.
-- **Body:** 3–8 paragraphs, 250–600 words in total.
+- **Body:** 3–8 paragraphs, 250–600 words in total (up to 10 paragraphs and about 1,100 words with the richer parts below).
   - Inline code goes in `` `backticks` ``.
   - A paragraph that starts with a fence line (a line of three backticks, optionally a language) is shown as a code block. Use real newlines (`\n`) inside it.
 - **Terms:** at least 3 pairs.
@@ -39,6 +39,40 @@ CertHub.addLessons("<cert-id>", [
 - **Tip:** at least 30 characters.
 - **Check:** at least 2 question/answer pairs.
 - **No links.** The About tab already lists official sources.
+
+### Optional richer parts
+
+A lesson can also have these fields (Security+ has all of them). Each shows in its own panel in the app and on the
+lesson's web page:
+
+- **`hook`**: a short opening scene (60–140 words) in second person, with a fictional organization and people, that
+  shows why the topic matters. It also shows as a teaser on locked lessons.
+- **`analogy`**: one everyday comparison for the hardest idea (40–120 words).
+- **`mnemonic`**: a memory aid, only for a real list or order the exam expects. Leave it out rather than force one.
+- **`mistakes`**: 2–5 `[wrong idea, correction]` pairs: the distractors learners actually fall for.
+- **`tryit`**: 1–3 `[scenario, answer]` pairs: a decision for the learner, with the reasoning.
+
+With these, the body can run to 10 paragraphs. No emoji or exclamation marks in any of them.
+
+### Teacher edition
+
+`content/teacher/<cert-id>.js` holds a lesson plan per lesson. It is never published: the API serves it only to
+accounts whose profile says "Teacher or trainer" (the **Teacher edition** tab).
+
+```js
+CertHub.addTeacher("<cert-id>", [{
+  t: "Exact lesson topic",
+  objectives: ["Students will be able to ...", "..."],
+  plan: [[5, "Warm-up", "..."], [15, "Teach", "..."], [15, "Activity", "..."], [5, "Discuss", "..."], [5, "Exit ticket", "..."]],
+  warmup: "Opening prompt",
+  activity: { title: "...", materials: "...", steps: ["...", "..."] },
+  discussion: ["Question?"],
+  exit: [["Question?", "Answer."], ["...", "..."]],
+  differentiation: ["Support: ...", "Extend: ..."]
+}]);
+```
+
+The plan's minutes must add up to 45.
 
 `node tools/check-data.js` validates all of this and fails if any plan topic in a certification that has a lessons file lacks a lesson.
 

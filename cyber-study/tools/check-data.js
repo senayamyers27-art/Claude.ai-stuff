@@ -73,17 +73,52 @@ for (const id of CertHub.catalog) {
     if (!l || typeof l.t !== "string") return L("needs t, the exact topic text");
     if (!want.has(l.t)) L("doesn't match any topic in the plan (the text must match exactly)");
     if (seen.has(l.t)) L("duplicate lesson"); seen.add(l.t);
-    if (!Array.isArray(l.body) || l.body.length < 3 || l.body.length > 8 || !l.body.every(p => typeof p === "string" && p.trim().length >= 40)) L("body needs 3 to 8 paragraphs");
+    if (!Array.isArray(l.body) || l.body.length < 3 || l.body.length > 10 || !l.body.every(p => typeof p === "string" && p.trim().length >= 40)) L("body needs 3 to 10 paragraphs");
     else if (l.body.join(" ").split(/\s+/).length < 180) L("body is too short (aim for 250 to 600 words)");
     if (!Array.isArray(l.terms) || l.terms.length < 3 || !l.terms.every(pair)) L("terms needs at least 3 [term, definition] pairs");
     if (typeof l.example !== "string" || l.example.trim().length < 80) L("example needs a real-world scenario");
     if (typeof l.tip !== "string" || l.tip.trim().length < 30) L("tip needs an exam tip");
     if (!Array.isArray(l.check) || l.check.length < 2 || !l.check.every(pair)) L("check needs at least 2 [question, answer] pairs");
+    // Optional richer parts (docs/LESSON_GUIDE.md): story opener, analogy, memory trick, common mistakes, "You decide".
+    const str = (v, min, max) => typeof v === "string" && v.trim().length >= min && v.length <= max;
+    if (l.hook != null && !str(l.hook, 150, 1200)) L("hook should be a short opening scene (150 to 1200 characters)");
+    if (l.analogy != null && !str(l.analogy, 60, 900)) L("analogy should be 60 to 900 characters");
+    if (l.mnemonic != null && !str(l.mnemonic, 10, 500)) L("mnemonic should be 10 to 500 characters");
+    if (l.mistakes != null && (!Array.isArray(l.mistakes) || l.mistakes.length < 2 || l.mistakes.length > 5 || !l.mistakes.every(pair))) L("mistakes needs 2 to 5 [mistake, correction] pairs");
+    if (l.tryit != null && (!Array.isArray(l.tryit) || l.tryit.length < 1 || l.tryit.length > 3 || !l.tryit.every(pair))) L("tryit needs 1 to 3 [scenario, answer] pairs");
+    const extra = Object.keys(l).filter(k => !["t", "body", "terms", "example", "tip", "check", "hook", "analogy", "mnemonic", "mistakes", "tryit"].includes(k));
+    if (extra.length) L(`unknown field ${extra[0]}`);
     if (/https?:\/\//.test(JSON.stringify(l))) L("no links inside lessons");
+    if (/[!]\s|[!]$|[\u{1F300}-\u{1FAFF}]/u.test([l.hook, l.analogy, l.mnemonic].concat(...(l.mistakes || []), ...(l.tryit || [])).filter(Boolean).join(" "))) L("no exclamation marks or emoji in the richer parts");
   });
   const missing = topics.filter(t => !seen.has(t));
   if (missing.length) fail(id, `${missing.length} plan topics have no lesson, e.g. "${missing[0]}"`);
   lessonTotal += list.length;
+}
+/* ---------- teacher editions: content/teacher/<id>.js (docs/LESSON_GUIDE.md) ---------- */
+let teacherTotal = 0;
+{
+  const split = require("./lesson-split");
+  for (const id of split.teacherIds()) {
+    const c = CertHub.certs[id]; if (!c) { fail(id, "content/teacher has a file for an unknown certification"); continue; }
+    let list; try { list = split.readTeacher(id); } catch (e) { fail(id, e.message); continue; }
+    const want = new Set((CertHub.lessons[id] || []).map(l => l.t)), seen = new Set();
+    const strs = (a, min, max) => Array.isArray(a) && a.length >= min && a.length <= max && a.every(x => typeof x === "string" && x.trim().length >= 10);
+    list.forEach((x, i) => {
+      const T = m => fail(id, `teacher plan ${i + 1} (${String(x && x.t).slice(0, 50)}): ${m}`);
+      if (!x || !want.has(x.t)) return T("t must match a lesson's topic exactly");
+      if (seen.has(x.t)) T("duplicate plan"); seen.add(x.t);
+      if (!strs(x.objectives, 2, 5)) T("objectives needs 2 to 5 statements");
+      if (!Array.isArray(x.plan) || x.plan.length < 3 || !x.plan.every(r => Array.isArray(r) && r.length === 3 && Number.isInteger(r[0]) && r[0] > 0 && typeof r[1] === "string" && typeof r[2] === "string" && r[2].trim()) || x.plan.reduce((a, r) => a + r[0], 0) !== 45) T("plan needs [minutes, step, details] rows adding up to 45 minutes");
+      if (typeof x.warmup !== "string" || x.warmup.trim().length < 20) T("warmup needs an opening prompt");
+      if (!x.activity || typeof x.activity.title !== "string" || !strs(x.activity.steps, 2, 10)) T("activity needs a title and 2 to 10 steps");
+      if (!strs(x.discussion, 1, 5)) T("discussion needs 1 to 5 questions");
+      if (!Array.isArray(x.exit) || x.exit.length < 2 || x.exit.length > 5 || !x.exit.every(pair)) T("exit needs 2 to 5 [question, answer] pairs");
+      if (!Array.isArray(x.differentiation) || x.differentiation.length !== 2 || !/^Support:/.test(x.differentiation[0] || "") || !/^Extend:/.test(x.differentiation[1] || "")) T('differentiation needs ["Support: ...", "Extend: ..."]');
+      if (/https?:\/\//.test(JSON.stringify(x))) T("no links inside teacher plans");
+    });
+    teacherTotal += list.length;
+  }
 }
 /* ---------- simulations, wrong-answer notes, Spanish lessons, careers ---------- */
 {
@@ -138,6 +173,7 @@ for (const id of CertHub.catalog) {
   console.log(`diagrams: ${D.length}`);
 }
 console.log(`lessons: ${lessonTotal}${noLessons.length ? `; not written yet for ${noLessons.join(", ")}` : " (every certification)"}`);
+if (teacherTotal) console.log(`teacher plans: ${teacherTotal}`);
 /* ---------- labs ---------- */
 const TRACKS = ["Foundations", "Networking", "Blue team", "GRC & architecture", "Systems administration", "Software engineering", "Cloud computing", "Data & AI"], LEVELS = ["Beginner", "Intermediate", "Advanced"];
 for (const l of Object.values(CertHub.labs)) {
