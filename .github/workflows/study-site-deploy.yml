@@ -75,4 +75,14 @@ jobs:
         run: |
           PROJECT=$(node -p 'require("./site.config.json").cloudflarePagesProject')
           npx wrangler pages project create "$PROJECT" --production-branch main 2>/dev/null || true
-          npx wrangler pages deploy public --project-name "$PROJECT" --branch "$BRANCH" --commit-hash "$SHA" --commit-dirty=false
+          # Cloudflare Pages takes files up to 25 MiB. Larger ones (the practice-VM snapshot) are left out of this
+          # copy and redirected to the same file on the main site, which serves it with CORS.
+          OUT="$RUNNER_TEMP/pages"; rm -rf "$OUT"; cp -r public "$OUT"
+          SITE="https://$(node -p 'require("./site.config.json").domain')"
+          find "$OUT" -type f -size +25M | while read -r f; do
+            rel="/${f#"$OUT"/}"
+            echo "::notice::Not uploading $rel ($(du -h "$f" | cut -f1)); redirecting it to $SITE$rel"
+            rm "$f"
+            printf '%s %s%s 302\n' "$rel" "$SITE" "$rel" >> "$OUT/_redirects"
+          done
+          npx wrangler pages deploy "$OUT" --project-name "$PROJECT" --branch "$BRANCH" --commit-hash "$SHA" --commit-dirty=false
