@@ -393,7 +393,30 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await s.click("#sms-btn");
     await s.waitForSelector("#profile-form");
     check((await s.textContent(".profhead h1")).trim() === "Sam Rivera", "logged in with a texted code");
+    // Richer lessons: story opener, analogy, common mistakes and "You decide" in an open lesson.
+    await s.goto(BASE + "/#security-plus.learn"); await s.reload();
+    await s.waitForFunction(() => document.querySelectorAll("details.lesson").length > 10 && !document.querySelector(".lesson.locked"));
+    await s.click("details.lesson >> nth=2 >> summary");
+    check(!!(await s.$("details.lesson[open] .lhook")) && !!(await s.$("details.lesson[open] .lidea")) && (await s.$$("details.lesson[open] ul.lmistakes li")).length >= 2 && !!(await s.$("details.lesson[open] .ltry details")), "a lesson shows its story opener, analogy, common mistakes and a You decide scenario");
+    check(!(await s.$('#tabs [data-tab="teach"]')), "the teacher edition tab is hidden from students");
+    if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/lesson-rich.png`, fullPage: true });
+    // Teacher edition: a teacher account gets the tab, a plan per lesson, and a link from each lesson.
+    await s.goto(BASE + "/#profile"); await s.waitForSelector("#profile-form");
+    await s.selectOption("#pf-role", "teacher");
+    await s.click("#profile-form button[type=submit]");
+    await s.waitForFunction(() => /Profile saved/.test(document.body.textContent));
+    await s.goto(BASE + "/#security-plus.teach"); await s.reload();
+    await s.waitForSelector("details.tplan");
+    check((await s.$$("details.tplan")).length === 72 && !!(await s.$('#tabs [data-tab="teach"]')), "a teacher sees a lesson plan for every Security+ lesson");
+    await s.click("details.tplan >> nth=0 >> summary");
+    const plan = await s.textContent("details.tplan[open]");
+    check(/Objectives/.test(plan) && /45-minute plan/.test(plan) && /Exit ticket/.test(plan) && /Answer:/.test(plan) && /Support:/.test(plan), "a plan has objectives, the 45-minute plan, an exit ticket with answers and differentiation");
+    if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/teacher.png`, fullPage: false });
+    await s.click("details.tplan[open] [data-act=teachstudent]");
+    await s.waitForSelector("details.lesson[open] [data-act=teachplan]");
+    check(true, "a plan opens its student lesson, which links back to the teacher edition");
     // Study tips by email can be switched off.
+    await s.goto(BASE + "/#profile"); await s.waitForSelector("[data-aact=emailtips]");
     await s.click("[data-aact=emailtips]");
     await s.waitForSelector('[data-aact=emailtips][data-on="0"]');
     check(true, "study tips by email switched off on the profile");
