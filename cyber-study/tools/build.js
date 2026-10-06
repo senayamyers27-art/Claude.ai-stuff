@@ -192,6 +192,8 @@ for (const c of certs) {
   const has = rel => fs.existsSync(path.join(/^lessons/.test(rel) ? CONTENT : path.join(PUB, "data"), rel, c.id + ".js"));
   if (has("lessons")) plan.hasLessons = true;
   if (has("lessons-es")) plan.hasLessonsEs = true;
+  // A teacher edition (content/teacher/<id>.js, served by the API to teacher accounts only).
+  if (fs.existsSync(path.join(CONTENT, "teacher", c.id + ".js"))) plan.hasTeacher = true;
   if (has("pbq")) plan.hasPbqs = true;
   if (has("handson")) plan.hasHandson = true;
   if (has("pbq-es")) plan.hasPbqsEs = true;
@@ -291,6 +293,12 @@ const slugify = t => t.toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/
 const inl = x => esc(x).replace(/`([^`\n]+)`/g, "<code>$1</code>");
 const par = x => /^```/.test(x) ? `<pre class="code" tabindex="0"><code>${esc(x.replace(/^```[a-z]*\n?/i, "").replace(/\n?```$/, ""))}</code></pre>` : `<p>${inl(x)}</p>`;
 const lessonPages = [];
+// The richer parts of a lesson (docs/LESSON_GUIDE.md), when it has them: story opener, analogy and memory trick,
+// common mistakes and "You decide" scenarios.
+const hookOf = l => l.hook ? `<div class="lhook"><p>${inl(l.hook)}</p></div>\n` : "";
+const ideaOf = l => l.analogy || l.mnemonic ? `<div class="panel lidea">${l.analogy ? `<p><strong>Think of it like this</strong> ${inl(l.analogy)}</p>` : ""}${l.mnemonic ? `<p><strong>Memory trick</strong> ${inl(l.mnemonic)}</p>` : ""}</div>\n` : "";
+const richOf = l => (l.mistakes && l.mistakes.length ? `<h2>Common mistakes</h2>\n<ul class="lmistakes">${l.mistakes.map(([a, b]) => `<li><span class="wrong">${inl(a)}</span><span class="right">${inl(b)}</span></li>`).join("")}</ul>\n` : "")
+  + (l.tryit && l.tryit.length ? `<h2>You decide</h2>\n${l.tryit.map(([q, a]) => `<div class="panel ltry"><p>${inl(q)}</p><details class="sq"><summary>Show the answer</summary><p>${inl(a)}</p></details></div>`).join("\n")}\n` : "");
 const reviewedOf = id => { const r = ((CertHub.lessonMeta || {})[id] || {}).reviewed; return r ? new Date(r + "T12:00:00Z").toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" }) : ""; };
 const esOf = (id, t) => { const f = path.join(CONTENT, "lessons-es", id + ".js"); if (!fs.existsSync(f)) return null; if (!(CertHub.lessonDataEs || {})[id]) require(f); return ((CertHub.lessonDataEs || {})[id] || []).find(l => l.t === t) || null; };
 certs.forEach(c => {
@@ -336,12 +344,12 @@ ${c.domains.map(d => { const its = items.filter(x => x.dom === d.id); return its
 <p class="btns"><a class="btn sm" href="../../#${c.id}.video-${lessonKeyOf(l.t)}">▶ Watch the overview video</a></p>
 <p class="note">${reviewedOf(c.id) ? `Last reviewed ${esc(reviewedOf(c.id))}` : ""}${esOf(c.id, l.t) ? `${reviewedOf(c.id) ? " · " : ""}<a href="../../../es/${c.id}/lessons/${x.slug}/" hreflang="es" lang="es">Leer en español</a>` : ""}</p>
 <article class="lbody">
-${gated ? `${par(l.body[0])}
+${hookOf(l)}${gated ? `${par(l.body[0])}
 <div class="panel gatewall"><span class="chip">Free account</span><h2>Keep reading for free</h2><p>Create a free StudyToCert account to read the rest of this lesson: ${l.body.length - 1} more sections, ${l.terms.length} key terms, a real-world example, an exam tip and self-check questions. Every lesson, lab and practice test is free with an account.</p><p class="btns"><a class="btn" href="../../../#signup">Sign up free</a> <a class="btn ghost" href="../../../#login">Log in</a></p></div>` : `${l.body.map((p, j) => par(p) + (j === 0 ? figs : "")).join("\n")}
-<h2>Key terms</h2>
+${ideaOf(l)}<h2>Key terms</h2>
 <dl class="terms">${l.terms.map(([a, b]) => `<dt>${inl(a)}</dt><dd>${inl(b)}</dd>`).join("")}</dl>
 <div class="panel ex"><strong>Real-world example</strong><p>${inl(l.example)}</p></div>
-<div class="status notice"><strong>Exam tip:</strong> ${inl(l.tip)}</div>
+${richOf(l)}<div class="status notice"><strong>Exam tip:</strong> ${inl(l.tip)}</div>
 <h2>Check yourself</h2>
 ${l.check.map(([q, a]) => `<details class="sq"><summary>${inl(q)}</summary><p>${inl(a)}</p></details>`).join("\n")}`}
 </article>
