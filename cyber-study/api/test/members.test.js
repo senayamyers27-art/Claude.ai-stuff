@@ -68,7 +68,7 @@ test("the lesson split keeps the free sample whole and only the opening of the r
   const member = JSON.parse(on.member["member/lessons/security-plus.json"]);
   assert.equal(member.lessons.length, full.length - split.FREE);
   assert.ok(member.lessons.every(l => !l.locked && l.check));
-  assert.equal(Object.keys(off.member).length, 0);
+  assert.ok(Object.keys(off.member).every(k => k.startsWith("member/teacher/")), "without accounts only the teacher editions stay private");
   // Spanish locks the same topics as English.
   const es = load(on.public["public/data/lessons-es/security-plus.js"]);
   assert.deepEqual(es.filter(l => !l.locked).map(l => l.t), pub.filter(l => !l.locked).map(l => l.t));
