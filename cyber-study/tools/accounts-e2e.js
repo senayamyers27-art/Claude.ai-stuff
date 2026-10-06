@@ -260,6 +260,39 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await stu.goto(BASE + "/#account"); await stu.reload();
     await stu.waitForSelector("#classpanel .assignlist li.done");
     check(/Warm-up questions/.test(await stu.textContent("#classpanel .assignlist")), "student sees the assignment marked done");
+    // Exit tickets: the teacher assigns one online; the student answers; only the teacher sees answers, with the expected ones.
+    const openAssign = async () => { if (!(await tch.isVisible("#assign-title"))) await tch.click("#assign-form >> xpath=.. >> summary"); };
+    await openAssign();
+    await tch.fill("#assign-title", "Read: lesson one");
+    await tch.selectOption("#assign-kind", "lesson");
+    await tch.selectOption("#assign-cert", "security-plus");
+    await tch.waitForFunction(() => { const o = document.querySelector("#assign-item option"); return o && /^l[0-9a-z]+$/.test(o.value); });
+    await tch.click("#assign-form button[type=submit]");
+    await tch.waitForSelector('a[href^="https://classroom.google.com/share?url="]');
+    check(true, "teacher assigns one lesson, with a Share to Google Classroom link");
+    await openAssign();
+    await tch.fill("#assign-title", "Exit ticket: lesson one");
+    await tch.selectOption("#assign-kind", "exit");
+    await tch.selectOption("#assign-cert", "security-plus");
+    await tch.waitForFunction(() => { const o = document.querySelector("#assign-item option"); return o && /^l[0-9a-z]+$/.test(o.value); });
+    await tch.click("#assign-form button[type=submit]");
+    await tch.waitForSelector("[data-aact=exitresults]");
+    check(true, "teacher adds an online exit ticket");
+    await stu.goto(BASE + "/#account"); await stu.reload();
+    await stu.waitForSelector("#classpanel [data-aact=exitopen]");
+    check(!!(await stu.$('#classpanel a[href^="#security-plus.lesson-l"]')), "student sees the one-lesson assignment with a link to the lesson");
+    await stu.click("#classpanel [data-aact=exitopen]");
+    await stu.waitForSelector(".exitform textarea");
+    const nq = (await stu.$$(".exitform textarea")).length;
+    for (let i = 0; i < nq; i++) await stu.fill(`.exitform textarea >> nth=${i}`, `My answer number ${i + 1}`);
+    await stu.click(".exitform button[type=submit]");
+    await stu.waitForSelector('#classpanel [data-aact=exitopen]:has-text("Change your answers")');
+    check(nq === 3, "student answers the three exit-ticket questions and sends them");
+    await tch.reload(); await tch.waitForSelector("[data-aact=exitresults]");
+    await tch.click("[data-aact=exitresults]");
+    await tch.waitForSelector(".exitres");
+    const res = await tch.textContent(".exitres");
+    check(/1 of 1 answered/.test(res) && /My answer number 1/.test(res) && /Expected:/.test(res) && /Ana/.test(res), "teacher sees each student's answers next to the expected ones");
     await stu.click("#classpanel [data-aact=leaveclass]");
     await stu.click('.modal [data-v="1"]');
     await stu.waitForSelector("text=None. Your teacher shares");
@@ -414,6 +447,19 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     const plan = await s.textContent("details.tplan[open]");
     check(/Objectives/.test(plan) && /45-minute plan/.test(plan) && /Exit ticket/.test(plan) && /Answer:/.test(plan) && /Support:/.test(plan), "a plan has objectives, the 45-minute plan, an exit ticket with answers and differentiation");
     if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/teacher.png`, fullPage: false });
+    // Present as slides: arrow keys move through them, Escape closes.
+    await s.click("details.tplan[open] [data-act=teachslides]");
+    await s.waitForSelector(".slides .slide:not([hidden])");
+    const total = +(await s.textContent(".slidecount")).split("/")[1];
+    await s.keyboard.press("ArrowRight");
+    check(total > 4 && (await s.textContent(".slidecount")).trim() === `2 / ${total}`, "a plan opens as slides, and the arrow keys move through them");
+    await s.keyboard.press("Escape");
+    await s.waitForSelector(".slides", { state: "detached" });
+    // Print a student worksheet: print is stubbed to read what would be printed.
+    await s.evaluate(() => { window.print = () => { const w = document.querySelector(".worksheet"); window.__sheet = w ? w.textContent : ""; window.dispatchEvent(new Event("afterprint")); }; });
+    await s.click("details.tplan[open] [data-act=teachsheet]");
+    const sheet = await s.evaluate(() => window.__sheet || "");
+    check(/Name _+/.test(sheet) && /Exit ticket/.test(sheet) && !/Answer:/.test(sheet) && !(await s.$(".worksheet")), "the student worksheet has a name line and the exit ticket, without the answers");
     await s.click("details.tplan[open] [data-act=teachstudent]");
     await s.waitForSelector("details.lesson[open] [data-act=teachplan]");
     check(true, "a plan opens its student lesson, which links back to the teacher edition");
@@ -427,6 +473,25 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await s.click("[data-aact=emailtips]");
     await s.waitForSelector('[data-aact=emailtips][data-on="0"]');
     check(true, "study tips by email switched off on the profile");
+    // Success stories: shared from the profile, shown on the site only after the owner approves it.
+    await s.waitForSelector("#story-form");
+    await s.selectOption("#story-cert", "security-plus");
+    await s.fill("#story-date", new Date().toISOString().slice(0, 10));
+    await s.fill("#story-quote", "Two lessons a day and a practice exam every Sunday.");
+    await s.fill("#story-name", "Sam R.");
+    await s.check("#story-publish");
+    await s.click("#story-form button[type=submit]");
+    await s.waitForSelector('#storypanel [data-aact=rmstory]');
+    check(/Waiting for a quick check/.test(await s.textContent("#storypanel")), "a shared story waits for approval before it's shown");
+    await s.goto(BASE + "/#security-plus.about"); await s.waitForSelector(".booking");
+    check(!(await s.$("#storiesbox .story")) && !!(await s.$('.booking a[target=_blank]')), "the About tab has a Book your exam guide, and no unapproved stories");
+    await own.goto(BASE + "/#admin"); await own.reload();
+    await own.waitForSelector('#adminstories [data-aact=modstory][data-status="approved"]');
+    await own.click('#adminstories [data-aact=modstory][data-status="approved"]');
+    await own.waitForSelector('#adminstories [data-aact=modstory][data-status="hidden"]');
+    await s.reload(); await s.waitForSelector("#storiesbox .story");
+    check(/Sam R\./.test(await s.textContent("#storiesbox")), "after the owner approves it, the story shows on the certification's About tab");
+    await s.goto(BASE + "/#profile"); await s.waitForSelector("#profile-form");
     if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/profile.png`, fullPage: true });
     // Connect LinkedIn from the profile, then disconnect it.
     await s.click('a[href$="/v1/auth/oauth/linkedin/start?link=1"]');

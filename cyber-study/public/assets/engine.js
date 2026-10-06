@@ -1517,6 +1517,7 @@
 
   function aboutView() {
     const x = C.examInfo || {};
+    setTimeout(() => CertHub.sync && CertHub.sync.stories && CertHub.sync.stories("storiesbox", C.id, `From learners who passed ${C.short}`), 0);
     return `<h1>${esc(C.name)} ${esc(C.exam)}</h1>
     <p class="meta">${esc(C.blurb || "")}</p>
     ${C.status === "verified" ? `<div class="status">${esc(C.statusNote || "")}</div>` : checkBanner()}
@@ -1533,6 +1534,18 @@
     </div>
     <h2>Domains and weights</h2>
     <div class="panel bars">${C.domains.map(d => `<div class="b" data-style="--c:${dc(d.id)}"><div class="flex"><span>D${esc(d.id)} ${esc(d.name)}</span><strong>${esc(d.w)}%</strong></div><div class="track"><i data-style="width:${esc(d.w)}%"></i></div></div>`).join("")}</div>
+    <h2>Book your exam</h2>
+    <div class="panel booking">
+      <ol>
+        <li>Check you're ready: aim for steady practice exam scores comfortably above the passing score${C.examInfo && C.examInfo.pass ? ` (${esc(C.examInfo.pass)})` : ""}, and a readiness score of 80 or more on the Progress tab.</li>
+        <li>Buy the exam or a voucher from ${esc(C.vendor || "the vendor")}. Students and teachers: ask your school or the vendor about academic pricing before you pay full price.</li>
+        <li>Choose a test center or online proctoring and pick a date. Most vendors deliver exams through a testing partner such as Pearson VUE or PSI; the vendor's page links to the right one.</li>
+        <li>Read the ID and check-in rules, then add the date to your profile so you get the exam countdown emails.</li>
+      </ol>
+      ${C.book || (C.sources && C.sources[0]) ? `<p class="btns" data-style="margin-bottom:0"><a class="btn sm" href="${esc((C.book && C.book.url) || C.sources[0].url)}" rel="noopener" target="_blank">${esc((C.book && C.book.label) || `Exam details and booking at ${C.vendor || "the vendor"}`)}</a><a class="btn ghost sm" href="#exam-day">Exam-day guide</a></p>` : ""}
+      <p class="note">StudyToCert doesn't sell exam vouchers or get paid for these links.</p>
+    </div>
+    <div id="storiesbox"></div>
     <h2>Official sources</h2>
     <div class="panel"><ul class="clean">${(C.sources || []).map(s => `<li><a href="${esc(s.url)}" rel="noopener" target="_blank">${esc(s.label)}</a></li>`).join("")}</ul>
     <p class="note">Always check the vendor's current objectives before booking. Exams are revised every few years.</p></div>`;

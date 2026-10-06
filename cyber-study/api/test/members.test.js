@@ -321,3 +321,33 @@ test("reminders, exam countdown and What's new go out at the right local time, o
   const pr = (await call(env, "GET", "/v1/profile", { cookie: u.cookie })).json;
   assert.equal(pr.remind, "off"); assert.equal(pr.countdown, false); assert.equal(pr.news, false);
 });
+
+test("success stories: shown only with the member's permission and after the owner approves; withdrawing removes them", async () => {
+  const env = makeEnv({ ADMIN_EMAILS: "owner@example.com" });
+  const amy = (await signIn(env, "amy@example.com")).cookie, owner = (await signIn(env, "owner@example.com")).cookie;
+  const today = new Date().toISOString().slice(0, 10);
+  assert.equal((await call(env, "POST", "/v1/stories", { cookie: amy, body: { certId: "nope", passedOn: today, quote: "Lessons every day and a practice exam weekly.", publish: true } })).json.error, "invalid_cert");
+  assert.equal((await call(env, "POST", "/v1/stories", { cookie: amy, body: { certId: "security-plus", passedOn: today, quote: "short", publish: true } })).json.error, "invalid_quote");
+  assert.equal((await call(env, "POST", "/v1/stories", { cookie: amy, body: { certId: "security-plus", passedOn: today, quote: "See https://example.com for my notes, it helped.", publish: true } })).json.error, "invalid_quote");
+  const saved = await call(env, "POST", "/v1/stories", { cookie: amy, body: { certId: "security-plus", passedOn: today, quote: "Two lessons a day and a practice exam every Sunday.", shownAs: "Amy R.", publish: true } });
+  assert.equal(saved.status, 200); assert.equal(saved.json.status, "pending");
+  assert.equal((await call(env, "GET", "/v1/stories")).json.stories.length, 0, "pending stories aren't public");
+  assert.equal((await call(env, "GET", "/v1/admin/stories", { cookie: amy })).status, 403);
+  assert.equal((await call(env, "POST", `/v1/admin/stories/${saved.json.id}`, { cookie: amy, body: { status: "approved" } })).status, 403);
+  assert.equal((await call(env, "GET", "/v1/admin/stories", { cookie: owner })).json.stories.length, 1);
+  assert.equal((await call(env, "POST", `/v1/admin/stories/${saved.json.id}`, { cookie: owner, body: { status: "approved" } })).status, 200);
+  const pub = (await call(env, "GET", "/v1/stories?cert=security-plus")).json.stories;
+  assert.equal(pub.length, 1); assert.equal(pub[0].shownAs, "Amy R.");
+  assert.ok(!("userId" in pub[0]) && !JSON.stringify(pub).includes("amy@example.com"), "no account details in public stories");
+  // Editing sends it back for approval.
+  await call(env, "POST", "/v1/stories", { cookie: amy, body: { certId: "security-plus", passedOn: today, quote: "Two lessons a day, labs on weekends, practice exams.", shownAs: "Amy R.", publish: true } });
+  assert.equal((await call(env, "GET", "/v1/stories")).json.stories.length, 0);
+  // Private stories never reach the owner's queue.
+  await call(env, "POST", "/v1/stories", { cookie: amy, body: { certId: "network-plus", passedOn: today, quote: "Subnetting drills every morning for a month.", publish: false } });
+  assert.equal((await call(env, "GET", "/v1/admin/stories", { cookie: owner })).json.stories.length, 1);
+  const mine = (await call(env, "GET", "/v1/stories/mine", { cookie: amy })).json.stories;
+  assert.equal(mine.length, 2);
+  assert.equal((await call(env, "DELETE", `/v1/stories/${saved.json.id}`, { cookie: owner })).status, 404, "only the author can delete");
+  assert.equal((await call(env, "DELETE", `/v1/stories/${saved.json.id}`, { cookie: amy })).status, 200);
+  assert.equal((await call(env, "GET", "/v1/stories/mine", { cookie: amy })).json.stories.length, 1);
+});

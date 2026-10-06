@@ -1007,3 +1007,12 @@ label.check{display:flex;gap:8px;align-items:flex-start;margin:10px 0;font-weigh
 label.check input{margin-top:4px;flex:none}
 .groupcard{border-top:1px solid var(--soft);padding-top:8px;margin-top:8px} .groupcard:first-of-type{border-top:0}
 .sectable tr.you td{background:var(--soft)}
+
+/* Success stories */
+.stories { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.story { margin: 0; }
+.story blockquote { margin: 0 0 8px; font-size: 1.02rem; line-height: 1.5; }
+.story blockquote::before { content: "\201C"; }
+.story blockquote::after { content: "\201D"; }
+.booking ol { margin: 0 0 10px; padding-left: 1.3em; }
+.booking li { margin: 4px 0; }

@@ -267,7 +267,7 @@
       pending.add(storageKey);
       clearTimeout(pushTimer); pushTimer = setTimeout(pushPending, 2500);
     },
-    syncAll, refreshMe, savePrompt, api, authInit, modeSwitch, setMode, assignFrom, get me() { return me; }, get enabled() { return !!API; }
+    syncAll, refreshMe, savePrompt, api, authInit, modeSwitch, setMode, assignFrom, stories: storiesInto, get me() { return me; }, get enabled() { return !!API; }
   };
 
   /* ---------- plan limits ---------- */
@@ -539,6 +539,46 @@
         </details></div>`;
     } catch (e) { el.innerHTML = `<div class="status warn">${esc(e.message)}</div>`; }
   }
+  /* ---------- success stories: members who passed share how they prepared ---------- */
+  const STORY_STATUS = { pending: "Waiting for a quick check before it's shown", approved: "Shown on the site", hidden: "Not shown on the site" };
+  async function storyPanel() {
+    const el = document.getElementById("storypanel"); if (!el) return;
+    try {
+      const { data } = await api("GET", "/v1/stories/mine");
+      const today = new Date().toISOString().slice(0, 10);
+      el.innerHTML = `<div class="panel">
+        <p class="note" data-style="margin-top:0">Passed an exam? Tell other learners how you prepared. If you allow it, your story can appear on the site after a quick check, under the name you choose or with no name. No email or account details are ever shown.</p>
+        ${data.stories.map(st => `<div class="row"><div class="grow"><strong>${esc(certLabel(st.certId))}</strong> <span class="note">· passed ${esc(st.passedOn)} · ${esc(st.publish ? STORY_STATUS[st.status] || st.status : "Private: only you can see it")}</span><br><span class="note">${esc(st.quote)}</span></div><button type="button" class="btn ghost sm" data-aact="rmstory" data-story="${esc(st.id)}">Delete</button></div>`).join("")}
+        <details class="sq"${data.stories.length ? "" : " open"}><summary>Share your result</summary>
+          <form id="story-form" novalidate>
+            <label for="story-cert">Certification you passed</label><select id="story-cert" class="textin" required>${certOptions("", "Choose a certification")}</select>
+            <label for="story-date">Date you passed</label><input type="date" id="story-date" class="textin" required max="${esc(today)}">
+            <label for="story-quote">How you prepared, in a sentence or two</label><textarea id="story-quote" class="textin" rows="3" maxlength="600" required placeholder="e.g. Two lessons a day, a practice exam every Sunday, and the labs for the hands-on questions."></textarea>
+            <label for="story-name">Name to show (leave blank to stay anonymous)</label><input type="text" id="story-name" class="textin" maxlength="40" placeholder="e.g. Sam R.">
+            <label class="check"><input type="checkbox" id="story-publish"> StudyToCert can show this on the site</label>
+            <div class="btns"><button type="submit" class="btn sm">Save my story</button></div>
+            <p class="note" id="story-msg" role="status">Sharing the same certification again replaces your earlier story. You can delete it any time, which removes it from the site.</p>
+          </form></details></div>`;
+    } catch (e) { el.innerHTML = `<div class="status warn">${esc(e.message)}</div>`; }
+  }
+  // Approved stories, shown only when there are some (the box stays empty otherwise).
+  async function storiesInto(id, certId, heading = "From learners who passed") {
+    if (!API) return;
+    try {
+      const { data } = await api("GET", "/v1/stories" + (certId ? "?cert=" + encodeURIComponent(certId) : ""));
+      const el = document.getElementById(id);
+      if (!el || !data.stories || !data.stories.length) return;
+      el.innerHTML = `<h2>${esc(heading)}</h2><div class="stories">${data.stories.slice(0, 6).map(st => `<figure class="panel story"><blockquote>${esc(st.quote)}</blockquote><figcaption class="note">${esc(st.shownAs || "A StudyToCert learner")}, passed ${esc(certLabel(st.certId))} in ${esc(new Date(st.passedOn + "T12:00:00").toLocaleDateString(undefined, { month: "long", year: "numeric" }))}</figcaption></figure>`).join("")}</div>`;
+    } catch (e) { /* stories are a nice-to-have */ }
+  }
+  async function adminStoriesPanel() {
+    const el = document.getElementById("adminstories"); if (!el) return;
+    try {
+      const { data } = await api("GET", "/v1/admin/stories");
+      el.innerHTML = data.stories.length ? data.stories.map(st => `<div class="panel"><div class="row"><div class="grow"><strong>${esc(certLabel(st.certId))}</strong> <span class="note">· ${esc(st.shownAs || "no name")} · passed ${esc(st.passedOn)} · ${esc(st.status)}</span><p data-style="margin:6px 0 0">${esc(st.quote)}</p></div>${st.status !== "approved" ? `<button type="button" class="btn sm" data-aact="modstory" data-story="${esc(st.id)}" data-status="approved">Approve</button>` : ""}${st.status !== "hidden" ? `<button type="button" class="btn ghost sm" data-aact="modstory" data-story="${esc(st.id)}" data-status="hidden">Hide</button>` : ""}</div></div>`).join("")
+        : `<p class="note">No stories yet. Members share them from their profile after they pass; only ones they allow to be shown appear here.</p>`;
+    } catch (e) { el.innerHTML = `<div class="status warn">${esc(e.message)}</div>`; }
+  }
   async function groupJoinView(code) {
     const app = $("#app");
     if (!signedIn()) { app.innerHTML = `<h1>Join a study group</h1><p class="meta">Sign in first, then open the invite link again.</p><div class="btns"><a class="btn" href="#signup">Sign up free</a><a class="btn ghost" href="#login">Log in</a></div>`; return; }
@@ -699,7 +739,11 @@
       <h2>Most studied (30 days)</h2>
       <div class="panel">${d.certs.length ? `<ol>${d.certs.map(c => `<li>${esc(certLabel(c.certId))} <span class="note">· ${plural(c.learners, "learner")}</span></li>`).join("")}</ol>` : `<p class="note" data-style="margin:0">No synced study yet.</p>`}</div>
       <h2>Classes and referrals</h2>
-      <div class="stats">${tile(d.classes.classes, "classes")}${tile(d.classes.students, "students in classes")}${tile(d.referrals.referred, "plans from referrals")}${tile(d.referrals.rewarded, "referral credits given")}</div>`;
+      <div class="stats">${tile(d.classes.classes, "classes")}${tile(d.classes.students, "students in classes")}${tile(d.referrals.referred, "plans from referrals")}${tile(d.referrals.rewarded, "referral credits given")}</div>
+      <h2>Success stories</h2>
+      <p class="note">Shown on the site only after you approve them, and only when the member allowed it. Check that each one reads as a real experience and names no exam questions.</p>
+      <div id="adminstories">${CertHub.fx.skeleton()}</div>`;
+      adminStoriesPanel();
     } catch (e) { $("#app").innerHTML = `${crumbs}<h1>Site dashboard</h1><div class="status warn">${esc(e.status === 403 ? "This page is for the site's owner." : e.message)}</div>`; }
   }
 
@@ -819,6 +863,15 @@
       e.preventDefault();
       try { const { data } = await api("POST", "/v1/groups", { name: $("#group-name").value, certId: $("#group-cert").value, displayName: $("#group-you").value }); ui.toast(`Group started. Join code: ${data.code}`); groupPanel(); }
       catch (err) { $("#group-msg").textContent = err.message; }
+      return;
+    }
+    if (f.id === "story-form") {
+      e.preventDefault();
+      try {
+        const { data } = await api("POST", "/v1/stories", { certId: $("#story-cert").value, passedOn: $("#story-date").value, quote: $("#story-quote").value, shownAs: $("#story-name").value, publish: $("#story-publish").checked });
+        ui.toast($("#story-publish").checked ? "Thanks. Your story will appear after a quick check." : "Saved. Only you can see it.");
+        if (data) storyPanel();
+      } catch (err) { $("#story-msg").textContent = err.message; }
       return;
     }
     if (f.id === "groupcode-form") { e.preventDefault(); const c = $("#groupcode").value.trim().toLowerCase(); if (/^[a-km-np-z2-9]{10}$/.test(c)) location.hash = "gjoin-" + c; else ui.toast("Join codes are 10 letters and numbers."); return; }
@@ -1002,6 +1055,11 @@
         if (!(await ui.confirm(`Leave "${b.dataset.name}"? The group stops seeing your progress.`, { ok: "Leave", cancel: "Stay", danger: true }))) return;
         await api("DELETE", `/v1/groups/${b.dataset.group}/membership`); ui.toast("You left the group."); groupPanel(); return;
       }
+      if (a === "rmstory") {
+        if (!(await ui.confirm("Delete this story? It's removed from the site too.", { ok: "Delete", cancel: "Keep it", danger: true }))) return;
+        await api("DELETE", `/v1/stories/${b.dataset.story}`); ui.toast("Story deleted."); storyPanel(); return;
+      }
+      if (a === "modstory") { await api("POST", `/v1/admin/stories/${b.dataset.story}`, { status: b.dataset.status }); ui.toast(b.dataset.status === "approved" ? "Approved: it's on the site." : "Hidden."); adminStoriesPanel(); return; }
       if (a === "exitopen") { await exitOpen(b.dataset.class, b.dataset.assign); return; }
       if (a === "exitresults") { await exitResultsView(b.dataset.class, b.dataset.assign); return; }
       if (a === "mode") { if (b.getAttribute("aria-pressed") !== "true") await setMode(b.dataset.mode === "teacher" ? "teacher" : "student"); return; }
@@ -1508,6 +1566,7 @@
     try { pr = (await api("GET", "/v1/profile")).data; }
     catch (e) { app.innerHTML = `<h1>Your profile</h1><div class="status warn" role="alert">${esc(e.message)}</div>`; return; }
     if (location.hash !== "#profile") return;
+    setTimeout(storyPanel, 0);
     const note = landingNote ? `<div class="status ${landingNote.kind === "ok" ? "" : "warn"}" role="alert">${esc(landingNote.text)}</div>` : "";
     landingNote = null;
     const name = pr.displayName || pr.email.split("@")[0];
@@ -1542,6 +1601,8 @@
           <p class="note" id="ep-msg" role="status" data-style="margin:0">Times are in your time zone${pr.tz ? ` (${esc(pr.tz)})` : ""}. Every email has a link to stop them.</p>
         </form>
       </div>
+      <h2>Passed your exam?</h2>
+      <div id="storypanel">${CertHub.fx.skeleton()}</div>
       <h2>Sign-in methods</h2>
       <div class="panel">
         <div class="row"><div class="grow"><strong>Email link</strong><br><span class="note">${esc(pr.email)}. Always available.</span></div></div>
@@ -1647,6 +1708,13 @@
         <ul class="clean"><li>Everything in Pro</li><li>Unlimited full-length exams</li><li>AI Tutor for every missed question</li><li>AI weak-spot practice questions</li><li>AI Study Coach with a weekly plan</li><li>AI resume review and mock job interviews</li><li>AI feedback on lab write-ups</li><li>100 help assistant questions a day</li></ul>
         <div class="btns">${/* html: fixed markup with esc() */ cta("premium")}</div></div>
     </div>
+    <h2>For schools, bootcamps and teams</h2>
+    <div class="dashgrid">
+      <div class="panel"><strong>Free for classes</strong><p class="note" data-style="margin:4px 0 0">Teachers create classes, share a join code, assign lessons, labs and exit tickets, and see progress from students who agree to share it. Students use free accounts.</p></div>
+      <div class="panel"><strong>Teacher edition</strong><p class="note" data-style="margin:4px 0 0">Lesson plans with objectives, a 45-minute outline, a class activity, slides, a printable worksheet and an exit ticket with answers. Free for teacher accounts.</p></div>
+      <div class="panel"><strong>Pro seats for your learners</strong><p class="note" data-style="margin:4px 0 0">Give a group Pro or Premium Pro under one organization plan, managed from one place. <a href="mailto:support@studytocert.com?subject=${encodeURIComponent("Seats for my school or team")}">Ask about seats</a></p></div>
+    </div>
+    <div id="storiesbox"></div>
     <h2>Compare plans</h2>
     <div class="panel ptablewrap" tabindex="0" role="region" aria-label="Plan comparison"><table class="ptable">
       <thead><tr><th scope="col">Feature</th><th scope="col">Free</th><th scope="col">Pro</th><th scope="col">Premium Pro</th></tr></thead>
@@ -1664,7 +1732,7 @@
   }
 
   CertHub.accountViews = {
-    plans: plansView,
+    plans: () => { setTimeout(() => storiesInto("storiesbox"), 0); return plansView(); },
     account: () => { setTimeout(() => { renderStatus(); if (signedIn()) { classPanel(); groupPanel(); passkeyPanel(); devicePanel(); refPanel(); } else turnstile(); }, 0); return accountView(); },
     admin: adminView,
     login: mode => { setTimeout(turnstile, 0); return loginView(mode); },
