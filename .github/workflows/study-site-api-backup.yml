@@ -1,6 +1,6 @@
 name: Study site API backup
 
-# Weekly encrypted export of the accounts database (D1 "cyber-cert-study"). The export is encrypted
+# Daily encrypted export of the accounts database (D1 "cyber-cert-study"). The export is encrypted
 # with age for the public key in the STUDY_API_BACKUP_AGE_RECIPIENT variable before it is stored, so
 # the run artifact is unreadable without the private key, which stays offline with you. Kept 35 days.
 # D1 Time Travel is the first way back (any minute in the last 30 days); this is a second copy
@@ -13,7 +13,7 @@ name: Study site API backup
 
 on:
   schedule:
-    - cron: "37 5 * * 0" # Sundays
+    - cron: "37 5 * * *" # daily
   workflow_dispatch:
 
 permissions:
