@@ -1,6 +1,7 @@
 /* StudyToCert API (Cloudflare Worker).
    See ../docs/BACKEND_DESIGN.md. The static site works without this; it only calls the API
    when someone signs in. */
+import { recordError, runOps } from "./ops.js";
 import { HttpError, readJson, notFound, clientIp } from "./util.js";
 import { rateLimit, securityLog, setHashKey } from "./audit.js";
 import { smsEnabled, startAddPhone, confirmPhone, removePhone, startSmsSignIn, verifySmsSignIn } from "./sms.js";
@@ -63,7 +64,7 @@ const LOGGED = new Set([403, 413, 415, 429]);
 const USER_WRITES_PER_HOUR = 1000;
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     setHashKey(env.IP_HASH_KEY);
     try {
       const res = await route(request, env);
@@ -76,15 +77,17 @@ export default {
         return json(env, request, { error: e.code, message: e.message }, e.status);
       }
       console.error("unhandled", e && e.stack ? e.stack.split("\n")[0] : e); // no request bodies or emails in logs
+      const rec = recordError(env, request, e).catch(() => {});
+      if (ctx && ctx.waitUntil) ctx.waitUntil(rec); else await rec;
       return json(env, request, { error: "server_error", message: "Something went wrong. Try again." }, 500);
     }
   },
   // Daily clean-up (wrangler [triggers] crons), so expired sign-in links, sessions and logs don't pile up.
   async scheduled(controller, env, ctx) {
-    // 15:47 UTC: the welcome emails (./welcome.js); the other run cleans up.
-    // 15:47 UTC: the welcome emails; every hour at :17, the reminders people chose (./notify.js); 04:23: clean-up.
+    // 15:47 UTC: the welcome emails; every hour at :17, the reminders people chose (./notify.js) and the owner's
+    // error alert and Monday summary (./ops.js); 04:23: clean-up.
     const cron = controller && controller.cron;
-    ctx.waitUntil(cron === "47 15 * * *" ? sendWelcomeEmails(env) : cron === "17 * * * *" ? sendScheduledEmails(env) : purgeExpired(env));
+    ctx.waitUntil(cron === "47 15 * * *" ? sendWelcomeEmails(env) : cron === "17 * * * *" ? Promise.allSettled([sendScheduledEmails(env), runOps(env)]) : purgeExpired(env));
   }
 };
 
@@ -100,7 +103,8 @@ export async function purgeExpired(env, t = Date.now()) {
     ["DELETE FROM sms_codes WHERE expires_at < ?", t],
     ["DELETE FROM rate_limits WHERE window_start < ?", t - DAY],
     ["DELETE FROM stripe_events WHERE received_at < ?", t - 90 * DAY],
-    ["DELETE FROM audit_log WHERE at < ?", t - 365 * DAY]
+    ["DELETE FROM audit_log WHERE at < ?", t - 365 * DAY],
+    ["DELETE FROM server_errors WHERE at < ?", t - 30 * DAY]
   ];
   const out = {};
   for (const [sql, before] of steps) {

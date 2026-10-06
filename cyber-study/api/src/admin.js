@@ -5,17 +5,24 @@ import { now, normalizeEmail, forbidden } from "./util.js";
 const DAY = 24 * 60 * 60 * 1000;
 
 export function isAdmin(env, user) {
-  if (!user || !env.ADMIN_EMAILS) return false;
-  const list = String(env.ADMIN_EMAILS).split(",").map(s => { try { return normalizeEmail(s); } catch (e) { return ""; } }).filter(Boolean);
-  return list.includes(user.email);
+  return !!user && adminEmails(env).includes(user.email);
 }
 
 const one = async (env, sql, ...args) => ((await env.DB.prepare(sql).bind(...args).first()) || {}).n || 0;
 const all = async (env, sql, ...args) => (await env.DB.prepare(sql).bind(...args).all()).results || [];
 
+// The admin email list, normalized (empty when ADMIN_EMAILS isn't set).
+export function adminEmails(env) {
+  return String(env.ADMIN_EMAILS || "").split(",").map(s => { try { return normalizeEmail(s); } catch (e) { return ""; } }).filter(Boolean);
+}
+
 export async function adminStats(env, user) {
   if (!isAdmin(env, user)) throw forbidden("This page is for the site's owner.");
-  const t = now();
+  return collectStats(env);
+}
+
+// The dashboard totals; also used by the weekly summary email (ops.js).
+export async function collectStats(env, t = now()) {
   const since = d => t - d * DAY;
 
   const users = {

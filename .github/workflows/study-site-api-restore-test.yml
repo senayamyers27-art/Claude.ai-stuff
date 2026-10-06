@@ -1,0 +1,130 @@
+name: Study site API restore test
+
+# Proves a backup can be restored, without touching the live database. Run it from the Actions tab
+# ("Run workflow"), optionally with the run ID of a "Study site API backup" run (blank = the latest one).
+# It downloads that encrypted export, decrypts it, loads it into a NEW scratch D1 database
+# (cyber-cert-study-restore-<run>), prints row counts for the main tables, and deletes the scratch
+# database again unless you tick "keep". Restoring over the live database is deliberately not automated:
+# if you ever need that, load the decrypted file into a new database first, check it, then switch the
+# worker's binding to it (see docs/BACKUPS.md).
+#
+# Setup (once):
+# 1. Settings -> Environments -> New environment named "restore". Add yourself as a required reviewer,
+#    so every run waits for your approval.
+# 2. In that environment, add the secret STUDY_API_BACKUP_AGE_KEY: the whole contents of your age private
+#    key file (the line starting AGE-SECRET-KEY-). It is only readable by runs you approve.
+# 3. CLOUDFLARE_API_TOKEN needs "D1: Edit" for this workflow (the backup alone only needs "D1: Read").
+
+on:
+  workflow_dispatch:
+    inputs:
+      backup_run_id:
+        description: "Backup run ID (blank = latest successful backup)"
+        required: false
+        default: ""
+      keep:
+        description: "Keep the scratch database afterwards (delete it yourself in Cloudflare)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: study-site-api-restore-test
+  cancel-in-progress: false
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: restore
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      AGE_KEY: ${{ secrets.STUDY_API_BACKUP_AGE_KEY }}
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      RUN_ID: ${{ inputs.backup_run_id }}
+    defaults:
+      run:
+        working-directory: cyber-study
+    steps:
+      - name: Check setup
+        working-directory: .
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$AGE_KEY" ]; then
+            echo "::error::Set up the restore environment first (see the comments at the top of this workflow)."
+            exit 1
+          fi
+          if [ -n "$RUN_ID" ] && ! printf '%s' "$RUN_ID" | grep -Eq '^[0-9]{1,20}$'; then
+            echo "::error::backup_run_id must be a number."
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cyber-study/package-lock.json
+
+      - name: Install wrangler and age
+        run: |
+          npm ci
+          sudo apt-get update -qq && sudo apt-get install -y -qq age
+
+      - name: Download and decrypt the backup
+        run: |
+          umask 077
+          W="$RUNNER_TEMP/restore"; mkdir -p "$W"
+          if [ -z "$RUN_ID" ]; then
+            RUN_ID=$(gh api "repos/$REPO/actions/workflows/study-site-api-backup.yml/runs?status=success&per_page=1" --jq '.workflow_runs[0].id')
+          fi
+          [ -n "$RUN_ID" ] && [ "$RUN_ID" != "null" ] || { echo "::error::No successful backup run found."; exit 1; }
+          ART=$(gh api "repos/$REPO/actions/runs/$RUN_ID/artifacts" --jq '[.artifacts[] | select(.name | startswith("study-api-backup-")) | select(.expired | not)][0].id')
+          [ -n "$ART" ] && [ "$ART" != "null" ] || { echo "::error::Backup run $RUN_ID has no unexpired backup."; exit 1; }
+          gh api "repos/$REPO/actions/artifacts/$ART/zip" > "$W/a.zip"
+          unzip -q "$W/a.zip" -d "$W"
+          printf '%s\n' "$AGE_KEY" > "$W/key.txt"
+          age -d -i "$W/key.txt" -o "$W/backup.sql" "$W/backup.sql.age"
+          shred -u "$W/key.txt"
+          test -s "$W/backup.sql"
+          echo "RUN_ID=$RUN_ID" >> "$GITHUB_ENV"
+          echo "Decrypted backup from run $RUN_ID ($(wc -c < "$W/backup.sql") bytes)."
+
+      - name: Load into a scratch database and count rows
+        run: |
+          WR="$GITHUB_WORKSPACE/cyber-study/node_modules/.bin/wrangler"
+          DB="cyber-cert-study-restore-$RUN_ID"
+          echo "DB=$DB" >> "$GITHUB_ENV"
+          # A separate folder with its own config, so nothing here can point at the live database.
+          S="$RUNNER_TEMP/scratch"; mkdir -p "$S"; cd "$S"
+          "$WR" d1 create "$DB" --update-config=false
+          ID=$("$WR" d1 info "$DB" --json | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s).uuid))')
+          printf 'name = "restore-test"\ncompatibility_date = "2025-01-01"\n[[d1_databases]]\nbinding = "DB"\ndatabase_name = "%s"\ndatabase_id = "%s"\n' "$DB" "$ID" > wrangler.toml
+          "$WR" d1 execute "$DB" --remote --file "$RUNNER_TEMP/restore/backup.sql" --yes
+          for t in users sessions progress_docs subscriptions classes class_members stories; do
+            n=$("$WR" d1 execute "$DB" --remote --json --command "SELECT COUNT(*) AS n FROM $t" 2>/dev/null | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{console.log(JSON.parse(s)[0].results[0].n)}catch(e){console.log("missing")}})')
+            echo "$t: $n"
+            echo "| $t | $n |" >> "$RUNNER_TEMP/rows.md"
+          done
+          { echo "### Restore test of backup run $RUN_ID"; echo; echo "| Table | Rows |"; echo "|---|---|"; cat "$RUNNER_TEMP/rows.md"; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Delete the scratch database
+        if: always() && env.DB != '' && inputs.keep != true
+        working-directory: .
+        run: |
+          cd "$RUNNER_TEMP/scratch" 2>/dev/null || cd "$RUNNER_TEMP"
+          "$GITHUB_WORKSPACE/cyber-study/node_modules/.bin/wrangler" d1 delete "$DB" --skip-confirmation || echo "::warning::Delete $DB yourself in the Cloudflare dashboard."
+
+      - name: Remove the decrypted file
+        if: always()
+        working-directory: .
+        run: rm -rf "$RUNNER_TEMP/restore"
