@@ -1118,13 +1118,13 @@
   }
   function teachView() {
     const head = `<h1>Teacher edition: ${esc(C.short)}</h1>`;
-    if (!isTeacher()) return head + `<p class="meta">Lesson plans for teachers and trainers. Choose "Teacher or trainer" under What describes you on <a href="#profile">your profile</a> to see them.</p>`;
+    if (!isTeacher()) return head + `<p class="meta">Lesson plans for teachers and trainers: objectives, a 45-minute plan, a class activity and an exit ticket with answers for every lesson.</p>${CertHub.sync && CertHub.sync.me && CertHub.sync.me.user ? `<div class="btns"><button type="button" class="btn" data-aact="mode" data-mode="teacher" aria-pressed="false">Switch to teacher view</button></div>` : `<div class="btns"><a class="btn" href="#signup">Sign up as a teacher</a><a class="btn ghost" href="#login">Log in</a></div>`}`;
     loadTeach(C.id);
     const T = teach[C.id];
     if (!T || T.loading) return head + CertHub.fx.skeleton();
     if (T.error) return head + `<div class="status warn" role="alert">${esc(T.error)}</div>`;
     const weeks = W.filter(w => lessonTopics(w).some(t => T.plans.has(t)));
-    return head + `<p class="meta">A ready-to-teach plan for every lesson in the ${W.length}-week ${esc(C.short)} plan: objectives, a 45-minute plan, a class activity, discussion questions, an exit ticket with answers and ideas for students who need support or a challenge. Students never see this tab.</p>
+    return head + `${/* html: fixed markup from sync.js */ CertHub.sync.modeSwitch("intab")}<p class="meta">A ready-to-teach plan for every lesson in the ${W.length}-week ${esc(C.short)} plan: objectives, a 45-minute plan, a class activity, discussion questions, an exit ticket with answers and ideas for students who need support or a challenge. Students never see this tab.</p>
     <div class="btns no-print"><button type="button" class="btn" data-act="teachprintall">Print every plan</button><a class="btn ghost" href="#account">Your classes and assignments</a></div>
     ${weeks.map(w => `<section class="teach-week"><h2 data-style="--c:${dc(w.dom)}">Week ${esc(w.n)}: ${esc(w.title || DOM[w.dom].name)}</h2>${lessonTopics(w).filter(t => T.plans.has(t)).map(t => planHtml(t, T.plans.get(t), w.n)).join("")}</section>`).join("")}`;
   }
@@ -1135,7 +1135,7 @@
     if (!LES) return head + `<p class="meta">Lessons for ${esc(C.short)} are being written. Until then, use each week's topic list with a study guide or video course, then check yourself with the weekly quiz.</p>`;
     const all = W.flatMap(w => lessonTopics(w).filter(t => LES.has(t)));
     const done = all.filter(isRead).length;
-    return head + `<p class="meta">A short lesson for every topic in your ${W.length}-week plan, in plan order. Read a lesson, answer its check questions, then take that week's quiz. ${done} of ${all.length} read. <a href="/${esc(C.id)}/lessons/">Open as web pages to share</a></p>
+    return head + `${C.hasTeacher && CertHub.sync && CertHub.sync.modeSwitch ? /* html: fixed markup from sync.js */ CertHub.sync.modeSwitch("intab") : ""}<p class="meta">A short lesson for every topic in your ${W.length}-week plan, in plan order. Read a lesson, answer its check questions, then take that week's quiz. ${done} of ${all.length} read. <a href="/${esc(C.id)}/lessons/">Open as web pages to share</a></p>
     <div class="status notice no-print"><strong>▶ Overview videos:</strong> every lesson has a short narrated video. Press "Watch this week's overview videos" to play a week in a row, or open any lesson and press "▶ Watch the overview".</div>
     <div class="panel bars"><div class="b"><div class="track"><i data-style="width:${all.length ? Math.round(100 * done / all.length) : 0}%"></i></div></div></div>
     <div class="btns no-print" data-style="margin-top:6px">

@@ -339,7 +339,7 @@
       <p class="meta">StudyToCert is free to use in class, with no ads and no tracking. Students create a free account to open every lesson, lab and practice test, and their progress syncs between their devices.</p>
       <h2>What you can use</h2>
       <div class="dashgrid">
-        ${CertHub.sync && CertHub.sync.enabled ? item("Teacher edition", "A ready-to-teach plan for every Security+ lesson, with more certifications coming: objectives, a 45-minute plan, a class activity, discussion questions, an exit ticket with answers, and ideas for students who need support or a challenge. Choose \"Teacher or trainer\" on your profile to see it.", CertHub.sync.me && CertHub.sync.me.teacher ? "#security-plus.teach" : CertHub.sync.me && CertHub.sync.me.user ? "#profile" : "#signup", CertHub.sync.me && CertHub.sync.me.teacher ? "Open the teacher edition" : CertHub.sync.me && CertHub.sync.me.user ? "Update your profile" : "Create a free teacher account") : ""}
+        ${CertHub.sync && CertHub.sync.enabled ? `<div class="panel"><strong>Teacher edition</strong><p class="note" data-style="margin:4px 0 0">A ready-to-teach plan for every Security+ lesson, with more certifications coming: objectives, a 45-minute plan, a class activity, discussion questions, an exit ticket with answers, and ideas for students who need support or a challenge.</p>${CertHub.sync.me && CertHub.sync.me.teacher ? `<p class="btns"><a class="btn sm" href="#security-plus.teach">Open the teacher edition</a></p>` : CertHub.sync.me && CertHub.sync.me.user ? `<p class="btns"><button type="button" class="btn sm" data-aact="mode" data-mode="teacher" aria-pressed="false">Switch to teacher view</button></p>` : `<p class="btns"><a class="btn sm" href="#signup">Sign up as a teacher</a></p>`}</div>` : ""}
         ${CertHub.sync && CertHub.sync.enabled ? item("Free classes and assignments", "Create a class, share its join code, set assignments with due dates and see each student's progress once they agree to share it.", "#account", "Set up a class") : ""}
         ${item(`Week-by-week plans for ${n} certifications`, "Each plan has lessons, a quiz per week, timed checkpoints and a practice exam weighted like the real one. Point students at the week you're teaching.", "#certifications", "Browse certifications")}
         ${item("Printable materials", "Cheat sheets, key-term flashcards to cut out and a study planner, all ready to print or save as PDF.", "#security-plus.cheat", "See a cheat sheet")}
@@ -655,6 +655,7 @@
   }
   function menuHtml() {
     return `<div class="menuhead"><strong id="menutitle">Menu</strong><button type="button" class="suphide" data-menu="close" aria-label="Close menu">✕</button></div>
+      ${CertHub.sync && CertHub.sync.modeSwitch ? /* html: fixed markup from sync.js */ CertHub.sync.modeSwitch("inmenu") : ""}
       <div class="menubody">${SECTIONS().map(([group, items]) => `<section><h2 class="menugroup">${esc(group)}</h2><ul class="clean">${items.map(([id, name]) => `<li><a href="#${esc(id)}" data-menulink="${esc(id)}">${esc(name)}</a></li>`).join("")}</ul></section>`).join("")}</div>`;
   }
   let menuOpener = null;

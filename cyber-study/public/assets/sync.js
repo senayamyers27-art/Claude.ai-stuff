@@ -267,7 +267,7 @@
       pending.add(storageKey);
       clearTimeout(pushTimer); pushTimer = setTimeout(pushPending, 2500);
     },
-    syncAll, refreshMe, savePrompt, api, authInit, get me() { return me; }, get enabled() { return !!API; }
+    syncAll, refreshMe, savePrompt, api, authInit, modeSwitch, setMode, get me() { return me; }, get enabled() { return !!API; }
   };
 
   /* ---------- plan limits ---------- */
@@ -812,11 +812,43 @@
     } catch (err) { ui.toast(err.message); if (f.id === "code-form") { const m = $("#signin-msg"); if (m) m.textContent = err.message; } if (f.id === "signin-form") { $("#signin-msg").textContent = err.message; turnstileReset(); } }
   });
 
+  // Sign-up: teachers don't need "Which describes you?".
+  document.addEventListener("change", e => {
+    if (e.target.name !== "su-kind") return;
+    const box = $("#su-role-box"); if (box) box.hidden = e.target.value === "teacher";
+  });
+
+  /* ---------- student / teacher view ---------- */
+  // One button switches the account between the two: teacher shows the teacher editions; student goes back to the
+  // role the person had before (kept on this device), or "student".
+  const PREV_ROLE = "certhub:studentRole";
+  async function setMode(mode) {
+    if (!signedIn()) { location.hash = "signup"; return; }
+    if (mode === "teacher") {
+      try { const pr = (await api("GET", "/v1/profile")).data; if (pr.role && pr.role !== "teacher") store.set(PREV_ROLE, pr.role); } catch (e) {}
+      await api("PUT", "/v1/profile", { role: "teacher" });
+    } else {
+      const prev = store.get(PREV_ROLE);
+      await api("PUT", "/v1/profile", { role: STUDENT_ROLES.some(([v]) => v === prev) ? prev : "student" });
+    }
+    await refreshMe();
+    document.querySelectorAll(".modeswitch [data-mode]").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.mode === mode)));
+    ui.toast(mode === "teacher" ? "Teacher view is on: lesson plans appear on each certification." : "Student view is on.");
+    if (CertHub.rerender) CertHub.rerender();
+  }
+  // The switch itself, for the menu, the Lessons tab and the Schools page. Empty when signed out or without accounts.
+  function modeSwitch(where = "") {
+    if (!API || !signedIn()) return "";
+    const t = !!(me && me.teacher);
+    return `<div class="modeswitch ${esc(where)}" role="group" aria-label="View as"><span class="note">View as</span><button type="button" class="chipbtn" data-aact="mode" data-mode="student" aria-pressed="${!t}">Student</button><button type="button" class="chipbtn" data-aact="mode" data-mode="teacher" aria-pressed="${t}">Teacher</button></div>`;
+  }
+
   document.addEventListener("click", async e => {
     const b = e.target.closest("[data-aact]"); if (!b) return;
     const a = b.dataset.aact;
     try {
       if (a === "code-restart") { CertHub.rerender(); return; }
+      if (a === "mode") { if (b.getAttribute("aria-pressed") !== "true") await setMode(b.dataset.mode === "teacher" ? "teacher" : "student"); return; }
       if (a === "rmpassword") {
         if (!(await ui.confirm("Remove your backup password? You'll sign in with an email link, Google or a passkey.", { ok: "Remove", cancel: "Keep it", danger: true }))) return;
         await api("DELETE", "/v1/account/password"); ui.toast("Backup password removed."); profileView(); return;
@@ -1179,13 +1211,19 @@
   const ROLES = [["student", "Student"], ["career-changer", "Changing careers into IT"], ["it-pro", "Working in IT"], ["teacher", "Teacher or trainer"], ["other", "Something else"]];
   const SIGNUP_KEY = "certhub:signup";
   const phoneOk = v => { const d = v.replace(/\D/g, ""); return /^\+?[\d\s().-]{7,24}$/.test(v) && d.length >= 7 && d.length <= 15; };
+  // Students pick what describes them; teachers are "teacher" (which opens the teacher editions).
+  const STUDENT_ROLES = ROLES.filter(([v]) => v !== "teacher");
   const signupDetailsHtml = () => `<fieldset class="signupdetails"><legend>1. About you</legend>
+          <div class="sukind" role="radiogroup" aria-labelledby="su-kind-l"><strong id="su-kind-l">I'm signing up as a</strong>
+            <label class="kindcard"><input type="radio" name="su-kind" value="student" required><span><b>Student</b><small>Study for a certification</small></span></label>
+            <label class="kindcard"><input type="radio" name="su-kind" value="teacher"><span><b>Teacher</b><small>Teach a class, with lesson plans</small></span></label>
+          </div>
           <label for="su-name"><strong>Full name</strong></label>
           <input type="text" id="su-name" class="textin" maxlength="60" autocomplete="name" required>
           <label for="su-phone"><strong>Phone number</strong></label>
           <input type="tel" id="su-phone" class="textin" maxlength="24" autocomplete="tel" inputmode="tel" placeholder="+1 555 123 4567" required>
           <div class="formgrid">
-            <div><label for="su-role"><strong>Which describes you?</strong></label><select id="su-role" class="textin" required><option value="">Choose one</option>${ROLES.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}</select></div>
+            <div id="su-role-box"><label for="su-role"><strong>Which describes you?</strong></label><select id="su-role" class="textin"><option value="">Choose one</option>${STUDENT_ROLES.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}</select></div>
             <div><label for="su-goal"><strong>Goal certification</strong></label><select id="su-goal" class="textin">${/* html: options built with esc() */ certOptions("", "Not decided yet")}</select></div>
           </div>
           <label for="su-date"><strong>Target exam date</strong> <span class="note">(optional)</span></label>
@@ -1196,7 +1234,9 @@
   function readSignupDetails() {
     const v = id => (($("#" + id) || {}).value || "").trim();
     const fail = (id, m) => { const el = $("#" + id); if (el) el.focus(); const msg = $("#su-msg"); if (msg) msg.textContent = m; throw new Error(m); };
-    const d = { displayName: v("su-name"), phone: v("su-phone"), role: v("su-role"), goalCert: v("su-goal") || null, examDate: v("su-date") || null };
+    const kind = ($('input[name="su-kind"]:checked') || {}).value || "";
+    const d = { displayName: v("su-name"), phone: v("su-phone"), role: kind === "teacher" ? "teacher" : v("su-role"), goalCert: v("su-goal") || null, examDate: v("su-date") || null };
+    if (!kind) { const r = $('input[name="su-kind"]'); if (r) r.focus(); const msg = $("#su-msg"); if (msg) msg.textContent = "Choose Student or Teacher."; throw new Error("Choose Student or Teacher."); }
     if (d.displayName.length < 2) fail("su-name", "Enter your full name.");
     if (!phoneOk(d.phone)) fail("su-phone", "Enter a phone number with digits only, for example +1 555 123 4567.");
     if (!d.role) fail("su-role", "Choose what describes you.");

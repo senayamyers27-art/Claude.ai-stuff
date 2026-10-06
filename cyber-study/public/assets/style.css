@@ -951,3 +951,16 @@ html.native-app a[href="#install"],html.native-app .row:has(> a[href="#install"]
 .pwlogin summary,.pwchange summary{cursor:pointer;color:var(--accent);font-weight:700}
 .pwlogin form,.pwchange form{margin-top:8px}
 .setpw{border-color:var(--accent);margin-top:14px}
+
+/* Sign-up: student or teacher; the Student / Teacher view switch */
+.sukind{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 12px}
+.sukind>strong{grid-column:1/-1}
+.kindcard{display:block;cursor:pointer}
+.kindcard input{position:absolute;opacity:0;width:1px;height:1px}
+.kindcard span{display:block;border:2px solid var(--line);border-radius:12px;padding:12px;background:var(--surface);height:100%}
+.kindcard b{display:block;font-size:17px} .kindcard small{display:block;color:var(--muted);margin-top:2px}
+.kindcard input:checked+span{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.kindcard input:focus-visible+span{outline:2px solid var(--ink);outline-offset:2px}
+.modeswitch{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.modeswitch.inmenu{padding:10px 16px 0;margin:0}
+@media print{.modeswitch{display:none}}

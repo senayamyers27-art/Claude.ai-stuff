@@ -337,8 +337,11 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/signup.png`, fullPage: true });
     // Sign-up asks about the person first: Google waits until the details are filled in.
     await s.click('.socialbtn[data-provider="google"]');
-    await s.waitForFunction(() => /full name/i.test((document.querySelector("#su-msg") || {}).textContent || ""));
-    check(/#signup$/.test(s.url()), "sign-up needs the details before Google");
+    await s.waitForFunction(() => /Student or Teacher/i.test((document.querySelector("#su-msg") || {}).textContent || ""));
+    check(/#signup$/.test(s.url()), "sign-up asks whether you're a student or a teacher before Google");
+    await s.click('.kindcard:has(input[value="teacher"])');
+    check(await s.isHidden("#su-role-box"), "teachers skip \"Which describes you?\"");
+    await s.click('.kindcard:has(input[value="student"])');
     await s.fill("#su-name", "Sam Rivera"); await s.fill("#su-phone", "+1 555 123 4567");
     await s.selectOption("#su-role", "career-changer"); await s.selectOption("#su-goal", "network-plus");
     await s.click('.socialbtn[data-provider="google"]');
@@ -401,11 +404,10 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     check(!(await s.$('#tabs [data-tab="teach"]')), "the teacher edition tab is hidden from students");
     if (process.env.SHOTS) await s.screenshot({ path: `${process.env.SHOTS}/lesson-rich.png`, fullPage: true });
     // Teacher edition: a teacher account gets the tab, a plan per lesson, and a link from each lesson.
-    await s.goto(BASE + "/#profile"); await s.waitForSelector("#profile-form");
-    await s.selectOption("#pf-role", "teacher");
-    await s.click("#profile-form button[type=submit]");
-    await s.waitForFunction(() => /Profile saved/.test(document.body.textContent));
-    await s.goto(BASE + "/#security-plus.teach"); await s.reload();
+    // One click switches to teacher view, right from the Lessons tab.
+    await s.click('.modeswitch.intab [data-mode="teacher"]');
+    await s.waitForSelector('#tabs [data-tab="teach"]');
+    await s.click('#tabs [data-tab="teach"]');
     await s.waitForSelector("details.tplan");
     check((await s.$$("details.tplan")).length === 72 && !!(await s.$('#tabs [data-tab="teach"]')), "a teacher sees a lesson plan for every Security+ lesson");
     await s.click("details.tplan >> nth=0 >> summary");
@@ -415,6 +417,11 @@ const check = (ok, msg) => { console.log(`  ${ok ? "✓" : "✗"} ${msg}`); if (
     await s.click("details.tplan[open] [data-act=teachstudent]");
     await s.waitForSelector("details.lesson[open] [data-act=teachplan]");
     check(true, "a plan opens its student lesson, which links back to the teacher edition");
+    // And back to student view: the tab goes away and the earlier "Which describes you?" comes back.
+    await s.click('.modeswitch.intab [data-mode="student"]');
+    await s.waitForFunction(() => !document.querySelector('#tabs [data-tab="teach"]'));
+    await s.goto(BASE + "/#profile"); await s.waitForSelector("#profile-form");
+    check(await s.inputValue("#pf-role") === "career-changer", "switching back to student view restores the earlier choice");
     // Study tips by email can be switched off.
     await s.goto(BASE + "/#profile"); await s.waitForSelector("[data-aact=emailtips]");
     await s.click("[data-aact=emailtips]");
