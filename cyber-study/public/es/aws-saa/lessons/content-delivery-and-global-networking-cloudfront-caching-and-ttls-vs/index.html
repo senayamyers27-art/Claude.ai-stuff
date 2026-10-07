@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Entrega De Contenido Y Redes Globales: Caché Y TTLs De Clo… · Lección De Solutions Architect Associate</title>
-<meta name="description" content="Los usuarios lejos de tu Región de AWS sufren latencia simplemente por la distancia y los muchos saltos de internet que hay en medio, y la internet pública">
+<title>Entrega De Contenido Y Redes Globales: Caché Y TTL De Clou… · Lección De Solutions Architect Associate</title>
+<meta name="description" content="Los usuarios lejanos a tu región de AWS sufren latencia simplemente por la distancia y los muchos saltos de internet que hay en el medio, y la internet púb">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0E1319" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
-<meta property="og:title" content="Entrega de contenido y redes globales: caché y TTLs de Clo… · Lección de Solutions Architect Associate">
-<meta property="og:description" content="Los usuarios lejos de tu Región de AWS sufren latencia simplemente por la distancia y los muchos saltos de internet que hay en medio, y la internet pública">
+<meta property="og:title" content="Entrega de contenido y redes globales: caché y TTL de Clou… · Lección de Solutions Architect Associate">
+<meta property="og:description" content="Los usuarios lejanos a tu región de AWS sufren latencia simplemente por la distancia y los muchos saltos de internet que hay en el medio, y la internet púb">
 <link rel="canonical" href="https://www.studytocert.com/es/aws-saa/lessons/content-delivery-and-global-networking-cloudfront-caching-and-ttls-vs/">
 <meta property="og:url" content="https://www.studytocert.com/es/aws-saa/lessons/content-delivery-and-global-networking-cloudfront-caching-and-ttls-vs/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Entrega de contenido y redes globales: caché y TTLs de Clo… · Lección de Solutions Architect Associate">
+<meta property="og:image:alt" content="Entrega de contenido y redes globales: caché y TTL de Clou… · Lección de Solutions Architect Associate">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="alternate" hreflang="en" href="https://www.studytocert.com/aws-saa/lessons/content-delivery-and-global-networking-cloudfront-caching-and-ttls-vs/">
 <link rel="alternate" hreflang="es" href="https://www.studytocert.com/es/aws-saa/lessons/content-delivery-and-global-networking-cloudfront-caching-and-ttls-vs/">
@@ -39,10 +39,10 @@
 <main class="wrap lesson-page">
 <p class="crumbs"><a href="../../../../aws-saa/">Solutions Architect Associate</a> / <a href="../">Lecciones</a> · <a href="../../../../aws-saa/lessons/content-delivery-and-global-networking-cloudfront-caching-and-ttls-vs/" hreflang="en" lang="en">English</a></p>
 <p class="note">AWS Certified Solutions Architect – Associate SAA-C03</p>
-<h1>Entrega de contenido y redes globales: caché y TTLs de CloudFront vs AWS Global Accelerator</h1>
+<h1>Entrega de contenido y redes globales: caché y TTL de CloudFront vs AWS Global Accelerator</h1>
 <article class="lbody">
-<p>Los usuarios lejos de tu Región de AWS sufren latencia simplemente por la distancia y los muchos saltos de internet que hay en medio, y la internet pública añade congestión impredecible. AWS tiene dos servicios que llevan a los usuarios a la red global de AWS cerca de donde están: Amazon CloudFront y AWS Global Accelerator. Ambos usan edge locations de AWS, ambos mejoran el rendimiento para usuarios lejanos y ambos se integran con AWS Shield para la protección contra denegación de servicio distribuida (DDoS), por eso distinguirlos es una pregunta clásica del examen.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Los usuarios lejanos a tu región de AWS sufren latencia simplemente por la distancia y los muchos saltos de internet que hay en el medio, y la internet pública añade congestión impredecible. AWS tiene dos servicios que llevan a los usuarios a la red global de AWS cerca de donde están: Amazon CloudFront y AWS Global Accelerator. Ambos usan edge locations de AWS, ambos mejoran el rendimiento para usuarios lejanos y ambos se integran con AWS Shield para la protección contra ataques de denegación de servicio distribuida (DDoS); por eso distinguirlos es una pregunta clásica del examen.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 9 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Solutions Architect Associate gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../aws-saa/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../caching-elasticache-for-redis-vs-memcached-dynamodb-accelerator-dax-la/">← Caché: ElastiCache for Redis vs Memcached, DynamoDB Accelera</a><a href="../choosing-a-database-rds-aurora-dynamodb-redshift-documentdb-neptune-an/">Cómo elegir una base de datos: RDS, Aurora, DynamoDB, Redshi →</a></nav>
