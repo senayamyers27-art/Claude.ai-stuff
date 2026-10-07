@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Image Analysis De Azure AI Vision: Captions, Dense Caption… · Lección De Azure AI Engineer</title>
-<meta name="description" content="La API Image Analysis de Azure AI Vision describe lo que hay en una imagen usando modelos precompilados entrenados por Microsoft, sin que tengas que entren">
+<meta name="description" content="La API Image Analysis de Azure AI Vision describe lo que hay en una imagen usando modelos prediseñados entrenados por Microsoft, sin que tú entrenes nada. ">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Image Analysis de Azure AI Vision: captions, dense caption… · Lección de Azure AI Engineer">
-<meta property="og:description" content="La API Image Analysis de Azure AI Vision describe lo que hay en una imagen usando modelos precompilados entrenados por Microsoft, sin que tengas que entren">
+<meta property="og:description" content="La API Image Analysis de Azure AI Vision describe lo que hay en una imagen usando modelos prediseñados entrenados por Microsoft, sin que tú entrenes nada. ">
 <link rel="canonical" href="https://www.studytocert.com/es/ai-102/lessons/azure-ai-vision-image-analysis-captions-dense-captions-tags-objects-pe/">
 <meta property="og:url" content="https://www.studytocert.com/es/ai-102/lessons/azure-ai-vision-image-analysis-captions-dense-captions-tags-objects-pe/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Microsoft Certified: Azure AI Engineer Associate AI-102</p>
 <h1>Image Analysis de Azure AI Vision: captions, dense captions, etiquetas, objetos, personas y smart crops</h1>
 <article class="lbody">
-<p>La API Image Analysis de Azure AI Vision describe lo que hay en una imagen usando modelos precompilados entrenados por Microsoft, sin que tengas que entrenar nada. Envías una imagen (como URL o como datos binarios) y una lista de las características visuales que quieres, y el servicio devuelve JSON con los resultados y puntuaciones de confianza. La versión actual, Image Analysis 4.0, se llama en la ruta <code>imageanalysis:analyze</code> con un parámetro de consulta <code>features</code>, o mediante el <code>ImageAnalysisClient</code> de los SDK de Python y C#.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 4 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>La API Image Analysis de Azure AI Vision describe lo que hay en una imagen usando modelos prediseñados entrenados por Microsoft, sin que tú entrenes nada. Envías una imagen, ya sea como URL o como datos binarios en el cuerpo de la solicitud, junto con una lista de las características visuales que quieres. El servicio devuelve JavaScript Object Notation (JSON) con los resultados de cada característica, normalmente con puntuaciones de confianza entre 0 y 1. La versión actual, Image Analysis 4.0, se llama en la ruta <code>imageanalysis:analyze</code> con un parámetro de consulta <code>features</code>, como <code>features=caption,tags,objects</code>, o mediante <code>ImageAnalysisClient</code> en los kits de desarrollo de software (SDKs) de Python y C#.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Azure AI Engineer gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../ai-102/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../deploying-agents-and-integrating-them-into-applications/">← Implementación de agentes e integración en aplicaciones</a><a href="../reading-printed-and-handwritten-text-with-the-ocr-read-feature-of-azur/">Lectura de texto impreso y manuscrito con la función OCR (Re →</a></nav>

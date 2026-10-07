@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Planificación De Implementaciones De Modelos: Regiones, Di… · Lección De Azure AI Engineer</title>
-<meta name="description" content="En Azure OpenAI no llamas a un modelo directamente. Creas una implementación (deployment): una instancia con nombre de un modelo y una versión específicos ">
+<meta name="description" content="En Azure OpenAI no llamas a un modelo directamente. Creas una implementación: una instancia con nombre de un modelo y una versión concretos dentro de tu re">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Planificación de implementaciones de modelos: regiones, di… · Lección de Azure AI Engineer">
-<meta property="og:description" content="En Azure OpenAI no llamas a un modelo directamente. Creas una implementación (deployment): una instancia con nombre de un modelo y una versión específicos ">
+<meta property="og:description" content="En Azure OpenAI no llamas a un modelo directamente. Creas una implementación: una instancia con nombre de un modelo y una versión concretos dentro de tu re">
 <link rel="canonical" href="https://www.studytocert.com/es/ai-102/lessons/planning-model-deployments-regions-model-availability-deployment-types/">
 <meta property="og:url" content="https://www.studytocert.com/es/ai-102/lessons/planning-model-deployments-regions-model-availability-deployment-types/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Microsoft Certified: Azure AI Engineer Associate AI-102</p>
 <h1>Planificación de implementaciones de modelos: regiones, disponibilidad de modelos, tipos de implementación (Standard, Global, Data Zone, Provisioned) y cuotas</h1>
 <article class="lbody">
-<p>En Azure OpenAI no llamas a un modelo directamente. Creas una implementación (deployment): una instancia con nombre de un modelo y una versión específicos en tu recurso, con su propia capacidad. Tu código llama al nombre de la implementación, no al nombre del modelo, lo que te permite cambiar de versión detrás del mismo nombre. Planificar una implementación significa elegir una región, un modelo disponible allí, un tipo de implementación y cuánta cuota asignarle.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 4 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>En Azure OpenAI no llamas a un modelo directamente. Creas una implementación: una instancia con nombre de un modelo y una versión concretos dentro de tu recurso, con su propia capacidad. Tu código llama al nombre de la implementación, no al nombre del modelo, lo que te permite cambiar de versión detrás del mismo nombre. Si tu código llama a una implementación llamada <code>support-chat</code>, más adelante puedes apuntar esa implementación a una versión más nueva del modelo, o crear una implementación nueva y cambiar el tráfico, sin reescribir la aplicación. Planificar una implementación significa elegir una región, un modelo disponible allí, un tipo de implementación y cuánta cuota asignarle.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Azure AI Engineer gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../ai-102/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../azure-ai-foundry-hubs-projects-and-resources-vs-single-service-and-mul/">← Hubs, proyectos y recursos de Azure AI Foundry frente a recu</a><a href="../deploying-azure-ai-resources-with-the-portal-azure-cli-arm-templates-a/">Implementación de recursos de Azure AI con el portal, la CLI →</a></nav>
