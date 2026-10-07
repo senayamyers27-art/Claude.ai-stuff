@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Solución De Problemas De Streams Y Colas: IteratorAge De K… · Lección De Developer Associate</title>
-<meta name="description" content="Cuando el consumidor de un stream o una cola se atrasa o sigue fallando, los mensajes se acumulan y los datos llegan tarde. El examen describe estos síntom">
+<meta name="description" content="Cuando un consumidor de un stream o de una cola se atrasa o falla constantemente, los mensajes se acumulan y los datos llegan tarde, o se pierden. El exame">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Solución de problemas de streams y colas: IteratorAge de K… · Lección de Developer Associate">
-<meta property="og:description" content="Cuando el consumidor de un stream o una cola se atrasa o sigue fallando, los mensajes se acumulan y los datos llegan tarde. El examen describe estos síntom">
+<meta property="og:description" content="Cuando un consumidor de un stream o de una cola se atrasa o falla constantemente, los mensajes se acumulan y los datos llegan tarde, o se pierden. El exame">
 <link rel="canonical" href="https://www.studytocert.com/es/aws-developer/lessons/stream-and-queue-troubleshooting-kinesis-iteratorage-parallelization-f/">
 <meta property="og:url" content="https://www.studytocert.com/es/aws-developer/lessons/stream-and-queue-troubleshooting-kinesis-iteratorage-parallelization-f/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">AWS Certified Developer – Associate DVA-C02</p>
 <h1>Solución de problemas de streams y colas: IteratorAge de Kinesis, factor de paralelización, colas de mensajes fallidos de SQS y redrive</h1>
 <article class="lbody">
-<p>Cuando el consumidor de un stream o una cola se atrasa o sigue fallando, los mensajes se acumulan y los datos llegan tarde. El examen describe estos síntomas mediante métricas específicas, y necesitas saber qué significa cada una y qué ajuste lo corrige.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Cuando un consumidor de un stream o de una cola se atrasa o falla constantemente, los mensajes se acumulan y los datos llegan tarde, o se pierden. El examen describe estas situaciones mediante métricas y ajustes específicos, y necesitas saber qué significa cada métrica y qué ajuste corrige la causa de fondo. Esta lección cubre los consumidores de streams en Amazon Kinesis Data Streams y Amazon DynamoDB Streams, y los consumidores de colas en Amazon Simple Queue Service (SQS), incluidas las colas de mensajes fallidos (DLQ, dead-letter queues) y el redrive.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Developer Associate gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../aws-developer/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../lambda-performance-memory-cpu-tuning-cold-starts-provisioned-concurren/">← Rendimiento de Lambda: ajuste de memoria/CPU, arranques en f</a><a href="../dynamodb-optimization-hot-partitions-key-design-on-demand-vs-provision/">Optimización de DynamoDB: particiones calientes, diseño de c →</a></nav>

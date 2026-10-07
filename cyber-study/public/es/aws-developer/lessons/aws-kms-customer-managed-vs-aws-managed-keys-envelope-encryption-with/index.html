@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AWS KMS: Claves Administradas Por El Cliente Vs Administra… · Lección De Developer Associate</title>
-<meta name="description" content="AWS Key Management Service (KMS) crea y controla claves criptográficas cuyo material de clave nunca sale de KMS sin cifrar. Servicios como S3, DynamoDB, La">
+<meta name="description" content="AWS Key Management Service (KMS) crea y controla claves criptográficas cuyo material de clave nunca sale de KMS sin cifrar. Las claves de KMS viven dentro ">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="AWS KMS: claves administradas por el cliente vs administra… · Lección de Developer Associate">
-<meta property="og:description" content="AWS Key Management Service (KMS) crea y controla claves criptográficas cuyo material de clave nunca sale de KMS sin cifrar. Servicios como S3, DynamoDB, La">
+<meta property="og:description" content="AWS Key Management Service (KMS) crea y controla claves criptográficas cuyo material de clave nunca sale de KMS sin cifrar. Las claves de KMS viven dentro ">
 <link rel="canonical" href="https://www.studytocert.com/es/aws-developer/lessons/aws-kms-customer-managed-vs-aws-managed-keys-envelope-encryption-with/">
 <meta property="og:url" content="https://www.studytocert.com/es/aws-developer/lessons/aws-kms-customer-managed-vs-aws-managed-keys-envelope-encryption-with/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">AWS Certified Developer – Associate DVA-C02</p>
 <h1>AWS KMS: claves administradas por el cliente vs administradas por AWS, cifrado de sobre con GenerateDataKey, límite de 4 KB de Encrypt, uso de claves entre cuentas</h1>
 <article class="lbody">
-<p>AWS Key Management Service (KMS) crea y controla claves criptográficas cuyo material de clave nunca sale de KMS sin cifrar. Servicios como S3, DynamoDB, Lambda y Secrets Manager llaman a KMS por ti, y tu propio código puede llamarlo directamente.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>AWS Key Management Service (KMS) crea y controla claves criptográficas cuyo material de clave nunca sale de KMS sin cifrar. Las claves de KMS viven dentro de módulos de seguridad de hardware administrados por AWS, y cada uso es una llamada a la API que IAM y la política de clave autorizan y que AWS CloudTrail registra. Servicios como Amazon S3, Amazon DynamoDB, AWS Lambda y AWS Secrets Manager llaman a KMS por ti cuando activas el cifrado, y tu propio código puede llamarlo directamente con el SDK.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Developer Associate gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../aws-developer/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../encryption-at-rest-sse-s3-sse-kms-sse-c-s3-bucket-keys-client-side-enc/">← Cifrado en reposo: SSE-S3, SSE-KMS, SSE-C, S3 Bucket Keys, c</a><a href="../encryption-in-transit-tls-acm-certificates-us-east-1-for-cloudfront-en/">Cifrado en tránsito: TLS, certificados de ACM (us-east-1 par →</a></nav>
