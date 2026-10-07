@@ -1259,7 +1259,7 @@ CertHub.addLessons("linux-plus", [
    ],
    [
     "An x in the password field of /etc/passwd means the account is locked.",
-    "x only means the real hash is stored in /etc/shadow. A locked password shows ! or * at the start of the shadow hash field."
+    "x only means the real hash is stored in /etc/shadow. A locked password shows `!` or `*` at the start of the shadow hash field."
    ],
    [
     "Changing /etc/login.defs or /etc/skel updates existing users.",
