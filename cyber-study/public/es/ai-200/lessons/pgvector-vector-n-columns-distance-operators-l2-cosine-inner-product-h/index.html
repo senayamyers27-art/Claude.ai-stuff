@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pgvector: Columnas Vector(N), Operadores De Distancia (&lt;-&gt;… · Lección De AI-200</title>
-<meta name="description" content="Con la extensión creada, almacenas los embeddings en una columna de tipo vector(n), donde n es el número de dimensiones que devuelve tu modelo de embedding">
+<meta name="description" content="Con la extensión creada, guardas los embeddings en una columna de tipo vector(n), donde n es el número de dimensiones que devuelve tu modelo de embeddings.">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="pgvector: columnas vector(n), operadores de distancia (&lt;-&gt;… · Lección de AI-200">
-<meta property="og:description" content="Con la extensión creada, almacenas los embeddings en una columna de tipo vector(n), donde n es el número de dimensiones que devuelve tu modelo de embedding">
+<meta property="og:description" content="Con la extensión creada, guardas los embeddings en una columna de tipo vector(n), donde n es el número de dimensiones que devuelve tu modelo de embeddings.">
 <link rel="canonical" href="https://www.studytocert.com/es/ai-200/lessons/pgvector-vector-n-columns-distance-operators-l2-cosine-inner-product-h/">
 <meta property="og:url" content="https://www.studytocert.com/es/ai-200/lessons/pgvector-vector-n-columns-distance-operators-l2-cosine-inner-product-h/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Microsoft Certified: Azure AI Cloud Developer Associate AI-200 (replaced AZ-204)</p>
 <h1>pgvector: columnas vector(n), operadores de distancia (&lt;-&gt; L2, &lt;=&gt; coseno, &lt;#&gt; producto interno), índices HNSW vs IVFFlat y su ajuste (m, ef_search, lists, probes)</h1>
 <article class="lbody">
-<p>Con la extensión creada, almacenas los embeddings en una columna de tipo <code>vector(n)</code>, donde n es el número de dimensiones que devuelve tu modelo de embeddings. Insertar un vector con otra longitud falla, lo que te protege de mezclar modelos. Una tabla típica guarda juntos el texto del fragmento, sus metadatos y su embedding, para que una sola consulta SQL pueda filtrar y ordenar por relevancia.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Con la extensión creada, guardas los embeddings en una columna de tipo <code>vector(n)</code>, donde n es el número de dimensiones que devuelve tu modelo de embeddings. Insertar un vector de otra longitud falla con un error, lo que te protege de mezclar por accidente embeddings de dos modelos en una misma columna. Una tabla típica guarda juntos el texto del fragmento, sus metadatos y su embedding, de modo que una sola consulta SQL puede filtrar por metadatos y ordenar por similitud al mismo tiempo. Esa combinación es una de las principales razones por las que los equipos eligen PostgreSQL para el trabajo con vectores.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia AI-200 gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../ai-200/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../azure-database-for-postgresql-flexible-server-allow-listing-and-enabli/">← Azure Database for PostgreSQL flexible server: incluir en la</a><a href="../retrieval-augmented-generation-chunking-embedding-storing-top-k-retrie/">Generación aumentada por recuperación: fragmentación, embedd →</a></nav>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Revisiones De Container Apps: Modo De Revisión Única Vs Mú… · Lección De AI-200</title>
-<meta name="description" content="Una revisión es una instantánea inmutable de una versión de una container app. Cada vez que cambias una configuración con alcance de revisión, Container Ap">
+<meta name="description" content="Una revisión es una instantánea inmutable de una versión de una container app, y entender qué la crea es la base de este tema. Cada vez que cambias una con">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Revisiones de Container Apps: modo de revisión única vs mú… · Lección de AI-200">
-<meta property="og:description" content="Una revisión es una instantánea inmutable de una versión de una container app. Cada vez que cambias una configuración con alcance de revisión, Container Ap">
+<meta property="og:description" content="Una revisión es una instantánea inmutable de una versión de una container app, y entender qué la crea es la base de este tema. Cada vez que cambias una con">
 <link rel="canonical" href="https://www.studytocert.com/es/ai-200/lessons/container-apps-revisions-single-vs-multiple-revision-mode-traffic-spli/">
 <meta property="og:url" content="https://www.studytocert.com/es/ai-200/lessons/container-apps-revisions-single-vs-multiple-revision-mode-traffic-spli/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Microsoft Certified: Azure AI Cloud Developer Associate AI-200 (replaced AZ-204)</p>
 <h1>Revisiones de Container Apps: modo de revisión única vs múltiple, división del tráfico y etiquetas</h1>
 <article class="lbody">
-<p>Una revisión es una instantánea inmutable de una versión de una container app. Cada vez que cambias una configuración con alcance de revisión, Container Apps crea una nueva revisión con un nombre generado como <code>orders--abc123</code> (o un sufijo que elijas). Los cambios con alcance de revisión son cualquier cosa bajo la sección <code>template</code> de la app: la imagen del contenedor, las variables de entorno, la CPU y la memoria, las reglas de escalado y las sondas. Los cambios con alcance de aplicación, como la configuración de ingress, los valores de los secretos y las credenciales del registro, se aplican a todas las revisiones y no crean una revisión nueva.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Una revisión es una instantánea inmutable de una versión de una container app, y entender qué la crea es la base de este tema. Cada vez que cambias una configuración con alcance de revisión, Container Apps crea una revisión nueva con un nombre generado como <code>orders--abc123</code>, o con un sufijo que tú eliges, como <code>orders--v2</code>. Los cambios con alcance de revisión son todo lo que está bajo la sección <code>template</code> de la app: la imagen del contenedor, las variables de entorno, la CPU y la memoria, las reglas de escalado y los sondeos de estado. Los cambios con alcance de aplicación, como la configuración de ingress, los valores de los secretos y las credenciales del registro, se aplican a todas las revisiones a la vez y no crean una revisión nueva. Si una pregunta plantea por qué cambiar un secreto no produjo una revisión nueva, esta es la razón.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia AI-200 gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../ai-200/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../azure-container-apps-environments-ingress-external-vs-internal-secrets/">← Azure Container Apps: entornos, ingress (externo vs interno)</a><a href="../container-apps-scaling-http-rules-keda-event-rules-for-example-service/">Escalado de Container Apps: reglas HTTP, reglas de eventos d →</a></nav>

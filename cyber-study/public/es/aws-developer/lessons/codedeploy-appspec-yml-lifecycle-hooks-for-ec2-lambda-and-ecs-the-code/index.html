@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Hooks Del Ciclo De Vida De Appspec.yml De CodeDeploy Para … · Lección De Developer Associate</title>
-<meta name="description" content="AWS CodeDeploy automatiza el despliegue de revisiones de aplicaciones en tres plataformas de cómputo: servidores EC2 y locales (on-premises), Lambda y Amaz">
+<meta name="description" content="AWS CodeDeploy automatiza el despliegue de revisiones de aplicaciones en tres plataformas de cómputo: instancias de Amazon EC2 y servidores locales (on-pre">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Hooks del ciclo de vida de appspec.yml de CodeDeploy para … · Lección de Developer Associate">
-<meta property="og:description" content="AWS CodeDeploy automatiza el despliegue de revisiones de aplicaciones en tres plataformas de cómputo: servidores EC2 y locales (on-premises), Lambda y Amaz">
+<meta property="og:description" content="AWS CodeDeploy automatiza el despliegue de revisiones de aplicaciones en tres plataformas de cómputo: instancias de Amazon EC2 y servidores locales (on-pre">
 <link rel="canonical" href="https://www.studytocert.com/es/aws-developer/lessons/codedeploy-appspec-yml-lifecycle-hooks-for-ec2-lambda-and-ecs-the-code/">
 <meta property="og:url" content="https://www.studytocert.com/es/aws-developer/lessons/codedeploy-appspec-yml-lifecycle-hooks-for-ec2-lambda-and-ecs-the-code/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">AWS Certified Developer – Associate DVA-C02</p>
 <h1>Hooks del ciclo de vida de appspec.yml de CodeDeploy para EC2, Lambda y ECS; el agente de CodeDeploy</h1>
 <article class="lbody">
-<p>AWS CodeDeploy automatiza el despliegue de revisiones de aplicaciones en tres plataformas de cómputo: servidores EC2 y locales (on-premises), Lambda y Amazon ECS. En cada despliegue lee un archivo de especificación de la aplicación, <code>appspec.yml</code> (o JSON para Lambda y ECS), que describe qué desplegar y qué hooks de eventos del ciclo de vida ejecutar. El examen evalúa el orden de los hooks y cuáles existen en cada plataforma.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>AWS CodeDeploy automatiza el despliegue de revisiones de aplicaciones en tres plataformas de cómputo: instancias de Amazon EC2 y servidores locales (on-premises), funciones de AWS Lambda y servicios de Amazon Elastic Container Service (ECS). En cada despliegue lee un archivo de especificación de la aplicación, <code>appspec.yml</code>, que en Lambda y ECS también puede estar en JSON. El AppSpec describe qué desplegar y qué hooks de eventos del ciclo de vida ejecutar. El examen Developer Associate evalúa el orden de los hooks, qué hooks existen en cada plataforma y cómo diagnosticar problemas con el agente de EC2.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Developer Associate gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../aws-developer/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../codepipeline-stages-and-actions-manual-approvals-codebuild-buildspec-p/">← Etapas y acciones de CodePipeline, aprobaciones manuales; fa</a><a href="../testing-in-development-environments-unit-tests-in-ci-integration-tests/">Pruebas en entornos de desarrollo: pruebas unitarias en CI,  →</a></nav>

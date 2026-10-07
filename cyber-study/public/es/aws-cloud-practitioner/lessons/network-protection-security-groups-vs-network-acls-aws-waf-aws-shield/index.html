@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Protección De Red: Security Groups Frente A Network ACLs, … · Lección De Cloud Practitioner</title>
-<meta name="description" content="AWS te ofrece varias capas de protección de red, cada una trabajando en un nivel distinto: la interfaz de red, la subred, la solicitud web y la organizació">
+<meta name="description" content="AWS te da varias capas de protección de red, y cada una trabaja en un nivel distinto: la interfaz de red, la subred, la solicitud web y la organización com">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Protección de red: security groups frente a network ACLs, … · Lección de Cloud Practitioner">
-<meta property="og:description" content="AWS te ofrece varias capas de protección de red, cada una trabajando en un nivel distinto: la interfaz de red, la subred, la solicitud web y la organizació">
+<meta property="og:description" content="AWS te da varias capas de protección de red, y cada una trabaja en un nivel distinto: la interfaz de red, la subred, la solicitud web y la organización com">
 <link rel="canonical" href="https://www.studytocert.com/es/aws-cloud-practitioner/lessons/network-protection-security-groups-vs-network-acls-aws-waf-aws-shield/">
 <meta property="og:url" content="https://www.studytocert.com/es/aws-cloud-practitioner/lessons/network-protection-security-groups-vs-network-acls-aws-waf-aws-shield/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">AWS Certified Cloud Practitioner CLF-C02</p>
 <h1>Protección de red: security groups frente a network ACLs, AWS WAF, AWS Shield Standard y Advanced, AWS Firewall Manager</h1>
 <article class="lbody">
-<p>AWS te ofrece varias capas de protección de red, cada una trabajando en un nivel distinto: la interfaz de red, la subred, la solicitud web y la organización completa. Usarlas juntas se llama defensa en profundidad (defense in depth). El examen evalúa tanto las diferencias entre ellas como cuál usar ante una amenaza determinada, así que aprende cada una según dónde se ubica y lo que puede y no puede hacer.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>AWS te da varias capas de protección de red, y cada una trabaja en un nivel distinto: la interfaz de red, la subred, la solicitud web y la organización completa. Usarlas juntas se llama defensa en profundidad. El examen evalúa tanto las diferencias entre ellas como cuál usar ante una amenaza determinada, así que aprende cada una según dónde se ubica y qué puede y no puede hacer. Un hábito útil es imaginar el tráfico que llega desde internet y pasa por cada punto de control en orden: Shield contra las avalanchas en el borde, WAF leyendo las solicitudes web, la network ACL en el límite de la subred y, por último, el security group en el propio recurso.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 8 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Cloud Practitioner gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../aws-cloud-practitioner/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../storing-credentials-safely-aws-secrets-manager-and-aws-systems-manager/">← Guardar credenciales de forma segura: AWS Secrets Manager y </a><a href="../threat-detection-and-posture-amazon-guardduty-amazon-inspector-amazon/">Detección de amenazas y postura de seguridad: Amazon GuardDu →</a></nav>
