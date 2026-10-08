@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Plano De Administración: Permitted IPs, Service Routes, Co… · Lección De NGFW Engineer</title>
-<meta name="description" content="Los firewalls de Palo Alto separan el plano de administración (management plane), que ejecuta la interfaz web, la CLI, el registro y la configuración, del ">
+<meta name="description" content="Los firewalls de Palo Alto Networks separan el plano de administración (management plane), que ejecuta la interfaz web, la interfaz de línea de comandos (C">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Plano de administración: permitted IPs, service routes, co… · Lección de NGFW Engineer">
-<meta property="og:description" content="Los firewalls de Palo Alto separan el plano de administración (management plane), que ejecuta la interfaz web, la CLI, el registro y la configuración, del ">
+<meta property="og:description" content="Los firewalls de Palo Alto Networks separan el plano de administración (management plane), que ejecuta la interfaz web, la interfaz de línea de comandos (C">
 <link rel="canonical" href="https://www.studytocert.com/es/palo-alto-ngfw/lessons/management-plane-permitted-ips-service-routes-candidate-vs-running-con/">
 <meta property="og:url" content="https://www.studytocert.com/es/palo-alto-ngfw/lessons/management-plane-permitted-ips-service-routes-candidate-vs-running-con/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Palo Alto Networks Certified Next-Generation Firewall Engineer NGFW-Engineer</p>
 <h1>Plano de administración: permitted IPs, service routes, configuración candidate vs running, commits, partial commits, config locks y named snapshots</h1>
 <article class="lbody">
-<p>Los firewalls de Palo Alto separan el plano de administración (management plane), que ejecuta la interfaz web, la CLI, el registro y la configuración, del plano de datos (data plane), que procesa el tráfico. Proteger y operar el plano de administración con cuidado es higiene básica y un área favorita del examen.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Los firewalls de Palo Alto Networks separan el plano de administración (management plane), que ejecuta la interfaz web, la interfaz de línea de comandos (CLI), el registro, los informes y la configuración, del plano de datos (data plane), que procesa el tráfico. Esta separación significa que un plano de datos muy ocupado no te deja sin acceso a la administración, y que las tareas pesadas de administración, como la generación de informes, no ralentizan el tráfico. Proteger y operar con cuidado el plano de administración es higiene básica y un área favorita del examen, porque una interfaz de administración comprometida significa un firewall comprometido, y un commit no planificado puede tumbar una red con la misma seguridad que un ataque.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 8 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia NGFW Engineer gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../palo-alto-ngfw/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../user-id-sources-server-monitoring-syslog-listener-globalprotect-xml-ap/">← Fuentes de User-ID (server monitoring, syslog listener, Glob</a><a href="../web-proxy-explicit-and-transparent-on-supported-pan-os-11-x-platforms/">Web proxy (explícito y transparente) en plataformas compatib →</a></nav>

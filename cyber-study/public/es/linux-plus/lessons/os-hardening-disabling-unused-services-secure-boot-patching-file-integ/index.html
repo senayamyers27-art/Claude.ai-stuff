@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Endurecimiento Del Sistema Operativo: Deshabilitar Servici… · Lección De Linux+</title>
-<meta name="description" content="Endurecer (hardening) significa reducir la superficie de ataque de un sistema: eliminar lo que no se necesita, restringir lo que queda, mantener el softwar">
+<meta name="description" content="Endurecer significa reducir la superficie de ataque de un sistema: eliminar lo que no se necesita, restringir lo que queda, mantener el software al día y v">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Endurecimiento del sistema operativo: deshabilitar servici… · Lección de Linux+">
-<meta property="og:description" content="Endurecer (hardening) significa reducir la superficie de ataque de un sistema: eliminar lo que no se necesita, restringir lo que queda, mantener el softwar">
+<meta property="og:description" content="Endurecer significa reducir la superficie de ataque de un sistema: eliminar lo que no se necesita, restringir lo que queda, mantener el software al día y v">
 <link rel="canonical" href="https://www.studytocert.com/es/linux-plus/lessons/os-hardening-disabling-unused-services-secure-boot-patching-file-integ/">
 <meta property="og:url" content="https://www.studytocert.com/es/linux-plus/lessons/os-hardening-disabling-unused-services-secure-boot-patching-file-integ/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">CompTIA Linux+ XK0-006</p>
 <h1>Endurecimiento del sistema operativo: deshabilitar servicios sin uso, Secure Boot, parches, integridad de archivos (AIDE)</h1>
 <article class="lbody">
-<p>Endurecer (hardening) significa reducir la superficie de ataque de un sistema: eliminar lo que no se necesita, restringir lo que queda, mantener el software al día y vigilar los cambios no autorizados. Ningún control por sí solo detiene todos los ataques, así que el endurecimiento superpone varias defensas, un enfoque llamado defensa en profundidad. Las cuatro áreas de esta lección, servicios, integridad del arranque, parches y monitoreo de integridad de archivos, son el núcleo de la mayoría de las listas de verificación de endurecimiento.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Endurecer significa reducir la superficie de ataque de un sistema: eliminar lo que no se necesita, restringir lo que queda, mantener el software al día y vigilar los cambios no autorizados. Ningún control por sí solo detiene todos los ataques, así que el endurecimiento superpone varias defensas independientes, un enfoque llamado defensa en profundidad. Si un atacante supera una capa, como un servicio sin parches, otra capa, como la monitorización de integridad de archivos, todavía debería notarlo. Las cuatro áreas de esta lección, servicios, integridad del arranque, parches y monitorización de integridad de archivos, son el núcleo de la mayoría de las listas de verificación de endurecimiento y de las preguntas que hará un auditor.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 8 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Linux+ gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../linux-plus/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../cryptography-hashing-sha256sum-gpg-signatures-tls-certificates-luks-di/">← Criptografía: hashing (sha256sum), firmas GPG, certificados </a><a href="../compliance-and-auditing-auditd-log-review-vulnerability-scanning-cis-b/">Cumplimiento y auditoría: auditd, revisión de logs, escaneo  →</a></nav>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Hilos De Plataforma Vs Hilos Virtuales; Executors.newVirtu… · Lección De OCP Java</title>
-<meta name="description" content="Un hilo de plataforma (platform thread) es un envoltorio delgado sobre un hilo del sistema operativo. Ocupa ese hilo del SO durante toda su vida, incluso m">
+<meta name="description" content="Java ahora tiene dos tipos de hilos, y el examen espera que sepas cuándo conviene cada uno. Un hilo de plataforma es una envoltura delgada alrededor de un ">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Hilos de plataforma vs hilos virtuales; Executors.newVirtu… · Lección de OCP Java">
-<meta property="og:description" content="Un hilo de plataforma (platform thread) es un envoltorio delgado sobre un hilo del sistema operativo. Ocupa ese hilo del SO durante toda su vida, incluso m">
+<meta property="og:description" content="Java ahora tiene dos tipos de hilos, y el examen espera que sepas cuándo conviene cada uno. Un hilo de plataforma es una envoltura delgada alrededor de un ">
 <link rel="canonical" href="https://www.studytocert.com/es/java-se/lessons/platform-threads-vs-virtual-threads-executors-newvirtualthreadpertaske/">
 <meta property="og:url" content="https://www.studytocert.com/es/java-se/lessons/platform-threads-vs-virtual-threads-executors-newvirtualthreadpertaske/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Oracle Certified Professional: Java SE Developer 1Z0-831 (Java SE 25)</p>
 <h1>Hilos de plataforma vs hilos virtuales; Executors.newVirtualThreadPerTaskExecutor()</h1>
 <article class="lbody">
-<p>Un hilo de plataforma (platform thread) es un envoltorio delgado sobre un hilo del sistema operativo. Ocupa ese hilo del SO durante toda su vida, incluso mientras espera una respuesta de la base de datos o de la red. Los hilos del SO son relativamente costosos: cada uno reserva memoria para una pila y el SO solo puede planificar eficientemente una cantidad limitada, así que tradicionalmente las aplicaciones usaban pools de hilos de tamaño fijo y compartían un número limitado de hilos entre muchas tareas.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Java ahora tiene dos tipos de hilos, y el examen espera que sepas cuándo conviene cada uno. Un hilo de plataforma es una envoltura delgada alrededor de un hilo del sistema operativo (OS). Ocupa ese hilo del OS durante toda su vida, incluido todo el tiempo que pasa esperando a una base de datos, un archivo o una respuesta de red. Los hilos del OS son relativamente costosos: cada uno reserva memoria para su pila, y el OS solo puede programar una cantidad limitada de forma eficiente. Por eso las aplicaciones de servidor tradicionalmente usaban pools de hilos de tamaño fijo y compartían un número limitado de hilos entre muchas tareas, con las tareas adicionales esperando en una cola.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia OCP Java gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../java-se/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../creating-threads-with-runnable-thread-and-the-thread-builder-api/">← Crear hilos con Runnable, Thread y la API Thread.Builder</a><a href="../executorservice-callable-and-future-shutdown-awaittermination-close/">ExecutorService, Callable y Future; shutdown, awaitTerminati →</a></nav>

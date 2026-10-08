@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Indexación, Índices Negativos Y Slicing (Rebanado), Inclui… · Lección De PCAP</title>
-<meta name="description" content="Una cadena es una secuencia de caracteres, y cada carácter tiene una posición llamada índice. Los índices empiezan en 0 para el primer carácter. Para s = '">
+<meta name="description" content="Una cadena es una secuencia de caracteres, y cada carácter tiene una posición llamada índice. Los índices empiezan en 0 para el primer carácter, así que pa">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Indexación, índices negativos y slicing (rebanado), inclui… · Lección de PCAP">
-<meta property="og:description" content="Una cadena es una secuencia de caracteres, y cada carácter tiene una posición llamada índice. Los índices empiezan en 0 para el primer carácter. Para s = '">
+<meta property="og:description" content="Una cadena es una secuencia de caracteres, y cada carácter tiene una posición llamada índice. Los índices empiezan en 0 para el primer carácter, así que pa">
 <link rel="canonical" href="https://www.studytocert.com/es/pcap/lessons/indexing-negative-indexing-and-slicing-including-steps/">
 <meta property="og:url" content="https://www.studytocert.com/es/pcap/lessons/indexing-negative-indexing-and-slicing-including-steps/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">PCAP – Certified Associate Python Programmer PCAP-31-03</p>
 <h1>Indexación, índices negativos y slicing (rebanado), incluidos los pasos</h1>
 <article class="lbody">
-<p>Una cadena es una secuencia de caracteres, y cada carácter tiene una posición llamada índice. Los índices empiezan en 0 para el primer carácter. Para <code>s = 'Python'</code>, <code>s[0]</code> es 'P' y <code>s[5]</code> es 'n'. Usar un índice igual o mayor que la longitud, como <code>s[6]</code>, lanza IndexError. La indexación siempre devuelve una cadena de longitud uno, porque Python no tiene un tipo carácter separado.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Una cadena es una secuencia de caracteres, y cada carácter tiene una posición llamada índice. Los índices empiezan en 0 para el primer carácter, así que para <code>s = 'Python'</code>, <code>s[0]</code> es 'P' y <code>s[5]</code> es 'n'. El último índice válido siempre es <code>len(s) - 1</code>. Usar un índice igual o mayor que la longitud, como <code>s[6]</code>, lanza IndexError: string index out of range. La indexación siempre devuelve una cadena de longitud uno, porque Python no tiene un tipo carácter aparte; <code>type(s[0])</code> es <code>str</code>.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia PCAP gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../pcap/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../string-literals-and-escape-sequences-n-t-quotes/">← Literales de cadena y secuencias de escape (\n, \t, \\, comi</a><a href="../immutability-why-item-assignment-fails/">Inmutabilidad: por qué falla la asignación a elementos →</a></nav>

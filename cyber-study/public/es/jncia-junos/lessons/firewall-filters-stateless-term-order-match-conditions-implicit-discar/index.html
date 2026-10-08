@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Firewall Filters: Stateless, Orden De Los Términos, Condic… · Lección De JNCIA-Junos</title>
+<title>Firewall Filters: Sin Estado, Orden De Los Términos, Condi… · Lección De JNCIA-Junos</title>
 <meta name="description" content="Los firewall filters de Junos inspeccionan paquetes y deciden qué hacer con ellos. Otros fabricantes llaman a la misma función listas de control de acceso ">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -11,14 +11,14 @@
 <meta name="theme-color" content="#0E1319" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
-<meta property="og:title" content="Firewall filters: stateless, orden de los términos, condic… · Lección de JNCIA-Junos">
+<meta property="og:title" content="Firewall filters: sin estado, orden de los términos, condi… · Lección de JNCIA-Junos">
 <meta property="og:description" content="Los firewall filters de Junos inspeccionan paquetes y deciden qué hacer con ellos. Otros fabricantes llaman a la misma función listas de control de acceso ">
 <link rel="canonical" href="https://www.studytocert.com/es/jncia-junos/lessons/firewall-filters-stateless-term-order-match-conditions-implicit-discar/">
 <meta property="og:url" content="https://www.studytocert.com/es/jncia-junos/lessons/firewall-filters-stateless-term-order-match-conditions-implicit-discar/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Firewall filters: stateless, orden de los términos, condic… · Lección de JNCIA-Junos">
+<meta property="og:image:alt" content="Firewall filters: sin estado, orden de los términos, condi… · Lección de JNCIA-Junos">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="alternate" hreflang="en" href="https://www.studytocert.com/jncia-junos/lessons/firewall-filters-stateless-term-order-match-conditions-implicit-discar/">
 <link rel="alternate" hreflang="es" href="https://www.studytocert.com/es/jncia-junos/lessons/firewall-filters-stateless-term-order-match-conditions-implicit-discar/">
@@ -39,10 +39,10 @@
 <main class="wrap lesson-page">
 <p class="crumbs"><a href="../../../../jncia-junos/">JNCIA-Junos</a> / <a href="../">Lecciones</a> · <a href="../../../../jncia-junos/lessons/firewall-filters-stateless-term-order-match-conditions-implicit-discar/" hreflang="en" lang="en">English</a></p>
 <p class="note">Juniper Networks Certified Associate, Junos (JNCIA-Junos) JN0-106</p>
-<h1>Firewall filters: stateless, orden de los términos, condiciones de coincidencia, descarte implícito al final</h1>
+<h1>Firewall filters: sin estado, orden de los términos, condiciones de coincidencia y descarte implícito al final</h1>
 <article class="lbody">
-<p>Los firewall filters de Junos inspeccionan paquetes y deciden qué hacer con ellos. Otros fabricantes llaman a la misma función listas de control de acceso (ACL, access control lists). Los filtros se configuran bajo <code>firewall family &lt;family&gt; filter &lt;name&gt;</code>, donde la familia normalmente es <code>inet</code> para IPv4 o <code>inet6</code> para IPv6. Se aplican a interfaces y se procesan en el Packet Forwarding Engine a alta velocidad.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Los firewall filters de Junos inspeccionan paquetes y deciden qué hacer con ellos. Otros fabricantes llaman a la misma función listas de control de acceso (ACL). Los filtros se configuran bajo <code>firewall family &lt;family&gt; filter &lt;name&gt;</code>, donde la familia normalmente es <code>inet</code> para Internet Protocol versión 4 (IPv4) o <code>inet6</code> para IPv6. Una vez aplicados a las interfaces, se procesan en el Packet Forwarding Engine (PFE) a alta velocidad, así que un filtro puede examinar cada paquete sin ralentizar el dispositivo como lo haría una inspección por software en el Routing Engine (RE).</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia JNCIA-Junos gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../jncia-junos/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../testing-with-test-policy/">← Pruebas con `test policy`</a><a href="../filter-actions-terminating-accept-discard-reject-and-non-terminating-c/">Acciones de filtro: terminantes (accept, discard, reject) y  →</a></nav>

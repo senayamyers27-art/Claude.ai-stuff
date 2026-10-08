@@ -4,21 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Module-info.java: Module, Requires, Requires Transitive, E… · Lección De OCP Java</title>
-<meta name="description" content="El Java Platform Module System (JPMS), introducido en Java 9, agrupa paquetes en módulos con nombre con dependencias explícitas y APIs públicas explícitas.">
+<meta name="description" content="El sistema de módulos de la plataforma Java (JPMS, Java Platform Module System), introducido en Java 9, agrupa paquetes en módulos con nombre que tienen de">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0E1319" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
-<meta property="og:title" content="Module-info.java: module, requires, requires transitive, e… · Lección de OCP Java">
-<meta property="og:description" content="El Java Platform Module System (JPMS), introducido en Java 9, agrupa paquetes en módulos con nombre con dependencias explícitas y APIs públicas explícitas.">
+<meta property="og:title" content="module-info.java: module, requires, requires transitive, e… · Lección de OCP Java">
+<meta property="og:description" content="El sistema de módulos de la plataforma Java (JPMS, Java Platform Module System), introducido en Java 9, agrupa paquetes en módulos con nombre que tienen de">
 <link rel="canonical" href="https://www.studytocert.com/es/java-se/lessons/module-info-java-module-requires-requires-transitive-exports-opens/">
 <meta property="og:url" content="https://www.studytocert.com/es/java-se/lessons/module-info-java-module-requires-requires-transitive-exports-opens/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Module-info.java: module, requires, requires transitive, e… · Lección de OCP Java">
+<meta property="og:image:alt" content="module-info.java: module, requires, requires transitive, e… · Lección de OCP Java">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="alternate" hreflang="en" href="https://www.studytocert.com/java-se/lessons/module-info-java-module-requires-requires-transitive-exports-opens/">
 <link rel="alternate" hreflang="es" href="https://www.studytocert.com/es/java-se/lessons/module-info-java-module-requires-requires-transitive-exports-opens/">
@@ -39,10 +39,10 @@
 <main class="wrap lesson-page">
 <p class="crumbs"><a href="../../../../java-se/">OCP Java</a> / <a href="../">Lecciones</a> · <a href="../../../../java-se/lessons/module-info-java-module-requires-requires-transitive-exports-opens/" hreflang="en" lang="en">English</a></p>
 <p class="note">Oracle Certified Professional: Java SE Developer 1Z0-831 (Java SE 25)</p>
-<h1>Module-info.java: module, requires, requires transitive, exports, opens</h1>
+<h1>module-info.java: module, requires, requires transitive, exports y opens</h1>
 <article class="lbody">
-<p>El Java Platform Module System (JPMS), introducido en Java 9, agrupa paquetes en módulos con nombre con dependencias explícitas y APIs públicas explícitas. Un módulo se describe con un archivo llamado <code>module-info.java</code> colocado en la raíz de la carpeta de fuentes del módulo, junto a los directorios de los paquetes de nivel superior. Se compila a <code>module-info.class</code>. El nombre del módulo suele seguir el estilo de dominio invertido, como <code>com.shop.orders</code>, y debe ser único en el module path.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>El sistema de módulos de la plataforma Java (JPMS, Java Platform Module System), introducido en Java 9, agrupa paquetes en módulos con nombre que tienen dependencias explícitas y una interfaz de programación de aplicaciones (API) pública explícita. Un módulo se describe con un archivo llamado <code>module-info.java</code>, ubicado en la raíz de la carpeta de código fuente del módulo, junto a los directorios de los paquetes de nivel superior. Se compila como <code>module-info.class</code>. El nombre del módulo suele seguir el estilo de dominio invertido, como <code>com.shop.orders</code>, y debe ser único entre los módulos que la máquina virtual de Java (JVM) puede ver en el module path. Esta es una declaración que usa todas las directivas que cubre esta lección.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia OCP Java gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../java-se/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../parallel-streams-and-why-stateful-lambdas-cause-problems/">← Streams paralelos y por qué las lambdas con estado causan pr</a><a href="../services-uses-provides-with-and-serviceloader/">Servicios: uses, provides ... with y ServiceLoader →</a></nav>

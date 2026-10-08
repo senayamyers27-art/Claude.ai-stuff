@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Recorrer Árboles De Archivos: Files.list Vs Files.walk Vs … · Lección De OCP Java</title>
-<meta name="description" content="Tres métodos de Files devuelven un Stream&lt;Path&gt; que describe el contenido de un directorio, y la diferencia entre ellos es una pregunta común del examen. L">
+<meta name="description" content="Tres métodos de la clase Files devuelven un Stream&lt;Path&gt; que describe el contenido de un directorio, y sus diferencias son una pregunta frecuente del exame">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Recorrer árboles de archivos: Files.list vs Files.walk vs … · Lección de OCP Java">
-<meta property="og:description" content="Tres métodos de Files devuelven un Stream&lt;Path&gt; que describe el contenido de un directorio, y la diferencia entre ellos es una pregunta común del examen. L">
+<meta property="og:description" content="Tres métodos de la clase Files devuelven un Stream&lt;Path&gt; que describe el contenido de un directorio, y sus diferencias son una pregunta frecuente del exame">
 <link rel="canonical" href="https://www.studytocert.com/es/java-se/lessons/walking-file-trees-files-list-vs-files-walk-vs-files-find/">
 <meta property="og:url" content="https://www.studytocert.com/es/java-se/lessons/walking-file-trees-files-list-vs-files-walk-vs-files-find/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Oracle Certified Professional: Java SE Developer 1Z0-831 (Java SE 25)</p>
 <h1>Recorrer árboles de archivos: Files.list vs Files.walk vs Files.find</h1>
 <article class="lbody">
-<p>Tres métodos de <code>Files</code> devuelven un <code>Stream&lt;Path&gt;</code> que describe el contenido de un directorio, y la diferencia entre ellos es una pregunta común del examen. Los tres son perezosos, los tres mantienen abiertos manejadores de directorio y los tres deben usarse en try-with-resources.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Tres métodos de la clase <code>Files</code> devuelven un <code>Stream&lt;Path&gt;</code> que describe el contenido de un directorio, y sus diferencias son una pregunta frecuente del examen. Tienen tres cosas en común. Los tres son perezosos (lazy) y leen las entradas solo a medida que se consume el stream. Los tres mantienen abiertos descriptores de directorio mientras el stream está en uso. Y por eso los tres deberían usarse en try-with-resources, para que los descriptores se liberen aunque el procesamiento se detenga antes de tiempo o lance una excepción.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia OCP Java gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../java-se/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../reading-and-writing-text-with-files-readalllines-files-lines-files-wri/">← Leer y escribir texto con Files.readAllLines, Files.lines, F</a><a href="../byte-and-character-streams-bufferedreader-and-bufferedwriter/">Streams de bytes y de caracteres, BufferedReader y BufferedW →</a></nav>

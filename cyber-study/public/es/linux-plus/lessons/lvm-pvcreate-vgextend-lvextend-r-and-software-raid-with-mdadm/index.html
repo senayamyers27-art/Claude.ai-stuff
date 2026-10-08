@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LVM (Pvcreate, Vgextend, Lvextend -r) Y RAID Por Software … · Lección De Linux+</title>
-<meta name="description" content="Las particiones simples son rígidas: agrandar una normalmente implica volver a particionar y mover datos. LVM (Logical Volume Manager) añade una capa flexi">
+<meta name="description" content="Las particiones simples son rígidas: agrandar una suele implicar volver a particionar y mover datos. LVM (administrador de volúmenes lógicos) añade una cap">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="LVM (pvcreate, vgextend, lvextend -r) y RAID por software … · Lección de Linux+">
-<meta property="og:description" content="Las particiones simples son rígidas: agrandar una normalmente implica volver a particionar y mover datos. LVM (Logical Volume Manager) añade una capa flexi">
+<meta property="og:description" content="Las particiones simples son rígidas: agrandar una suele implicar volver a particionar y mover datos. LVM (administrador de volúmenes lógicos) añade una cap">
 <link rel="canonical" href="https://www.studytocert.com/es/linux-plus/lessons/lvm-pvcreate-vgextend-lvextend-r-and-software-raid-with-mdadm/">
 <meta property="og:url" content="https://www.studytocert.com/es/linux-plus/lessons/lvm-pvcreate-vgextend-lvextend-r-and-software-raid-with-mdadm/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">CompTIA Linux+ XK0-006</p>
 <h1>LVM (pvcreate, vgextend, lvextend -r) y RAID por software con mdadm</h1>
 <article class="lbody">
-<p>Las particiones simples son rígidas: agrandar una normalmente implica volver a particionar y mover datos. LVM (Logical Volume Manager) añade una capa flexible entre los discos y los sistemas de archivos para que puedas agrupar espacio de varios discos, agrandar volúmenes en línea y tomar instantáneas. El RAID por software (Redundant Array of Independent Disks) con <code>mdadm</code> combina discos para obtener redundancia o velocidad sin una controladora de hardware. Ambos son habilidades de almacenamiento centrales en Linux+ y a menudo se usan juntos.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Las particiones simples son rígidas: agrandar una suele implicar volver a particionar y mover datos. LVM (administrador de volúmenes lógicos) añade una capa flexible entre los discos y los sistemas de archivos, para que puedas reunir espacio de varios discos, agrandar volúmenes en línea y tomar instantáneas. El RAID (arreglo redundante de discos independientes) por software con <code>mdadm</code> combina discos para obtener redundancia o velocidad sin una controladora de hardware. Ambas son habilidades centrales de almacenamiento en Linux+ y a menudo se usan juntas, así que ayuda mantener separadas sus funciones en tu cabeza: LVM se trata de flexibilidad, y RAID se trata de sobrevivir a la falla de un disco o de ganar velocidad.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 8 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Linux+ gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../linux-plus/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../storage-partitions-fdisk-gdisk-parted-lsblk-blkid-uuids-etc-fstab-opti/">← Almacenamiento: particiones (fdisk, gdisk, parted), lsblk, b</a><a href="../filesystems-ext4-xfs-btrfs-mkfs-mount-resize2fs-xfs-growfs-df-and-du/">Sistemas de archivos: ext4, XFS, Btrfs; mkfs, mount, resize2 →</a></nav>

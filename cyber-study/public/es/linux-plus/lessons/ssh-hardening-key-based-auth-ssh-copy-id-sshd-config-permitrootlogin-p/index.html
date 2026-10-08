@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Endurecimiento De SSH: Autenticación Por Claves, Ssh-copy-… · Lección De Linux+</title>
-<meta name="description" content="SSH (Secure Shell) es la forma en que administras casi todos los servidores Linux, lo que lo convierte en uno de los servicios más atacados de internet. Lo">
+<meta name="description" content="SSH (Secure Shell) es la forma de administrar casi cualquier servidor Linux, lo que lo convierte en uno de los servicios más atacados de internet. Bots aut">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Endurecimiento de SSH: autenticación por claves, ssh-copy-… · Lección de Linux+">
-<meta property="og:description" content="SSH (Secure Shell) es la forma en que administras casi todos los servidores Linux, lo que lo convierte en uno de los servicios más atacados de internet. Lo">
+<meta property="og:description" content="SSH (Secure Shell) es la forma de administrar casi cualquier servidor Linux, lo que lo convierte en uno de los servicios más atacados de internet. Bots aut">
 <link rel="canonical" href="https://www.studytocert.com/es/linux-plus/lessons/ssh-hardening-key-based-auth-ssh-copy-id-sshd-config-permitrootlogin-p/">
 <meta property="og:url" content="https://www.studytocert.com/es/linux-plus/lessons/ssh-hardening-key-based-auth-ssh-copy-id-sshd-config-permitrootlogin-p/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">CompTIA Linux+ XK0-006</p>
 <h1>Endurecimiento de SSH: autenticación por claves, ssh-copy-id, sshd_config (PermitRootLogin, PasswordAuthentication)</h1>
 <article class="lbody">
-<p>SSH (Secure Shell) es la forma en que administras casi todos los servidores Linux, lo que lo convierte en uno de los servicios más atacados de internet. Los bots automatizados prueban constantemente nombres de usuario y contraseñas comunes contra cualquier dirección que tenga el puerto 22 abierto. Endurecer SSH significa reemplazar las contraseñas por claves, restringir quién puede iniciar sesión y cómo, y mantener estricta la configuración del demonio. Como un error aquí puede dejarte fuera de una máquina remota, el orden en que haces los cambios importa tanto como los cambios mismos.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>SSH (Secure Shell) es la forma de administrar casi cualquier servidor Linux, lo que lo convierte en uno de los servicios más atacados de internet. Bots automatizados prueban sin parar nombres de usuario y contraseñas comunes contra cualquier dirección con el puerto 22 abierto, y el log de autenticación de un servidor público nuevo se llena de fallos en cuestión de horas. Endurecer SSH significa reemplazar las contraseñas por claves, restringir quién puede iniciar sesión y cómo, y mantener ajustada la configuración del demonio. Como un error aquí puede dejarte fuera de una máquina remota, el orden en que haces los cambios importa tanto como los propios cambios.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 8 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Linux+ gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../linux-plus/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../firewalls-firewalld-zones-and-permanent-ufw-nftables-iptables-basics/">← Firewalls (cortafuegos): zonas de firewalld y --permanent, u</a><a href="../privilege-escalation-sudo-visudo-etc-sudoers-d-su-polkit/">Escalada de privilegios: sudo, visudo, /etc/sudoers.d, su, p →</a></nav>
