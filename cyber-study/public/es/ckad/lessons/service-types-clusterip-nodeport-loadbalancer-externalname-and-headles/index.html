@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tipos De Service: ClusterIP, NodePort, LoadBalancer, Exter… · Lección De CKAD</title>
-<meta name="description" content="Los Pods van y vienen y sus direcciones IP cambian. Un Service ofrece un nombre estable y una IP virtual delante de un conjunto cambiante de Pods, elegidos">
+<meta name="description" content="Empieza por el problema que resuelven los Services. Los Pods son desechables. Un Deployment los reemplaza durante las actualizaciones, después de fallos y ">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Tipos de Service: ClusterIP, NodePort, LoadBalancer, Exter… · Lección de CKAD">
-<meta property="og:description" content="Los Pods van y vienen y sus direcciones IP cambian. Un Service ofrece un nombre estable y una IP virtual delante de un conjunto cambiante de Pods, elegidos">
+<meta property="og:description" content="Empieza por el problema que resuelven los Services. Los Pods son desechables. Un Deployment los reemplaza durante las actualizaciones, después de fallos y ">
 <link rel="canonical" href="https://www.studytocert.com/es/ckad/lessons/service-types-clusterip-nodeport-loadbalancer-externalname-and-headles/">
 <meta property="og:url" content="https://www.studytocert.com/es/ckad/lessons/service-types-clusterip-nodeport-loadbalancer-externalname-and-headles/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Certified Kubernetes Application Developer CKAD (Kubernetes v1.35 curriculum)</p>
 <h1>Tipos de Service: ClusterIP, NodePort, LoadBalancer, ExternalName y headless (clusterIP: None)</h1>
 <article class="lbody">
-<p>Los Pods van y vienen y sus direcciones IP cambian. Un Service ofrece un nombre estable y una IP virtual delante de un conjunto cambiante de Pods, elegidos mediante un selector de etiquetas, y reparte las conexiones entre ellos. El <code>type</code> del Service decide quién puede alcanzarlo.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Empieza por el problema que resuelven los Services. Los Pods son desechables. Un Deployment los reemplaza durante las actualizaciones, después de fallos y cuando caen nodos, y cada Pod nuevo recibe una dirección IP nueva. Los clientes no pueden seguir ese ritmo. Un Service ofrece un nombre estable y una dirección IP virtual estable delante de un conjunto cambiante de Pods, elegidos por un selector de etiquetas, y reparte las conexiones entre los Pods listos. El campo <code>type</code> del Service decide quién puede alcanzarlo, y los tipos se construyen unos sobre otros de una forma fácil de recordar una vez que la ves.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia CKAD gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../ckad/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../linux-capabilities-add-drop-and-pod-security-admission-levels-privileg/">← Capabilities de Linux (add/drop) y niveles de Pod Security A</a><a href="../selectors-port-vs-targetport-vs-nodeport-named-ports/">Selectores, port vs targetPort vs nodePort y puertos con nom →</a></nav>

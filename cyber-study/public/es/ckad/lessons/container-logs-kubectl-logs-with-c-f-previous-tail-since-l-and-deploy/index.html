@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Logs De Contenedores: Kubectl Logs Con -c, -f, --previous,… · Lección De CKAD</title>
-<meta name="description" content="Se espera que los contenedores escriban sus logs en la salida estándar y la salida de error estándar. El runtime de contenedores captura esos flujos en arc">
+<meta name="description" content="Empieza por saber de dónde vienen los logs. Se espera que los contenedores escriban sus logs en la salida estándar (stdout) y en la salida de error estánda">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Logs de contenedores: kubectl logs con -c, -f, --previous,… · Lección de CKAD">
-<meta property="og:description" content="Se espera que los contenedores escriban sus logs en la salida estándar y la salida de error estándar. El runtime de contenedores captura esos flujos en arc">
+<meta property="og:description" content="Empieza por saber de dónde vienen los logs. Se espera que los contenedores escriban sus logs en la salida estándar (stdout) y en la salida de error estánda">
 <link rel="canonical" href="https://www.studytocert.com/es/ckad/lessons/container-logs-kubectl-logs-with-c-f-previous-tail-since-l-and-deploy/">
 <meta property="og:url" content="https://www.studytocert.com/es/ckad/lessons/container-logs-kubectl-logs-with-c-f-previous-tail-since-l-and-deploy/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Certified Kubernetes Application Developer CKAD (Kubernetes v1.35 curriculum)</p>
 <h1>Logs de contenedores: kubectl logs con -c, -f, --previous, --tail, --since, -l y deploy/&lt;name&gt;</h1>
 <article class="lbody">
-<p>Se espera que los contenedores escriban sus logs en la salida estándar y la salida de error estándar. El runtime de contenedores captura esos flujos en archivos del nodo, y <code>kubectl logs</code> los lee a través del kubelet. Si una aplicación escribe solo en un archivo dentro del contenedor, <code>kubectl logs</code> no muestra nada; esa es una de las razones del patrón sidecar que lee esos archivos y los envía a stdout.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Empieza por saber de dónde vienen los logs. Se espera que los contenedores escriban sus logs en la salida estándar (stdout) y en la salida de error estándar (stderr). El runtime de contenedores de cada nodo captura esos dos flujos en archivos, y cuando ejecutas <code>kubectl logs</code>, el API server le pide al kubelet de ese nodo que te los devuelva. Este diseño tiene una consecuencia directa: si una aplicación escribe solo en un archivo dentro del contenedor, como <code>/var/log/app.log</code>, <code>kubectl logs</code> no muestra absolutamente nada. Esa es una de las razones del patrón sidecar, en el que un pequeño contenedor auxiliar sigue el archivo de log y lo imprime en su propio stdout para que la plataforma pueda recogerlo.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia CKAD gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../ckad/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../kubectl-get-describe-get-events-top-pod-node-metrics-server-for-monito/">← kubectl get, describe, get events y top pod/node (metrics-se</a><a href="../reading-pod-status-pending-imagepullbackoff-crashloopbackoff-oomkilled/">Leer el estado de un Pod: Pending, ImagePullBackOff, CrashLo →</a></nav>
