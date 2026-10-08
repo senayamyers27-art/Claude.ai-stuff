@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Esquema De Advanced Hunting: DeviceProcessEvents, DeviceNe… · Lección De SC-200</title>
-<meta name="description" content="Advanced hunting en el portal de Defender expone los datos de Defender XDR como tablas agrupadas por fuente. Saber qué tabla contiene qué tipo de evento, y">
+<meta name="description" content="Empieza por cómo está organizado el esquema. La búsqueda avanzada del portal de Defender expone los datos de Defender XDR como tablas agrupadas por origen.">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Esquema de advanced hunting: DeviceProcessEvents, DeviceNe… · Lección de SC-200">
-<meta property="og:description" content="Advanced hunting en el portal de Defender expone los datos de Defender XDR como tablas agrupadas por fuente. Saber qué tabla contiene qué tipo de evento, y">
+<meta property="og:description" content="Empieza por cómo está organizado el esquema. La búsqueda avanzada del portal de Defender expone los datos de Defender XDR como tablas agrupadas por origen.">
 <link rel="canonical" href="https://www.studytocert.com/es/sc-200/lessons/advanced-hunting-schema-deviceprocessevents-devicenetworkevents-device/">
 <meta property="og:url" content="https://www.studytocert.com/es/sc-200/lessons/advanced-hunting-schema-deviceprocessevents-devicenetworkevents-device/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Microsoft Certified: Security Operations Analyst Associate SC-200</p>
 <h1>Esquema de advanced hunting: DeviceProcessEvents, DeviceNetworkEvents, DeviceLogonEvents, EmailEvents, EmailUrlInfo, IdentityLogonEvents, CloudAppEvents, AlertInfo y AlertEvidence</h1>
 <article class="lbody">
-<p>Advanced hunting en el portal de Defender expone los datos de Defender XDR como tablas agrupadas por fuente. Saber qué tabla contiene qué tipo de evento, y cómo se vinculan las tablas, es la diferencia entre una búsqueda rápida y una frustrante. La referencia del esquema en el portal lista todas las columnas; aquí están las tablas en las que se enfoca el SC-200.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Empieza por cómo está organizado el esquema. La búsqueda avanzada del portal de Defender expone los datos de Defender XDR como tablas agrupadas por origen. Saber qué tabla contiene cada tipo de evento, y cómo se vinculan las tablas, es la diferencia entre una búsqueda rápida y una frustrante. La referencia del esquema en el portal, en el lado izquierdo de la página de búsqueda avanzada, lista cada tabla y columna con descripciones y consultas de ejemplo. La columna de tiempo en estas tablas es <code>Timestamp</code>, y la búsqueda avanzada conserva unos 30 días de datos de Defender; para un historial más largo, los datos deben estar en Sentinel o en el data lake. El panel del esquema también muestra las columnas de cada tabla y sus tipos, que es la forma más rápida de comprobar si la columna que recuerdas realmente existe antes de escribir una consulta.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 9 secciones más, 8 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia SC-200 gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../sc-200/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../kql-for-hunting-has-vs-contains-in-and-has-any-let-statements-and-dyna/">← KQL para hunting: has vs. contains, in y has_any, instruccio</a><a href="../turning-a-hunting-query-into-a-custom-detection-rule-security-copilot/">Convertir una consulta de hunting en una regla de detección  →</a></nav>
