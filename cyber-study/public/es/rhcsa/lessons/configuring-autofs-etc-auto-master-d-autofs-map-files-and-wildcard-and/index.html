@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Configurar Autofs: /Etc/Auto.master.d/*.autofs, Archivos D… · Lección De RHCSA</title>
-<meta name="description" content="autofs es el montador automático (automounter). En lugar de montar sistemas de archivos al arrancar, vigila directorios y monta un sistema de archivos en e">
+<meta name="description" content="autofs es el montador automático. En lugar de montar sistemas de archivos al arrancar, vigila directorios y monta un sistema de archivos en el momento en q">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Configurar autofs: /etc/auto.master.d/*.autofs, archivos d… · Lección de RHCSA">
-<meta property="og:description" content="autofs es el montador automático (automounter). En lugar de montar sistemas de archivos al arrancar, vigila directorios y monta un sistema de archivos en e">
+<meta property="og:description" content="autofs es el montador automático. En lugar de montar sistemas de archivos al arrancar, vigila directorios y monta un sistema de archivos en el momento en q">
 <link rel="canonical" href="https://www.studytocert.com/es/rhcsa/lessons/configuring-autofs-etc-auto-master-d-autofs-map-files-and-wildcard-and/">
 <meta property="og:url" content="https://www.studytocert.com/es/rhcsa/lessons/configuring-autofs-etc-auto-master-d-autofs-map-files-and-wildcard-and/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Red Hat Certified System Administrator EX200 (RHEL 10)</p>
 <h1>Configurar autofs: /etc/auto.master.d/*.autofs, archivos de mapa y entradas comodín (* y &amp;)</h1>
 <article class="lbody">
-<p>autofs es el montador automático (automounter). En lugar de montar sistemas de archivos al arrancar, vigila directorios y monta un sistema de archivos en el momento en que alguien accede a una ruta bajo ellos, y luego lo desmonta tras un periodo de inactividad. Es la forma estándar de dar a los usuarios directorios personales en red: nada se monta hasta que un usuario inicia sesión, y un servidor inaccesible no ralentiza el arranque.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>autofs es el montador automático. En lugar de montar sistemas de archivos al arrancar, vigila directorios y monta un sistema de archivos en el momento en que alguien accede a una ruta dentro de ellos, y luego lo desmonta tras un período de inactividad, cinco minutos de forma predeterminada en Red Hat Enterprise Linux (RHEL). Es la forma estándar de dar a los usuarios directorios personales de red compartidos mediante el sistema de archivos de red (NFS): no se monta nada hasta que un usuario inicia sesión o entra en el directorio, y un servidor inalcanzable no ralentiza el arranque. Como autofs monta bajo demanda, las rutas que gestiona no tienen ninguna línea en <code>/etc/fstab</code>. autofs también puede montar dispositivos locales, pero en el RHCSA casi siempre gestiona recursos compartidos NFS de un servidor, así que el cliente necesita el paquete nfs-utils además de autofs.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 9 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia RHCSA gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../rhcsa/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../mounting-and-unmounting-nfs-network-file-systems-mount-t-nfs-netdev/">← Montar y desmontar sistemas de archivos de red NFS (mount -t</a><a href="../extending-existing-logical-volumes-and-their-file-systems-lvextend-r-x/">Ampliar volúmenes lógicos existentes y sus sistemas de archi →</a></nav>

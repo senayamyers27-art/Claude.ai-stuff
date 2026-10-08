@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Elegir El Kernel Predeterminado Y Añadir O Quitar Argument… · Lección De RHCSA</title>
-<meta name="description" content="RHEL mantiene varios kernels instalados a la vez, para que una actualización defectuosa nunca te deje sin uno que funcione. Por defecto, dnf conserva un nú">
+<meta name="description" content="Red Hat Enterprise Linux (RHEL) mantiene varios kernels instalados a la vez, para que una mala actualización nunca te deje sin uno que funcione. Los paquet">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Elegir el kernel predeterminado y añadir o quitar argument… · Lección de RHCSA">
-<meta property="og:description" content="RHEL mantiene varios kernels instalados a la vez, para que una actualización defectuosa nunca te deje sin uno que funcione. Por defecto, dnf conserva un nú">
+<meta property="og:description" content="Red Hat Enterprise Linux (RHEL) mantiene varios kernels instalados a la vez, para que una mala actualización nunca te deje sin uno que funcione. Los paquet">
 <link rel="canonical" href="https://www.studytocert.com/es/rhcsa/lessons/choosing-the-default-kernel-and-adding-or-removing-kernel-arguments/">
 <meta property="og:url" content="https://www.studytocert.com/es/rhcsa/lessons/choosing-the-default-kernel-and-adding-or-removing-kernel-arguments/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Red Hat Certified System Administrator EX200 (RHEL 10)</p>
 <h1>Elegir el kernel predeterminado y añadir o quitar argumentos del kernel</h1>
 <article class="lbody">
-<p>RHEL mantiene varios kernels instalados a la vez, para que una actualización defectuosa nunca te deje sin uno que funcione. Por defecto, dnf conserva un número limitado de versiones del kernel y elimina la más antigua cuando llega una nueva. La entrada de arranque predeterminada suele ser el kernel más reciente, pero puede que necesites arrancar uno anterior de forma permanente, por ejemplo mientras se investiga un problema de un controlador en el kernel nuevo.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Red Hat Enterprise Linux (RHEL) mantiene varios kernels instalados a la vez, para que una mala actualización nunca te deje sin uno que funcione. Los paquetes del kernel se instalan uno junto a otro en lugar de reemplazarse, y dnf conserva un número limitado de versiones del kernel, controlado por el ajuste <code>installonly_limit</code> de <code>/etc/dnf/dnf.conf</code>, eliminando la más antigua cuando llega una nueva. La entrada de arranque predeterminada suele ser el kernel más nuevo, pero puede que necesites arrancar uno anterior de forma permanente, por ejemplo mientras se investiga un problema de controlador en el kernel nuevo. En el examen Red Hat Certified System Administrator (RHCSA), esto aparece como tareas para establecer un kernel predeterminado concreto o para hacer persistente un argumento del kernel.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 9 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia RHCSA gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../rhcsa/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../modifying-the-boot-loader-grubby-etc-default-grub-and-grub2-mkconfig/">← Modificar el cargador de arranque: grubby, /etc/default/grub</a><a href="../configuring-static-and-dhcp-ipv4-and-ipv6-addresses-with-nmcli-ipv4-me/">Configurar direcciones IPv4 e IPv6 estáticas y por DHCP con  →</a></nav>

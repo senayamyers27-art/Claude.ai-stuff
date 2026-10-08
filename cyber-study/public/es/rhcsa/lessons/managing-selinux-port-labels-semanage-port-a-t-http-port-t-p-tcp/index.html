@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Gestionar Las Etiquetas De Puertos De SELinux (Semanage Po… · Lección De RHCSA</title>
-<meta name="description" content="SELinux etiqueta los puertos de red además de los archivos. La política dice qué tipos de proceso pueden enlazarse (bind), es decir, escuchar, en qué tipos">
+<meta name="description" content="SELinux etiqueta los puertos de red además de los archivos. La política de SELinux (Security-Enhanced Linux) dice qué tipos de proceso pueden enlazarse (bi">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Gestionar las etiquetas de puertos de SELinux (semanage po… · Lección de RHCSA">
-<meta property="og:description" content="SELinux etiqueta los puertos de red además de los archivos. La política dice qué tipos de proceso pueden enlazarse (bind), es decir, escuchar, en qué tipos">
+<meta property="og:description" content="SELinux etiqueta los puertos de red además de los archivos. La política de SELinux (Security-Enhanced Linux) dice qué tipos de proceso pueden enlazarse (bi">
 <link rel="canonical" href="https://www.studytocert.com/es/rhcsa/lessons/managing-selinux-port-labels-semanage-port-a-t-http-port-t-p-tcp/">
 <meta property="og:url" content="https://www.studytocert.com/es/rhcsa/lessons/managing-selinux-port-labels-semanage-port-a-t-http-port-t-p-tcp/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Red Hat Certified System Administrator EX200 (RHEL 10)</p>
 <h1>Gestionar las etiquetas de puertos de SELinux (semanage port -a -t http_port_t -p tcp)</h1>
 <article class="lbody">
-<p>SELinux etiqueta los puertos de red además de los archivos. La política dice qué tipos de proceso pueden enlazarse (bind), es decir, escuchar, en qué tipos de puerto. Por ejemplo, <code>httpd_t</code> puede enlazarse a los puertos etiquetados como <code>http_port_t</code>, que por defecto incluyen el 80, el 443 y algunos otros como el 8008 y el 8443 (el 8080 está etiquetado como http_cache_port_t). Si configuras un servicio para escuchar en un puerto que no tiene su tipo, SELinux bloquea el enlace y el servicio no arranca, aunque la configuración por lo demás sea perfecta.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>SELinux etiqueta los puertos de red además de los archivos. La política de SELinux (Security-Enhanced Linux) dice qué tipos de proceso pueden enlazarse (bind), es decir, escuchar, en qué tipos de puerto. Por ejemplo, <code>httpd_t</code>, el tipo del servidor web Apache, puede enlazarse a los puertos etiquetados como <code>http_port_t</code>, que por defecto incluyen el 80, el 443 y algunos otros como el 8008 y el 8443. El puerto 8080, que mucha gente supone que es un puerto web, en realidad está etiquetado como <code>http_cache_port_t</code>. Si configuras un servicio para escuchar en un puerto que no lleva su tipo, SELinux bloquea el enlace y el servicio no arranca, aunque la configuración por lo demás sea perfecta. Esto te protege si un servicio comprometido intenta abrir un punto de escucha en un puerto inesperado.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia RHCSA gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../rhcsa/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../restoring-default-file-contexts-restorecon-rv-and-adding-rules-with-se/">← Restaurar los contextos de archivo predeterminados (restorec</a><a href="../using-selinux-booleans-getsebool-a-setsebool-p-semanage-boolean-l/">Usar los booleanos de SELinux (getsebool -a, setsebool -P, s →</a></nav>
