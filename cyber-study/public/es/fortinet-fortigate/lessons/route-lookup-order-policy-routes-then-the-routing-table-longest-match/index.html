@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Orden De Búsqueda De Rutas: Policy Routes Y Luego La Tabla… · Lección De FortiGate Admin</title>
-<meta name="description" content="Antes de que un FortiGate pueda aplicar una política de firewall, debe decidir a dónde debe ir un paquete. Esa decisión de enrutamiento sigue un orden estr">
+<meta name="description" content="Antes de que un FortiGate pueda aplicar una política de firewall al tráfico nuevo, debe decidir a dónde debe ir el paquete, porque la interfaz de salida es">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Orden de búsqueda de rutas: policy routes y luego la tabla… · Lección de FortiGate Admin">
-<meta property="og:description" content="Antes de que un FortiGate pueda aplicar una política de firewall, debe decidir a dónde debe ir un paquete. Esa decisión de enrutamiento sigue un orden estr">
+<meta property="og:description" content="Antes de que un FortiGate pueda aplicar una política de firewall al tráfico nuevo, debe decidir a dónde debe ir el paquete, porque la interfaz de salida es">
 <link rel="canonical" href="https://www.studytocert.com/es/fortinet-fortigate/lessons/route-lookup-order-policy-routes-then-the-routing-table-longest-match/">
 <meta property="og:url" content="https://www.studytocert.com/es/fortinet-fortigate/lessons/route-lookup-order-policy-routes-then-the-routing-table-longest-match/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Fortinet NSE 4 - FortiOS 7.6 Administrator NSE4_FGT_AD-7.6</p>
 <h1>Orden de búsqueda de rutas: policy routes y luego la tabla de enrutamiento (coincidencia más larga, distancia, prioridad)</h1>
 <article class="lbody">
-<p>Antes de que un FortiGate pueda aplicar una política de firewall, debe decidir a dónde debe ir un paquete. Esa decisión de enrutamiento sigue un orden estricto, y conocerlo explica muchas preguntas del examen del tipo '¿por qué el tráfico tomó ese camino?'.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Antes de que un FortiGate pueda aplicar una política de firewall al tráfico nuevo, debe decidir a dónde debe ir el paquete, porque la interfaz de salida es parte de lo que se compara en la búsqueda de políticas. Esa decisión de enrutamiento sigue un orden estricto y predecible. Conocer el orden explica muchas preguntas del tipo '¿por qué el tráfico tomó ese camino?', tanto en el examen como en la resolución de problemas real. La búsqueda se hace cuando se crea una sesión, y el resultado se guarda con la sesión, así que los paquetes posteriores de la misma sesión siguen el mismo camino.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia FortiGate Admin gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../fortinet-fortigate/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../security-profile-logs-and-troubleshooting-fortiguard-connectivity-diag/">← Registros de perfiles de seguridad y resolución de problemas</a><a href="../static-routes-administrative-distance-priority-ecmp-and-load-balancing/">Rutas estáticas: distancia administrativa, prioridad, ECMP y →</a></nav>

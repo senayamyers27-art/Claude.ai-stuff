@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Link Health Monitors Y Rutas Blackhole · Lección De FortiGate Admin</title>
-<meta name="description" content="Una ruta estática, por sí sola, solo desaparece si su interfaz se cae físicamente; permanece en la tabla incluso cuando el camino más allá del siguiente sa">
+<meta name="description" content="Por sí sola, una ruta estática solo se elimina de la tabla de enrutamiento cuando su interfaz de salida se cae. Mientras la interfaz esté activa, la ruta s">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Link health monitors y rutas blackhole · Lección de FortiGate Admin">
-<meta property="og:description" content="Una ruta estática, por sí sola, solo desaparece si su interfaz se cae físicamente; permanece en la tabla incluso cuando el camino más allá del siguiente sa">
+<meta property="og:description" content="Por sí sola, una ruta estática solo se elimina de la tabla de enrutamiento cuando su interfaz de salida se cae. Mientras la interfaz esté activa, la ruta s">
 <link rel="canonical" href="https://www.studytocert.com/es/fortinet-fortigate/lessons/link-health-monitors-and-blackhole-routes/">
 <meta property="og:url" content="https://www.studytocert.com/es/fortinet-fortigate/lessons/link-health-monitors-and-blackhole-routes/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Fortinet NSE 4 - FortiOS 7.6 Administrator NSE4_FGT_AD-7.6</p>
 <h1>Link health monitors y rutas blackhole</h1>
 <article class="lbody">
-<p>Una ruta estática, por sí sola, solo desaparece si su interfaz se cae físicamente; permanece en la tabla incluso cuando el camino más allá del siguiente salto está roto. Dos funciones cubren los huecos que esto crea: los link health monitors detectan un camino muerto y retiran su ruta, y las rutas blackhole descartan de forma segura el tráfico que de otro modo se filtraría al lugar equivocado. Ambas son elementos básicos de un diseño resiliente de FortiGate y aparecen con regularidad en el examen.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 4 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Por sí sola, una ruta estática solo se elimina de la tabla de enrutamiento cuando su interfaz de salida se cae. Mientras la interfaz esté activa, la ruta sigue activa, aunque el camino más allá del gateway de siguiente salto esté completamente roto. Eso crea dos huecos en un diseño resiliente: el FortiGate no nota un camino muerto aguas arriba, y cuando una ruta sí desaparece, el tráfico puede caer en una ruta que no tenías prevista. Los monitores de salud del enlace cierran el primer hueco al detectar caminos muertos y retirar rutas, y las rutas blackhole cierran el segundo al descartar de forma segura el tráfico que de otro modo se filtraría. Ambos son elementos básicos del diseño con FortiGate y aparecen con frecuencia en el examen.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia FortiGate Admin gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../fortinet-fortigate/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../reverse-path-forwarding-rpf-check/">← Comprobación de reverse path forwarding (RPF)</a><a href="../sd-wan-members-and-zones-and-routes-that-point-to-the-zone/">Miembros y zonas de SD-WAN, y rutas que apuntan a la zona →</a></nav>
