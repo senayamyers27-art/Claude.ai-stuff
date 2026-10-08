@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Suplantación De Cuentas De Servicio, Credenciales De Corta… · Lección De Associate Cloud Engineer</title>
-<meta name="description" content="Una clave de cuenta de servicio (service account key) es un archivo de clave privada de larga duración (JSON) que cualquiera puede usar para autenticarse c">
+<meta name="description" content="Una clave de cuenta de servicio es una clave privada de larga duración, normalmente descargada como archivo JSON, que cualquiera puede usar para autenticar">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Suplantación de cuentas de servicio, credenciales de corta… · Lección de Associate Cloud Engineer">
-<meta property="og:description" content="Una clave de cuenta de servicio (service account key) es un archivo de clave privada de larga duración (JSON) que cualquiera puede usar para autenticarse c">
+<meta property="og:description" content="Una clave de cuenta de servicio es una clave privada de larga duración, normalmente descargada como archivo JSON, que cualquiera puede usar para autenticar">
 <link rel="canonical" href="https://www.studytocert.com/es/google-ace/lessons/service-account-impersonation-short-lived-credentials-and-avoiding-ser/">
 <meta property="og:url" content="https://www.studytocert.com/es/google-ace/lessons/service-account-impersonation-short-lived-credentials-and-avoiding-ser/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Google Cloud Associate Cloud Engineer Associate Cloud Engineer</p>
 <h1>Suplantación de cuentas de servicio, credenciales de corta duración y cómo evitar las claves de cuentas de servicio</h1>
 <article class="lbody">
-<p>Una clave de cuenta de servicio (service account key) es un archivo de clave privada de larga duración (JSON) que cualquiera puede usar para autenticarse como la cuenta de servicio, desde cualquier lugar, hasta que la clave se elimine o se deshabilite. Las claves son una de las causas más comunes de brechas en la nube porque terminan copiadas en el código fuente, laptops, sistemas de CI y mensajes de chat. La guía de Google es evitar crear claves siempre que exista otra opción, y muchas organizaciones bloquean la creación de claves con la política de la organización <code>iam.disableServiceAccountKeyCreation</code>.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 4 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Una clave de cuenta de servicio es una clave privada de larga duración, normalmente descargada como archivo JSON, que cualquiera puede usar para autenticarse como la cuenta de servicio desde cualquier lugar hasta que la clave se elimine o se deshabilite. Las claves son una de las causas más comunes de incidentes de seguridad en la nube porque son fáciles de copiar: terminan en el código fuente, en laptops, en sistemas de integración y entrega continuas (CI/CD), en imágenes de contenedores y en mensajes de chat. A diferencia de la contraseña de un usuario, una clave no está protegida por la verificación en dos pasos. La recomendación de Google es evitar crear claves siempre que exista otra opción, y muchas organizaciones bloquean por completo la creación de claves con la restricción de política de la organización <code>iam.disableServiceAccountKeyCreation</code>.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Associate Cloud Engineer gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../google-ace/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../service-accounts-creating-them-granting-roles-attaching-them-to-resour/">← Cuentas de servicio: crearlas, otorgarles roles, adjuntarlas</a><a href="../workload-identity-federation-for-gke-and-for-workloads-outside-google/">Workload Identity Federation para GKE y para cargas de traba →</a></nav>

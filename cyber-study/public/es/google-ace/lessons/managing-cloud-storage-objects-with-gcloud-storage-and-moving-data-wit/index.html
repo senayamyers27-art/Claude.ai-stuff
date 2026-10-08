@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Administrar Objetos De Cloud Storage Con Gcloud Storage Y … · Lección De Associate Cloud Engineer</title>
-<meta name="description" content="El grupo de comandos gcloud storage es la CLI actual para Cloud Storage y reemplaza la mayoría de los usos del antiguo gsutil. Los buckets y objetos se ide">
+<meta name="description" content="El grupo de comandos gcloud storage es la interfaz de línea de comandos (CLI) actual para Cloud Storage y reemplaza la mayoría de los usos de la herramient">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Administrar objetos de Cloud Storage con gcloud storage y … · Lección de Associate Cloud Engineer">
-<meta property="og:description" content="El grupo de comandos gcloud storage es la CLI actual para Cloud Storage y reemplaza la mayoría de los usos del antiguo gsutil. Los buckets y objetos se ide">
+<meta property="og:description" content="El grupo de comandos gcloud storage es la interfaz de línea de comandos (CLI) actual para Cloud Storage y reemplaza la mayoría de los usos de la herramient">
 <link rel="canonical" href="https://www.studytocert.com/es/google-ace/lessons/managing-cloud-storage-objects-with-gcloud-storage-and-moving-data-wit/">
 <meta property="og:url" content="https://www.studytocert.com/es/google-ace/lessons/managing-cloud-storage-objects-with-gcloud-storage-and-moving-data-wit/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Google Cloud Associate Cloud Engineer Associate Cloud Engineer</p>
 <h1>Administrar objetos de Cloud Storage con gcloud storage y mover datos con Storage Transfer Service</h1>
 <article class="lbody">
-<p>El grupo de comandos <code>gcloud storage</code> es la CLI actual para Cloud Storage y reemplaza la mayoría de los usos del antiguo <code>gsutil</code>. Los buckets y objetos se identifican con URLs gs://. Comandos comunes: <code>gcloud storage ls gs://my-bucket</code> lista los objetos; <code>gcloud storage cp report.csv gs://my-bucket/reports/</code> sube un archivo; <code>gcloud storage cp -r ./site gs://my-bucket</code> copia una carpeta; <code>gcloud storage mv</code> mueve o cambia el nombre; <code>gcloud storage rm gs://my-bucket/old/**</code> elimina; y <code>gcloud storage rsync</code> sincroniza un directorio con un prefijo del bucket. Las transferencias grandes se paralelizan automáticamente.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 4 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>El grupo de comandos <code>gcloud storage</code> es la interfaz de línea de comandos (CLI) actual para Cloud Storage y reemplaza la mayoría de los usos de la herramienta anterior <code>gsutil</code>. Es más rápido en trabajos grandes porque paraleliza las transferencias automáticamente, y sigue los mismos patrones que el resto de gcloud. Los buckets y los objetos se indican con URLs gs://, como gs://my-bucket/reports/jan.csv.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Associate Cloud Engineer gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../google-ace/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../managing-cloud-run-revisions-traffic-splitting-minimum-and-maximum-ins/">← Administrar Cloud Run: revisiones, división de tráfico, inst</a><a href="../operating-databases-cloud-sql-backups-high-availability-and-read-repli/">Operar bases de datos: copias de seguridad, alta disponibili →</a></nav>

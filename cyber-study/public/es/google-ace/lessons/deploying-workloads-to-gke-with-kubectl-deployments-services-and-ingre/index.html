@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Desplegar Cargas De Trabajo En GKE Con Kubectl: Deployment… · Lección De Associate Cloud Engineer</title>
-<meta name="description" content="Antes de usar kubectl en un clúster de GKE, obtén las credenciales: gcloud container clusters get-credentials my-cluster --region=us-central1. Esto escribe">
+<meta name="description" content="Antes de poder usar kubectl, la herramienta de línea de comandos de Kubernetes, con un clúster de GKE, necesitas credenciales. Ejecuta gcloud container clu">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Desplegar cargas de trabajo en GKE con kubectl: Deployment… · Lección de Associate Cloud Engineer">
-<meta property="og:description" content="Antes de usar kubectl en un clúster de GKE, obtén las credenciales: gcloud container clusters get-credentials my-cluster --region=us-central1. Esto escribe">
+<meta property="og:description" content="Antes de poder usar kubectl, la herramienta de línea de comandos de Kubernetes, con un clúster de GKE, necesitas credenciales. Ejecuta gcloud container clu">
 <link rel="canonical" href="https://www.studytocert.com/es/google-ace/lessons/deploying-workloads-to-gke-with-kubectl-deployments-services-and-ingre/">
 <meta property="og:url" content="https://www.studytocert.com/es/google-ace/lessons/deploying-workloads-to-gke-with-kubectl-deployments-services-and-ingre/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Google Cloud Associate Cloud Engineer Associate Cloud Engineer</p>
 <h1>Desplegar cargas de trabajo en GKE con kubectl: Deployments, Services e Ingress</h1>
 <article class="lbody">
-<p>Antes de usar kubectl en un clúster de GKE, obtén las credenciales: <code>gcloud container clusters get-credentials my-cluster --region=us-central1</code>. Esto escribe una entrada en tu kubeconfig para que kubectl se comunique con el servidor de API de ese clúster usando tu identidad de Google. El acceso dentro del clúster se controla con roles de IAM como Kubernetes Engine Developer y, opcionalmente, con RBAC de Kubernetes.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 4 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Antes de poder usar kubectl, la herramienta de línea de comandos de Kubernetes, con un clúster de GKE, necesitas credenciales. Ejecuta <code>gcloud container clusters get-credentials my-cluster --region=us-central1</code> (o <code>--zone</code> para un clúster zonal). Esto escribe una entrada en tu archivo kubeconfig con el endpoint del clúster y la configuración de autenticación, para que kubectl se comunique con el servidor de la interfaz de programación de aplicaciones (API) de ese clúster usando tu identidad de Google. Si omites este paso, los comandos de kubectl fallan con errores de conexión o de configuración. El acceso dentro del clúster se controla con roles de Identity and Access Management (IAM) como Kubernetes Engine Developer o Kubernetes Engine Viewer y, opcionalmente, con el control de acceso basado en roles (RBAC) de Kubernetes para permisos más finos a nivel de espacio de nombres (namespace).</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Associate Cloud Engineer gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../google-ace/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../google-kubernetes-engine-clusters-autopilot-vs-standard-zonal-vs-regio/">← Clústeres de Google Kubernetes Engine: Autopilot vs. Standar</a><a href="../cloud-run-services-and-cloud-run-functions-deploying-containers-and-ev/">Servicios de Cloud Run y Cloud Run functions: desplegar cont →</a></nav>
