@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Azure Site Recovery: Replicación A Una Región Secundaria, … · Lección De Azure Administrator</title>
-<meta name="description" content="La copia de seguridad protege los datos para que puedas restaurarlos más adelante; la recuperación ante desastres mantiene cargas de trabajo completas en f">
+<meta name="description" content="La copia de seguridad protege los datos para que puedas restaurarlos más tarde; la recuperación ante desastres mantiene en funcionamiento cargas de trabajo">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Azure Site Recovery: replicación a una región secundaria, … · Lección de Azure Administrator">
-<meta property="og:description" content="La copia de seguridad protege los datos para que puedas restaurarlos más adelante; la recuperación ante desastres mantiene cargas de trabajo completas en f">
+<meta property="og:description" content="La copia de seguridad protege los datos para que puedas restaurarlos más tarde; la recuperación ante desastres mantiene en funcionamiento cargas de trabajo">
 <link rel="canonical" href="https://www.studytocert.com/es/az-104/lessons/azure-site-recovery-replication-to-a-secondary-region-test-failover-fa/">
 <meta property="og:url" content="https://www.studytocert.com/es/az-104/lessons/azure-site-recovery-replication-to-a-secondary-region-test-failover-fa/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Microsoft Certified: Azure Administrator Associate AZ-104</p>
 <h1>Azure Site Recovery: replicación a una región secundaria, conmutación por error de prueba, conmutación por error, confirmación y conmutación por recuperación</h1>
 <article class="lbody">
-<p>La copia de seguridad protege los datos para que puedas restaurarlos más adelante; la recuperación ante desastres mantiene cargas de trabajo completas en funcionamiento cuando falla una región o un sitio. Azure Site Recovery (ASR) replica de forma continua máquinas virtuales (VM) a una ubicación secundaria para que puedas conmutar por error hacia ella con un objetivo de punto de recuperación (RPO, cuántos datos puedes perder) de minutos y un objetivo de tiempo de recuperación (RTO, cuánto tarda la recuperación) que depende sobre todo de la rapidez con que arrancan las VM. ASR admite VM de Azure que se replican a otra región de Azure, y servidores locales Hyper-V, VMware y físicos que se replican a Azure.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>La copia de seguridad protege los datos para que puedas restaurarlos más tarde; la recuperación ante desastres mantiene en funcionamiento cargas de trabajo completas cuando falla una región o un sitio. Azure Site Recovery (ASR) replica de forma continua las máquinas virtuales (VM) a una ubicación secundaria para que puedas conmutar por error hacia ella. El objetivo de punto de recuperación (RPO, recovery point objective, cuántos datos puedes perder) suele ser de minutos, y el objetivo de tiempo de recuperación (RTO, recovery time objective, cuánto tarda la recuperación) depende sobre todo de lo rápido que arrancan las VM. ASR admite VM de Azure que se replican a otra región de Azure, y servidores locales de Hyper-V, VMware y físicos que se replican a Azure. El examen AZ-104 se centra en la replicación de Azure a Azure y en el orden de los pasos.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 8 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Azure Administrator gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../az-104/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../restoring-vms-disks-and-individual-files/">← Restaurar VM, discos y archivos individuales</a><a href="../backup-reports-and-alerts/">Informes y alertas de copia de seguridad →</a></nav>

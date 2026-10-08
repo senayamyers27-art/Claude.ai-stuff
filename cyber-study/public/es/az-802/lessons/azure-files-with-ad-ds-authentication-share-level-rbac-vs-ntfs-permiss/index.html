@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Azure Files Con Autenticación De AD DS; RBAC De Nivel De R… · Lección De AZ-802</title>
-<meta name="description" content="De forma predeterminada, montas un recurso compartido de archivos de Azure con la clave de la cuenta de almacenamiento, que es como una única contraseña to">
+<meta name="description" content="Azure Files ofrece recursos compartidos de archivos totalmente administrados a los que los clientes acceden con el protocolo Server Message Block (SMB), el">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Azure Files con autenticación de AD DS; RBAC de nivel de r… · Lección de AZ-802">
-<meta property="og:description" content="De forma predeterminada, montas un recurso compartido de archivos de Azure con la clave de la cuenta de almacenamiento, que es como una única contraseña to">
+<meta property="og:description" content="Azure Files ofrece recursos compartidos de archivos totalmente administrados a los que los clientes acceden con el protocolo Server Message Block (SMB), el">
 <link rel="canonical" href="https://www.studytocert.com/es/az-802/lessons/azure-files-with-ad-ds-authentication-share-level-rbac-vs-ntfs-permiss/">
 <meta property="og:url" content="https://www.studytocert.com/es/az-802/lessons/azure-files-with-ad-ds-authentication-share-level-rbac-vs-ntfs-permiss/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Microsoft Certified: Windows Server Administrator Associate (exam AZ-802: Administering Windows Server) AZ-802</p>
 <h1>Azure Files con autenticación de AD DS; RBAC de nivel de recurso compartido frente a permisos NTFS</h1>
 <article class="lbody">
-<p>De forma predeterminada, montas un recurso compartido de archivos de Azure con la clave de la cuenta de almacenamiento, que es como una única contraseña todopoderosa. Para un uso real como servidor de archivos, quieres que los usuarios se conecten con su identidad normal de dominio y obtengan permisos por usuario. Azure Files admite el acceso basado en identidades sobre SMB con Active Directory Domain Services (AD DS) local, Microsoft Entra Domain Services o Microsoft Entra Kerberos para identidades híbridas. Esta lección se centra en AD DS.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Azure Files ofrece recursos compartidos de archivos totalmente administrados a los que los clientes acceden con el protocolo Server Message Block (SMB), el mismo que usan los servidores de archivos de Windows. De forma predeterminada montas un recurso compartido con la clave de la cuenta de almacenamiento, que funciona como una única contraseña todopoderosa: quien la tenga obtiene control total de todos los recursos compartidos de la cuenta, y nada en los registros vincula las acciones con una persona. Para un uso real como servidor de archivos quieres que los usuarios se conecten con su identidad de dominio habitual y reciban permisos por usuario. Azure Files admite acceso basado en identidad sobre SMB con Active Directory Domain Services (AD DS) local, Microsoft Entra Domain Services o Microsoft Entra Kerberos para identidades híbridas. Esta lección se centra en AD DS, que es la opción que más se evalúa cuando el escenario describe un dominio local existente.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia AZ-802 gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../az-802/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../azure-file-sync-sync-groups-cloud-and-server-endpoints-cloud-tiering-p/">← Azure File Sync: grupos de sincronización, puntos de conexió</a><a href="../smb-security-encryption-signing-smb-over-quic-removing-smbv1/">Seguridad de SMB: cifrado, firma, SMB over QUIC, eliminación →</a></nav>
