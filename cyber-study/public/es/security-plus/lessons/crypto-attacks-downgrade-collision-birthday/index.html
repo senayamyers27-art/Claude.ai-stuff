@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Ataques Criptográficos: Downgrade, Colisión Y Cumpleaños · Lección De Security+</title>
-<meta name="description" content="Los algoritmos criptográficos fuertes rara vez se rompen de frente. En su lugar, los atacantes buscan formas de rodearlos: obligar a los sistemas a usar op">
+<title>Ataques Criptográficos: Degradación (Downgrade), Colisión … · Lección De Security+</title>
+<meta name="description" content="Los algoritmos criptográficos fuertes rara vez se rompen de frente. En cambio, los atacantes buscan formas de rodearlos: obligar a los sistemas a usar opci">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0E1319" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
-<meta property="og:title" content="Ataques criptográficos: downgrade, colisión y cumpleaños · Lección de Security+">
-<meta property="og:description" content="Los algoritmos criptográficos fuertes rara vez se rompen de frente. En su lugar, los atacantes buscan formas de rodearlos: obligar a los sistemas a usar op">
+<meta property="og:title" content="Ataques criptográficos: degradación (downgrade), colisión … · Lección de Security+">
+<meta property="og:description" content="Los algoritmos criptográficos fuertes rara vez se rompen de frente. En cambio, los atacantes buscan formas de rodearlos: obligar a los sistemas a usar opci">
 <link rel="canonical" href="https://www.studytocert.com/es/security-plus/lessons/crypto-attacks-downgrade-collision-birthday/">
 <meta property="og:url" content="https://www.studytocert.com/es/security-plus/lessons/crypto-attacks-downgrade-collision-birthday/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Ataques criptográficos: downgrade, colisión y cumpleaños · Lección de Security+">
+<meta property="og:image:alt" content="Ataques criptográficos: degradación (downgrade), colisión … · Lección de Security+">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="alternate" hreflang="en" href="https://www.studytocert.com/security-plus/lessons/crypto-attacks-downgrade-collision-birthday/">
 <link rel="alternate" hreflang="es" href="https://www.studytocert.com/es/security-plus/lessons/crypto-attacks-downgrade-collision-birthday/">
@@ -39,10 +39,10 @@
 <main class="wrap lesson-page">
 <p class="crumbs"><a href="../../../../security-plus/">Security+</a> / <a href="../">Lecciones</a> · <a href="../../../../security-plus/lessons/crypto-attacks-downgrade-collision-birthday/" hreflang="en" lang="en">English</a></p>
 <p class="note">CompTIA Security+ SY0-701</p>
-<h1>Ataques criptográficos: downgrade, colisión y cumpleaños</h1>
+<h1>Ataques criptográficos: degradación (downgrade), colisión y cumpleaños</h1>
 <article class="lbody">
-<p>Los algoritmos criptográficos fuertes rara vez se rompen de frente. En su lugar, los atacantes buscan formas de rodearlos: obligar a los sistemas a usar opciones más débiles, explotar debilidades en funciones hash más antiguas o aprovechar las matemáticas de la probabilidad. Security+ nombra tres ataques criptográficos que debes reconocer: los ataques de degradación (downgrade), de colisión y de cumpleaños. Entenderlos explica por qué se retiran los protocolos y algoritmos antiguos, y por qué la configuración importa tanto como la elección del algoritmo.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Los algoritmos criptográficos fuertes rara vez se rompen de frente. En cambio, los atacantes buscan formas de rodearlos: obligar a los sistemas a usar opciones más débiles, explotar debilidades de funciones hash más antiguas o aprovechar las matemáticas de la probabilidad. Security+ nombra tres ataques criptográficos que debes reconocer: los ataques de degradación, de colisión y de cumpleaños. Entenderlos explica por qué se retiran los protocolos y algoritmos antiguos, y por qué la configuración importa tanto como la elección del algoritmo.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Security+ gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../security-plus/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../password-attacks-spraying-brute-force-credential-stuffing/">← Ataques a contraseñas: password spraying, fuerza bruta y cre</a><a href="../indicators-impossible-travel-account-lockout-resource-consumption-miss/">Indicadores: viaje imposible, bloqueo de cuentas, consumo de →</a></nav>
