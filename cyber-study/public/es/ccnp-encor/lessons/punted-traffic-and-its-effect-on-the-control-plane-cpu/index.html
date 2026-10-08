@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tráfico Enviado A La CPU (Punt) Y Su Efecto En La CPU Del … · Lección De ENCOR</title>
-<meta name="description" content="Un dispositivo de red tiene varios planos. El plano de datos reenvía el tráfico de tránsito, idealmente en hardware. El plano de control ejecuta los protoc">
+<meta name="description" content="Un dispositivo de red tiene varios planos, y el punt solo tiene sentido una vez que los ves. El plano de datos reenvía el tráfico de tránsito, idealmente e">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Tráfico enviado a la CPU (punt) y su efecto en la CPU del … · Lección de ENCOR">
-<meta property="og:description" content="Un dispositivo de red tiene varios planos. El plano de datos reenvía el tráfico de tránsito, idealmente en hardware. El plano de control ejecuta los protoc">
+<meta property="og:description" content="Un dispositivo de red tiene varios planos, y el punt solo tiene sentido una vez que los ves. El plano de datos reenvía el tráfico de tránsito, idealmente e">
 <link rel="canonical" href="https://www.studytocert.com/es/ccnp-encor/lessons/punted-traffic-and-its-effect-on-the-control-plane-cpu/">
 <meta property="og:url" content="https://www.studytocert.com/es/ccnp-encor/lessons/punted-traffic-and-its-effect-on-the-control-plane-cpu/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Cisco CCNP Enterprise core exam (ENCOR) 350-401 v1.2</p>
 <h1>Tráfico enviado a la CPU (punt) y su efecto en la CPU del plano de control</h1>
 <article class="lbody">
-<p>Un dispositivo de red tiene varios planos. El plano de datos reenvía el tráfico de tránsito, idealmente en hardware. El plano de control ejecuta los protocolos de enrutamiento, spanning tree y otros procesos que construyen las tablas de reenvío. El plano de gestión maneja SSH, SNMP y accesos similares. Los planos de control y de gestión se ejecutan en la CPU del procesador de rutas, que es mucho más lenta que el hardware de reenvío. Hacer punt (punting) es cuando el plano de datos entrega un paquete a la CPU en lugar de reenviarlo en hardware.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 4 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Un dispositivo de red tiene varios planos, y el punt solo tiene sentido una vez que los ves. El plano de datos reenvía el tráfico de tránsito, idealmente en hardware usando ASIC (circuitos integrados de aplicación específica) y TCAM (memoria ternaria direccionable por contenido). El plano de control ejecuta los protocolos de enrutamiento, spanning tree y otros procesos que construyen las tablas de reenvío. El plano de gestión maneja SSH (Secure Shell), SNMP (Simple Network Management Protocol) y accesos similares. Los planos de control y de gestión se ejecutan en la CPU del procesador de rutas, que es mucho más lenta que el hardware de reenvío. Hacer punt (punting) es cuando el plano de datos entrega un paquete a la CPU en lugar de reenviarlo en hardware.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia ENCOR gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../ccnp-encor/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../cam-and-tcam-tables-and-what-each-stores/">← Tablas CAM y TCAM y lo que almacena cada una</a><a href="../hypervisors-type-1-vs-type-2-virtual-machines-and-virtual-switching/">Hipervisores: tipo 1 frente a tipo 2, máquinas virtuales y c →</a></nav>

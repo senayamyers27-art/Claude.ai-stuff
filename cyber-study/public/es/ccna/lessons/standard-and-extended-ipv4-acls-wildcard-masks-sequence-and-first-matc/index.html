@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ACL IPv4 Estándar Y Extendidas: Wildcard Masks, Secuencia … · Lección De CCNA</title>
-<meta name="description" content="Una lista de control de acceso (ACL, access control list) es una lista ordenada de sentencias permit y deny, llamadas entradas de control de acceso (ACE, a">
+<title>ACL IPv4 Estándar Y Extendidas: Máscaras Wildcard, Secuenc… · Lección De CCNA</title>
+<meta name="description" content="Una lista de control de acceso (ACL) es una lista ordenada de sentencias permit y deny, llamadas entradas de control de acceso (ACE), que un router usa par">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0E1319" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
-<meta property="og:title" content="ACL IPv4 estándar y extendidas: wildcard masks, secuencia … · Lección de CCNA">
-<meta property="og:description" content="Una lista de control de acceso (ACL, access control list) es una lista ordenada de sentencias permit y deny, llamadas entradas de control de acceso (ACE, a">
+<meta property="og:title" content="ACL IPv4 estándar y extendidas: máscaras wildcard, secuenc… · Lección de CCNA">
+<meta property="og:description" content="Una lista de control de acceso (ACL) es una lista ordenada de sentencias permit y deny, llamadas entradas de control de acceso (ACE), que un router usa par">
 <link rel="canonical" href="https://www.studytocert.com/es/ccna/lessons/standard-and-extended-ipv4-acls-wildcard-masks-sequence-and-first-matc/">
 <meta property="og:url" content="https://www.studytocert.com/es/ccna/lessons/standard-and-extended-ipv4-acls-wildcard-masks-sequence-and-first-matc/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="ACL IPv4 estándar y extendidas: wildcard masks, secuencia … · Lección de CCNA">
+<meta property="og:image:alt" content="ACL IPv4 estándar y extendidas: máscaras wildcard, secuenc… · Lección de CCNA">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="alternate" hreflang="en" href="https://www.studytocert.com/ccna/lessons/standard-and-extended-ipv4-acls-wildcard-masks-sequence-and-first-matc/">
 <link rel="alternate" hreflang="es" href="https://www.studytocert.com/es/ccna/lessons/standard-and-extended-ipv4-acls-wildcard-masks-sequence-and-first-matc/">
@@ -39,10 +39,10 @@
 <main class="wrap lesson-page">
 <p class="crumbs"><a href="../../../../ccna/">CCNA</a> / <a href="../">Lecciones</a> · <a href="../../../../ccna/lessons/standard-and-extended-ipv4-acls-wildcard-masks-sequence-and-first-matc/" hreflang="en" lang="en">English</a></p>
 <p class="note">Cisco CCNA 200-301 v2.0</p>
-<h1>ACL IPv4 estándar y extendidas: wildcard masks, secuencia y primera coincidencia, deny implícito, ubicación</h1>
+<h1>ACL IPv4 estándar y extendidas: máscaras wildcard, secuencia y primera coincidencia, deny implícito, ubicación</h1>
 <article class="lbody">
-<p>Una lista de control de acceso (ACL, access control list) es una lista ordenada de sentencias permit y deny, llamadas entradas de control de acceso (ACE, access control entries), que un router usa para filtrar paquetes. Aplicada a una interfaz en un sentido, decide si cada paquete pasa. Las ACL también se usan para seleccionar tráfico para otras funciones, como NAT (Network Address Translation), el acceso VTY y QoS (quality of service), así que leerlas correctamente importa mucho más allá del filtrado tipo firewall.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Una lista de control de acceso (ACL) es una lista ordenada de sentencias permit y deny, llamadas entradas de control de acceso (ACE), que un router usa para filtrar paquetes. Aplicada a una interfaz en un sentido, decide si cada paquete pasa. Las ACL también se usan para seleccionar tráfico para otras funciones, como NAT (Network Address Translation, traducción de direcciones de red), el acceso VTY y QoS (calidad de servicio), así que leerlas correctamente importa mucho más allá del filtrado tipo firewall.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 9 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia CCNA gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../ccna/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../secure-management-access-ssh-version-2-enable-secret-vty-access-class/">← Acceso de administración seguro: SSH versión 2, enable secre</a><a href="../layer-2-security-port-security-maximum-sticky-violation-modes-dhcp-sno/">Seguridad de Capa 2: port security (maximum, sticky, modos d →</a></nav>
