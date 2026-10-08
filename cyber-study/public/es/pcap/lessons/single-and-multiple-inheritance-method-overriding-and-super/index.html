@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Herencia Simple Y Múltiple, Sobrescritura De Métodos Y Sup… · Lección De PCAP</title>
-<meta name="description" content="La herencia permite que una clase reutilice y amplíe otra. Con la herencia simple, una clase tiene una sola superclase directa: class Car(Vehicle):. La sub">
+<meta name="description" content="La herencia permite que una clase reutilice y amplíe otra clase. Con la herencia simple, una clase tiene exactamente una superclase directa, como en class ">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Herencia simple y múltiple, sobrescritura de métodos y sup… · Lección de PCAP">
-<meta property="og:description" content="La herencia permite que una clase reutilice y amplíe otra. Con la herencia simple, una clase tiene una sola superclase directa: class Car(Vehicle):. La sub">
+<meta property="og:description" content="La herencia permite que una clase reutilice y amplíe otra clase. Con la herencia simple, una clase tiene exactamente una superclase directa, como en class ">
 <link rel="canonical" href="https://www.studytocert.com/es/pcap/lessons/single-and-multiple-inheritance-method-overriding-and-super/">
 <meta property="og:url" content="https://www.studytocert.com/es/pcap/lessons/single-and-multiple-inheritance-method-overriding-and-super/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">PCAP – Certified Associate Python Programmer PCAP-31-03</p>
 <h1>Herencia simple y múltiple, sobrescritura de métodos y super()</h1>
 <article class="lbody">
-<p>La herencia permite que una clase reutilice y amplíe otra. Con la herencia simple, una clase tiene una sola superclase directa: <code>class Car(Vehicle):</code>. La subclase obtiene todos los atributos y métodos de <code>Vehicle</code>, y todo lo que define ella misma se añade. Cuando llamas a un método sobre un <code>Car</code>, Python busca primero en <code>Car</code>, luego en <code>Vehicle</code>, después en las superclases de <code>Vehicle</code>, y finalmente llega a <code>object</code>.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>La herencia permite que una clase reutilice y amplíe otra clase. Con la herencia simple, una clase tiene exactamente una superclase directa, como en <code>class Car(Vehicle):</code>. La subclase recibe todos los atributos y métodos de <code>Vehicle</code>, y lo que define ella misma se añade encima. Cuando llamas a un método sobre un objeto <code>Car</code>, Python lo busca primero en <code>Car</code>, luego en <code>Vehicle</code>, luego en las propias superclases de <code>Vehicle</code> y, por último, en <code>object</code>, que está en la cima de toda jerarquía. Gana la primera coincidencia y, si ninguna clase define el nombre, la llamada lanza AttributeError.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia PCAP gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../pcap/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../introspection-hasattr-type-name-module-bases-class/">← Introspección: hasattr(), type(), __name__, __module__, __ba</a><a href="../method-resolution-order-mro-diamonds-and-inconsistent-hierarchies/">Orden de resolución de métodos (MRO), diamantes y jerarquías →</a></nav>

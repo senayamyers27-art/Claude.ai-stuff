@@ -3400,7 +3400,7 @@ CertHub.addLessons("pcep", [
    "Exam questions ask you to identify parameters versus arguments, predict output from calls that mix styles, or pick the call that fails. Clue patterns: \"in the function definition\" means parameters, \"in the function call\" means arguments; a `name=value` pair before a bare value in a call means `SyntaxError`; a parameter supplied twice, a missing argument or an unknown keyword means `TypeError`; and keyword arguments in any order mean the same result as the correctly ordered positional call. Map each argument to its parameter on paper before deciding what is printed."
   ],
   "analogy": "Think of a theater. A positional argument is a ticket that only says \"next in line\": the first person in gets seat 1, the second seat 2, so order is everything. A keyword argument is a ticket with a name printed on a reserved seat: arrive in any order and you still sit in the right place. Mixing works if the unnamed tickets enter first and fill seats from the left. The analogy stops at one point the exam tests: in Python, letting a named ticket in before an unnamed one is not merely awkward but a SyntaxError, so the code never starts at all.",
-  "mnemonic": "Parameters are Placeholders in the definition; Arguments are Actual values in the call. For mixed calls, Positional comes before Keyword, just as P comes before K in the alphabet.",
+  "mnemonic": "Parameters are Placeholders in the definition; Arguments are Actual values in the call. For mixed calls, Positional arguments come first and Keyword arguments last: position first, names after.",
   "terms": [
    [
     "Parameter",
