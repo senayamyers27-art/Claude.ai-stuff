@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Operadores De Restricción De Versión: `=`, `!=`, `&gt;=`, `&lt;=… · Lección De Terraform Associate</title>
-<meta name="description" content="Terraform usa la misma sintaxis de restricción de versión para required_version, los argumentos version de los providers y los argumentos version de los mó">
+<meta name="description" content="Terraform usa una misma sintaxis de restricción de versión en tres lugares: el ajuste required_version del bloque terraform, que limita qué versiones de la">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Operadores de restricción de versión: `=`, `!=`, `&gt;=`, `&lt;=… · Lección de Terraform Associate">
-<meta property="og:description" content="Terraform usa la misma sintaxis de restricción de versión para required_version, los argumentos version de los providers y los argumentos version de los mó">
+<meta property="og:description" content="Terraform usa una misma sintaxis de restricción de versión en tres lugares: el ajuste required_version del bloque terraform, que limita qué versiones de la">
 <link rel="canonical" href="https://www.studytocert.com/es/terraform/lessons/version-constraint-operators-and-the-pessimistic/">
 <meta property="og:url" content="https://www.studytocert.com/es/terraform/lessons/version-constraint-operators-and-the-pessimistic/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">HashiCorp Certified: Terraform Associate Terraform Associate (004)</p>
 <h1>Operadores de restricción de versión: `=`, `!=`, `&gt;=`, `&lt;=` y el pesimista `~&gt;`</h1>
 <article class="lbody">
-<p>Terraform usa la misma sintaxis de restricción de versión para <code>required_version</code>, los argumentos <code>version</code> de los providers y los argumentos <code>version</code> de los módulos. Una restricción es una cadena que contiene una o más condiciones separadas por comas, y una versión es aceptable solo si las cumple todas. Las versiones siguen el versionado semántico: MAJOR.MINOR.PATCH, donde un aumento de major puede romper la compatibilidad, uno de minor agrega funciones y uno de patch corrige bugs.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Terraform usa una misma sintaxis de restricción de versión en tres lugares: el ajuste <code>required_version</code> del bloque <code>terraform</code>, que limita qué versiones de la CLI de Terraform pueden ejecutar la configuración; el argumento <code>version</code> de cada provider en <code>required_providers</code>; y el argumento <code>version</code> en los bloques de módulo que llaman a módulos del registro. Una restricción es una cadena que contiene una o más condiciones separadas por comas, y una versión es aceptable solo si las cumple todas a la vez. Las versiones siguen el versionado semántico, escrito MAJOR.MINOR.PATCH, donde un aumento de major puede romper la compatibilidad, un aumento de minor agrega funciones de forma compatible y un aumento de patch corrige bugs.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Terraform Associate gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../terraform/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../the-required-providers-block-source-addresses-hostname-namespace-type/">← El bloque `required_providers`: direcciones `source` (hostna</a><a href="../the-dependency-lock-file-terraform-lock-hcl-what-it-records-and-why-it/">El archivo de bloqueo de dependencias `.terraform.lock.hcl`: →</a></nav>

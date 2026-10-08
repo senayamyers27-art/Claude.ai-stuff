@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Refactorización: Bloques `moved` Y `terraform State Mv` · Lección De Terraform Associate</title>
-<meta name="description" content="A medida que las configuraciones crecen, renombras recursos, los mueves a módulos y cambias de count a for_each. Cada uno de estos cambios modifica la dire">
+<meta name="description" content="A medida que las configuraciones crecen, renombras recursos, los mueves a módulos, renombras llamadas a módulos y pasas de un solo recurso a count o for_ea">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Refactorización: bloques `moved` y `terraform state mv` · Lección de Terraform Associate">
-<meta property="og:description" content="A medida que las configuraciones crecen, renombras recursos, los mueves a módulos y cambias de count a for_each. Cada uno de estos cambios modifica la dire">
+<meta property="og:description" content="A medida que las configuraciones crecen, renombras recursos, los mueves a módulos, renombras llamadas a módulos y pasas de un solo recurso a count o for_ea">
 <link rel="canonical" href="https://www.studytocert.com/es/terraform/lessons/refactoring-moved-blocks-and-terraform-state-mv/">
 <meta property="og:url" content="https://www.studytocert.com/es/terraform/lessons/refactoring-moved-blocks-and-terraform-state-mv/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">HashiCorp Certified: Terraform Associate Terraform Associate (004)</p>
 <h1>Refactorización: bloques `moved` y `terraform state mv`</h1>
 <article class="lbody">
-<p>A medida que las configuraciones crecen, renombras recursos, los mueves a módulos y cambias de <code>count</code> a <code>for_each</code>. Cada uno de estos cambios modifica la dirección del recurso. Terraform rastrea los objetos por dirección, así que si simplemente renombras <code>aws_instance.web</code> a <code>aws_instance.frontend</code>, el plan muestra que la dirección anterior se destruye y se crea una nueva. Para una base de datos o un servidor de producción, eso es exactamente lo que no quieres. Las herramientas de refactorización le dicen a Terraform que el objeto solo se movió.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>A medida que las configuraciones crecen, renombras recursos, los mueves a módulos, renombras llamadas a módulos y pasas de un solo recurso a <code>count</code> o <code>for_each</code>. Cada uno de estos cambios modifica la dirección del recurso. Terraform rastrea los objetos reales en el estado por su dirección, así que si simplemente renombras <code>aws_instance.web</code> como <code>aws_instance.frontend</code>, el plan muestra que se destruye la dirección vieja y se crea una nueva. Para un servidor de pruebas sin estado eso puede ser inofensivo, pero para una base de datos, un bucket de almacenamiento lleno de datos o un balanceador de carga de producción, es justo lo que no quieres. Las herramientas de refactorización le dicen a Terraform que el objeto solo cambió de dirección, no de identidad.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Terraform Associate gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../terraform/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../inspecting-state-terraform-state-list-terraform-state-show-terraform-s/">← Inspeccionar el estado: `terraform state list`, `terraform s</a><a href="../removing-resources-from-state-without-destroying-them-removed-blocks-a/">Eliminar recursos del estado sin destruirlos: bloques `remov →</a></nav>
