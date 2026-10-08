@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Seguridad Del Correo: SPF, DKIM Y DMARC · Lección De Security+</title>
-<meta name="description" content="El correo electrónico se diseñó sin ninguna forma de demostrar quién envió un mensaje. La dirección From que ven los usuarios puede configurarse con cualqu">
+<meta name="description" content="El correo electrónico se diseñó sin ninguna forma integrada de demostrar quién envió un mensaje. La dirección From que ven los usuarios es solo un texto qu">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Seguridad del correo: SPF, DKIM y DMARC · Lección de Security+">
-<meta property="og:description" content="El correo electrónico se diseñó sin ninguna forma de demostrar quién envió un mensaje. La dirección From que ven los usuarios puede configurarse con cualqu">
+<meta property="og:description" content="El correo electrónico se diseñó sin ninguna forma integrada de demostrar quién envió un mensaje. La dirección From que ven los usuarios es solo un texto qu">
 <link rel="canonical" href="https://www.studytocert.com/es/security-plus/lessons/email-security-spf-dkim-dmarc/">
 <meta property="og:url" content="https://www.studytocert.com/es/security-plus/lessons/email-security-spf-dkim-dmarc/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">CompTIA Security+ SY0-701</p>
 <h1>Seguridad del correo: SPF, DKIM y DMARC</h1>
 <article class="lbody">
-<p>El correo electrónico se diseñó sin ninguna forma de demostrar quién envió un mensaje. La dirección From que ven los usuarios puede configurarse con cualquier valor, y por eso el phishing y el compromiso del correo empresarial (business email compromise) suplantan con tanta frecuencia dominios de confianza. Tres estándares complementarios basados en DNS resuelven gran parte de este problema: Sender Policy Framework (SPF), DomainKeys Identified Mail (DKIM) y Domain-based Message Authentication, Reporting and Conformance (DMARC). Security+ espera que sepas qué verifica cada uno, cómo funcionan juntos y contra qué no protegen.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>El correo electrónico se diseñó sin ninguna forma integrada de demostrar quién envió un mensaje. La dirección From que ven los usuarios es solo un texto que escribe el remitente, y puede ser cualquier cosa. Esa carencia explica por qué el phishing y el compromiso del correo empresarial (business email compromise) suplantan tan a menudo a dominios de confianza. Tres estándares complementarios, todos publicados en el sistema de nombres de dominio (DNS), cierran buena parte de esa brecha: Sender Policy Framework (SPF), DomainKeys Identified Mail (DKIM) y Domain-based Message Authentication, Reporting and Conformance (DMARC). Security+ espera que sepas qué comprueba cada uno, cómo funcionan juntos y, igual de importante, contra qué no protegen.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 8 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Security+ gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../security-plus/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../logs-siem-correlation-alerting-scap-netflow/">← Logs, correlación en SIEM, alertas, SCAP y NetFlow</a><a href="../edr-xdr-dlp-ueba/">EDR/XDR, DLP y UEBA →</a></nav>
