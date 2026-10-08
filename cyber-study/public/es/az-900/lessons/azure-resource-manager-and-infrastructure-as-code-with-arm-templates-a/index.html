@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Azure Resource Manager E Infraestructura Como Código Con P… · Lección De Azure Fundamentals</title>
-<meta name="description" content="Azure Resource Manager (ARM) es el servicio de implementación y administración de Azure. Toda solicitud para crear, actualizar o eliminar un recurso, ya ve">
+<meta name="description" content="Azure Resource Manager (ARM) es el servicio de implementación y administración de Azure. Cada solicitud para crear, actualizar o eliminar un recurso pasa p">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Azure Resource Manager e infraestructura como código con p… · Lección de Azure Fundamentals">
-<meta property="og:description" content="Azure Resource Manager (ARM) es el servicio de implementación y administración de Azure. Toda solicitud para crear, actualizar o eliminar un recurso, ya ve">
+<meta property="og:description" content="Azure Resource Manager (ARM) es el servicio de implementación y administración de Azure. Cada solicitud para crear, actualizar o eliminar un recurso pasa p">
 <link rel="canonical" href="https://www.studytocert.com/es/az-900/lessons/azure-resource-manager-and-infrastructure-as-code-with-arm-templates-a/">
 <meta property="og:url" content="https://www.studytocert.com/es/az-900/lessons/azure-resource-manager-and-infrastructure-as-code-with-arm-templates-a/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,11 +41,11 @@
 <p class="note">Microsoft Certified: Azure Fundamentals AZ-900</p>
 <h1>Azure Resource Manager e infraestructura como código con plantillas ARM y Bicep</h1>
 <article class="lbody">
-<p>Azure Resource Manager (ARM) es el servicio de implementación y administración de Azure. Toda solicitud para crear, actualizar o eliminar un recurso, ya venga del portal, de Azure CLI, de Azure PowerShell, de las API REST o de un kit de desarrollo de software (SDK), pasa por Resource Manager. Autentica a quien llama con Microsoft Entra ID, comprueba la autorización con el control de acceso basado en roles (RBAC), evalúa Azure Policy y los bloqueos y luego envía la solicitud al servicio de Azure correspondiente, llamado proveedor de recursos, como <code>Microsoft.Compute</code> para las VM. Como todas las herramientas pasan por la misma capa, obtienes resultados consistentes y funciones consistentes como RBAC, etiquetas, bloqueos y directivas sin importar qué herramienta uses.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 8 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Azure Resource Manager (ARM) es el servicio de implementación y administración de Azure. Cada solicitud para crear, actualizar o eliminar un recurso pasa por Resource Manager, ya venga del portal, de la interfaz de línea de comandos (CLI) de Azure, de Azure PowerShell, de las API REST o de un kit de desarrollo de software (SDK). Resource Manager autentica a quien llama con Microsoft Entra ID, comprueba la autorización con el control de acceso basado en roles (RBAC), evalúa Azure Policy y los bloqueos de recursos, y luego envía la solicitud al servicio de Azure correcto, llamado proveedor de recursos (resource provider), como <code>Microsoft.Compute</code> para las máquinas virtuales o <code>Microsoft.Storage</code> para las cuentas de almacenamiento. Como todas las herramientas pasan por la misma capa, obtienes resultados uniformes y las mismas funciones, como RBAC, etiquetas, bloqueos y directivas, sin importar qué herramienta uses.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 9 secciones más, 8 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Azure Fundamentals gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../az-900/?lang=es">Abrir el plan de estudio</a></div>
-<nav class="pager" aria-label="Más lecciones"><a href="../azure-arc-for-managing-on-premises-and-multicloud-resources/">← Azure Arc para administrar recursos on-premises y multicloud</a><a href="../azure-advisor-recommendations-and-azure-service-health-azure-status-se/">Recomendaciones de Azure Advisor y Azure Service Health (Azu →</a></nav>
+<nav class="pager" aria-label="Más lecciones"><a href="../azure-arc-for-managing-on-premises-and-multicloud-resources/">← Azure Arc para administrar recursos locales (on-premises) y </a><a href="../azure-advisor-recommendations-and-azure-service-health-azure-status-se/">Recomendaciones de Azure Advisor y Azure Service Health (Azu →</a></nav>
 </main>
 </body>
 </html>
