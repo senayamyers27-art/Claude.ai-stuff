@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cuentas Y Grupos Locales: Useradd, Usermod -aG, Userdel, G… · Lección De Linux+</title>
-<meta name="description" content="Todo proceso en Linux se ejecuta como algún usuario, y el acceso a archivos y comandos se deriva de ese usuario y sus grupos. Crear y mantener cuentas loca">
+<meta name="description" content="Todo proceso en Linux se ejecuta como algún usuario, y el acceso a archivos y comandos depende de ese usuario y de sus grupos. Crear y mantener cuentas loc">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Cuentas y grupos locales: useradd, usermod -aG, userdel, g… · Lección de Linux+">
-<meta property="og:description" content="Todo proceso en Linux se ejecuta como algún usuario, y el acceso a archivos y comandos se deriva de ese usuario y sus grupos. Crear y mantener cuentas loca">
+<meta property="og:description" content="Todo proceso en Linux se ejecuta como algún usuario, y el acceso a archivos y comandos depende de ese usuario y de sus grupos. Crear y mantener cuentas loc">
 <link rel="canonical" href="https://www.studytocert.com/es/linux-plus/lessons/local-accounts-and-groups-useradd-usermod-ag-userdel-groupadd-passwd-c/">
 <meta property="og:url" content="https://www.studytocert.com/es/linux-plus/lessons/local-accounts-and-groups-useradd-usermod-ag-userdel-groupadd-passwd-c/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,7 +41,7 @@
 <p class="note">CompTIA Linux+ XK0-006</p>
 <h1>Cuentas y grupos locales: useradd, usermod -aG, userdel, groupadd, passwd, chage</h1>
 <article class="lbody">
-<p>Todo proceso en Linux se ejecuta como algún usuario, y el acceso a archivos y comandos se deriva de ese usuario y sus grupos. Crear y mantener cuentas locales es trabajo básico de administración y una fuente constante de preguntas de Linux+, en especial sobre opciones que es fácil confundir. Todos estos comandos editan los archivos de cuentas por ti, lo cual es más seguro que editarlos a mano.</p>
+<p>Todo proceso en Linux se ejecuta como algún usuario, y el acceso a archivos y comandos depende de ese usuario y de sus grupos. Crear y mantener cuentas locales es una tarea básica de administración y una fuente constante de preguntas de Linux+, sobre todo en torno a opciones fáciles de confundir. Todos estos comandos editan los archivos de cuentas por ti, lo que es más seguro que editarlos a mano. Por detrás, <code>useradd</code> agrega líneas a <code>/etc/passwd</code> y <code>/etc/shadow</code> y, en las distribuciones que usan grupos privados de usuario, crea un grupo correspondiente en <code>/etc/group</code>; la próxima lección cubre esos archivos en detalle. Por ahora, concéntrate en qué cambia cada comando y opción, y en qué opciones reemplazan datos en silencio en lugar de agregarlos.</p>
 <div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Linux+ gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../linux-plus/?lang=es">Abrir el plan de estudio</a></div>

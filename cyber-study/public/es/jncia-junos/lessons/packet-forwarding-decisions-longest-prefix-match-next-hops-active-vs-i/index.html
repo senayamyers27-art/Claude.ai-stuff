@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Decisiones De Reenvío De Paquetes: Coincidencia Del Prefij… · Lección De JNCIA-Junos</title>
-<meta name="description" content="El trabajo central de un router es decidir, para cada paquete, a dónde enviarlo a continuación. Junos toma esa decisión en dos etapas. El Routing Engine re">
+<meta name="description" content="El trabajo central de un router es decidir, para cada paquete, a dónde enviarlo a continuación. Junos toma esa decisión en dos etapas que manejan dos parte">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Decisiones de reenvío de paquetes: coincidencia del prefij… · Lección de JNCIA-Junos">
-<meta property="og:description" content="El trabajo central de un router es decidir, para cada paquete, a dónde enviarlo a continuación. Junos toma esa decisión en dos etapas. El Routing Engine re">
+<meta property="og:description" content="El trabajo central de un router es decidir, para cada paquete, a dónde enviarlo a continuación. Junos toma esa decisión en dos etapas que manejan dos parte">
 <link rel="canonical" href="https://www.studytocert.com/es/jncia-junos/lessons/packet-forwarding-decisions-longest-prefix-match-next-hops-active-vs-i/">
 <meta property="og:url" content="https://www.studytocert.com/es/jncia-junos/lessons/packet-forwarding-decisions-longest-prefix-match-next-hops-active-vs-i/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -39,10 +39,10 @@
 <main class="wrap lesson-page">
 <p class="crumbs"><a href="../../../../jncia-junos/">JNCIA-Junos</a> / <a href="../">Lecciones</a> · <a href="../../../../jncia-junos/lessons/packet-forwarding-decisions-longest-prefix-match-next-hops-active-vs-i/" hreflang="en" lang="en">English</a></p>
 <p class="note">Juniper Networks Certified Associate, Junos (JNCIA-Junos) JN0-106</p>
-<h1>Decisiones de reenvío de paquetes: coincidencia del prefijo más largo, siguientes saltos, rutas activas vs inactivas (`*`)</h1>
+<h1>Decisiones de reenvío de paquetes: coincidencia del prefijo más largo, siguientes saltos, rutas activas e inactivas (`*`)</h1>
 <article class="lbody">
-<p>El trabajo central de un router es decidir, para cada paquete, a dónde enviarlo a continuación. Junos toma esa decisión en dos etapas. El Routing Engine reúne las rutas de todas las fuentes (interfaces directamente conectadas, configuración estática y protocolos de enrutamiento) en tablas de enrutamiento y elige la mejor ruta para cada prefijo de destino. Esas mejores rutas se copian a la tabla de reenvío, que el Packet Forwarding Engine (PFE) usa para reenviar los paquetes a alta velocidad.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>El trabajo central de un router es decidir, para cada paquete, a dónde enviarlo a continuación. Junos toma esa decisión en dos etapas que manejan dos partes distintas del dispositivo. El Routing Engine (RE, motor de enrutamiento) reúne las rutas de todas las fuentes, incluidas las interfaces directamente conectadas, la configuración estática y los protocolos de enrutamiento, en tablas de enrutamiento y elige la mejor ruta para cada prefijo de destino. Esas mejores rutas se copian luego a la tabla de reenvío, que el Packet Forwarding Engine (PFE, motor de reenvío de paquetes) usa para reenviar los paquetes a alta velocidad en hardware. El RE piensa y el PFE actúa según lo que decidió el RE.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia JNCIA-Junos gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../jncia-junos/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../ntp-snmp-and-remote-syslog-for-ongoing-operations/">← NTP, SNMP y syslog remoto para las operaciones del día a día</a><a href="../routing-tables-inet-0-inet6-0-inet-3-and-instance-tables-such-as-vr1-i/">Tablas de enrutamiento: inet.0, inet6.0, inet.3 y tablas de  →</a></nav>

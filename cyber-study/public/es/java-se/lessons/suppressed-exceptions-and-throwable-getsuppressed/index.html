@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Excepciones Suprimidas Y Throwable.getSuppressed() · Lección De OCP Java</title>
-<meta name="description" content="A veces ocurre más de una excepción durante la misma operación. En try-with-resources esto es común: el cuerpo lanza una excepción, y luego la llamada auto">
+<meta name="description" content="A veces ocurre más de una excepción durante la misma operación. En try-with-resources es habitual: el cuerpo lanza una excepción y luego la llamada automát">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Excepciones suprimidas y Throwable.getSuppressed() · Lección de OCP Java">
-<meta property="og:description" content="A veces ocurre más de una excepción durante la misma operación. En try-with-resources esto es común: el cuerpo lanza una excepción, y luego la llamada auto">
+<meta property="og:description" content="A veces ocurre más de una excepción durante la misma operación. En try-with-resources es habitual: el cuerpo lanza una excepción y luego la llamada automát">
 <link rel="canonical" href="https://www.studytocert.com/es/java-se/lessons/suppressed-exceptions-and-throwable-getsuppressed/">
 <meta property="og:url" content="https://www.studytocert.com/es/java-se/lessons/suppressed-exceptions-and-throwable-getsuppressed/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Oracle Certified Professional: Java SE Developer 1Z0-831 (Java SE 25)</p>
 <h1>Excepciones suprimidas y Throwable.getSuppressed()</h1>
 <article class="lbody">
-<p>A veces ocurre más de una excepción durante la misma operación. En try-with-resources esto es común: el cuerpo lanza una excepción, y luego la llamada automática a <code>close()</code> también lanza una. Java no puede lanzar ambas a la vez, así que tiene que elegir una como excepción principal y recordar la otra. La que conserva como principal es la excepción del bloque try. Cualquier excepción lanzada al cerrar recursos se le adjunta como excepción suprimida.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>A veces ocurre más de una excepción durante la misma operación. En try-with-resources es habitual: el cuerpo lanza una excepción y luego la llamada automática a <code>close()</code> también lanza otra, quizá porque la conexión ya está rota. Java no puede lanzar dos excepciones a la vez, así que debe elegir una como excepción principal y recordar la otra. La regla es simple y muy evaluada: la excepción del bloque <code>try</code> es la principal. Cualquier excepción lanzada al cerrar los recursos se le adjunta como excepción suprimida, y solo la principal se propaga a un bloque <code>catch</code> o hacia arriba en la pila de llamadas.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia OCP Java gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../java-se/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../try-with-resources-autocloseable-and-reverse-close-order/">← try-with-resources, AutoCloseable y cierre en orden inverso</a><a href="../declaring-exceptions-with-throws-and-overriding-rules/">Declarar excepciones con throws y reglas de sobrescritura →</a></nav>

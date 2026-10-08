@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Políticas Por Defecto: BGP Acepta Y Anuncia Las Rutas BGP … · Lección De JNCIA-Junos</title>
-<meta name="description" content="Cada protocolo de enrutamiento en Junos tiene una política por defecto incorporada. Se aplica automáticamente al final de cualquier cadena de políticas, as">
+<meta name="description" content="Cada protocolo de enrutamiento de Junos tiene una política por defecto incorporada. Se aplica automáticamente al final de cualquier cadena de políticas, as">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Políticas por defecto: BGP acepta y anuncia las rutas BGP … · Lección de JNCIA-Junos">
-<meta property="og:description" content="Cada protocolo de enrutamiento en Junos tiene una política por defecto incorporada. Se aplica automáticamente al final de cualquier cadena de políticas, as">
+<meta property="og:description" content="Cada protocolo de enrutamiento de Junos tiene una política por defecto incorporada. Se aplica automáticamente al final de cualquier cadena de políticas, as">
 <link rel="canonical" href="https://www.studytocert.com/es/jncia-junos/lessons/default-policies-bgp-accepts-and-advertises-active-bgp-routes-ospf-imp/">
 <meta property="og:url" content="https://www.studytocert.com/es/jncia-junos/lessons/default-policies-bgp-accepts-and-advertises-active-bgp-routes-ospf-imp/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -39,10 +39,10 @@
 <main class="wrap lesson-page">
 <p class="crumbs"><a href="../../../../jncia-junos/">JNCIA-Junos</a> / <a href="../">Lecciones</a> · <a href="../../../../jncia-junos/lessons/default-policies-bgp-accepts-and-advertises-active-bgp-routes-ospf-imp/" hreflang="en" lang="en">English</a></p>
 <p class="note">Juniper Networks Certified Associate, Junos (JNCIA-Junos) JN0-106</p>
-<h1>Políticas por defecto: BGP acepta y anuncia las rutas BGP activas; OSPF import acepta todo y export rechaza todo; RIP export rechaza todo</h1>
+<h1>Políticas por defecto: BGP acepta y anuncia las rutas BGP activas; en OSPF, import acepta todo y export rechaza todo; en RIP, export rechaza todo</h1>
 <article class="lbody">
-<p>Cada protocolo de enrutamiento en Junos tiene una política por defecto incorporada. Se aplica automáticamente al final de cualquier cadena de políticas, así que decide qué pasa con una ruta que ninguna de tus políticas configuradas acepta o rechaza explícitamente. Si no configuras ninguna política, la política por defecto es lo único que se aplica. Conocer el valor por defecto de cada protocolo explica mucho comportamiento que sorprende a los principiantes.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Cada protocolo de enrutamiento de Junos tiene una política por defecto incorporada. Se aplica automáticamente al final de cualquier cadena de políticas, así que decide qué pasa con una ruta que ninguna de tus políticas configuradas acepta o rechaza explícitamente. Si no configuras ninguna política, la política por defecto es lo único que se aplica. Conocer la política por defecto de cada protocolo explica muchos comportamientos que sorprenden a los principiantes, y es un tema favorito de las preguntas de examen que describen un síntoma y piden la causa.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia JNCIA-Junos gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../jncia-junos/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../routing-policy-uses-import-into-the-routing-table-and-export-out-of-th/">← Usos de la política de enrutamiento: import (hacia la tabla </a><a href="../policy-structure-terms-from-match-conditions-then-actions-terminating/">Estructura de una política: términos, condiciones de coincid →</a></nav>

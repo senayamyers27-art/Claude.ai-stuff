@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Optional: Of, OfNullable, Map, OrElse, OrElseGet, OrElseTh… · Lección De OCP Java</title>
-<meta name="description" content="Optional&lt;T&gt; es un contenedor que o bien guarda un valor no null o está vacío. Métodos como findFirst, max y reduce lo devuelven para que quien llama deba p">
+<meta name="description" content="Optional&lt;T&gt; es un contenedor que contiene un valor no null o está vacío. Métodos como findFirst, max y reduce lo devuelven para que quien llama tenga que p">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Optional: of, ofNullable, map, orElse, orElseGet, orElseTh… · Lección de OCP Java">
-<meta property="og:description" content="Optional&lt;T&gt; es un contenedor que o bien guarda un valor no null o está vacío. Métodos como findFirst, max y reduce lo devuelven para que quien llama deba p">
+<meta property="og:description" content="Optional&lt;T&gt; es un contenedor que contiene un valor no null o está vacío. Métodos como findFirst, max y reduce lo devuelven para que quien llama tenga que p">
 <link rel="canonical" href="https://www.studytocert.com/es/java-se/lessons/optional-of-ofnullable-map-orelse-orelseget-orelsethrow/">
 <meta property="og:url" content="https://www.studytocert.com/es/java-se/lessons/optional-of-ofnullable-map-orelse-orelseget-orelsethrow/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Oracle Certified Professional: Java SE Developer 1Z0-831 (Java SE 25)</p>
 <h1>Optional: of, ofNullable, map, orElse, orElseGet, orElseThrow</h1>
 <article class="lbody">
-<p><code>Optional&lt;T&gt;</code> es un contenedor que o bien guarda un valor no null o está vacío. Métodos como <code>findFirst</code>, <code>max</code> y <code>reduce</code> lo devuelven para que quien llama deba pensar en el caso sin resultado en lugar de recibir un null inesperado. Está pensado principalmente como tipo de retorno; usarlo para campos o parámetros de métodos no se recomienda.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p><code>Optional&lt;T&gt;</code> es un contenedor que contiene un valor no null o está vacío. Métodos como <code>findFirst</code>, <code>max</code> y <code>reduce</code> lo devuelven para que quien llama tenga que pensar en el caso sin resultado, en lugar de recibir un null inesperado. Está pensado principalmente como tipo de retorno; no se recomienda usarlo en campos ni en parámetros de métodos. Antes de Optional, un método que podía no encontrar nada solía devolver null, y nada en la firma del método advertía a quien lo llamaba. Una comprobación de null olvidada se convertía entonces en una <code>NullPointerException</code> lejos del lugar donde faltaba el valor. Un tipo de retorno <code>Optional&lt;User&gt;</code> documenta esa posibilidad en la propia firma, y el compilador obliga a quien llama a desenvolverlo de forma deliberada. Una variable Optional en sí nunca debería ser null; devuelve <code>Optional.empty()</code> en su lugar.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia OCP Java gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../java-se/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../primitive-streams-and-summary-statistics/">← Streams primitivos y estadísticas resumidas</a><a href="../stream-gatherers-java-24-gather-with-gatherers-windowfixed-windowslidi/">Stream Gatherers (Java 24+): gather() con Gatherers.windowFi →</a></nav>

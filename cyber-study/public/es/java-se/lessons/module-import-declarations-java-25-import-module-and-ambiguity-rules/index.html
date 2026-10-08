@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Declaraciones Import Module (Java 25): Import Module Y Reg… · Lección De OCP Java</title>
-<meta name="description" content="Una declaración de importación de módulo (module import declaration), finalizada en Java 25, te permite importar toda la API de un módulo en una sola línea">
+<title>Declaraciones De Importación De Módulos (Java 25): Import … · Lección De OCP Java</title>
+<meta name="description" content="Una declaración de importación de módulo, finalizada en Java 25, te permite importar toda la interfaz de programación de aplicaciones (API) de un módulo en">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0E1319" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
-<meta property="og:title" content="Declaraciones import module (Java 25): import module y reg… · Lección de OCP Java">
-<meta property="og:description" content="Una declaración de importación de módulo (module import declaration), finalizada en Java 25, te permite importar toda la API de un módulo en una sola línea">
+<meta property="og:title" content="Declaraciones de importación de módulos (Java 25): import … · Lección de OCP Java">
+<meta property="og:description" content="Una declaración de importación de módulo, finalizada en Java 25, te permite importar toda la interfaz de programación de aplicaciones (API) de un módulo en">
 <link rel="canonical" href="https://www.studytocert.com/es/java-se/lessons/module-import-declarations-java-25-import-module-and-ambiguity-rules/">
 <meta property="og:url" content="https://www.studytocert.com/es/java-se/lessons/module-import-declarations-java-25-import-module-and-ambiguity-rules/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Declaraciones import module (Java 25): import module y reg… · Lección de OCP Java">
+<meta property="og:image:alt" content="Declaraciones de importación de módulos (Java 25): import … · Lección de OCP Java">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="alternate" hreflang="en" href="https://www.studytocert.com/java-se/lessons/module-import-declarations-java-25-import-module-and-ambiguity-rules/">
 <link rel="alternate" hreflang="es" href="https://www.studytocert.com/es/java-se/lessons/module-import-declarations-java-25-import-module-and-ambiguity-rules/">
@@ -39,10 +39,10 @@
 <main class="wrap lesson-page">
 <p class="crumbs"><a href="../../../../java-se/">OCP Java</a> / <a href="../">Lecciones</a> · <a href="../../../../java-se/lessons/module-import-declarations-java-25-import-module-and-ambiguity-rules/" hreflang="en" lang="en">English</a></p>
 <p class="note">Oracle Certified Professional: Java SE Developer 1Z0-831 (Java SE 25)</p>
-<h1>Declaraciones import module (Java 25): import module y reglas de ambigüedad</h1>
+<h1>Declaraciones de importación de módulos (Java 25): import module y reglas de ambigüedad</h1>
 <article class="lbody">
-<p>Una declaración de importación de módulo (module import declaration), finalizada en Java 25, te permite importar toda la API de un módulo en una sola línea: <code>import module java.base;</code>. Importa, bajo demanda, cada clase e interfaz public de nivel superior de cada paquete que el módulo exporta. También incluye los paquetes exportados por los módulos que el módulo nombrado requiere de forma transitiva. Por ejemplo, <code>java.sql</code> requiere <code>java.xml</code> de forma transitiva, así que <code>import module java.sql;</code> también pone a disposición los tipos exportados de java.xml.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Una declaración de importación de módulo, finalizada en Java 25, te permite importar toda la interfaz de programación de aplicaciones (API) de un módulo en una sola línea: <code>import module java.base;</code>. Importa, bajo demanda, todas las clases e interfaces públicas de nivel superior de todos los paquetes que exporta el módulo nombrado. También incluye los paquetes exportados por los módulos que el módulo nombrado requiere de forma transitiva. Por ejemplo, <code>java.sql</code> declara <code>requires transitive java.xml</code>, así que <code>import module java.sql;</code> también pone a disposición, por su nombre simple, los tipos que exporta <code>java.xml</code>.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia OCP Java gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../java-se/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../compiling-and-running-modules-with-javac-module-path-and-java-module/">← Compilar y ejecutar módulos con javac --module-path y java -</a><a href="../compact-source-files-and-instance-main-methods-java-25-java-lang-io/">Archivos fuente compactos y métodos main de instancia (Java  →</a></nav>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Valores De Preferencia De Ruta: Direct/Local 0, Static 5, … · Lección De JNCIA-Junos</title>
-<meta name="description" content="Cuando Junos aprende más de una ruta hacia exactamente el mismo prefijo desde fuentes distintas, debe elegir una para hacerla activa. El primer y más impor">
+<meta name="description" content="Cuando Junos aprende más de una ruta hacia exactamente el mismo prefijo desde fuentes distintas, debe elegir una para que sea la activa. El primer criterio">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Valores de preferencia de ruta: direct/local 0, static 5, … · Lección de JNCIA-Junos">
-<meta property="og:description" content="Cuando Junos aprende más de una ruta hacia exactamente el mismo prefijo desde fuentes distintas, debe elegir una para hacerla activa. El primer y más impor">
+<meta property="og:description" content="Cuando Junos aprende más de una ruta hacia exactamente el mismo prefijo desde fuentes distintas, debe elegir una para que sea la activa. El primer criterio">
 <link rel="canonical" href="https://www.studytocert.com/es/jncia-junos/lessons/route-preference-values-direct-local-0-static-5-ospf-internal-10-rip-1/">
 <meta property="og:url" content="https://www.studytocert.com/es/jncia-junos/lessons/route-preference-values-direct-local-0-static-5-ospf-internal-10-rip-1/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Juniper Networks Certified Associate, Junos (JNCIA-Junos) JN0-106</p>
 <h1>Valores de preferencia de ruta: direct/local 0, static 5, OSPF interno 10, RIP 100, aggregate/generated 130, OSPF externo 150, BGP 170</h1>
 <article class="lbody">
-<p>Cuando Junos aprende más de una ruta hacia exactamente el mismo prefijo desde fuentes distintas, debe elegir una para hacerla activa. El primer y más importante criterio es la preferencia de ruta (route preference), un número asignado a cada fuente de enrutamiento. Otros fabricantes llaman a la misma idea distancia administrativa (administrative distance). La regla es simple: cuanto más baja la preferencia, más confiable es la ruta, así que gana el valor más bajo.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Cuando Junos aprende más de una ruta hacia exactamente el mismo prefijo desde fuentes distintas, debe elegir una para que sea la activa. El primer criterio, y el más importante, es la preferencia de ruta (route preference), un número asignado a cada fuente de enrutamiento. Otros fabricantes llaman a la misma idea distancia administrativa, así que si has estudiado para otros exámenes el concepto te resultará familiar, aunque los números son distintos. La regla es sencilla: cuanto más baja la preferencia, más confiable es la ruta, así que el valor más bajo gana y se convierte en la ruta activa que se instala en la tabla de reenvío.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia JNCIA-Junos gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../jncia-junos/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../routing-tables-inet-0-inet6-0-inet-3-and-instance-tables-such-as-vr1-i/">← Tablas de enrutamiento: inet.0, inet6.0, inet.3 y tablas de </a><a href="../routing-instances-virtual-router-forwarding-and-vrf-types/">Instancias de enrutamiento: tipos virtual-router, forwarding →</a></nav>

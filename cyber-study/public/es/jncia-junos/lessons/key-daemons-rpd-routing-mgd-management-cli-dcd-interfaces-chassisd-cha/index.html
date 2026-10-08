@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Daemons Clave: Rpd (Enrutamiento), Mgd (Gestión/CLI), Dcd … · Lección De JNCIA-Junos</title>
-<meta name="description" content="Junos está formado por muchos procesos independientes llamados daemons, cada uno corriendo en su propio espacio de memoria protegida. El examen se enfoca e">
+<meta name="description" content="Junos está construido a partir de muchos procesos independientes llamados daemons, cada uno ejecutándose en su propio espacio de memoria protegida en el Ro">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Daemons clave: rpd (enrutamiento), mgd (gestión/CLI), dcd … · Lección de JNCIA-Junos">
-<meta property="og:description" content="Junos está formado por muchos procesos independientes llamados daemons, cada uno corriendo en su propio espacio de memoria protegida. El examen se enfoca e">
+<meta property="og:description" content="Junos está construido a partir de muchos procesos independientes llamados daemons, cada uno ejecutándose en su propio espacio de memoria protegida en el Ro">
 <link rel="canonical" href="https://www.studytocert.com/es/jncia-junos/lessons/key-daemons-rpd-routing-mgd-management-cli-dcd-interfaces-chassisd-cha/">
 <meta property="og:url" content="https://www.studytocert.com/es/jncia-junos/lessons/key-daemons-rpd-routing-mgd-management-cli-dcd-interfaces-chassisd-cha/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Juniper Networks Certified Associate, Junos (JNCIA-Junos) JN0-106</p>
 <h1>Daemons clave: rpd (enrutamiento), mgd (gestión/CLI), dcd (interfaces), chassisd (chasis)</h1>
 <article class="lbody">
-<p>Junos está formado por muchos procesos independientes llamados daemons, cada uno corriendo en su propio espacio de memoria protegida. El examen se enfoca en cuatro de ellos, y saber qué hace cada uno te ayuda a entender los mensajes de log, la salida de <code>show system processes</code> y lo que ocurre cuando algo falla.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Junos está construido a partir de muchos procesos independientes llamados daemons, cada uno ejecutándose en su propio espacio de memoria protegida en el Routing Engine (RE). Memoria protegida significa que un daemon no puede sobrescribir los datos de otro, así que es mucho menos probable que un error en un proceso corrompa el resto del sistema. El examen se centra en cuatro daemons: rpd, mgd, dcd y chassisd. Saber qué hace cada uno te ayuda a leer los mensajes de log, interpretar la salida de <code>show system processes</code> y predecir qué ocurre cuando algo falla.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia JNCIA-Junos gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../jncia-junos/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../packet-forwarding-engine-pfe-forwards-transit-traffic-using-the-forwar/">← Packet Forwarding Engine (PFE): reenvía el tráfico de tránsi</a><a href="../transit-traffic-vs-exception-host-bound-traffic-and-why-exception-traf/">Tráfico de tránsito vs tráfico de excepción (dirigido al hos →</a></nav>
