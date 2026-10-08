@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Actividad Maliciosa E Indicadores: Beaconing, Persistencia… · Lección De SSCP</title>
-<meta name="description" content="Detectar un ataque normalmente significa notar un comportamiento, no archivos de malware. Los indicadores de compromiso (IoC) son artefactos que sugieren q">
+<meta name="description" content="Detectar un ataque normalmente significa notar un comportamiento, no encontrar un archivo de malware. Los indicadores de compromiso (IoC) son artefactos qu">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Actividad maliciosa e indicadores: beaconing, persistencia… · Lección de SSCP">
-<meta property="og:description" content="Detectar un ataque normalmente significa notar un comportamiento, no archivos de malware. Los indicadores de compromiso (IoC) son artefactos que sugieren q">
+<meta property="og:description" content="Detectar un ataque normalmente significa notar un comportamiento, no encontrar un archivo de malware. Los indicadores de compromiso (IoC) son artefactos qu">
 <link rel="canonical" href="https://www.studytocert.com/es/sscp/lessons/malicious-activity-and-indicators-beaconing-persistence-privilege-esca/">
 <meta property="og:url" content="https://www.studytocert.com/es/sscp/lessons/malicious-activity-and-indicators-beaconing-persistence-privilege-esca/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">ISC2 SSCP Oct 2025 outline</p>
 <h1>Actividad maliciosa e indicadores: beaconing, persistencia y escalada de privilegios</h1>
 <article class="lbody">
-<p>Detectar un ataque normalmente significa notar un comportamiento, no archivos de malware. Los indicadores de compromiso (IoC) son artefactos que sugieren que un sistema ha sido vulnerado: direcciones IP y dominios maliciosos conocidos, hashes de archivos, claves de registro inusuales, procesos extraños o entradas de registro sospechosas. Los indicadores de ataque se centran en comportamientos en curso. Como SSCP revisarás alertas y logs, así que necesitas reconocer los patrones comunes de la actividad de un atacante después del acceso inicial.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Detectar un ataque normalmente significa notar un comportamiento, no encontrar un archivo de malware. Los indicadores de compromiso (IoC) son artefactos que sugieren que un sistema ya ha sido vulnerado: direcciones IP y dominios maliciosos conocidos, hashes de archivos, claves de registro inusuales, procesos extraños o entradas de log raras. Los indicadores de ataque (IoA), en cambio, se centran en comportamientos en curso, como un procesador de textos que abre una shell de comandos o una cuenta que de repente enumera todos los recursos compartidos de archivos. Los IoC son útiles para compararlos con fuentes de inteligencia de amenazas, pero a los atacantes les cuesta poco cambiar un hash o un dominio, mientras que cambiar su forma de comportarse es mucho más difícil. Como SSCP revisarás alertas y logs, así que necesitas reconocer los patrones comunes que dejan los atacantes después del acceso inicial, y los tres de esta lección están entre los más confiables.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia SSCP gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../sscp/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../malware-types-virus-worm-trojan-ransomware-rootkit-logic-bomb-fileless/">← Tipos de malware: virus, gusano, troyano, ransomware, rootki</a><a href="../countermeasures-antimalware-sandboxing-allow-listing-user-training/">Contramedidas: antimalware, sandboxing, listas de permitidos →</a></nav>
