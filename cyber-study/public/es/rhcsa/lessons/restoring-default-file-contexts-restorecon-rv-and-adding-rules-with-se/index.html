@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Restaurar Los Contextos De Archivo Predeterminados (Restor… · Lección De RHCSA</title>
-<meta name="description" content="SELinux mantiene una base de datos de la política con la etiqueta que debe tener cada ruta, escrita como expresiones regulares como /var/www(/.*)? asociada">
+<meta name="description" content="SELinux guarda dos versiones de la verdad, y corregir etiquetas significa ponerlas de acuerdo. La base de datos de la política registra qué etiqueta debe t">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Restaurar los contextos de archivo predeterminados (restor… · Lección de RHCSA">
-<meta property="og:description" content="SELinux mantiene una base de datos de la política con la etiqueta que debe tener cada ruta, escrita como expresiones regulares como /var/www(/.*)? asociada">
+<meta property="og:description" content="SELinux guarda dos versiones de la verdad, y corregir etiquetas significa ponerlas de acuerdo. La base de datos de la política registra qué etiqueta debe t">
 <link rel="canonical" href="https://www.studytocert.com/es/rhcsa/lessons/restoring-default-file-contexts-restorecon-rv-and-adding-rules-with-se/">
 <meta property="og:url" content="https://www.studytocert.com/es/rhcsa/lessons/restoring-default-file-contexts-restorecon-rv-and-adding-rules-with-se/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Red Hat Certified System Administrator EX200 (RHEL 10)</p>
 <h1>Restaurar los contextos de archivo predeterminados (restorecon -Rv) y añadir reglas con semanage fcontext</h1>
 <article class="lbody">
-<p>SELinux mantiene una base de datos de la política con la etiqueta que debe tener cada ruta, escrita como expresiones regulares como <code>/var/www(/.*)?</code> asociadas a <code>httpd_sys_content_t</code>. La etiqueta real se guarda en cada archivo. Cuando ambas no coinciden, la solución es restablecer el archivo a lo que dice la política. Cuando la propia política no tiene ninguna regla para tu ruta personalizada, primero añades una.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>SELinux guarda dos versiones de la verdad, y corregir etiquetas significa ponerlas de acuerdo. La base de datos de la política registra qué etiqueta debe tener cada ruta, escrita como expresiones regulares como <code>/var/www(/.*)?</code> asociadas al tipo <code>httpd_sys_content_t</code>. La etiqueta real se guarda en cada archivo como un atributo extendido. Cuando las dos no coinciden, la solución es restablecer el archivo a lo que dice la política. Cuando la propia política no tiene una regla adecuada para tu ruta personalizada, primero añades una y luego la aplicas. Esas dos operaciones son el trabajo de <code>restorecon</code> y <code>semanage fcontext</code> en SELinux (Security-Enhanced Linux).</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia RHCSA gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../rhcsa/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../listing-and-identifying-selinux-file-and-process-contexts-ls-z-ps-ez-i/">← Listar e identificar contextos de SELinux de archivos y proc</a><a href="../managing-selinux-port-labels-semanage-port-a-t-http-port-t-p-tcp/">Gestionar las etiquetas de puertos de SELinux (semanage port →</a></nav>

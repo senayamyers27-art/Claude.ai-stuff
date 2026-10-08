@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Leer Entradas Y Usar Variables Y Comillas Correctamente · Lección De RHCSA</title>
-<meta name="description" content="Las variables guardan valores en un script: nombres, rutas, cantidades. En Bash se asigna con name=value y no debe haber espacios alrededor del =; name = v">
+<meta name="description" content="Las variables guardan los valores con los que trabaja un script: nombres, rutas, cantidades. En Bash asignas con name=value, y no debe haber espacios alred">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Leer entradas y usar variables y comillas correctamente · Lección de RHCSA">
-<meta property="og:description" content="Las variables guardan valores en un script: nombres, rutas, cantidades. En Bash se asigna con name=value y no debe haber espacios alrededor del =; name = v">
+<meta property="og:description" content="Las variables guardan los valores con los que trabaja un script: nombres, rutas, cantidades. En Bash asignas con name=value, y no debe haber espacios alred">
 <link rel="canonical" href="https://www.studytocert.com/es/rhcsa/lessons/reading-input-and-using-variables-and-quoting-correctly/">
 <meta property="og:url" content="https://www.studytocert.com/es/rhcsa/lessons/reading-input-and-using-variables-and-quoting-correctly/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Red Hat Certified System Administrator EX200 (RHEL 10)</p>
 <h1>Leer entradas y usar variables y comillas correctamente</h1>
 <article class="lbody">
-<p>Las variables guardan valores en un script: nombres, rutas, cantidades. En Bash se asigna con <code>name=value</code> y no debe haber espacios alrededor del <code>=</code>; <code>name = value</code> intentaría ejecutar un comando llamado name. Usas el valor con <code>$name</code>, o <code>${name}</code> cuando al nombre le siguen otros caracteres, como en <code>${file}.bak</code>. Los nombres de variable distinguen mayúsculas y minúsculas, y por convención los scripts usan minúsculas para sus propias variables y dejan las mayúsculas para las variables de entorno como PATH y HOME.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Las variables guardan los valores con los que trabaja un script: nombres, rutas, cantidades. En Bash asignas con <code>name=value</code>, y no debe haber espacios alrededor del <code>=</code>. Escribir <code>name = value</code> hace que Bash intente ejecutar un comando llamado name con los argumentos <code>=</code> y value, lo que falla con &quot;command not found&quot;. Usas el valor con <code>$name</code>, o con <code>${name}</code> cuando el nombre va seguido inmediatamente de otros caracteres, como en <code>${file}.bak</code>; sin las llaves, <code>$file.bak</code> funciona, pero <code>$filebak</code> buscaría una variable llamada filebak. Los nombres de variable distinguen mayúsculas de minúsculas, y por convención los scripts usan minúsculas para sus propias variables y dejan las mayúsculas para las variables de entorno como PATH, HOME y USER, lo que evita sobrescribir por accidente algo importante.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia RHCSA gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../rhcsa/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../processing-the-output-of-shell-commands-with-command-substitution/">← Procesar la salida de comandos del shell con la sustitución </a><a href="../case-statements-for-simple-argument-handling/">Sentencias case para manejar argumentos sencillos →</a></nav>
