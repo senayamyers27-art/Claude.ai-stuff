@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bloqueo Del Estado: Por Qué Evita La Corrupción, Qué Backe… · Lección De Terraform Associate</title>
-<meta name="description" content="Imagina a dos ingenieros ejecutando terraform apply contra el mismo estado en el mismo momento. Ambos leen el mismo estado inicial, ambos hacen cambios en ">
+<meta name="description" content="Empieza por el problema que resuelve el bloqueo. Imagina a dos ingenieros ejecutando terraform apply contra el mismo estado en el mismo momento. Ambos leen">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Bloqueo del estado: por qué evita la corrupción, qué backe… · Lección de Terraform Associate">
-<meta property="og:description" content="Imagina a dos ingenieros ejecutando terraform apply contra el mismo estado en el mismo momento. Ambos leen el mismo estado inicial, ambos hacen cambios en ">
+<meta property="og:description" content="Empieza por el problema que resuelve el bloqueo. Imagina a dos ingenieros ejecutando terraform apply contra el mismo estado en el mismo momento. Ambos leen">
 <link rel="canonical" href="https://www.studytocert.com/es/terraform/lessons/state-locking-why-it-prevents-corruption-which-backends-support-it-loc/">
 <meta property="og:url" content="https://www.studytocert.com/es/terraform/lessons/state-locking-why-it-prevents-corruption-which-backends-support-it-loc/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">HashiCorp Certified: Terraform Associate Terraform Associate (004)</p>
 <h1>Bloqueo del estado: por qué evita la corrupción, qué backends lo admiten, `-lock-timeout` y `terraform force-unlock`</h1>
 <article class="lbody">
-<p>Imagina a dos ingenieros ejecutando <code>terraform apply</code> contra el mismo estado en el mismo momento. Ambos leen el mismo estado inicial, ambos hacen cambios en la nube y ambos intentan escribir un estado nuevo. El que escribe segundo sobrescribe al primero, y el estado ya no coincide con la realidad. El bloqueo del estado evita esto permitiendo que se ejecute solo una operación a la vez que pueda escribir el estado.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Empieza por el problema que resuelve el bloqueo. Imagina a dos ingenieros ejecutando <code>terraform apply</code> contra el mismo estado en el mismo momento. Ambos leen el mismo estado inicial, ambos hacen cambios en la nube y ambos intentan escribir un estado nuevo. El que escribe en segundo lugar sobrescribe al primero, y el estado ya no coincide con la realidad: los recursos que creó el primer ingeniero ahora faltan en el estado, así que Terraform podría intentar crearlos de nuevo más adelante o perderles el rastro por completo. El bloqueo del estado lo evita al permitir que se ejecute solo una operación a la vez que pueda escribir el estado.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 9 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Terraform Associate gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../terraform/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../the-default-local-backend-and-the-terraform-tfstate-file-terraform-tfs/">← El backend local predeterminado y los archivos `terraform.tf</a><a href="../the-backend-block-inside-terraform-remote-backends-such-as-s3-azurerm/">El bloque `backend` dentro de `terraform {}`: backends remot →</a></nav>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Llamar A Un Módulo Con Un Bloque `module` Y Pasar Variable… · Lección De Terraform Associate</title>
-<meta name="description" content="Usar un módulo en tu configuración se llama llamarlo, y lo haces con un bloque module. La etiqueta después de module es un nombre local que tú eliges, como">
+<meta name="description" content="Usar un módulo en tu configuración se llama llamarlo, y se hace con un bloque module. La etiqueta después de module es un nombre local que tú eliges, como ">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Llamar a un módulo con un bloque `module` y pasar variable… · Lección de Terraform Associate">
-<meta property="og:description" content="Usar un módulo en tu configuración se llama llamarlo, y lo haces con un bloque module. La etiqueta después de module es un nombre local que tú eliges, como">
+<meta property="og:description" content="Usar un módulo en tu configuración se llama llamarlo, y se hace con un bloque module. La etiqueta después de module es un nombre local que tú eliges, como ">
 <link rel="canonical" href="https://www.studytocert.com/es/terraform/lessons/calling-a-module-with-a-module-block-and-passing-input-variables/">
 <meta property="og:url" content="https://www.studytocert.com/es/terraform/lessons/calling-a-module-with-a-module-block-and-passing-input-variables/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">HashiCorp Certified: Terraform Associate Terraform Associate (004)</p>
 <h1>Llamar a un módulo con un bloque `module` y pasar variables de entrada</h1>
 <article class="lbody">
-<p>Usar un módulo en tu configuración se llama llamarlo, y lo haces con un bloque <code>module</code>. La etiqueta después de <code>module</code> es un nombre local que tú eliges, como <code>module &quot;web_server&quot;</code>. Ese nombre es la forma de referirte a esta instancia concreta del módulo en otras partes, y puedes llamar al mismo origen de módulo varias veces con distintos nombres para construir varias copias con distintos ajustes.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Usar un módulo en tu configuración se llama llamarlo, y se hace con un bloque <code>module</code>. La etiqueta después de <code>module</code> es un nombre local que tú eliges, como <code>module &quot;web_server&quot;</code>. Ese nombre es la forma de referirte a esta instancia concreta del módulo en otros lugares, por ejemplo <code>module.web_server.instance_id</code>, y pasa a formar parte de la dirección de cada recurso que crea el módulo. Puedes llamar al mismo origen de módulo varias veces con nombres distintos para construir varias copias independientes con configuraciones diferentes, y cada copia tiene sus propios recursos en el estado.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Terraform Associate gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../terraform/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../module-sources-local-paths-or-the-public-terraform-registry-private-re/">← Orígenes de módulos: rutas locales (`./` o `../`), el Terraf</a><a href="../variable-scope-child-modules-only-see-values-passed-in-outputs-are-rea/">Alcance de las variables: los módulos hijos solo ven los val →</a></nav>

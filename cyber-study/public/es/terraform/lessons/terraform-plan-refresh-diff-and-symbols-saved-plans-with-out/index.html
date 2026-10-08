@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>`terraform Plan`: Refresh, Diff Y Símbolos (`+`, `-`, `~`,… · Lección De Terraform Associate</title>
-<meta name="description" content="terraform plan crea un plan de ejecución: una previsualización de lo que Terraform cambiaría. No cambia la infraestructura real. Plan funciona en tres etap">
+<meta name="description" content="terraform plan crea un plan de ejecución: una vista previa de lo que Terraform cambiaría. Nunca cambia la infraestructura real, y por eso es seguro ejecuta">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="`terraform plan`: refresh, diff y símbolos (`+`, `-`, `~`,… · Lección de Terraform Associate">
-<meta property="og:description" content="terraform plan crea un plan de ejecución: una previsualización de lo que Terraform cambiaría. No cambia la infraestructura real. Plan funciona en tres etap">
+<meta property="og:description" content="terraform plan crea un plan de ejecución: una vista previa de lo que Terraform cambiaría. Nunca cambia la infraestructura real, y por eso es seguro ejecuta">
 <link rel="canonical" href="https://www.studytocert.com/es/terraform/lessons/terraform-plan-refresh-diff-and-symbols-saved-plans-with-out/">
 <meta property="og:url" content="https://www.studytocert.com/es/terraform/lessons/terraform-plan-refresh-diff-and-symbols-saved-plans-with-out/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">HashiCorp Certified: Terraform Associate Terraform Associate (004)</p>
 <h1>`terraform plan`: refresh, diff y símbolos (`+`, `-`, `~`, `-/+`), planes guardados con `-out`</h1>
 <article class="lbody">
-<p><code>terraform plan</code> crea un plan de ejecución: una previsualización de lo que Terraform cambiaría. No cambia la infraestructura real. Plan funciona en tres etapas. Primero lee el estado actual. Luego, de forma predeterminada, hace un refresh (actualización): le pide a cada provider los atributos actuales de cada objeto gestionado, para poder ver el drift hecho fuera de Terraform. Por último, compara la configuración con esa vista actualizada y determina qué acciones harían que la realidad coincida con el código.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p><code>terraform plan</code> crea un plan de ejecución: una vista previa de lo que Terraform cambiaría. Nunca cambia la infraestructura real, y por eso es seguro ejecutarlo tantas veces como quieras. Plan trabaja en tres etapas. Primero lee el estado actual, el registro que Terraform lleva de los objetos que gestiona. Luego, de forma predeterminada, hace un refresh (actualización): le pide a cada provider los atributos actuales de cada objeto gestionado, para poder ver el drift, es decir, los cambios hechos fuera de Terraform, por ejemplo por alguien que hizo clic en una consola de la nube. Por último, compara la configuración con esa vista actualizada y determina qué acciones harían que la realidad coincida con el código. Durante un plan normal, el refresh solo actualiza la vista que Terraform tiene en memoria; plan no reescribe el archivo de estado.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Terraform Associate gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../terraform/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../terraform-validate-syntax-and-internal-consistency-checks-without-cont/">← `terraform validate`: verificaciones de sintaxis y consisten</a><a href="../planning-options-var-var-file-target-refresh-false-refresh-only-replac/">Opciones de planificación: `-var`, `-var-file`, `-target`, ` →</a></nav>

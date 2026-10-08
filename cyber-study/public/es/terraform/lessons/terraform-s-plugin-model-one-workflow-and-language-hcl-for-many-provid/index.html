@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>El Modelo De Plugins De Terraform: Un Solo Flujo De Trabaj… · Lección De Terraform Associate</title>
-<meta name="description" content="Terraform por sí mismo no sabe nada de AWS, Azure, GitHub ni de ninguna plataforma en particular. El binario principal entiende el lenguaje, construye graf">
+<meta name="description" content="Terraform por sí mismo no sabe nada de AWS, Azure, GitHub ni de ninguna plataforma en particular. El binario principal entiende HashiCorp Configuration Lan">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="El modelo de plugins de Terraform: un solo flujo de trabaj… · Lección de Terraform Associate">
-<meta property="og:description" content="Terraform por sí mismo no sabe nada de AWS, Azure, GitHub ni de ninguna plataforma en particular. El binario principal entiende el lenguaje, construye graf">
+<meta property="og:description" content="Terraform por sí mismo no sabe nada de AWS, Azure, GitHub ni de ninguna plataforma en particular. El binario principal entiende HashiCorp Configuration Lan">
 <link rel="canonical" href="https://www.studytocert.com/es/terraform/lessons/terraform-s-plugin-model-one-workflow-and-language-hcl-for-many-provid/">
 <meta property="og:url" content="https://www.studytocert.com/es/terraform/lessons/terraform-s-plugin-model-one-workflow-and-language-hcl-for-many-provid/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,11 +41,11 @@
 <p class="note">HashiCorp Certified: Terraform Associate Terraform Associate (004)</p>
 <h1>El modelo de plugins de Terraform: un solo flujo de trabajo y un solo lenguaje (HCL) para muchos providers</h1>
 <article class="lbody">
-<p>Terraform por sí mismo no sabe nada de AWS, Azure, GitHub ni de ninguna plataforma en particular. El binario principal entiende el lenguaje, construye grafos de dependencias, gestiona el estado y ejecuta el flujo de trabajo de plan y apply. Todo lo específico de cada plataforma vive en los providers, que son programas plugin separados que Terraform descarga y ejecuta.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Terraform por sí mismo no sabe nada de AWS, Azure, GitHub ni de ninguna plataforma en particular. El binario principal entiende HashiCorp Configuration Language (HCL), construye grafos de dependencias, gestiona el estado y ejecuta el flujo de trabajo de plan y apply. Todo lo específico de cada plataforma vive en los providers, que son programas plugin separados que Terraform descarga y ejecuta junto a sí mismo. Esta división es una de las ideas de arquitectura más importantes del examen Terraform Associate, porque muchos otros temas, desde <code>terraform init</code> hasta la fijación de versiones, solo tienen sentido una vez que la entiendes.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Terraform Associate gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../terraform/?lang=es">Abrir el plan de estudio</a></div>
-<nav class="pager" aria-label="Más lecciones"><a href="../idempotence-applying-the-same-configuration-twice-makes-no-further-cha/">← Idempotencia: aplicar la misma configuración dos veces no pr</a><a href="../multi-cloud-and-hybrid-cloud-deployments-from-a-single-configuration/">Despliegues multicloud y de nube híbrida desde una sola conf →</a></nav>
+<nav class="pager" aria-label="Más lecciones"><a href="../idempotence-applying-the-same-configuration-twice-makes-no-further-cha/">← Idempotencia: aplicar la misma configuración dos veces no pr</a><a href="../multi-cloud-and-hybrid-cloud-deployments-from-a-single-configuration/">Despliegues multinube y de nube híbrida desde una sola confi →</a></nav>
 </main>
 </body>
 </html>
