@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Protecciones De Capa 2: DHCP Snooping, Dynamic ARP Inspect… · Lección De ENCOR</title>
-<meta name="description" content="Los protocolos de Capa 2 como DHCP y ARP se diseñaron para redes confiables y no tienen autenticación. Un atacante en un puerto de acceso puede aprovecharl">
+<meta name="description" content="Los protocolos de Capa 2 como DHCP (protocolo de configuración dinámica de host) y ARP (protocolo de resolución de direcciones) se diseñaron para redes con">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Protecciones de Capa 2: DHCP snooping, dynamic ARP inspect… · Lección de ENCOR">
-<meta property="og:description" content="Los protocolos de Capa 2 como DHCP y ARP se diseñaron para redes confiables y no tienen autenticación. Un atacante en un puerto de acceso puede aprovecharl">
+<meta property="og:description" content="Los protocolos de Capa 2 como DHCP (protocolo de configuración dinámica de host) y ARP (protocolo de resolución de direcciones) se diseñaron para redes con">
 <link rel="canonical" href="https://www.studytocert.com/es/ccnp-encor/lessons/layer-2-protections-dhcp-snooping-dynamic-arp-inspection-ip-source-gua/">
 <meta property="og:url" content="https://www.studytocert.com/es/ccnp-encor/lessons/layer-2-protections-dhcp-snooping-dynamic-arp-inspection-ip-source-gua/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -39,10 +39,10 @@
 <main class="wrap lesson-page">
 <p class="crumbs"><a href="../../../../ccnp-encor/">ENCOR</a> / <a href="../">Lecciones</a> · <a href="../../../../ccnp-encor/lessons/layer-2-protections-dhcp-snooping-dynamic-arp-inspection-ip-source-gua/" hreflang="en" lang="en">English</a></p>
 <p class="note">Cisco CCNP Enterprise core exam (ENCOR) 350-401 v1.2</p>
-<h1>Protecciones de Capa 2: DHCP snooping, dynamic ARP inspection, IP source guard</h1>
+<h1>Protecciones de Capa 2: DHCP snooping, dynamic ARP inspection e IP source guard</h1>
 <article class="lbody">
-<p>Los protocolos de Capa 2 como DHCP y ARP se diseñaron para redes confiables y no tienen autenticación. Un atacante en un puerto de acceso puede aprovecharlo: un servidor DHCP falso (rogue) puede anunciarse a sí mismo como gateway predeterminado para interceptar el tráfico, el ARP spoofing puede redirigir el tráfico a través del atacante (un ataque de intermediario) y el IP spoofing puede hacer que el tráfico de un atacante parezca venir de otro host. Los switches Cisco proporcionan tres funciones que se apoyan unas en otras para detener estos ataques.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 5 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Los protocolos de Capa 2 como DHCP (protocolo de configuración dinámica de host) y ARP (protocolo de resolución de direcciones) se diseñaron para redes confiables y no tienen autenticación. Cualquier dispositivo en un puerto de acceso puede enviar mensajes de servidor DHCP o respuestas ARP, y los demás hosts los creerán. Un atacante puede aprovecharlo de tres formas comunes. Un servidor DHCP falso (rogue) puede anunciarse a sí mismo como gateway predeterminado para que el tráfico de los clientes pase por él. El ARP spoofing, también llamado envenenamiento ARP (ARP poisoning), envía respuestas falsificadas que asocian la dirección IP del gateway con la dirección MAC del atacante, lo que crea una posición de intermediario (man-in-the-middle). El IP spoofing hace que los paquetes del atacante parezcan venir de la dirección de otro host. Los switches Cisco ofrecen tres funciones que se apoyan unas en otras para detener estos ataques, y ENCOR espera que sepas qué verifica cada una y cómo dependen entre sí.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia ENCOR gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../ccnp-encor/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../network-access-control-802-1x-mab-and-webauth/">← Control de acceso a la red: 802.1X, MAB y WebAuth</a><a href="../python-basics-variables-loops-functions-dictionaries-the-requests-libr/">Fundamentos de Python: variables, bucles, funciones, diccion →</a></nav>
