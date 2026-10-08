@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cuentas De Cloud Billing: Vincular Proyectos A La Facturac… · Lección De Associate Cloud Engineer</title>
-<meta name="description" content="Una cuenta de Cloud Billing define quién paga el uso de Google Cloud. Contiene el perfil de pago (una tarjeta de crédito o facturación por factura) y está ">
+<meta name="description" content="Una cuenta de Cloud Billing define quién paga el uso de Google Cloud. Contiene el perfil de pagos, que puede usar una tarjeta de crédito u otro método de p">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Cuentas de Cloud Billing: vincular proyectos a la facturac… · Lección de Associate Cloud Engineer">
-<meta property="og:description" content="Una cuenta de Cloud Billing define quién paga el uso de Google Cloud. Contiene el perfil de pago (una tarjeta de crédito o facturación por factura) y está ">
+<meta property="og:description" content="Una cuenta de Cloud Billing define quién paga el uso de Google Cloud. Contiene el perfil de pagos, que puede usar una tarjeta de crédito u otro método de p">
 <link rel="canonical" href="https://www.studytocert.com/es/google-ace/lessons/cloud-billing-accounts-linking-projects-to-billing-and-the-billing-iam/">
 <meta property="og:url" content="https://www.studytocert.com/es/google-ace/lessons/cloud-billing-accounts-linking-projects-to-billing-and-the-billing-iam/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Google Cloud Associate Cloud Engineer Associate Cloud Engineer</p>
 <h1>Cuentas de Cloud Billing: vincular proyectos a la facturación y los roles de IAM de facturación</h1>
 <article class="lbody">
-<p>Una cuenta de Cloud Billing define quién paga el uso de Google Cloud. Contiene el perfil de pago (una tarjeta de crédito o facturación por factura) y está vinculada a uno o más proyectos. Un proyecto puede estar vinculado a una sola cuenta de facturación a la vez, pero una cuenta de facturación puede pagar muchos proyectos. Si un proyecto no tiene una cuenta de facturación activa, sus recursos de pago se detienen: las VMs se apagan, los servicios facturables dejan de estar disponibles y, con el tiempo, los datos pueden eliminarse.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 4 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Una cuenta de Cloud Billing define quién paga el uso de Google Cloud. Contiene el perfil de pagos, que puede usar una tarjeta de crédito u otro método de pago de autoservicio, o facturación por factura para clientes más grandes, y está vinculada a uno o más proyectos. Un proyecto solo puede estar vinculado a una cuenta de facturación a la vez, pero una cuenta de facturación puede pagar muchos proyectos. La cuenta de facturación tiene su propio ID con el formato de tres grupos de seis caracteres hexadecimales, como <code>0X0X0X-0X0X0X-0X0X0X</code>, y lo ves en la sección Billing de la consola y en la salida de gcloud.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Associate Cloud Engineer gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../google-ace/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../granting-iam-roles-to-users-and-groups-at-the-organization-folder-and/">← Otorgar roles de IAM a usuarios y grupos a nivel de organiza</a><a href="../budgets-budget-alerts-and-exporting-billing-data-to-bigquery/">Presupuestos, alertas de presupuesto y exportación de datos  →</a></nav>
