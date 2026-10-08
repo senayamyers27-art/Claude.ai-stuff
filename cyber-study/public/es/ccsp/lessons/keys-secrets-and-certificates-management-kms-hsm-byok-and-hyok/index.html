@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Gestión De Llaves, Secretos Y Certificados: KMS, HSM, BYOK… · Lección De CCSP</title>
-<meta name="description" content="Las llaves, los secretos y los certificados son las credenciales de las que depende todo lo demás. Una llave de cifrado abre datos, un secreto como una lla">
+<title>Gestión De Claves, Secretos Y Certificados: KMS, HSM, BYOK… · Lección De CCSP</title>
+<meta name="description" content="Las claves, los secretos y los certificados son las credenciales de las que dependen todos los demás controles. Una clave de cifrado abre datos; un secreto">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0E1319" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
-<meta property="og:title" content="Gestión de llaves, secretos y certificados: KMS, HSM, BYOK… · Lección de CCSP">
-<meta property="og:description" content="Las llaves, los secretos y los certificados son las credenciales de las que depende todo lo demás. Una llave de cifrado abre datos, un secreto como una lla">
+<meta property="og:title" content="Gestión de claves, secretos y certificados: KMS, HSM, BYOK… · Lección de CCSP">
+<meta property="og:description" content="Las claves, los secretos y los certificados son las credenciales de las que dependen todos los demás controles. Una clave de cifrado abre datos; un secreto">
 <link rel="canonical" href="https://www.studytocert.com/es/ccsp/lessons/keys-secrets-and-certificates-management-kms-hsm-byok-and-hyok/">
 <meta property="og:url" content="https://www.studytocert.com/es/ccsp/lessons/keys-secrets-and-certificates-management-kms-hsm-byok-and-hyok/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Gestión de llaves, secretos y certificados: KMS, HSM, BYOK… · Lección de CCSP">
+<meta property="og:image:alt" content="Gestión de claves, secretos y certificados: KMS, HSM, BYOK… · Lección de CCSP">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="alternate" hreflang="en" href="https://www.studytocert.com/ccsp/lessons/keys-secrets-and-certificates-management-kms-hsm-byok-and-hyok/">
 <link rel="alternate" hreflang="es" href="https://www.studytocert.com/es/ccsp/lessons/keys-secrets-and-certificates-management-kms-hsm-byok-and-hyok/">
@@ -39,10 +39,10 @@
 <main class="wrap lesson-page">
 <p class="crumbs"><a href="../../../../ccsp/">CCSP</a> / <a href="../">Lecciones</a> · <a href="../../../../ccsp/lessons/keys-secrets-and-certificates-management-kms-hsm-byok-and-hyok/" hreflang="en" lang="en">English</a></p>
 <p class="note">ISC2 Certified Cloud Security Professional 2026 outline (effective Aug 1, 2026)</p>
-<h1>Gestión de llaves, secretos y certificados: KMS, HSM, BYOK y HYOK</h1>
+<h1>Gestión de claves, secretos y certificados: KMS, HSM, BYOK y HYOK</h1>
 <article class="lbody">
-<p>Las llaves, los secretos y los certificados son las credenciales de las que depende todo lo demás. Una llave de cifrado abre datos, un secreto como una llave de API o la contraseña de una base de datos abre un sistema, y un certificado prueba una identidad y habilita TLS. El temario del CCSP menciona su gestión de forma explícita porque los errores aquí anulan todos los demás controles.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 3 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Las claves, los secretos y los certificados son las credenciales de las que dependen todos los demás controles. Una clave de cifrado abre datos; un secreto, como una clave de la interfaz de programación de aplicaciones (API), un token o una contraseña de base de datos, abre un sistema; y un certificado vincula una clave pública con una identidad para que los sistemas puedan demostrar quiénes son y establecer conexiones de seguridad de la capa de transporte (TLS). El temario de Certified Cloud Security Professional (CCSP) menciona explícitamente su gestión, porque una clave filtrada, una contraseña en el código fuente o un certificado vencido pueden anular en un solo momento un cifrado fuerte, un diseño de red cuidadoso y una buena política de acceso.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia CCSP gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../ccsp/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../data-loss-prevention-dlp-in-the-cloud/">← Prevención de pérdida de datos (DLP) en la nube</a><a href="../data-discovery-structured-semi-structured-and-unstructured-data-and-da/">Descubrimiento de datos: datos estructurados, semiestructura →</a></nav>
