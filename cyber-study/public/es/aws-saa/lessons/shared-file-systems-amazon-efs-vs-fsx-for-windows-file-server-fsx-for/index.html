@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sistemas De Archivos Compartidos: Amazon EFS Vs FSx For Wi… · Lección De Solutions Architect Associate</title>
-<meta name="description" content="Los volúmenes de Amazon Elastic Block Store (EBS) generalmente se adjuntan a una sola instancia, y Amazon S3 es almacenamiento de objetos al que se accede ">
+<meta name="description" content="Los volúmenes de Amazon Elastic Block Store (EBS) por lo general se conectan a una sola instancia, y Amazon S3 es almacenamiento de objetos al que se acced">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Sistemas de archivos compartidos: Amazon EFS vs FSx for Wi… · Lección de Solutions Architect Associate">
-<meta property="og:description" content="Los volúmenes de Amazon Elastic Block Store (EBS) generalmente se adjuntan a una sola instancia, y Amazon S3 es almacenamiento de objetos al que se accede ">
+<meta property="og:description" content="Los volúmenes de Amazon Elastic Block Store (EBS) por lo general se conectan a una sola instancia, y Amazon S3 es almacenamiento de objetos al que se acced">
 <link rel="canonical" href="https://www.studytocert.com/es/aws-saa/lessons/shared-file-systems-amazon-efs-vs-fsx-for-windows-file-server-fsx-for/">
 <meta property="og:url" content="https://www.studytocert.com/es/aws-saa/lessons/shared-file-systems-amazon-efs-vs-fsx-for-windows-file-server-fsx-for/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">AWS Certified Solutions Architect – Associate SAA-C03</p>
 <h1>Sistemas de archivos compartidos: Amazon EFS vs FSx for Windows File Server, FSx for Lustre y FSx for NetApp ONTAP</h1>
 <article class="lbody">
-<p>Los volúmenes de Amazon Elastic Block Store (EBS) generalmente se adjuntan a una sola instancia, y Amazon S3 es almacenamiento de objetos al que se accede mediante API HTTP y no como una unidad montada. Cuando muchos servidores necesitan leer y escribir los mismos archivos a través de una interfaz de sistema de archivos normal, con directorios, bloqueo de archivos y permisos, necesitas un sistema de archivos compartido. AWS ofrece Amazon Elastic File System (EFS) y la familia Amazon FSx, y el examen decide entre ellos según el protocolo, el sistema operativo y el perfil de rendimiento. Acertar desde el principio ahorra migraciones dolorosas más adelante, porque las aplicaciones se escriben esperando un protocolo concreto.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 7 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Los volúmenes de Amazon Elastic Block Store (EBS) por lo general se conectan a una sola instancia, y Amazon S3 es almacenamiento de objetos al que se accede mediante API HTTP, no como una unidad montada. Cuando muchos servidores necesitan leer y escribir los mismos archivos a través de una interfaz de sistema de archivos normal, con directorios, bloqueo de archivos y permisos, necesitas un sistema de archivos compartido. AWS ofrece Amazon Elastic File System (EFS) y la familia Amazon FSx, y el examen decide entre ellos según el protocolo, el sistema operativo y el perfil de rendimiento. Acertar desde el principio evita migraciones dolorosas más adelante, porque las aplicaciones se escriben esperando un protocolo concreto.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 9 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Solutions Architect Associate gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../aws-saa/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../ebs-volume-types-and-instance-store-gp3-vs-io2-block-express-vs-st1-an/">← Tipos de volúmenes EBS e instance store: gp3 vs io2 Block Ex</a><a href="../s3-performance-prefixes-multipart-upload-byte-range-fetches-and-s3-tra/">Rendimiento de S3: prefijos, multipart upload, byte-range fe →</a></nav>

@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cifrar Almacenes De Datos: Cifrado Por Defecto De EBS, Cif… · Lección De Security Specialty</title>
-<meta name="description" content="La mayoría de los almacenes de datos de AWS cifran en reposo con KMS, pero los detalles de cuándo y cómo puedes activar el cifrado cambian, y esos detalles">
+<title>Cifrar Almacenes De Datos: Cifrado Predeterminado De EBS, … · Lección De Security Specialty</title>
+<meta name="description" content="La mayoría de los almacenes de datos de AWS cifran en reposo con claves de AWS Key Management Service (KMS), pero los detalles de cuándo y cómo se puede ac">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0E1319" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
-<meta property="og:title" content="Cifrar almacenes de datos: cifrado por defecto de EBS, cif… · Lección de Security Specialty">
-<meta property="og:description" content="La mayoría de los almacenes de datos de AWS cifran en reposo con KMS, pero los detalles de cuándo y cómo puedes activar el cifrado cambian, y esos detalles">
+<meta property="og:title" content="Cifrar almacenes de datos: cifrado predeterminado de EBS, … · Lección de Security Specialty">
+<meta property="og:description" content="La mayoría de los almacenes de datos de AWS cifran en reposo con claves de AWS Key Management Service (KMS), pero los detalles de cuándo y cómo se puede ac">
 <link rel="canonical" href="https://www.studytocert.com/es/aws-security/lessons/encrypting-data-stores-ebs-encryption-by-default-rds-aurora-and-dynamo/">
 <meta property="og:url" content="https://www.studytocert.com/es/aws-security/lessons/encrypting-data-stores-ebs-encryption-by-default-rds-aurora-and-dynamo/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Cifrar almacenes de datos: cifrado por defecto de EBS, cif… · Lección de Security Specialty">
+<meta property="og:image:alt" content="Cifrar almacenes de datos: cifrado predeterminado de EBS, … · Lección de Security Specialty">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="alternate" hreflang="en" href="https://www.studytocert.com/aws-security/lessons/encrypting-data-stores-ebs-encryption-by-default-rds-aurora-and-dynamo/">
 <link rel="alternate" hreflang="es" href="https://www.studytocert.com/es/aws-security/lessons/encrypting-data-stores-ebs-encryption-by-default-rds-aurora-and-dynamo/">
@@ -39,10 +39,10 @@
 <main class="wrap lesson-page">
 <p class="crumbs"><a href="../../../../aws-security/">Security Specialty</a> / <a href="../">Lecciones</a> · <a href="../../../../aws-security/lessons/encrypting-data-stores-ebs-encryption-by-default-rds-aurora-and-dynamo/" hreflang="en" lang="en">English</a></p>
 <p class="note">AWS Certified Security – Specialty SCS-C03</p>
-<h1>Cifrar almacenes de datos: cifrado por defecto de EBS, cifrado de RDS, Aurora y DynamoDB, y cifrar recursos existentes sin cifrar</h1>
+<h1>Cifrar almacenes de datos: cifrado predeterminado de EBS, cifrado de RDS, Aurora y DynamoDB, y cifrar recursos existentes sin cifrar</h1>
 <article class="lbody">
-<p>La mayoría de los almacenes de datos de AWS cifran en reposo con KMS, pero los detalles de cuándo y cómo puedes activar el cifrado cambian, y esos detalles son los que evalúan las preguntas del examen.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 3 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>La mayoría de los almacenes de datos de AWS cifran en reposo con claves de AWS Key Management Service (KMS), pero los detalles de cuándo y cómo se puede activar el cifrado varían de un servicio a otro. Esos detalles son justamente lo que evalúan las preguntas del examen: si el cifrado puede habilitarse en un recurso existente, qué pasa con las instantáneas (snapshots) y las réplicas, y cómo mover datos sin cifrar a un recurso cifrado con la menor interrupción posible.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Security Specialty gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../aws-security/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../sensitive-data-discovery-and-masking-amazon-macie-and-cloudwatch-logs/">← Descubrimiento y enmascaramiento de datos sensibles: Amazon </a><a href="../securing-generative-ai-data-amazon-bedrock-guardrails-private-model-ac/">Proteger los datos de IA generativa: guardrails de Amazon Be →</a></nav>
