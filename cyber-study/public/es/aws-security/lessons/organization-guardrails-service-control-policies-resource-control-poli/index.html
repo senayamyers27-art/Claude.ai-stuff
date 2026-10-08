@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Barreras De La Organización: Service Control Policies, Res… · Lección De Security Specialty</title>
-<meta name="description" content="Las políticas de la organización permiten que un equipo central fije límites de los que nadie en una cuenta miembro puede escapar, por muchos permisos de I">
+<meta name="description" content="Las políticas de la organización son barreras de protección (guardrails) que un equipo central adjunta a la raíz, a una unidad organizativa (OU) o a una cu">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Barreras de la organización: service control policies, res… · Lección de Security Specialty">
-<meta property="og:description" content="Las políticas de la organización permiten que un equipo central fije límites de los que nadie en una cuenta miembro puede escapar, por muchos permisos de I">
+<meta property="og:description" content="Las políticas de la organización son barreras de protección (guardrails) que un equipo central adjunta a la raíz, a una unidad organizativa (OU) o a una cu">
 <link rel="canonical" href="https://www.studytocert.com/es/aws-security/lessons/organization-guardrails-service-control-policies-resource-control-poli/">
 <meta property="og:url" content="https://www.studytocert.com/es/aws-security/lessons/organization-guardrails-service-control-policies-resource-control-poli/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">AWS Certified Security – Specialty SCS-C03</p>
 <h1>Barreras de la organización: service control policies, resource control policies y declarative policies</h1>
 <article class="lbody">
-<p>Las políticas de la organización permiten que un equipo central fije límites de los que nadie en una cuenta miembro puede escapar, por muchos permisos de IAM que tenga. SCS-C03 espera que conozcas tres tipos y cuándo usar cada uno.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 3 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Las políticas de la organización son barreras de protección (guardrails) que un equipo central adjunta a la raíz, a una unidad organizativa (OU) o a una cuenta individual en AWS Organizations. Su poder viene de una propiedad: ninguna identidad dentro de una cuenta miembro puede anularlas, sin importar cuántos permisos de Identity and Access Management (IAM) tenga. El examen AWS Certified Security – Specialty espera que conozcas tres tipos de barreras, qué controla realmente cada uno y cómo elegir entre ellos a partir de la redacción de un escenario.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 8 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia Security Specialty gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../aws-security/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../multi-account-strategy-aws-organizations-organizational-units-aws-cont/">← Estrategia multicuenta: AWS Organizations, unidades organiza</a><a href="../delegated-administration-for-guardduty-security-hub-config-and-other-s/">Administración delegada para GuardDuty, Security Hub, Config →</a></nav>
