@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ConfigMaps Y Secrets: Creación, Consumo Como Env Y Como Vo… · Lección De CKA</title>
-<meta name="description" content="Los ConfigMaps y los Secrets separan la configuración de las imágenes de contenedor. Un ConfigMap guarda datos clave-valor no sensibles; un Secret guarda v">
+<meta name="description" content="Los ConfigMaps y los Secrets separan la configuración de las imágenes de contenedor, de modo que la misma imagen puede ejecutarse en desarrollo y en produc">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="ConfigMaps y Secrets: creación, consumo como env y como vo… · Lección de CKA">
-<meta property="og:description" content="Los ConfigMaps y los Secrets separan la configuración de las imágenes de contenedor. Un ConfigMap guarda datos clave-valor no sensibles; un Secret guarda v">
+<meta property="og:description" content="Los ConfigMaps y los Secrets separan la configuración de las imágenes de contenedor, de modo que la misma imagen puede ejecutarse en desarrollo y en produc">
 <link rel="canonical" href="https://www.studytocert.com/es/cka/lessons/configmaps-and-secrets-creation-env-and-volume-consumption-immutable-o/">
 <meta property="og:url" content="https://www.studytocert.com/es/cka/lessons/configmaps-and-secrets-creation-env-and-volume-consumption-immutable-o/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Certified Kubernetes Administrator CKA (Kubernetes v1.35 curriculum)</p>
 <h1>ConfigMaps y Secrets: creación, consumo como env y como volumen, objetos inmutables y reinicio de cargas de trabajo tras los cambios</h1>
 <article class="lbody">
-<p>Los ConfigMaps y los Secrets separan la configuración de las imágenes de contenedor. Un ConfigMap guarda datos clave-valor no sensibles; un Secret guarda valores sensibles como contraseñas, tokens y claves TLS. Sus datos solo están codificados en base64, lo cual no es cifrado, así que protege los Secrets con RBAC e, idealmente, con cifrado en reposo (encryption at rest) configurado en el API server.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Los ConfigMaps y los Secrets separan la configuración de las imágenes de contenedor, de modo que la misma imagen puede ejecutarse en desarrollo y en producción con configuraciones distintas. Un ConfigMap guarda datos clave-valor no sensibles, como feature flags, niveles de log o archivos de configuración completos. Un Secret guarda valores sensibles como contraseñas, tokens y claves de Transport Layer Security (TLS). La advertencia importante es que los datos de un Secret solo están codificados en base64, lo cual no es cifrado; cualquiera que pueda leer el objeto Secret puede decodificarlo con un solo comando. Protege los Secrets con control de acceso basado en roles (RBAC) que limite quién puede hacer get o list sobre ellos e, idealmente, con cifrado en reposo configurado en el API server para que los valores estén cifrados en etcd.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 9 secciones más, 6 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia CKA gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../cka/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../daemonsets-and-statefulsets-from-an-operator-s-point-of-view-including/">← DaemonSets y StatefulSets desde el punto de vista del operad</a><a href="../resource-requests-and-limits-limitrange-and-resourcequota-as-admission/">Requests y limits de recursos, LimitRange y ResourceQuota co →</a></nav>

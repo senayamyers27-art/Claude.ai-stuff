@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cómo `command` Y `args` Del Pod Sobrescriben ENTRYPOINT Y … · Lección De CKAD</title>
-<meta name="description" content="Kubernetes te permite cambiar cómo arranca un contenedor sin reconstruir su imagen. En la especificación de un contenedor, el campo command sobrescribe el ">
+<meta name="description" content="Kubernetes te permite cambiar cómo inicia un contenedor sin reconstruir su imagen. En la especificación de un contenedor, el campo command sobrescribe el E">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Cómo `command` y `args` del Pod sobrescriben ENTRYPOINT y … · Lección de CKAD">
-<meta property="og:description" content="Kubernetes te permite cambiar cómo arranca un contenedor sin reconstruir su imagen. En la especificación de un contenedor, el campo command sobrescribe el ">
+<meta property="og:description" content="Kubernetes te permite cambiar cómo inicia un contenedor sin reconstruir su imagen. En la especificación de un contenedor, el campo command sobrescribe el E">
 <link rel="canonical" href="https://www.studytocert.com/es/ckad/lessons/how-pod-command-and-args-override-the-image-entrypoint-and-cmd/">
 <meta property="og:url" content="https://www.studytocert.com/es/ckad/lessons/how-pod-command-and-args-override-the-image-entrypoint-and-cmd/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Certified Kubernetes Application Developer CKAD (Kubernetes v1.35 curriculum)</p>
 <h1>Cómo `command` y `args` del Pod sobrescriben ENTRYPOINT y CMD de la imagen</h1>
 <article class="lbody">
-<p>Kubernetes te permite cambiar cómo arranca un contenedor sin reconstruir su imagen. En la especificación de un contenedor, el campo <code>command</code> sobrescribe el ENTRYPOINT de la imagen y el campo <code>args</code> sobrescribe su CMD. La nomenclatura confunde porque el CMD de Docker es el args de Kubernetes, así que vale la pena memorizar la equivalencia: command = ENTRYPOINT, args = CMD.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 3 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Kubernetes te permite cambiar cómo inicia un contenedor sin reconstruir su imagen. En la especificación de un contenedor, el campo <code>command</code> sobrescribe el ENTRYPOINT de la imagen y el campo <code>args</code> sobrescribe el CMD de la imagen. Los nombres confunden, porque el CMD de Docker corresponde a args en Kubernetes, no a command. Vale la pena memorizar la correspondencia hasta que sea automática: command = ENTRYPOINT, args = CMD. Casi todas las preguntas del examen sobre este tema se reducen a aplicar esa correspondencia con cuidado.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 7 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia CKAD gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../ckad/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../building-tagging-saving-and-loading-images-with-docker-or-podman-build/">← Construir, etiquetar, guardar y cargar imágenes con docker o</a><a href="../choosing-a-workload-deployment-statefulset-daemonset-job-cronjob-bare/">Elegir un workload: Deployment, StatefulSet, DaemonSet, Job, →</a></nav>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pods Atascados En Terminating En Nodos Perdidos Y Borrado … · Lección De CKA</title>
-<meta name="description" content="Borrar un Pod normalmente es una conversación. El API server marca el Pod con una marca de tiempo de borrado y un período de gracia, el kubelet de su nodo ">
+<meta name="description" content="Borrar un Pod es normalmente una conversación entre el control plane y un nodo. El API server marca el Pod con una marca de tiempo de borrado y un período ">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'none'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.studytocert.com; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types default">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="StudyToCert">
 <meta property="og:title" content="Pods atascados en Terminating en nodos perdidos y borrado … · Lección de CKA">
-<meta property="og:description" content="Borrar un Pod normalmente es una conversación. El API server marca el Pod con una marca de tiempo de borrado y un período de gracia, el kubelet de su nodo ">
+<meta property="og:description" content="Borrar un Pod es normalmente una conversación entre el control plane y un nodo. El API server marca el Pod con una marca de tiempo de borrado y un período ">
 <link rel="canonical" href="https://www.studytocert.com/es/cka/lessons/stuck-terminating-pods-on-lost-nodes-and-force-deletion/">
 <meta property="og:url" content="https://www.studytocert.com/es/cka/lessons/stuck-terminating-pods-on-lost-nodes-and-force-deletion/">
 <meta property="og:image" content="https://www.studytocert.com/og/site.png">
@@ -41,8 +41,8 @@
 <p class="note">Certified Kubernetes Administrator CKA (Kubernetes v1.35 curriculum)</p>
 <h1>Pods atascados en Terminating en nodos perdidos y borrado forzado</h1>
 <article class="lbody">
-<p>Borrar un Pod normalmente es una conversación. El API server marca el Pod con una marca de tiempo de borrado y un período de gracia, el kubelet de su nodo detiene los contenedores, enviando SIGTERM y más tarde SIGKILL, y luego lo confirma, después de lo cual se elimina el objeto Pod. Si el nodo está apagado, aislado de la red o su kubelet está muerto, la confirmación nunca llega y el Pod se queda en <code>Terminating</code> indefinidamente.</p>
-<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 6 secciones más, 4 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
+<p>Borrar un Pod es normalmente una conversación entre el control plane y un nodo. El API server marca el Pod con una marca de tiempo de borrado y un período de gracia, de 30 segundos de forma predeterminada. El kubelet del nodo del Pod lo ve, envía SIGTERM a los contenedores para que puedan detenerse de forma limpia, envía SIGKILL a todo lo que siga ejecutándose cuando termina el período de gracia y luego lo confirma. Solo después de esa confirmación se elimina el objeto Pod de la API. Si el nodo está apagado, aislado de la red o su kubelet está muerto, la confirmación nunca llega, y el Pod se queda en <code>Terminating</code> indefinidamente. El examen Certified Kubernetes Administrator (CKA) espera que entiendas por qué ocurre y cuándo es seguro intervenir.</p>
+<div class="panel gatewall"><span class="chip">Cuenta gratis</span><h2>Sigue leyendo gratis</h2><p>Crea una cuenta gratis de StudyToCert para leer el resto de esta lección: 9 secciones más, 5 términos clave, un ejemplo real, un consejo para el examen y preguntas de repaso. Todas las lecciones, laboratorios y exámenes de práctica son gratis con una cuenta.</p><p class="btns"><a class="btn" href="../../../../#signup">Crear cuenta gratis</a> <a class="btn ghost" href="../../../../#login">Iniciar sesión</a></p></div>
 </article>
 <div class="panel startcard"><div class="grow"><strong>Estudia CKA gratis</strong><br><span class="note">Plan semana a semana con lecciones, cuestionarios, simulaciones de examen y práctica, en español.</span></div><a class="btn sm" href="../../../../cka/?lang=es">Abrir el plan de estudio</a></div>
 <nav class="pager" aria-label="Más lecciones"><a href="../output-handling-for-tasks-o-jsonpath-custom-columns-sort-by-writing-an/">← Manejo de la salida en las tareas: -o jsonpath, custom-colum</a></nav>
